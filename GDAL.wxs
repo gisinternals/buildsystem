@@ -328,6 +328,9 @@
                     <Component Id="openjpeg.dll" Guid="*">
                         <File Id="openjpeg.dll" Name="openjpeg.dll" Source="$(var.TargetDir)\openjpeg.dll" Vital="yes"/>
                     </Component>
+                    <Component Id="openjp2.dll" Guid="*">
+                        <File Id="openjp2.dll" Name="openjp2.dll" Source="$(var.TargetDir)\openjp2.dll" Vital="yes"/>
+                    </Component>
                     <Component Id="pdflib.dll" Guid="*">
                         <File Id="pdflib.dll" Name="pdflib.dll" Source="$(var.TargetDir)\pdflib.dll" Vital="yes"/>
                     </Component>
@@ -689,6 +692,7 @@
             <ComponentRef Id="spatialite.dll" />
             <ComponentRef Id="xerces_c_2_8.dll" />
             <ComponentRef Id="openjpeg.dll" />
+            <ComponentRef Id="openjp2.dll" />
             <ComponentRef Id="zlib1.dll" />
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="GDALLicense.rtf" />

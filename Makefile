@@ -552,6 +552,30 @@ OPENJPEG_DIR=openjpegv2\vc7
 !ENDIF
 !ENDIF
 
+!IFNDEF OPENJPEG2_DIR
+!IF $(MSVC_VER) == 1400
+!IFDEF WIN64
+OPENJPEG2_DIR=openjpeg-2.0.0\vc8x64
+!ELSE
+OPENJPEG2_DIR=openjpeg-2.0.0\vc8
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1500
+!IFDEF WIN64
+OPENJPEG2_DIR=openjpeg-2.0.0\vc9x64
+!ELSE
+OPENJPEG2_DIR=openjpeg-2.0.0\vc9
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
+!IFDEF WIN64
+OPENJPEG2_DIR=openjpeg-2.0.0\vc10x64
+!ELSE
+OPENJPEG2_DIR=openjpeg-2.0.0\vc10
+!ENDIF
+!ELSE
+OPENJPEG2_DIR=openjpeg-2.0.0\vc7
+!ENDIF
+!ENDIF
+
 !IFNDEF SDE_DIR
 SDE_DIR = ArcSDE92sp6
 SDE_VERSION=92
@@ -595,6 +619,8 @@ GDAL_VERSIONTAG = 20
 GDAL_VERSIONTAG = 18dev
 !ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal19dev.dll)
 GDAL_VERSIONTAG = 19dev
+!ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal110dev.dll)
+GDAL_VERSIONTAG = 110dev
 !ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal20dev.dll)
 GDAL_VERSIONTAG = 20dev
 !ENDIF
@@ -976,8 +1002,13 @@ gdal-optfile:
 !IFDEF GDAL_OPENJPEG
     echo OPENJPEG_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
     echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
+!IF [type $(GDAL_PATH)\VERSION|find "1.10." >NUL ] == 0
+    echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(OUTPUT_DIR)\gdal.opt
+	echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ELSE
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjpeg.lib >> $(OUTPUT_DIR)\gdal.opt
-    echo $(OPENJPEG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+	echo $(OPENJPEG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
 !ENDIF
 !IFDEF GDAL_TIFF
     echo TIFF_INC=-I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
@@ -3000,6 +3031,23 @@ libopenjpeg:
     xcopy /Y $(BASE_DIR)\$(OPENJPEG_DIR)\bin\Release\openjpeg.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(OPENJPEG_DIR)\bin\Release\openjpeg.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(OPENJPEG_DIR)\libopenjpeg\openjpeg.h $(OUTPUT_DIR)\include  
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+libopenjpeg2:
+!IFDEF OPENJPEG2_DIR
+    cd $(OPENJPEG2_DIR)
+!IFNDEF NO_BUILD
+    devenv /rebuild Release openjpeg.sln /Project openjp2
+!ENDIF 
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\bin\Release\openjp2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\bin\Release\openjp2.dll $(OUTPUT_DIR)\bin
+	if not exist $(OUTPUT_DIR)\include\openjpeg-2.0 mkdir $(OUTPUT_DIR)\include\openjpeg-2.0
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\src\lib\openjp2\openjpeg.h $(OUTPUT_DIR)\include\openjpeg-2.0
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\src\lib\openjp2\opj_stdint.h $(OUTPUT_DIR)\include\openjpeg-2.0
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\src\lib\openjp2\opj_config.h $(OUTPUT_DIR)\include\openjpeg-2.0	
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
