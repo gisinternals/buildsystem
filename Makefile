@@ -398,6 +398,14 @@ AGG_DIR = agg-2.4
 CAIRO_DIR = cairo-1.10.0
 !ENDIF
 
+!IFNDEF LIBSVG_DIR
+LIBSVG_DIR = libsvg-0.1.4
+!ENDIF
+
+!IFNDEF LIBSVG_CAIRO_DIR
+LIBSVG_CAIRO_DIR = libsvg-cairo-0.1.6
+!ENDIF
+
 !IFNDEF PIXMAN_DIR
 PIXMAN_DIR = pixman-0.20.0
 !ENDIF
@@ -665,7 +673,7 @@ gdalbindings: gdal-csharp gdal-python
 
 graph: zlib libpng jpeg gd
 
-platform: zlib libpng jpeg geos proj iconv freexl spatialite openssl curl freetype pgsql gd libxml minizip fits agg ming fastcgi expat pdf fribidi netcdf libjbig libtiff libecw mrsidlib fontconfig pixman cairo ftgl xerces hdf5lib mysql libopenjpeg poppler giflib visual-leak-detector msvcr
+platform: zlib libpng jpeg geos proj iconv freexl spatialite openssl curl freetype pgsql gd libxml minizip fits agg ming fastcgi expat pdf fribidi netcdf libjbig libtiff libecw mrsidlib fontconfig pixman cairo ftgl xerces hdf5lib mysql libopenjpeg poppler giflib visual-leak-detector msvcr libsvg libsvg-cairo
 
 rebuild: remove-output gdal-optfile gdal gdalpluginlibs gdal-csharp gdal-java ms ms-csharp msplugins gdalversion gdal-python package package-dev
 
@@ -724,8 +732,12 @@ update-gdal-autotest:
 	cd $(BASE_DIR)
 	
 update-ms-autotest:
+    set TERM=msys
+	set PATH=E:\Git\bin;%PATH%
 	cd $(BASE_DIR)\$(MSAUTOTEST_DIR)
-	svn update --revision $(MS_REVISION) --non-interactive
+	rem svn update --revision $(MS_REVISION) --non-interactive
+	git pull origin
+	git log --pretty=format:%H -n 1
 	cd $(BASE_DIR)
 	
 updatecmd:
@@ -1885,7 +1897,7 @@ ms-optfile:
 	echo $(AGG_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !ENDIF
 !IFDEF MS_CAIRO
-	echo CAIRO=-DUSE_CAIRO >> $(OUTPUT_DIR)\mapserver.opt
+	echo CAIRO=-DUSE_CAIRO -DUSE_SVG_CAIRO >> $(OUTPUT_DIR)\mapserver.opt
 	echo CAIRO_DIR=$(BASE_DIR)\$(CAIRO_DIR) >> $(OUTPUT_DIR)\mapserver.opt
 	echo FONTCONFIG_DIR=$(BASE_DIR)\$(FONTCONFIG_DIR) >> $(OUTPUT_DIR)\mapserver.opt
 	echo $(CAIRO_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
@@ -1960,7 +1972,7 @@ ms-optfile:
 	echo libexpat.lib \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF
 !IFDEF MS_CAIRO
-	echo cairo.lib \>> $(OUTPUT_DIR)\mapserver.opt
+	echo cairo.lib libsvg.lib libsvg-cairo.lib \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF
 !IFDEF MS_OGL
 	echo ftgl.lib opengl32.lib glu32.lib user32.lib gdi32.lib \>> $(OUTPUT_DIR)\mapserver.opt
@@ -2155,7 +2167,7 @@ ms-autotest: update-ms-autotest
     $(BASE_DIR)\$(PYTHON_DIR)\python.exe run_test.py
     cd..
     cd wxs
-    $(BASE_DIR)\$(PYTHON_DIR)\python.exe run_test.py
+    rem $(BASE_DIR)\$(PYTHON_DIR)\python.exe run_test.py
     cd..
 !IF EXIST ($(MSAUTOTEST_DIR)\renderers)    
     cd renderers
@@ -2182,7 +2194,7 @@ ms-autotest2:
     $(BASE_DIR)\$(PYTHON_DIR)\python.exe run_test.py
     cd..
     cd wxs
-    $(BASE_DIR)\$(PYTHON_DIR)\python.exe run_test.py
+    rem $(BASE_DIR)\$(PYTHON_DIR)\python.exe run_test.py
     cd $(BASE_DIR)
 	
 ms-sde: ms-optfile
@@ -2922,6 +2934,40 @@ cairo:
     xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\src\cairo-pdf.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\src\cairo-svg.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\src\cairo-ft.h $(OUTPUT_DIR)\include
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+libsvg:
+!IFDEF LIBSVG_DIR
+    cd $(LIBSVG_DIR)\src
+!IFNDEF NO_CLEAN
+    nmake -f makefile.vc clean SDK_DIR=$(OUTPUT_DIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake -f makefile.vc SDK_DIR=$(OUTPUT_DIR)
+	cd ..
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(LIBSVG_DIR)\src\libsvg.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(LIBSVG_DIR)\src\svg.h $(OUTPUT_DIR)\include
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+libsvg-cairo:
+!IFDEF LIBSVG_DIR
+    cd $(LIBSVG_CAIRO_DIR)\src
+!IFNDEF NO_CLEAN
+    nmake -f makefile.vc clean SDK_DIR=$(OUTPUT_DIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake -f makefile.vc SDK_DIR=$(OUTPUT_DIR)
+	cd ..
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(LIBSVG_CAIRO_DIR)\src\libsvg-cairo.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(LIBSVG_CAIRO_DIR)\src\svg-cairo.h $(OUTPUT_DIR)\include
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
