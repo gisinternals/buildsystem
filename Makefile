@@ -1901,6 +1901,8 @@ ms-optfile:
 	echo CAIRO_DIR=$(BASE_DIR)\$(CAIRO_DIR) >> $(OUTPUT_DIR)\mapserver.opt
 	echo FONTCONFIG_DIR=$(BASE_DIR)\$(FONTCONFIG_DIR) >> $(OUTPUT_DIR)\mapserver.opt
 	echo $(CAIRO_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo $(LIBSVG_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo $(LIBSVG_CAIRO_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 	echo $(PIXMAN_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 	echo $(FONTCONFIG_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !ENDIF
