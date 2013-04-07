@@ -30,6 +30,12 @@ WIN64=YES
 !ENDIF
 !ENDIF
 
+!IFDEF WIN64
+MS_PROJECT_CONFIG = "Release|x64"
+!ELSE
+MS_PROJECT_CONFIG = "Release|Win32"
+!ENDIF
+
 !IFNDEF MS_REVISION
 MS_REVISION=HEAD
 !ENDIF
@@ -94,25 +100,62 @@ BASE_DIR = $(MAKEDIR)
 INSTALL_DIR = C:\Inetpub\wwwroot\sdk
 !ENDIF
 
+!IFNDEF CMAKE_DIR
+CMAKE_DIR = E:\builds\cmake-2.8.10.2-win32-x86
+!ENDIF
+
 !IFNDEF MSVC_VER
 !IF "$(_NMAKE_VER)" == "6.00.8168.0"
 MSVC_VER = 1200
+CMAKE_GENERATOR = "Visual Studio 6"
 !ELSEIF "$(_NMAKE_VER)" == "7.00.9466"
 MSVC_VER = 1300
+CMAKE_GENERATOR = "Visual Studio 7"
 !ELSEIF "$(_NMAKE_VER)" == "7.10.3077"
 MSVC_VER = 1310
+CMAKE_GENERATOR = "Visual Studio 7 .NET 2003"
 !ELSEIF "$(_NMAKE_VER)" == "8.00.50727.42"
 MSVC_VER = 1400
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 8 2005 Win64"
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 8 2005"
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "8.00.50727.762"
 MSVC_VER = 1400
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 8 2005 Win64"
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 8 2005"
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "9.00.21022.08"
 MSVC_VER = 1500
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 9 2008 Win64"
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 9 2008"
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "9.00.30729.01"
 MSVC_VER = 1500
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 9 2008 Win64"
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 9 2008"
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "10.00.30128.01"
 MSVC_VER = 1600
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 10 Win64"
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 10"
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "10.00.30319.01"
 MSVC_VER = 1600
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 10 Win64"
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 10"
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
@@ -286,6 +329,12 @@ MS_DIR = mapserver-6-0
 MS_PATH = $(BASE_DIR)\$(MS_DIR)
 !ENDIF
 
+!IFNDEF MS_CMAKE_BUILD
+!IF EXIST ($(MS_PATH)\CMakeLists.txt)
+MS_CMAKE_BUILD = 1 
+!ENDIF
+!ENDIF
+
 !IFNDEF SWIG_DIR
 SWIG_DIR = SWIG-1.3.39
 !ENDIF
@@ -449,17 +498,17 @@ SETARGV = "$(VCDIR)\lib\setargv.obj"
 !IFNDEF FT_DIR
 !IF $(MSVC_VER) == 1400
 !IFDEF WIN64
-FT_DIR=freetype-2.3.9-VC8
-FT_LIBPATH=$(FT_DIR)\objs\x64
-FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
+FT_DIR=freetype-2.3.9
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2005\x64
+FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
 FT_LIB=freetype239.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC8x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc8
 !ELSE
-FT_DIR=freetype-2.3.9-VC8
-FT_LIBPATH=$(FT_DIR)\objs\win32
-FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
+FT_DIR=freetype-2.3.9
+FT_LIBPATH=$(FT_DIR)\objs\win32\vc2005
+FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
 FT_LIB=freetype239.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC8
@@ -467,17 +516,17 @@ FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc8
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
 !IFDEF WIN64
-FT_DIR=freetype-2.3.9-VC9
-FT_LIBPATH=$(FT_DIR)\objs\x64
-FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
+FT_DIR=freetype-2.3.9
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2008\x64
+FT_SRCPATH=$(FT_DIR)\builds\win32\vc2008
 FT_LIB=freetype239.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC9x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc9
 !ELSE
-FT_DIR=freetype-2.3.9-VC9
-FT_LIBPATH=$(FT_DIR)\objs\Win32
-FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
+FT_DIR=freetype-2.3.9
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2008
+FT_SRCPATH=$(FT_DIR)\builds\win32\vc2008
 FT_LIB=freetype239.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC9
@@ -485,17 +534,17 @@ FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc9
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
-FT_DIR=freetype-2.3.9-VC10
-FT_LIBPATH=$(FT_DIR)\objs\x64
-FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
+FT_DIR=freetype-2.3.9
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2010\x64
+FT_SRCPATH=$(FT_DIR)\builds\win32\VC2010
 FT_LIB=freetype239.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC10x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc10
 !ELSE
-FT_DIR=freetype-2.3.9-VC10
-FT_LIBPATH=$(FT_DIR)\objs\Win32
-FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
+FT_DIR=freetype-2.3.9
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2010
+FT_SRCPATH=$(FT_DIR)\builds\win32\VC2010
 FT_LIB=freetype239.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC10
@@ -882,19 +931,25 @@ freetype:
 !IFDEF FT_DIR
 !IFNDEF NO_BUILD
     cd $(FT_SRCPATH)
-!IFDEF WIN64    
-    devenv /rebuild Release freetype.sln /Project freetype /ProjectConfig "Release|x64"
+!IFDEF WIN64
+!IF $(MSVC_VER) == 1600
+    devenv /rebuild "Release" freetype.sln /Project freetype /ProjectConfig "Release|x64"
+!ELSE	
+    devenv /rebuild "LIB Release" freetype.sln /Project freetype /ProjectConfig "Release|x64"
+!ENDIF
 !ELSE
 !IF $(MSVC_VER) == 1310
     devenv /rebuild Release freetype.sln /Project freetype
+!ELSEIF $(MSVC_VER) == 1600
+    devenv /rebuild "Release" freetype.sln /Project freetype /ProjectConfig "Release|Win32"
 !ELSE
-    devenv /rebuild Release freetype.sln /Project freetype /ProjectConfig "Release|Win32"
+    devenv /rebuild "LIB Release" freetype.sln /Project freetype /ProjectConfig "Release|Win32"
 !ENDIF
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
 !IFNDEF NO_COPY
-    xcopy /Y /S $(FT_LIBPATH)\$(FT_LIB) $(OUTPUT_DIR)\lib
+    xcopy /Y $(FT_LIBPATH)\$(FT_LIB) $(OUTPUT_DIR)\lib
     xcopy /Y /S $(FT_DIR)\include\*.h $(OUTPUT_DIR)\include
 !ENDIF
 !ENDIF
@@ -1008,7 +1063,7 @@ gdal-optfile:
     echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
     echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(OUTPUT_DIR)\gdal.opt
     echo POPPLER_HAS_OPTCONTENT = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\freetype239.lib advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
@@ -1058,7 +1113,7 @@ gdal-clean:
 	cd $(BASE_DIR)
 !ENDIF
 
-gdal-build: gdal-optfile
+gdal-build:
 	cd $(GDAL_PATH)
 !IFNDEF NO_BUILD
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
@@ -1082,7 +1137,7 @@ gdal-build: gdal-optfile
 !ENDIF
 	cd $(BASE_DIR)
 
-gdal: gdal-clean gdal-build
+gdal: gdal-optfile gdal-clean gdal-build
 	
 gdalversion2:
 !IFNDEF NO_COPY
@@ -1995,21 +2050,46 @@ ms-optfile:
     echo libming.lib \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF
     echo libjpeg.lib zdll.lib >> $(OUTPUT_DIR)\mapserver.opt
+	
+ms-cmake:
+!IFDEF MS_CMAKE_BUILD
+    cd $(MS_PATH)
+	del CMakeCache.txt
+	set JAVA_HOME=$(JAVA_HOME)
+	set ORACLE_HOME=$(OCI_DIR)
+	set PYTHONPATH=$(BASE_DIR)\$(PYTHON_DIR)
+    $(CMAKE_DIR)\bin\cmake -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python26.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib
+	cd $(BASE_DIR)
+!ENDIF
 
-ms: ms-optfile  
+ms: ms-optfile ms-cmake
 	cd $(MS_PATH)
 !IFNDEF NO_CLEAN
+!IFDEF MS_CMAKE_BUILD
+    devenv /clean Release MapServer.sln /ProjectConfig $(MS_PROJECT_CONFIG) 
+!ELSE
 	del mapscriptvars
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
+!ENDIF
 !IFNDEF NO_BUILD
+!IFDEF MS_CMAKE_BUILD
+    devenv /build Release MapServer.sln /Project mapserv /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project shp2img /ProjectConfig $(MS_PROJECT_CONFIG)
+!ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
+!ENDIF
 !IFNDEF NO_COPY
-	xcopy /Y *.dll $(OUTPUT_DIR)\bin
-	if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
+    if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
 	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
+!IFDEF MS_CMAKE_BUILD
+    xcopy /Y Release\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y Release\*.exe $(OUTPUT_DIR)\bin\ms\apps
+!ELSE
+	xcopy /Y *.dll $(OUTPUT_DIR)\bin
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\apps
+!ENDIF
 !ENDIF
 	cd ..
 !IFNDEF NO_COPY
@@ -2022,15 +2102,28 @@ ms-csharp:
 !IFDEF MS_CSHARP
 	cd $(MS_PATH)\mapscript\csharp
 !IFNDEF NO_CLEAN
+!IFNDEF MS_CMAKE_BUILD
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
+!ENDIF
 !IFNDEF NO_BUILD
+!IFDEF MS_CMAKE_BUILD
+    devenv /build Release ..\..\MapServer.sln /Project csharpmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+!ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
+!ENDIF
 !IFNDEF NO_COPY
-	if not exist $(OUTPUT_DIR)\bin\ms\csharp mkdir $(OUTPUT_DIR)\bin\ms\csharp
+    if not exist $(OUTPUT_DIR)\bin\ms\csharp mkdir $(OUTPUT_DIR)\bin\ms\csharp
+	
+!IFDEF MS_CMAKE_BUILD
+    xcopy /Y Release\*.dll $(OUTPUT_DIR)\bin\ms\csharp
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\csharp
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\csharp
+!ELSE
+	xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\csharp
+	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\csharp
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
@@ -2048,26 +2141,39 @@ ms-java: ms-optfile
 !IFDEF MS_JAVA
 	cd $(MS_PATH)\mapscript\java
 !IFNDEF NO_CLEAN
+!IFNDEF MS_CMAKE_BUILD
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
+!ENDIF
 !IFNDEF NO_BUILD
-	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+!IFDEF MS_CMAKE_BUILD
+    devenv /build Release ..\..\MapServer.sln /Project javamapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+!ELSE
+    nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
-	if not exist $(OUTPUT_DIR)\bin\ms\java mkdir $(OUTPUT_DIR)\bin\ms\java
-	xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\java
+    if not exist $(OUTPUT_DIR)\bin\ms\java mkdir $(OUTPUT_DIR)\bin\ms\java
+!IFDEF MS_CMAKE_BUILD
+    xcopy /Y Release\*.dll $(OUTPUT_DIR)\bin\ms\java
 	xcopy /Y *.jar $(OUTPUT_DIR)\bin\ms\java
+!ELSE
+    xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\java
+	xcopy /Y *.jar $(OUTPUT_DIR)\bin\ms\java
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
 
-ms-java-test:	
+ms-java-test:
+!IFNDEF MS_CMAKE_BUILD	
 !IFDEF MS_JAVA
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\java;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
 	cd $(MS_PATH)\mapscript\java
 	nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 	cd $(BASE_DIR)
+!ENDIF
 !ENDIF
 
 ms-python:
@@ -2077,28 +2183,42 @@ ms-python:
     SET LIB=%LIB%;$(OUTPUT_DIR)\lib
 	cd $(MS_PATH)\mapscript\python
 !IFNDEF NO_CLEAN
+!IFNDEF MS_CMAKE_BUILD
 	-del mapscript_wrap.c
     -rmdir /s /q build
 !ENDIF
+!ENDIF
 !IFNDEF NO_BUILD
+!IFDEF MS_CMAKE_BUILD
+    devenv /build Release ..\..\MapServer.sln /Project _pythonmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+!ELSE
 	$(BASE_DIR)\$(SWIG_DIR)\swig.exe -python -shadow -o mapscript_wrap.c ../mapscript.i
 !ENDIF
+!ENDIF
+!IFNDEF MS_CMAKE_BUILD
 !IFNDEF NO_CLEAN
 	$(BASE_DIR)\$(PYTHON_DIR)\python.exe setup.py clean
 !ENDIF
 !IFNDEF NO_BUILD
 	$(BASE_DIR)\$(PYTHON_DIR)\python.exe setup.py build
 !ENDIF
-	cd ..\$(PYTHON_OUTDIR)
+!ENDIF
 !IFNDEF NO_COPY
-	if not exist $(OUTPUT_DIR)\bin\ms\python mkdir $(OUTPUT_DIR)\bin\ms\python
+    if not exist $(OUTPUT_DIR)\bin\ms\python mkdir $(OUTPUT_DIR)\bin\ms\python
+!IFDEF MS_CMAKE_BUILD
+    xcopy /Y mapscript.py $(OUTPUT_DIR)\bin\ms\python
+	xcopy /Y Release\*.pyd $(OUTPUT_DIR)\bin\ms\python
+!ELSE
+    cd ..\$(PYTHON_OUTDIR)
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\ms\python
 	xcopy /Y *.pyd $(OUTPUT_DIR)\bin\ms\python
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
 
 ms-python-bdist:
+!IFNDEF MS_CMAKE_BUILD
 !IFDEF MS_PYTHON
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
@@ -2116,8 +2236,10 @@ ms-python-bdist:
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
+!ENDIF
 
 ms-php: ms-optfile
+!IFNDEF MS_CMAKE_BUILD
 !IFDEF MS_PHP
     cd $(MS_PATH)\mapscript\php
 !IFNDEF NO_CLEAN
@@ -2133,6 +2255,7 @@ ms-php: ms-optfile
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\php
 !ENDIF
 	cd $(BASE_DIR)
+!ENDIF
 !ENDIF
 
 ms-php-test:	
@@ -2211,15 +2334,25 @@ ms-sde: ms-optfile
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
 !IFNDEF NO_COPY
+!IFNDEF MS_CMAKE_BUILD
     del msplugin_sde_*
     -del mapsde.obj
 !ENDIF
+!ENDIF
 !IFNDEF NO_BUILD
+!IFDEF MS_CMAKE_BUILD
+    devenv /build Release ..\..\MapServer.sln /Project msplugin_sde91 /ProjectConfig $(MS_PROJECT_CONFIG)
+!ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\plugins\sde mkdir $(OUTPUT_DIR)\bin\ms\plugins\sde
+!IFDEF MS_CMAKE_BUILD
+    xcopy /Y Release\msplugin_sde_*.dll $(OUTPUT_DIR)\bin\ms\plugins\sde
+!ELSE
     xcopy /Y msplugin_sde_*.dll $(OUTPUT_DIR)\bin\ms\plugins\sde
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
@@ -2235,15 +2368,25 @@ ms-oci: ms-optfile
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
 !IFNDEF NO_CLEAN
+!IFNDEF MS_CMAKE_BUILD
     del msplugin_oracle*
     -del maporaclespatial.obj
 !ENDIF
+!ENDIF
 !IFNDEF NO_BUILD
+!IFDEF MS_CMAKE_BUILD
+    devenv /build Release MapServer.sln /Project msplugin_oracle /ProjectConfig $(MS_PROJECT_CONFIG)
+!ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\plugins\oci mkdir $(OUTPUT_DIR)\bin\ms\plugins\oci
-	xcopy /Y msplugin_oracle.dll $(OUTPUT_DIR)\bin\ms\plugins\oci
+!IFDEF MS_CMAKE_BUILD
+    xcopy /Y Release\msplugin_oracle.dll $(OUTPUT_DIR)\bin\ms\plugins\oci
+!ELSE
+    xcopy /Y msplugin_oracle.dll $(OUTPUT_DIR)\bin\ms\plugins\oci
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
@@ -2254,14 +2397,24 @@ ms-sql2008: ms-optfile
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
 !IFNDEF NO_CLEAN
+!IFNDEF MS_CMAKE_BUILD
     del msplugin_mssql2008*
 !ENDIF
+!ENDIF
 !IFNDEF NO_BUILD
+!IFDEF MS_CMAKE_BUILD
+    devenv /build Release MapServer.sln /Project msplugin_mssql2008 /ProjectConfig $(MS_PROJECT_CONFIG)
+!ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\plugins\mssql2008 mkdir $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
+!IFDEF MS_CMAKE_BUILD
+    xcopy /Y Release\msplugin_mssql2008.dll $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
+!ELSE
 	xcopy /Y msplugin_mssql2008.dll $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR) 
 
