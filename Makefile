@@ -444,7 +444,7 @@ AGG_DIR = agg-2.4
 !ENDIF
 
 !IFNDEF CAIRO_DIR
-CAIRO_DIR = cairo-1.10.0
+CAIRO_DIR = cairo-1.12.14
 !ENDIF
 
 !IFNDEF LIBSVG_DIR
@@ -456,11 +456,11 @@ LIBSVG_CAIRO_DIR = libsvg-cairo-0.1.6
 !ENDIF
 
 !IFNDEF PIXMAN_DIR
-PIXMAN_DIR = pixman-0.20.0
+PIXMAN_DIR = pixman-0.28.2
 !ENDIF
 
 !IFNDEF FONTCONFIG_DIR
-FONTCONFIG_DIR = fontconfig-2.6.0
+FONTCONFIG_DIR = fontconfig-2.10.91
 !ENDIF
 
 !IFNDEF FTGL_DIR
@@ -498,63 +498,63 @@ SETARGV = "$(VCDIR)\lib\setargv.obj"
 !IFNDEF FT_DIR
 !IF $(MSVC_VER) == 1400
 !IFDEF WIN64
-FT_DIR=freetype-2.3.9
+FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2005\x64
 FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
-FT_LIB=freetype239.lib
+FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC8x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc8
 !ELSE
-FT_DIR=freetype-2.3.9
+FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\win32\vc2005
 FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
-FT_LIB=freetype239.lib
+FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC8
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc8
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
 !IFDEF WIN64
-FT_DIR=freetype-2.3.9
+FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2008\x64
 FT_SRCPATH=$(FT_DIR)\builds\win32\vc2008
-FT_LIB=freetype239.lib
+FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC9x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc9
 !ELSE
-FT_DIR=freetype-2.3.9
+FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2008
 FT_SRCPATH=$(FT_DIR)\builds\win32\vc2008
-FT_LIB=freetype239.lib
+FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC9
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc9
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
-FT_DIR=freetype-2.3.9
+FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2010\x64
 FT_SRCPATH=$(FT_DIR)\builds\win32\VC2010
-FT_LIB=freetype239.lib
+FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC10x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc10
 !ELSE
-FT_DIR=freetype-2.3.9
+FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2010
 FT_SRCPATH=$(FT_DIR)\builds\win32\VC2010
-FT_LIB=freetype239.lib
+FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC10
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc10
 !ENDIF
 !ELSE
-FT_DIR=freetype-2.3.9
+FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs
 FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
-FT_LIB=freetype239.lib
+FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC7
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc71
@@ -1733,9 +1733,9 @@ gd:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF WIN64
-        nmake /f makefile.vc gd.lib MSVC_VER=$(MSVC_VER) WIN64=YES
+        nmake /f makefile.vc gd.lib MSVC_VER=$(MSVC_VER) WIN64=YES SDK_DIR=$(OUTPUT_DIR)
 !ELSE
-	nmake /f makefile.vc gd.lib MSVC_VER=$(MSVC_VER)
+	nmake /f makefile.vc gd.lib MSVC_VER=$(MSVC_VER) SDK_DIR=$(OUTPUT_DIR)
 !ENDIF
 !ENDIF
 !IFNDEF NO_COPY
@@ -1996,7 +1996,7 @@ ms-optfile:
     echo -I$(BASE_DIR)\$(OCI_DIR)\sdk\include \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF    
     echo -I$(REGEX_PATH) >> $(OUTPUT_DIR)\mapserver.opt
-    echo EXTERNAL_LIBS = /LIBPATH:$(OUTPUT_DIR)\lib gd.lib \>> $(OUTPUT_DIR)\mapserver.opt
+    echo EXTERNAL_LIBS = /LIBPATH:$(OUTPUT_DIR)\lib gd.lib libpng.lib libjpeg.lib \>> $(OUTPUT_DIR)\mapserver.opt
 !IFDEF MS_PROJ
 	echo proj_i.lib \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2058,7 +2058,7 @@ ms-cmake:
 	set JAVA_HOME=$(JAVA_HOME)
 	set ORACLE_HOME=$(OCI_DIR)
 	set PYTHONPATH=$(BASE_DIR)\$(PYTHON_DIR)
-    $(CMAKE_DIR)\bin\cmake -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python26.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib
+    $(CMAKE_DIR)\bin\cmake -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python26.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib
 	cd $(BASE_DIR)
 !ENDIF
 
