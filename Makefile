@@ -298,7 +298,7 @@ PROJ_DIR = proj-4.8
 !ENDIF
 
 !IFNDEF GEOS_DIR
-GEOS_DIR = geos-3-2
+GEOS_DIR = geos-3-3
 !ENDIF
 
 !IFNDEF ZLIB_DIR
@@ -955,7 +955,7 @@ freetype:
 !ENDIF
 
 geos:
-	cd $(GEOS_DIR)\source
+	cd $(GEOS_DIR)\src
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 	del *.manifest *.pdb *.obj *.ilk *.exp
@@ -968,13 +968,13 @@ geos:
 	xcopy /Y geos_c_i.lib $(OUTPUT_DIR)\lib
 !ENDIF
 	cd ..
-	cd source\headers
 !IFNDEF NO_COPY
+    cd include
     xcopy /Y geos.h $(OUTPUT_DIR)\include
     if not exist $(OUTPUT_DIR)\include\geos mkdir $(OUTPUT_DIR)\include\geos
     xcopy /Y /S geos\*.h $(OUTPUT_DIR)\include\geos
 !ENDIF
-	cd ..\..
+	cd ..
 !IFNDEF NO_COPY
 	xcopy /Y capi\*.h $(OUTPUT_DIR)\include
 !ENDIF
