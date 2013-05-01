@@ -855,7 +855,7 @@ install: package package-dev
     xcopy /Y $(OUTPUT_DIR).zip $(INSTALL_DIR)
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
     
-mkgdalinst: mkgdalinst-core mkgdalinst-oci mkgdalinst-ecw mkgdalinst-mrsid
+mkgdalinst: mkgdalinst-core mkgdalinst-oci mkgdalinst-ecw mkgdalinst-mrsid mkgdalinst-filegdb
     
 mkgdalinst-core:
 !IFDEF WIX_DIR
@@ -926,6 +926,24 @@ mkgdalinst-mrsid:
     cd $(BASE_DIR)
 !ENDIF
 !ENDIF 
+
+mkgdalinst-filegdb:
+!IFDEF WIX_DIR
+    set PATH=$(BASE_DIR)\$(WIX_DIR);$(PATH)
+    if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
+    -del $(OUTPUT_DIR)\install\GDAL.wixobj
+    -del $(OUTPUT_DIR)\install\GDAL.wixpdb
+    -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi
+!IF EXIST ($(OUTPUT_DIR)\bin\gdal\plugins-external\ogr_FileGDB.dll)    
+!IFDEF WIN64
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dogr_FileGDB=ogr_FileGDB.dll" "-dFileGDBBINDIR=$(FILEGDB_BINPATH)" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+!ELSE
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dogr_FileGDB=ogr_FileGDB.dll" "-dFileGDBBINDIR=$(FILEGDB_BINPATH)" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+!ENDIF
+    -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
+    cd $(BASE_DIR)
+!ENDIF
+!ENDIF
 	
 freetype:
 !IFDEF FT_DIR

@@ -39,6 +39,18 @@
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2010 Win64)" ?>
     <?endif?>
     <?endif?>
+    <?ifdef ogr_FileGDB?>
+    <?if $(var.Compiler) = 1400?>
+    <?define UpgradeCode = "3E5893F3-B0BF-4F29-8C53-E5EECD5A7E64" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2005 Win64)" ?>
+    <?elseif $(var.Compiler) = 1500?>
+    <?define UpgradeCode = "37F9BD5E-06DF-4291-BDE6-1A99E48DDD27" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2008 Win64)" ?>
+    <?elseif $(var.Compiler) = 1600?>
+    <?define UpgradeCode = "C7A5A05D-7277-4BE3-B41C-F14477823033" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2010 Win64)" ?>
+    <?endif?>
+    <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
     <?if $(var.Compiler) = 1400?>
     <?define UpgradeCode = "6CC0B4C7-C405-4192-A0F6-A17001E0255A" ?>
@@ -98,6 +110,21 @@
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2010)" ?>
     <?endif?>
     <?endif?>
+    <?ifdef ogr_FileGDB?>
+    <?if $(var.Compiler) = 1310?>
+    <?define UpgradeCode = "532668CF-5679-43E9-802C-5963DC549617" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2003)" ?>
+    <?elseif $(var.Compiler) = 1400?>
+    <?define UpgradeCode = "640F3D42-4A87-480B-8AA5-5089F3568632" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2005)" ?>
+    <?elseif $(var.Compiler) = 1500?>
+    <?define UpgradeCode = "8DCA4E02-D926-482B-B1DE-CF7CDCFA8DE9" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2008)" ?>
+    <?elseif $(var.Compiler) = 1600?>
+    <?define UpgradeCode = "738B113E-5608-43A9-BF98-13EAB7D22BB3" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2010)" ?>
+    <?endif?>
+    <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
     <?if $(var.Compiler) = 1310?>
     <?define UpgradeCode = "E5784C66-A6E4-45AE-B626-70F2B6B086A5" ?>
@@ -139,6 +166,11 @@
                             <File Id="MRSIDLicense.rtf" Name="MRSIDLicense.rtf" Source="$(var.BaseDir)\MRSIDLicense.rtf" />
                         </Component>
                         <?endif?>
+                        <?ifdef ogr_FileGDB?>
+                        <Component Id="FileGDBLicense.rtf" Guid="*">
+                            <File Id="FileGDBLicense.rtf" Name="FileGDBLicense.rtf" Source="$(var.BaseDir)\FileGDBLicense.rtf" />
+                        </Component>
+                        <?endif?>
                         <?ifdef gdal_ECW_JP2ECW?>
                         <Component Id="ECWLicense.rtf" Guid="*">
                             <File Id="ECWLicense.rtf" Name="ECWLicense.rtf" Source="$(var.BaseDir)\ECWLicense.rtf" />
@@ -154,6 +186,11 @@
                         <?ifdef gdal_MrSID?>
                         <Component Id="gdal_MrSID.dll" Guid="*">
                             <File Id="gdal_MrSID.dll" Name="gdal_MrSID.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_MrSID.dll" />
+                        </Component>
+                        <?endif?>
+                        <?ifdef ogr_FileGDB?>
+                        <Component Id="ogr_FileGDB.dll" Guid="*">
+                            <File Id="ogr_FileGDB.dll" Name="ogr_FileGDB.dll" Source="$(var.TargetDir)\gdal\plugins-external\ogr_FileGDB.dll" />
                         </Component>
                         <?endif?>
                         <?ifdef ogr_OCI?>
@@ -198,6 +235,11 @@
                     <?ifdef gdal_ECW_JP2ECW?>
                     <Component Id="libecwj2.dll" Guid="*">
                         <File Id="libecwj2.dll" Name="libecwj2.dll" Source="$(var.TargetDir)\libecwj2.dll" Vital="yes"/>
+                    </Component>
+                    <?endif?>
+                    <?ifdef ogr_FileGDB?>
+                    <Component Id="FileGDBAPI.dll" Guid="*">
+                        <File Id="FileGDBAPI.dll" Name="FileGDBAPI.dll" Source="$(var.FileGDBBINDIR)\FileGDBAPI.dll" />
                     </Component>
                     <?endif?>
                     <?ifdef gdal_dll?>
@@ -666,6 +708,9 @@
         <?ifdef gdal_MrSID?>
         <WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\MRSIDLicense.rtf" />
         <?endif?>
+        <?ifdef ogr_FileGDB?>
+        <WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\FileGDBLicense.rtf" />
+        <?endif?>
         <WixVariable Id="WixUIBannerBmp" Value="$(var.BaseDir)\bannrbmpGDAL.bmp" />
         <WixVariable Id="WixUIDialogBmp" Value="$(var.BaseDir)\dlgbmpGDAL.bmp" />
 
@@ -859,6 +904,14 @@
             <?endif?>
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="MRSIDLicense.rtf" />
+        </Feature>
+        <?endif?>
+        <?ifdef ogr_FileGDB?>
+        <Feature Id="FileGDB" Level="1" Title="FileGDB" Absent="disallow" Description="ESRI File Geodatabase (FileGDB)">
+            <ComponentRef Id="ogr_FileGDB.dll" />
+            <ComponentRef Id="ApplicationShortcut" />
+            <ComponentRef Id="FileGDBLicense.rtf" />
+            <ComponentRef Id="FileGDBAPI.dll" />
         </Feature>
         <?endif?>
         <?ifdef ogr_OCI?>
