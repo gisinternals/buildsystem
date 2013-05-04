@@ -639,7 +639,7 @@
                         <Component Id="unit_of_measure.csv" Guid="*">
                             <File Id="unit_of_measure.csv" Name="unit_of_measure.csv" Source="$(var.TargetDir)\gdal-data\unit_of_measure.csv" Vital="yes"/>
                         </Component>
-                        <?if $(var.VersionTag) = 18 Or $(var.VersionTag) = 18dev Or $(var.VersionTag) = 19dev Or $(var.VersionTag) = 19?>
+                        <?if $(var.VersionTag) = 18 Or $(var.VersionTag) = 18dev Or $(var.VersionTag) = 19dev Or $(var.VersionTag) = 19 Or $(var.VersionTag) = 110dev Or $(var.VersionTag) = 110 Or $(var.VersionTag) = 20dev Or $(var.VersionTag) = 20?>
                         <Component Id="compdcs.csv" Guid="*">
                             <File Id="compdcs.csv" Name="compdcs.csv" Source="$(var.TargetDir)\gdal-data\compdcs.csv" Vital="yes"/>
                         </Component>
@@ -792,7 +792,7 @@
             <ComponentRef Id="s57objectclasses_iw.csv" />
             <ComponentRef Id="stateplane.csv" />
             <ComponentRef Id="unit_of_measure.csv" />
-            <?if $(var.VersionTag) = 18 Or $(var.VersionTag) = 18dev Or $(var.VersionTag) = 19dev Or $(var.VersionTag) = 19?>
+            <?if $(var.VersionTag) = 18 Or $(var.VersionTag) = 18dev Or $(var.VersionTag) = 19dev Or $(var.VersionTag) = 19 Or $(var.VersionTag) = 110dev Or $(var.VersionTag) = 110 Or $(var.VersionTag) = 20dev Or $(var.VersionTag) = 20?>
             <ComponentRef Id="vertcs.csv" />
             <ComponentRef Id="compdcs.csv" />
             <ComponentRef Id="vertcs.override.csv" />
