@@ -430,6 +430,9 @@
                     <Component Id="gdalmanage.exe" Guid="*">
                         <File Id="gdalmanage.exe" Name="gdalmanage.exe" Source="$(var.TargetDir)\gdal\apps\gdalmanage.exe" />
                     </Component>
+                    <Component Id="gdalsrsinfo.exe" Guid="*">
+                        <File Id="gdalsrsinfo.exe" Name="gdalsrsinfo.exe" Source="$(var.TargetDir)\gdal\apps\gdalsrsinfo.exe" />
+                    </Component>
                     <Component Id="gdaltindex.exe" Guid="*">
                         <File Id="gdaltindex.exe" Name="gdaltindex.exe" Source="$(var.TargetDir)\gdal\apps\gdaltindex.exe" />
                     </Component>
@@ -639,7 +642,7 @@
                         <Component Id="unit_of_measure.csv" Guid="*">
                             <File Id="unit_of_measure.csv" Name="unit_of_measure.csv" Source="$(var.TargetDir)\gdal-data\unit_of_measure.csv" Vital="yes"/>
                         </Component>
-                        <?if $(var.VersionTag) = 18 Or $(var.VersionTag) = 18dev Or $(var.VersionTag) = 19dev Or $(var.VersionTag) = 19 Or $(var.VersionTag) = 110dev Or $(var.VersionTag) = 110 Or $(var.VersionTag) = 20dev Or $(var.VersionTag) = 20?>
+                        <?if $(var.VersionTag) != 17 And $(var.VersionTag) != 17dev?>
                         <Component Id="compdcs.csv" Guid="*">
                             <File Id="compdcs.csv" Name="compdcs.csv" Source="$(var.TargetDir)\gdal-data\compdcs.csv" Vital="yes"/>
                         </Component>
@@ -658,6 +661,34 @@
                         <Component Id="pci_ellips.txt" Guid="*">
                             <File Id="pci_ellips.txt" Name="pci_ellips.txt" Source="$(var.TargetDir)\gdal-data\pci_ellips.txt" Vital="yes"/>
                         </Component>
+                        <?if $(var.VersionTag) != 18 And $(var.VersionTag) != 18dev?>
+                        <Component Id="esri_StatePlane_extra.wkt" Guid="*">
+                            <File Id="esri_StatePlane_extra.wkt" Name="esri_StatePlane_extra.wkt" Source="$(var.TargetDir)\gdal-data\esri_StatePlane_extra.wkt" Vital="yes"/>
+                        </Component>
+                        <Component Id="esri_Wisconsin_extra.wkt" Guid="*">
+                            <File Id="esri_Wisconsin_extra.wkt" Name="esri_Wisconsin_extra.wkt" Source="$(var.TargetDir)\gdal-data\esri_Wisconsin_extra.wkt" Vital="yes"/>
+                        </Component>
+                        <Component Id="geoccs.csv" Guid="*">
+                            <File Id="geoccs.csv" Name="geoccs.csv" Source="$(var.TargetDir)\gdal-data\geoccs.csv" Vital="yes"/>
+                        </Component>
+                        <Component Id="nitf_spec.xml" Guid="*">
+                            <File Id="nitf_spec.xml" Name="nitf_spec.xml" Source="$(var.TargetDir)\gdal-data\nitf_spec.xml" Vital="yes"/>
+                        </Component>
+                        <Component Id="nitf_spec.xsd" Guid="*">
+                            <File Id="nitf_spec.xsd" Name="nitf_spec.xsd" Source="$(var.TargetDir)\gdal-data\nitf_spec.xsd" Vital="yes"/>
+                        </Component>
+                        <?if $(var.VersionTag) != 19 And $(var.VersionTag) != 19dev?>
+                        <Component Id="osmconf.ini" Guid="*">
+                            <File Id="osmconf.ini" Name="osmconf.ini" Source="$(var.TargetDir)\gdal-data\osmconf.ini" Vital="yes"/>
+                        </Component>
+                        <Component Id="ozi_datum.csv" Guid="*">
+                            <File Id="ozi_datum.csv" Name="ozi_datum.csv" Source="$(var.TargetDir)\gdal-data\ozi_datum.csv" Vital="yes"/>
+                        </Component>
+                        <Component Id="ozi_ellips.csv" Guid="*">
+                            <File Id="ozi_ellips.csv" Name="ozi_ellips.csv" Source="$(var.TargetDir)\gdal-data\ozi_ellips.csv" Vital="yes"/>
+                        </Component>
+                        <?endif?>
+                        <?endif?>
                         <?endif?>
                         <Component Id="header.dxf" Guid="*">
                             <File Id="header.dxf" Name="header.dxf" Source="$(var.TargetDir)\gdal-data\header.dxf" Vital="yes"/>
@@ -682,7 +713,7 @@
                         <?ifdef gdal_dll?>
                         <Shortcut Id="commandpromptGDAL" Target="[SystemFolder]cmd.exe" Arguments="/k &quot;[INSTALLDIR]GDALShell.bat&quot;" WorkingDirectory="INSTALLDIR" Name="$(var.ProductName) Command Prompt" />
                         <?endif?>
-                        <Shortcut Id="UninstallProduct" Name="Uninstall GDAL $(var.ProductName)" Target="[System64Folder]msiexec.exe" Arguments="/x [ProductCode]" Description="Uninstalls $(var.ProductName)" />
+                        <Shortcut Id="UninstallProduct" Name="Uninstall $(var.ProductName)" Target="[System64Folder]msiexec.exe" Arguments="/x [ProductCode]" Description="Uninstalls $(var.ProductName)" />
                         <RemoveFolder Id="ProgramMenuDirGDAL" On="uninstall"/>
                         <RegistryValue Root="HKCU" Key="Software\OSGeo\$(var.UpgradeCode)" Name="location" Type="string" Value="[INSTALLDIR]" Action="write" KeyPath="yes"/>
                     </Component>
@@ -792,13 +823,25 @@
             <ComponentRef Id="s57objectclasses_iw.csv" />
             <ComponentRef Id="stateplane.csv" />
             <ComponentRef Id="unit_of_measure.csv" />
-            <?if $(var.VersionTag) = 18 Or $(var.VersionTag) = 18dev Or $(var.VersionTag) = 19dev Or $(var.VersionTag) = 19 Or $(var.VersionTag) = 110dev Or $(var.VersionTag) = 110 Or $(var.VersionTag) = 20dev Or $(var.VersionTag) = 20?>
+            <?if $(var.VersionTag) != 17 And $(var.VersionTag) != 17dev?>
             <ComponentRef Id="vertcs.csv" />
             <ComponentRef Id="compdcs.csv" />
             <ComponentRef Id="vertcs.override.csv" />
             <ComponentRef Id="datum_shift.csv" />
             <ComponentRef Id="pci_ellips.txt" />
             <ComponentRef Id="pci_datum.txt" />
+            <?if $(var.VersionTag) != 18 And $(var.VersionTag) != 18dev?>
+            <ComponentRef Id="esri_StatePlane_extra.wkt" />
+            <ComponentRef Id="esri_Wisconsin_extra.wkt" />
+            <ComponentRef Id="geoccs.csv" />
+            <ComponentRef Id="nitf_spec.xml" />
+            <ComponentRef Id="nitf_spec.xsd" />
+            <?if $(var.VersionTag) != 19 And $(var.VersionTag) != 19dev?>
+            <ComponentRef Id="osmconf.ini" />
+            <ComponentRef Id="ozi_datum.csv" />
+            <ComponentRef Id="ozi_ellips.csv" />
+            <?endif?>
+            <?endif?>
             <?endif?>
             <ComponentRef Id="seed_3d.dgn" />
             <ComponentRef Id="seed_2d.dgn" />
@@ -820,6 +863,7 @@
                 <ComponentRef Id="gdalinfo.exe" />
                 <ComponentRef Id="gdallocationinfo.exe" />
                 <ComponentRef Id="gdalmanage.exe" />
+                <ComponentRef Id="gdalsrsinfo.exe" />
                 <ComponentRef Id="gdaltindex.exe" />
                 <ComponentRef Id="gdaltransform.exe" />
                 <ComponentRef Id="gdalwarp.exe" />
@@ -909,9 +953,9 @@
         <?ifdef ogr_FileGDB?>
         <Feature Id="FileGDB" Level="1" Title="FileGDB" Absent="disallow" Description="ESRI File Geodatabase (FileGDB)">
             <ComponentRef Id="ogr_FileGDB.dll" />
+            <ComponentRef Id="FileGDBAPI.dll" />
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="FileGDBLicense.rtf" />
-            <ComponentRef Id="FileGDBAPI.dll" />
         </Feature>
         <?endif?>
         <?ifdef ogr_OCI?>
