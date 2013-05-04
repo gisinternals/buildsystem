@@ -1,7 +1,13 @@
 @echo off
+
+set SDK_ROOT=%~dp0
+set SDK_ROOT=%SDK_ROOT:\\=\%
+
+echo %SDK_ROOT%
+
 if "%1" == "setenv" goto setenv
 
-%comspec% /k %~dp0\SDKShell.bat setenv %1
+%comspec% /k %SDK_ROOT%SDKShell.bat setenv %1
 goto exit
 
 :setenv
@@ -20,16 +26,16 @@ goto setenv2
 
 :hideoci
 @echo Hiding the OCI plugin library.
-if not exist %~dp0\bin\gdal\plugins-optional mkdir %~dp0\bin\gdal\plugins-optional
-if exist %~dp0\bin\gdal\plugins\ogr_OCI.dll move %~dp0\bin\gdal\plugins\ogr_OCI.dll %~dp0\bin\gdal\plugins-optional\ogr_OCI.dll
-if exist %~dp0\bin\gdal\plugins\gdal_GEOR.dll move %~dp0\bin\gdal\plugins\gdal_GEOR.dll %~dp0\bin\gdal\plugins-optional\gdal_GEOR.dll
+if not exist %SDK_ROOT%bin\gdal\plugins-optional mkdir %SDK_ROOT%bin\gdal\plugins-optional
+if exist %SDK_ROOT%bin\gdal\plugins\ogr_OCI.dll move %SDK_ROOT%bin\gdal\plugins\ogr_OCI.dll %SDK_ROOT%bin\gdal\plugins-optional\ogr_OCI.dll
+if exist %SDK_ROOT%bin\gdal\plugins\gdal_GEOR.dll move %SDK_ROOT%bin\gdal\plugins\gdal_GEOR.dll %SDK_ROOT%bin\gdal\plugins-optional\gdal_GEOR.dll
 
 :setenv2
-SET PATH=%~dp0\bin;%~dp0\bin\gdal\python\osgeo;%~dp0\bin\proj\apps;%~dp0\bin\gdal\apps;%~dp0\bin\ms\apps;%~dp0\bin\gdal\csharp;%~dp0\bin\ms\csharp;%~dp0\bin\curl;%PATH%
-SET GDAL_DATA=%~dp0\bin\gdal-data
-SET GDAL_DRIVER_PATH=%~dp0\bin\gdal\plugins
-SET PYTHONPATH=%~dp0\bin\gdal\python\osgeo;%~dp0\bin\ms\python
-SET PROJ_LIB=%~dp0\bin\proj\SHARE
+SET PATH=%SDK_ROOT%bin;%SDK_ROOT%bin\gdal\python\osgeo;%SDK_ROOT%bin\proj\apps;%SDK_ROOT%bin\gdal\apps;%SDK_ROOT%bin\ms\apps;%SDK_ROOT%bin\gdal\csharp;%SDK_ROOT%bin\ms\csharp;%SDK_ROOT%bin\curl;%PATH%
+SET GDAL_DATA=%SDK_ROOT%bin\gdal-data
+SET GDAL_DRIVER_PATH=%SDK_ROOT%bin\gdal\plugins
+SET PYTHONPATH=%SDK_ROOT%bin\gdal\python;%SDK_ROOT%bin\ms\python
+SET PROJ_LIB=%SDK_ROOT%bin\proj\SHARE
 
 
 :exit
