@@ -663,6 +663,14 @@ OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 PKG_VERSION = $(GDAL_DIR)-$(MS_DIR)
 #ENDIF
 
+!IF ([type $(GDAL_PATH)\VERSION|find "1.10." > NUL] == 0)
+GDAL_VER = 1.10
+USE_OPENJP2 = 1
+!ELSE IF ([type $(GDAL_PATH)\VERSION|find "1.11." > NUL] == 0)
+GDAL_VER = 1.11
+USE_OPENJP2 = 1
+!ENDIF
+
 !IFNDEF GDAL_VERSIONTAG
 !IF EXIST ($(OUTPUT_DIR)\bin\gdal17.dll)
 GDAL_VERSIONTAG = 17
@@ -1089,7 +1097,7 @@ gdal-optfile:
 !IFDEF GDAL_OPENJPEG
     echo OPENJPEG_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
     echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
-!IF [type $(GDAL_PATH)\VERSION|find "1.10." >NUL ] == 0
+!IFDEF USE_OPENJP2
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(OUTPUT_DIR)\gdal.opt
 	echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSE
