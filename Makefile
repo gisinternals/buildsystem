@@ -954,6 +954,26 @@ mkgdalinst-filegdb:
     cd $(BASE_DIR)
 !ENDIF
 !ENDIF
+
+mkmapserverinst:
+    set PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\ms\apps;$(PATH)
+	for /F "tokens=1-3" %%i IN ('mapserv -v'); do ( if "%%i %%j"=="MapServer version" nmake mkmapserverinst-core MS_VERSION=%%k )
+
+mkmapserverinst-core:
+!IFDEF WIX_DIR
+    set PATH=$(BASE_DIR)\$(WIX_DIR);$(PATH)
+    if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
+    -del $(OUTPUT_DIR)\install\MapServer.wixobj
+    -del $(OUTPUT_DIR)\install\MapServer.wixpdb
+    -del $(OUTPUT_DIR)\install\mapserver-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi
+!IFDEF WIN64
+    -candle.exe "-dMSVersionTag=$(MS_VERSION)" "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\MapServer.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxs"
+!ELSE
+    -candle.exe "-dMSVersionTag=$(MS_VERSION)" "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\MapServer.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxs"
+!ENDIF
+    -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" -loc "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxl" -out "$(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\MapServer.wixpdb" "$(OUTPUT_DIR)\install\MapServer.wixobj"
+    cd $(BASE_DIR)
+!ENDIF 
 	
 freetype:
 !IFDEF FT_DIR
