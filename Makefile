@@ -63,6 +63,7 @@ GDAL_KMLSUPEROVERLAY = YES
 GDAL_PDF = YES
 #GDAL_TIFF = YES
 #GDAL_SDE = YES
+GDAL_LIBKML = YES
 
 MS_PROJ = YES
 MS_FREETYPE = YES
@@ -282,6 +283,16 @@ EXPAT_DIR = expat-2.0.1-VS9
 EXPAT_DIR = expat-2.0.1-VS8
 !ELSE
 EXPAT_DIR = expat-2.0.1
+!ENDIF
+!ENDIF
+
+!IFNDEF LIBKML_DIR
+!IF $(MSVC_VER) == 1600
+LIBKML_DIR=libkml-svn-VC10
+!ELSEIF $(MSVC_VER) == 1500
+LIBKML_DIR=libkml-svn-VC8
+!ELSEIF $(MSVC_VER) == 1400
+LIBKML_DIR=libkml-svn
 !ENDIF
 !ENDIF
 
@@ -1106,6 +1117,14 @@ gdal-optfile:
     echo EXPAT_INCLUDE=-I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
     echo EXPAT_LIB=$(OUTPUT_DIR)\lib\libexpat.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(EXPAT_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF GDAL_LIBKML
+!IFDEF LIBKML_DIR
+    echo LIBKML_DIR=$(BASE_DIR)\$(LIBKML_DIR) >> $(OUTPUT_DIR)\gdal.opt
+    echo LIBKML_INCLUDE=-I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
+    echo LIBKML_LIBS=$(OUTPUT_DIR)\lib\libkmlbase.lib $(OUTPUT_DIR)\lib\libkmlconvenience.lib $(OUTPUT_DIR)\lib\libkmldom.lib $(OUTPUT_DIR)\lib\libkmlengine.lib $(OUTPUT_DIR)\lib\libkmlregionator.lib $(OUTPUT_DIR)\lib\libkmlxsd.lib $(OUTPUT_DIR)\lib\libexpat.lib $(OUTPUT_DIR)\lib\zdll.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo $(LIBKML_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
 !ENDIF
 !IFDEF GDAL_PDF
     echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
@@ -2765,6 +2784,24 @@ xerces:
     xcopy  /Y /S xercesc\*.c $(OUTPUT_DIR)\include\xercesc
     cd $(BASE_DIR)
 !ENDIF
+!ENDIF
+
+libkml:
+!IFDEF LIBKML_DIR
+!IFNDEF NO_COPY
+    cd $(LIBKML_DIR)\src
+!IFDEF WIN64
+    xcopy /Y $(BASE_DIR)\$(LIBKML_DIR)\x64\release\*.lib $(OUTPUT_DIR)\lib
+!ELSE
+    xcopy /Y $(BASE_DIR)\$(LIBKML_DIR)\release\*.lib $(OUTPUT_DIR)\lib
+!ENDIF
+	if not exist $(OUTPUT_DIR)\include\kml mkdir $(OUTPUT_DIR)\include\kml
+    xcopy /Y /S kml\*.h $(OUTPUT_DIR)\include\kml
+	cd ..\third_party\boost_1_34_1
+	if not exist $(OUTPUT_DIR)\include\boost mkdir $(OUTPUT_DIR)\include\boost
+    xcopy /Y /S boost\*.hpp $(OUTPUT_DIR)\include\boost
+!ENDIF
+    cd $(BASE_DIR)
 !ENDIF
 
 expat:
