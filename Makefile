@@ -290,7 +290,7 @@ EXPAT_DIR = expat-2.0.1
 !IF $(MSVC_VER) == 1600
 LIBKML_DIR=libkml-svn-VC10
 !ELSEIF $(MSVC_VER) == 1500
-LIBKML_DIR=libkml-svn-VC8
+LIBKML_DIR=libkml-svn-VC9
 !ELSEIF $(MSVC_VER) == 1400
 LIBKML_DIR=libkml-svn
 !ENDIF
