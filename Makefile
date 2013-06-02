@@ -2143,6 +2143,13 @@ ms: ms-optfile ms-cmake
 !IFDEF MS_CMAKE_BUILD
     devenv /build Release MapServer.sln /Project mapserv /ProjectConfig $(MS_PROJECT_CONFIG)
 	devenv /build Release MapServer.sln /Project shp2img /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project shptree /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project shptreevis /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project sortshp /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project legend /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project scalebar /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project msencrypt /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build Release MapServer.sln /Project tile4ms /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
