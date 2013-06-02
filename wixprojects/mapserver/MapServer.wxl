@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="DefaultWebSiteName" Overridable="yes">Default Web Site</String>
+  <String Id="DefaultAppPoolName" Overridable="yes">DefaultAppPool</String>
+  <String Id="InvalidWebAppNameDlgText" Overridable="yes">
+    The web application name cannot be a blank value.
+  </String>
+  <String Id="WebAppInstallDlgTitle" Overridable="yes">
+    <!-- _locID_text="WebAppInstallDlgTitle" _locComment="WebAppInstallDlgTitle" -->{\WixUI_Font_Title}Web Application Settings
+  </String>
+  <String Id="WebAppInstallDlgDescription" Overridable="yes">Click Next to install the web application or change the individual settings.</String>
+  <String Id="WebAppInstallDlgWebSiteLabel" Overridable="yes">Install [ProductName] in the to the web site:</String>
+  <String Id="WebAppInstallDlgAppNameLabel" Overridable="yes">Install [ProductName] to the application named:</String>
+  <String Id="WebAppInstallDlgUseCustomAppPool" Overridable="yes">Use a custom app pool instead of the web site default</String>
+  <String Id="WebAppInstallDlgAppPoolLabel" Overridable="yes">Install [ProductName] to use the custom app pool:</String>
+</WixLocalization>
