@@ -2178,6 +2178,8 @@ ms-csharp:
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+!ELSE
+    del *.cs
 !ENDIF
 !ENDIF
 !IFNDEF NO_BUILD
@@ -2217,6 +2219,8 @@ ms-java: ms-optfile
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+!ELSE
+    -rmdir /s /q edu
 !ENDIF
 !ENDIF
 !IFNDEF NO_BUILD
