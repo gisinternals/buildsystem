@@ -2439,7 +2439,7 @@ ms-sde: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build Release ..\..\MapServer.sln /Project msplugin_sde91 /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project msplugin_sde91 /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2447,7 +2447,7 @@ ms-sde: ms-optfile
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\plugins\sde mkdir $(OUTPUT_DIR)\bin\ms\plugins\sde
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y Release\msplugin_sde_*.dll $(OUTPUT_DIR)\bin\ms\plugins\sde
+    xcopy /Y $(MS_PROJECT_DIR)\msplugin_sde_*.dll $(OUTPUT_DIR)\bin\ms\plugins\sde
 !ELSE
     xcopy /Y msplugin_sde_*.dll $(OUTPUT_DIR)\bin\ms\plugins\sde
 !ENDIF
@@ -2473,7 +2473,7 @@ ms-oci: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build Release MapServer.sln /Project msplugin_oracle /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_oracle /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2481,7 +2481,7 @@ ms-oci: ms-optfile
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\plugins\oci mkdir $(OUTPUT_DIR)\bin\ms\plugins\oci
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y Release\msplugin_oracle.dll $(OUTPUT_DIR)\bin\ms\plugins\oci
+    xcopy /Y $(MS_PROJECT_DIR)\msplugin_oracle.dll $(OUTPUT_DIR)\bin\ms\plugins\oci
 !ELSE
     xcopy /Y msplugin_oracle.dll $(OUTPUT_DIR)\bin\ms\plugins\oci
 !ENDIF
@@ -2501,7 +2501,7 @@ ms-sql2008: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build Release MapServer.sln /Project msplugin_mssql2008 /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_mssql2008 /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2509,7 +2509,7 @@ ms-sql2008: ms-optfile
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\plugins\mssql2008 mkdir $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y Release\msplugin_mssql2008.dll $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
+    xcopy /Y $(MS_PROJECT_DIR)\msplugin_mssql2008.dll $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
 !ELSE
 	xcopy /Y msplugin_mssql2008.dll $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
 !ENDIF
