@@ -444,6 +444,12 @@ PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python32-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.2
 PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python33"
+PYTHON_OUTDIR = python\build\lib.win32-3.3
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python33-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.3
+PYTHON_BDIST_OPTS = --formats=msi
 !ENDIF
 
 !IFNDEF PYDIR
@@ -1295,6 +1301,8 @@ gdal-python-all:
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26-AMD64
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26-AMD64
 !ELSE
@@ -1304,6 +1312,8 @@ gdal-python-all:
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26
 !ENDIF
