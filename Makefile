@@ -30,10 +30,20 @@ WIN64=YES
 !ENDIF
 !ENDIF
 
+!IFDEF DEBUG
+MS_PROJECT_DIR=RelWithDebInfo
+!IFDEF WIN64
+MS_PROJECT_CONFIG = "RelWithDebInfo|x64"
+!ELSE
+MS_PROJECT_CONFIG = "RelWithDebInfo|Win32"
+!ENDIF
+!ELSE
+MS_PROJECT_DIR=Release
 !IFDEF WIN64
 MS_PROJECT_CONFIG = "Release|x64"
 !ELSE
 MS_PROJECT_CONFIG = "Release|Win32"
+!ENDIF
 !ENDIF
 
 !IFNDEF MS_REVISION
@@ -2143,7 +2153,7 @@ ms: ms-optfile ms-cmake
 	cd $(MS_PATH)
 !IFNDEF NO_CLEAN
 !IFDEF MS_CMAKE_BUILD
-    devenv /clean Release MapServer.sln /ProjectConfig $(MS_PROJECT_CONFIG) 
+    devenv /clean $(MS_PROJECT_DIR) MapServer.sln /ProjectConfig $(MS_PROJECT_CONFIG) 
 !ELSE
 	del mapscriptvars
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
@@ -2151,15 +2161,15 @@ ms: ms-optfile ms-cmake
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build Release MapServer.sln /Project mapserv /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project shp2img /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project shptree /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project shptreevis /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project sortshp /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project legend /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project scalebar /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project msencrypt /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build Release MapServer.sln /Project tile4ms /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project mapserv /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shp2img /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptree /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptreevis /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project sortshp /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project legend /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project scalebar /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msencrypt /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project tile4ms /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2168,8 +2178,8 @@ ms: ms-optfile ms-cmake
     if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
 	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y Release\*.dll $(OUTPUT_DIR)\bin
-	xcopy /Y Release\*.exe $(OUTPUT_DIR)\bin\ms\apps
+    xcopy /Y $(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\*.exe $(OUTPUT_DIR)\bin\ms\apps
 !ELSE
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\apps
@@ -2194,7 +2204,7 @@ ms-csharp:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build Release ..\..\MapServer.sln /Project csharpmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project csharpmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2203,7 +2213,7 @@ ms-csharp:
     if not exist $(OUTPUT_DIR)\bin\ms\csharp mkdir $(OUTPUT_DIR)\bin\ms\csharp
 	
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y Release\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+    xcopy /Y $(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin\ms\csharp
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\csharp
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\csharp
 !ELSE
@@ -2235,7 +2245,7 @@ ms-java: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build Release ..\..\MapServer.sln /Project javamapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project javamapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2243,7 +2253,7 @@ ms-java: ms-optfile
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\java mkdir $(OUTPUT_DIR)\bin\ms\java
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y Release\*.dll $(OUTPUT_DIR)\bin\ms\java
+    xcopy /Y $(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin\ms\java
 	xcopy /Y *.jar $(OUTPUT_DIR)\bin\ms\java
 !ELSE
     xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\java
@@ -2278,7 +2288,7 @@ ms-python:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build Release ..\..\MapServer.sln /Project _pythonmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project _pythonmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	$(BASE_DIR)\$(SWIG_DIR)\swig.exe -python -shadow -o mapscript_wrap.c ../mapscript.i
 !ENDIF
@@ -2295,7 +2305,7 @@ ms-python:
     if not exist $(OUTPUT_DIR)\bin\ms\python mkdir $(OUTPUT_DIR)\bin\ms\python
 !IFDEF MS_CMAKE_BUILD
     xcopy /Y mapscript.py $(OUTPUT_DIR)\bin\ms\python
-	xcopy /Y Release\*.pyd $(OUTPUT_DIR)\bin\ms\python
+	xcopy /Y $(MS_PROJECT_DIR)\*.pyd $(OUTPUT_DIR)\bin\ms\python
 !ELSE
     cd ..\$(PYTHON_OUTDIR)
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\ms\python
