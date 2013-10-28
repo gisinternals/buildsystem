@@ -2145,12 +2145,17 @@ ms-cmake:
 	set JAVA_HOME=$(JAVA_HOME)
 	set ORACLE_HOME=$(OCI_DIR)
 	set PYTHONPATH=$(BASE_DIR)\$(PYTHON_DIR)
-    $(CMAKE_DIR)\bin\cmake -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python26.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib -DWITH_HARFBUZZ=0 -DWITH_FRIBIDI=0 "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1"
+	if not exist build mkdir build
+	cd build
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python26.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib -DWITH_HARFBUZZ=0 -DWITH_FRIBIDI=0 "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1"
 	cd $(BASE_DIR)
 !ENDIF
 
 ms: ms-optfile ms-cmake
 	cd $(MS_PATH)
+!IFDEF MS_CMAKE_BUILD
+    cd build
+!ENDIF
 !IFNDEF NO_CLEAN
 !IFDEF MS_CMAKE_BUILD
     devenv /clean $(MS_PROJECT_DIR) MapServer.sln /ProjectConfig $(MS_PROJECT_CONFIG) 
@@ -2194,7 +2199,11 @@ ms: ms-optfile ms-cmake
 	
 ms-csharp:
 !IFDEF MS_CSHARP
+!IFDEF MS_CMAKE_BUILD
+    cd $(MS_PATH)\build
+!ELSE
 	cd $(MS_PATH)\mapscript\csharp
+!ENDIF
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
@@ -2204,7 +2213,7 @@ ms-csharp:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project csharpmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project csharpmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2213,9 +2222,9 @@ ms-csharp:
     if not exist $(OUTPUT_DIR)\bin\ms\csharp mkdir $(OUTPUT_DIR)\bin\ms\csharp
 	
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y $(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin\ms\csharp
-	xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\csharp
-	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\csharp
+    xcopy /Y mapscript\csharp\$(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	xcopy /Y mapscript\csharp\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	xcopy /Y mapscript\csharp\*.exe $(OUTPUT_DIR)\bin\ms\csharp
 !ELSE
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\csharp
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\csharp
@@ -2235,7 +2244,11 @@ ms-csharp-test:
 
 ms-java: ms-optfile
 !IFDEF MS_JAVA
+!IFDEF MS_CMAKE_BUILD
+    cd $(MS_PATH)\build
+!ELSE
 	cd $(MS_PATH)\mapscript\java
+!ENDIF
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
@@ -2245,7 +2258,7 @@ ms-java: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project javamapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project javamapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2253,8 +2266,8 @@ ms-java: ms-optfile
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\java mkdir $(OUTPUT_DIR)\bin\ms\java
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y $(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin\ms\java
-	xcopy /Y *.jar $(OUTPUT_DIR)\bin\ms\java
+    xcopy /Y mapscript\java\$(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin\ms\java
+	xcopy /Y mapscript\java\*.jar $(OUTPUT_DIR)\bin\ms\java
 !ELSE
     xcopy /Y *.dll $(OUTPUT_DIR)\bin\ms\java
 	xcopy /Y *.jar $(OUTPUT_DIR)\bin\ms\java
@@ -2279,7 +2292,11 @@ ms-python:
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
     SET LIB=%LIB%;$(OUTPUT_DIR)\lib
+!IFDEF MS_CMAKE_BUILD
+    cd $(MS_PATH)\build
+!ELSE
 	cd $(MS_PATH)\mapscript\python
+!ENDIF
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
 	-del mapscript_wrap.c
@@ -2288,7 +2305,7 @@ ms-python:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project _pythonmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project _pythonmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	$(BASE_DIR)\$(SWIG_DIR)\swig.exe -python -shadow -o mapscript_wrap.c ../mapscript.i
 !ENDIF
@@ -2304,8 +2321,8 @@ ms-python:
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\python mkdir $(OUTPUT_DIR)\bin\ms\python
 !IFDEF MS_CMAKE_BUILD
-    xcopy /Y mapscript.py $(OUTPUT_DIR)\bin\ms\python
-	xcopy /Y $(MS_PROJECT_DIR)\*.pyd $(OUTPUT_DIR)\bin\ms\python
+    xcopy /Y mapscript\python\mapscript.py $(OUTPUT_DIR)\bin\ms\python
+	xcopy /Y mapscript\python\$(MS_PROJECT_DIR)\*.pyd $(OUTPUT_DIR)\bin\ms\python
 !ELSE
     cd ..\$(PYTHON_OUTDIR)
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\ms\python
@@ -2434,6 +2451,9 @@ ms-sde: ms-optfile
     echo INCLUDES = -I$(OUTPUT_DIR)\include -I$(REGEX_PATH) -I$(BASE_DIR)\$(SDE_DIR)\include >> $(OUTPUT_DIR)\mapserver.opt
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
+!IFDEF MS_CMAKE_BUILD
+    cd build
+!ENDIF
 !IFNDEF NO_COPY
 !IFNDEF MS_CMAKE_BUILD
     del msplugin_sde_*
@@ -2442,7 +2462,7 @@ ms-sde: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) ..\..\MapServer.sln /Project msplugin_sde91 /ProjectConfig $(MS_PROJECT_CONFIG)
+    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_sde91 /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -2468,6 +2488,9 @@ ms-oci: ms-optfile
     echo ORACLE_LIB=$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc\oci.lib >> $(OUTPUT_DIR)\mapserver.opt
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
+!IFDEF MS_CMAKE_BUILD
+    cd build
+!ENDIF
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
     del msplugin_oracle*
@@ -2497,6 +2520,9 @@ ms-sql2008: ms-optfile
     echo ODBC_LIBS=odbc32.lib odbccp32.lib user32.lib  >> $(OUTPUT_DIR)\mapserver.opt
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
+!IFDEF MS_CMAKE_BUILD
+    cd build
+!ENDIF
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
     del msplugin_mssql2008*
