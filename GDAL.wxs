@@ -430,6 +430,9 @@
                     <Component Id="gdalmanage.exe" Guid="*">
                         <File Id="gdalmanage.exe" Name="gdalmanage.exe" Source="$(var.TargetDir)\gdal\apps\gdalmanage.exe" />
                     </Component>
+                    <Component Id="gdalserver.exe" Guid="*">
+                        <File Id="gdalserver.exe" Name="gdalserver.exe" Source="$(var.TargetDir)\gdal\apps\gdalserver.exe" />
+                    </Component>
                     <Component Id="gdalsrsinfo.exe" Guid="*">
                         <File Id="gdalsrsinfo.exe" Name="gdalsrsinfo.exe" Source="$(var.TargetDir)\gdal\apps\gdalsrsinfo.exe" />
                     </Component>
@@ -453,6 +456,9 @@
                     </Component>
                     <Component Id="ogrtindex.exe" Guid="*">
                         <File Id="ogrtindex.exe" Name="ogrtindex.exe" Source="$(var.TargetDir)\gdal\apps\ogrtindex.exe" />
+                    </Component>
+                    <Component Id="testepsg.exe" Guid="*">
+                        <File Id="testepsg.exe" Name="testepsg.exe" Source="$(var.TargetDir)\gdal\apps\testepsg.exe" />
                     </Component>
                     <Component Id="curl.exe" Guid="*">
                         <File Id="curl.exe" Name="curl.exe" Source="$(var.TargetDir)\curl\curl.exe" />
@@ -514,6 +520,15 @@
                     <Component Id="gdal2xyz.py" Guid="*">
                         <File Id="gdal2xyz.py" Name="gdal2xyz.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal2xyz.py" Vital="yes"/>
                     </Component>
+                    <Component Id="gdal_auth.py" Guid="*">
+                        <File Id="gdal_auth.py" Name="gdal_auth.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_auth.py" Vital="yes"/>
+                    </Component>
+                    <Component Id="gdal_calc.py" Guid="*">
+                        <File Id="gdal_calc.py" Name="gdal_calc.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_calc.py" Vital="yes"/>
+                    </Component>
+                    <Component Id="gdal_edit.py" Guid="*">
+                        <File Id="gdal_edit.py" Name="gdal_edit.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_edit.py" Vital="yes"/>
+                    </Component>
                     <Component Id="gdal_fillnodata.py" Guid="*">
                         <File Id="gdal_fillnodata.py" Name="gdal_fillnodata.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_fillnodata.py" Vital="yes"/>
                     </Component>
@@ -540,6 +555,9 @@
                     </Component>
                     <Component Id="gdalimport.py" Guid="*">
                         <File Id="gdalimport.py" Name="gdalimport.py" Source="$(var.TargetDir)\gdal\python\scripts\gdalimport.py" Vital="yes"/>
+                    </Component>
+                    <Component Id="gdalmove.py" Guid="*">
+                        <File Id="gdalmove.py" Name="gdalmove.py" Source="$(var.TargetDir)\gdal\python\scripts\gdalmove.py" Vital="yes"/>
                     </Component>
                     <Component Id="mkgraticule.py" Guid="*">
                         <File Id="mkgraticule.py" Name="mkgraticule.py" Source="$(var.TargetDir)\gdal\python\scripts\mkgraticule.py" Vital="yes"/>
@@ -863,6 +881,7 @@
                 <ComponentRef Id="gdalinfo.exe" />
                 <ComponentRef Id="gdallocationinfo.exe" />
                 <ComponentRef Id="gdalmanage.exe" />
+                <ComponentRef Id="gdalserver.exe" />
                 <ComponentRef Id="gdalsrsinfo.exe" />
                 <ComponentRef Id="gdaltindex.exe" />
                 <ComponentRef Id="gdaltransform.exe" />
@@ -871,6 +890,7 @@
                 <ComponentRef Id="ogr2ogr.exe" />
                 <ComponentRef Id="ogrinfo.exe" />
                 <ComponentRef Id="ogrtindex.exe" />
+                <ComponentRef Id="testepsg.exe" />
             </Feature>
             <Feature Id="PROJ4Utilities" Level="1" Title="Proj.4 Utilities" Display="expand" Description="Proj.4 Utilities">
                 <ComponentRef Id="cs2cs.exe" />
@@ -923,6 +943,9 @@
             <ComponentRef Id="gcps2wld.py" />
             <ComponentRef Id="gdal2tiles.py" />
             <ComponentRef Id="gdal2xyz.py" />
+            <ComponentRef Id="gdal_auth.py" />
+            <ComponentRef Id="gdal_calc.py" />
+            <ComponentRef Id="gdal_edit.py" />
             <ComponentRef Id="gdal_fillnodata.py" />
             <ComponentRef Id="gdal_merge.py" />
             <ComponentRef Id="gdal_polygonize.py" />
@@ -932,6 +955,7 @@
             <ComponentRef Id="gdalchksum.py" />
             <ComponentRef Id="gdalident.py" />
             <ComponentRef Id="gdalimport.py" />
+            <ComponentRef Id="gdalmove.py" />
             <ComponentRef Id="mkgraticule.py" />
             <ComponentRef Id="pct2rgb.py" />
             <ComponentRef Id="rgb2pct.py" />
