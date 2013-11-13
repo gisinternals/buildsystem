@@ -54,13 +54,13 @@
     <?ifdef gdal_ECW_JP2ECW?>
     <?if $(var.Compiler) = 1400?>
     <?define UpgradeCode = "6CC0B4C7-C405-4192-A0F6-A17001E0255A" ?>
-    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) (MSVC 2005 Win64)" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2005 Win64)" ?>
     <?elseif $(var.Compiler) = 1500?>
     <?define UpgradeCode = "48F12F55-FCCF-44B8-9BE1-6C95F598AF11" ?>
-    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) (MSVC 2008 Win64)" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2008 Win64)" ?>
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "85E216C4-DDDF-4657-A57E-BA74900E8080" ?>
-    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) (MSVC 2010 Win64)" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2010 Win64)" ?>
     <?endif?>
     <?endif?>
     <?else?>
@@ -128,16 +128,16 @@
     <?ifdef gdal_ECW_JP2ECW?>
     <?if $(var.Compiler) = 1310?>
     <?define UpgradeCode = "E5784C66-A6E4-45AE-B626-70F2B6B086A5" ?>
-    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) (MSVC 2003)" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2003)" ?>
     <?elseif $(var.Compiler) = 1400?>
     <?define UpgradeCode = "BBC48E75-BEE5-4613-8033-EC5FE4F6338D" ?>
-    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) (MSVC 2005)" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2005)" ?>
     <?elseif $(var.Compiler) = 1500?>
     <?define UpgradeCode = "60D886CC-B7CD-4EF7-A995-6A7FB434C0F0" ?>
-    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) (MSVC 2008)" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2008)" ?>
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "7E797B42-095B-4940-A14A-0EBFA87DCAF8" ?>
-    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) (MSVC 2010)" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2010)" ?>
     <?endif?>
     <?endif?>
     <?endif?>
@@ -173,7 +173,11 @@
                         <?endif?>
                         <?ifdef gdal_ECW_JP2ECW?>
                         <Component Id="ECWLicense.rtf" Guid="*">
-                            <File Id="ECWLicense.rtf" Name="ECWLicense.rtf" Source="$(var.BaseDir)\ECWLicense.rtf" />
+						<?if $(var.ECWSDKVersion) = 50?>
+							<File Id="ECW5License.rtf" Name="ECW5License.rtf" Source="$(var.BaseDir)\ECW5License.rtf" />
+						<?else?>
+							<File Id="ECWLicense.rtf" Name="ECWLicense.rtf" Source="$(var.BaseDir)\ECWLicense.rtf" />
+						<?endif?>                           
                         </Component>
                         <?endif?>
                     </Directory>
@@ -233,8 +237,12 @@
                     </Component>
                     <?endif?>
                     <?ifdef gdal_ECW_JP2ECW?>
-                    <Component Id="libecwj2.dll" Guid="*">
-                        <File Id="libecwj2.dll" Name="libecwj2.dll" Source="$(var.TargetDir)\libecwj2.dll" Vital="yes"/>
+					<Component Id="libecwj2.dll" Guid="*">
+					<?if $(var.ECWSDKVersion) = 50?>					    
+						<File Id="NCSEcw.dll" Name="NCSEcw.dll" Source="$(var.TargetDir)\NCSEcw.dll" Vital="yes"/>
+					<?else?>
+					    <File Id="libecwj2.dll" Name="libecwj2.dll" Source="$(var.TargetDir)\libecwj2.dll" Vital="yes"/>
+					<?endif?>
                     </Component>
                     <?endif?>
                     <?ifdef ogr_FileGDB?>
@@ -752,7 +760,11 @@
         <WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\OCILicense.rtf" />
         <?endif?>
         <?ifdef gdal_ECW_JP2ECW?>
-        <WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\ECWLicense.rtf" />
+		<?if $(var.ECWSDKVersion) = 50?>
+			<WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\ECW5License.rtf" />
+		<?else?>
+			<WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\ECWLicense.rtf" />
+		<?endif?>    
         <?endif?>
         <?ifdef gdal_MrSID?>
         <WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\MRSIDLicense.rtf" />

@@ -58,6 +58,7 @@ GDAL_REVISION=HEAD
 GDAL_GEOS = YES
 GDAL_POSTGIS = YES
 GDAL_ECW = YES
+GDAL_ECW5 = YES
 GDAL_CURL = YES
 #GDAL_SQLITE = YES
 GDAL_SPATIALITE = YES
@@ -238,18 +239,6 @@ SPATIALITE_DIR = libspatialite-3.0.0
 
 !IFNDEF FREEXL_DIR
 FREEXL_DIR = freexl-1.0.0b
-!ENDIF
-
-!IFNDEF ECW_DIR
-!IF $(MSVC_VER) == 1600
-ECW_DIR = libecwj2-3.3-VC10
-!ELSEIF $(MSVC_VER) == 1500
-ECW_DIR = libecwj2-3.3-VC9
-!ELSEIF $(MSVC_VER) == 1400
-ECW_DIR = libecwj2-3.3-VC8
-!ELSE
-ECW_DIR = libecwj2-3.3
-!ENDIF
 !ENDIF
 
 !IFNDEF FILEGDB_API_DIR
@@ -686,9 +675,61 @@ COMPILER_VER=$(MSVC_VER)
 OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 !ENDIF
 
-#IFNDEF PKG_VERSION
+!IFNDEF ECW_DIR
+!IF $(MSVC_VER) == 1600
+!IFDEF GDAL_ECW5
+ECW_DIR = ECWSDK50
+ECWDIR = $(BASE_DIR)\$(ECW_DIR)
+ECWSDK_VERSION=50
+!IFDEF WIN64
+ECWLIB = $(ECWDIR)\lib\vc100\x64\NCSEcw.lib
+!ELSE
+ECWLIB = $(ECWDIR)\lib\vc100\win32\NCSEcw.lib
+!ENDIF
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(ECWDIR)\include -I$(ECWDIR)\include\NCSECW\api -I$(ECWDIR)\include\NCSECW\jp2 -I$(ECWDIR)\include\NCSECW\ecw
+!ELSE
+ECW_DIR = libecwj2-3.3-VC10
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1500
+!IFDEF GDAL_ECW5
+ECW_DIR = ECWSDK50
+ECWDIR = $(BASE_DIR)\$(ECW_DIR)
+ECWSDK_VERSION=50
+!IFDEF WIN64
+ECWLIB = $(ECWDIR)\lib\vc90\x64\NCSEcw.lib
+!ELSE
+ECWLIB = $(ECWDIR)\lib\vc90\win32\NCSEcw.lib
+!ENDIF
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(ECWDIR)\include -I$(ECWDIR)\include\NCSECW\api -I$(ECWDIR)\include\NCSECW\jp2 -I$(ECWDIR)\include\NCSECW\ecw
+!ELSE
+ECW_DIR = libecwj2-3.3-VC9
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1400
+ECW_DIR = libecwj2-3.3-VC8
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ELSE
+ECW_DIR = libecwj2-3.3
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ENDIF
+!ENDIF
+
+!IFNDEF PKG_VERSION
 PKG_VERSION = $(GDAL_DIR)-$(MS_DIR)
-#ENDIF
+!ENDIF
 
 !IF ([type $(GDAL_PATH)\VERSION|find "1.10." > NUL] == 0)
 GDAL_VER = 1.10
@@ -937,9 +978,9 @@ mkgdalinst-ecw:
     -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi
 !IF EXIST ($(OUTPUT_DIR)\bin\gdal\plugins\gdal_ECW_JP2ECW.dll)    
 !IFDEF WIN64
-    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" "-dECWSDKVersion=$(ECWSDK_VERSION)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ELSE
-    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" "-dECWSDKVersion=$(ECWSDK_VERSION)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
@@ -1681,9 +1722,9 @@ ogr-pg: gdal-optfile
 gdal-ecw: gdal-optfile
 !IFDEF ECW_DIR
     echo ECW_PLUGIN = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo ECWDIR=$(OUTPUT_DIR) >> $(OUTPUT_DIR)\gdal.opt
-    echo ECWLIB= $(OUTPUT_DIR)\lib\libecwj2.lib >> $(OUTPUT_DIR)\gdal.opt
-    echo ECWFLAGS= /DECWSDK_VERSION=33 -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI >> $(OUTPUT_DIR)\gdal.opt
+    echo ECWDIR=$(ECWDIR) >> $(OUTPUT_DIR)\gdal.opt
+    echo ECWLIB=$(ECWLIB) >> $(OUTPUT_DIR)\gdal.opt
+    echo ECWFLAGS= $(ECWFLAGS) >> $(OUTPUT_DIR)\gdal.opt
 !IF $(MSVC_VER) == 1500   
     echo _WIN32_WINNT= 0x0500 >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF
@@ -3100,6 +3141,23 @@ netcdf:
 
 libecw:
 !IFDEF ECW_DIR
+!IF $(ECWSDK_VERSION) == 50
+!IFNDEF NO_COPY
+!IF $(MSVC_VER) == 1600
+!IFDEF WIN64
+    xcopy /Y $(ECWDIR)\redistributable\vc100\x64\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(ECWDIR)\redistributable\vc100\Win32\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1500
+!IFDEF WIN64
+    xcopy /Y $(ECWDIR)\redistributable\vc90\x64\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(ECWDIR)\redistributable\vc90\Win32\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ENDIF
+!ENDIF
+!ELSE
 !IFNDEF NO_BUILD
     cd $(ECW_DIR)\Source\NCSBuildQmake
 !IFDEF WIN64    
@@ -3122,6 +3180,7 @@ libecw:
     xcopy /Y $(BASE_DIR)\$(ECW_DIR)\lib64\libecwj2.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(ECW_DIR)\lib64\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(ECW_DIR)\Source\include\NCS*.h $(OUTPUT_DIR)\include
+!ENDIF
 !ENDIF
 !ENDIF
 !ENDIF
