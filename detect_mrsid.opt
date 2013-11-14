@@ -3,17 +3,17 @@
 !IF $(MSVC_VER) == 1600
 !IF EXIST("$(GDAL_PATH)\frmts\mrsid\nmake.opt")
 !IFDEF WIN64
-MRSID_DIR=mrsid\Unified_DSDK_8.0_win64-vs10
+MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win64-vs10
 !ELSE
-MRSID_DIR=mrsid\Unified_DSDK_8.0_win32-vs10
+MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win32-vs10
 !ENDIF
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
 !IF EXIST("$(GDAL_PATH)\frmts\mrsid\nmake.opt")
 !IFDEF WIN64
-MRSID_DIR=mrsid\Unified_DSDK_8.0_win64-vc9
+MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win64-vc9
 !ELSE
-MRSID_DIR=mrsid\Unified_DSDK_8.0_win32-vc9
+MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win32-vc9
 !ENDIF
 !ELSE
 !IFDEF WIN64
@@ -445,6 +445,10 @@ MRSID_INCLUDE =    -I"$(MRSID_LIDAR_DIR)\include" $(MRSID_INCLUDE)
 MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk.lib" $(MRSID_LIB)
 MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk.dll"
 MRSID_DLL_NAME =        lti_dsdk.dll
+!ELSE IF EXIST("$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.0.dll")
+MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk.lib" $(MRSID_LIB)
+MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.0.dll"
+MRSID_DLL_NAME =        lti_dsdk_9.0.dll
 !ELSE IF EXIST("$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.dll")
 MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.lib" $(MRSID_LIB)
 MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.dll"
@@ -530,6 +534,10 @@ MRSID_LIB =        "$(MRSID_RASTER_DIR)\3rd-party\lib\$(MRSID_CONFIG)\xmlparse.l
 MRSID_LIB =        "$(MRSID_LIDAR_DIR)\lib\lti_lidar_dsdk.lib" $(MRSID_LIB)
 LIDAR_DLL =        "$(MRSID_LIDAR_DIR)\lib\lti_lidar_dsdk.dll"
 LIDAR_DLL_NAME =        lti_lidar_dsdk.dll
+!ELSE IF EXIST("$(MRSID_LIDAR_DIR)\lib\lti_lidar_dsdk_1.1.dll")
+MRSID_LIB =        "$(MRSID_LIDAR_DIR)\lib\lti_lidar_dsdk.lib" $(MRSID_LIB)
+LIDAR_DLL =        "$(MRSID_LIDAR_DIR)\lib\lti_lidar_dsdk_1.1.dll"
+LIDAR_DLL_NAME =        lti_lidar_dsdk_1.1.dll
 !ELSE IF $(MRSID_LVER)0 < 1110
 !ERROR Cannot link dynamically against this version of the MrSID Lidar SDK ($(MRSID_LVER)).  Try linking statically by setting MRSID_LDLLBUILD to NO.
 !ELSE

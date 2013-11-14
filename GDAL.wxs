@@ -228,12 +228,17 @@
                     </Directory>
                     <?ifdef lti_dsdk?>
                     <Component Id="lti_dsdk.dll" Guid="*">
-                        <File Id="lti_dsdk.dll" Name="$(var.lti_dsdk_name)" Source="$(var.lti_dsdk)" Vital="yes"/>
+                        <File Id="$(var.lti_dsdk_name)" Name="$(var.lti_dsdk_name)" Source="$(var.lti_dsdk)" Vital="yes"/>
+                    </Component>
+                    <?endif?>
+					<?ifdef mrsid_tbb?>
+                    <Component Id="tbb.dll" Guid="*">
+                        <File Id="tbb.dll" Name="tbb.dll" Source="$(var.mrsid_tbb)" Vital="yes"/>
                     </Component>
                     <?endif?>
                     <?ifdef lti_lidar_dsdk?>
                     <Component Id="lti_lidar_dsdk.dll" Guid="*">
-                        <File Id="lti_lidar_dsdk.dll" Name="$(var.lti_lidar_dsdk_name)" Source="$(var.lti_lidar_dsdk)" Vital="yes"/>
+                        <File Id="$(var.lti_lidar_dsdk_name)" Name="$(var.lti_lidar_dsdk_name)" Source="$(var.lti_lidar_dsdk)" Vital="yes"/>
                     </Component>
                     <?endif?>
                     <?ifdef gdal_ECW_JP2ECW?>
@@ -978,6 +983,9 @@
             <ComponentRef Id="gdal_MrSID.dll" />
             <?ifdef lti_dsdk?>
             <ComponentRef Id="lti_dsdk.dll" />
+            <?endif?>
+			<?ifdef mrsid_tbb?>
+            <ComponentRef Id="tbb.dll" />
             <?endif?>
             <?ifdef lti_lidar_dsdk?>
             <ComponentRef Id="lti_lidar_dsdk.dll" />

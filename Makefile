@@ -765,6 +765,10 @@ GDAL_VERSIONTAG = 20dev
 MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_dsdk=$(MRSID_DLL)" "-dlti_dsdk_name=$(MRSID_DLL_NAME)"
 !ENDIF
 
+!IF EXIST ($(MRSID_RASTER_DIR)\lib\lti_dsdk_9.0.dll)
+MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dmrsid_tbb=$(MRSID_RASTER_DIR)\lib\tbb.dll"
+!ENDIF
+
 !IFDEF LIDAR_DLL
 MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_lidar_dsdk=$(LIDAR_DLL)" "-dlti_lidar_dsdk_name=$(LIDAR_DLL_NAME)"
 !ENDIF
@@ -1584,9 +1588,13 @@ gdal-mrsid: gdal-optfile
     if exist $(OUTPUT_DIR)\bin\lti_dsdk_dll.dll del $(OUTPUT_DIR)\bin\lti_dsdk_dll.dll
     if exist $(OUTPUT_DIR)\bin\lti_dsdk.dll del $(OUTPUT_DIR)\bin\lti_dsdk.dll
     if exist $(OUTPUT_DIR)\bin\lti_lidar_dsdk.dll del $(OUTPUT_DIR)\bin\lti_lidar_dsdk.dll
+	if exist $(OUTPUT_DIR)\bin\lti_dsdk_9.0.dll del $(OUTPUT_DIR)\bin\lti_dsdk_9.0.dll
+    if exist $(OUTPUT_DIR)\bin\lti_lidar_dsdk_1.1.dll del $(OUTPUT_DIR)\bin\lti_lidar_dsdk_1.1.dll
+	if exist $(OUTPUT_DIR)\bin\tbb.dll del $(OUTPUT_DIR)\bin\tbb.dll
 	xcopy /Y gdal_MrSID.dll $(OUTPUT_DIR)\bin\gdal\plugins
 	if exist $(MRSID_DLL) xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
 	if exist $(LIDAR_DLL) xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
+	if exist $(MRSID_RASTER_DIR)\lib\tbb.dll xcopy /Y $(MRSID_RASTER_DIR)\lib\tbb.dll $(OUTPUT_DIR)\bin
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
