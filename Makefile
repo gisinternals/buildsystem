@@ -113,60 +113,75 @@ INSTALL_DIR = C:\Inetpub\wwwroot\sdk
 !ENDIF
 
 !IFNDEF CMAKE_DIR
-CMAKE_DIR = E:\builds\cmake-2.8.10.2-win32-x86
+CMAKE_DIR = E:\builds\cmake-2.8.12.1-win32-x86
 !ENDIF
 
 !IFNDEF MSVC_VER
 !IF "$(_NMAKE_VER)" == "6.00.8168.0"
 MSVC_VER = 1200
 CMAKE_GENERATOR = "Visual Studio 6"
+CMAKE_BUILDDIR = vc6
 !ELSEIF "$(_NMAKE_VER)" == "7.00.9466"
 MSVC_VER = 1300
 CMAKE_GENERATOR = "Visual Studio 7"
+CMAKE_BUILDDIR = vc7
 !ELSEIF "$(_NMAKE_VER)" == "7.10.3077"
 MSVC_VER = 1310
 CMAKE_GENERATOR = "Visual Studio 7 .NET 2003"
+CMAKE_BUILDDIR = vc71
 !ELSEIF "$(_NMAKE_VER)" == "8.00.50727.42"
 MSVC_VER = 1400
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 8 2005 Win64"
+CMAKE_BUILDDIR = vc8x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 8 2005"
+CMAKE_BUILDDIR = vc8
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "8.00.50727.762"
 MSVC_VER = 1400
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 8 2005 Win64"
+CMAKE_BUILDDIR = vc8x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 8 2005"
+CMAKE_BUILDDIR = vc8
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "9.00.21022.08"
 MSVC_VER = 1500
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 9 2008 Win64"
+CMAKE_BUILDDIR = vc9x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 9 2008"
+CMAKE_BUILDDIR = vc9
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "9.00.30729.01"
 MSVC_VER = 1500
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 9 2008 Win64"
+CMAKE_BUILDDIR = vc9x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 9 2008"
+CMAKE_BUILDDIR = vc9
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "10.00.30128.01"
 MSVC_VER = 1600
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 10 Win64"
+CMAKE_BUILDDIR = vc10x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 10"
+CMAKE_BUILDDIR = vc10
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "10.00.30319.01"
 MSVC_VER = 1600
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 10 Win64"
+CMAKE_BUILDDIR = vc10x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 10"
+CMAKE_BUILDDIR = vc10
 !ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
@@ -488,11 +503,19 @@ XERCES_DIR=xerces-c-src_2_8_0
 !ENDIF
 
 !IFNDEF HDF5_DIR
-HDF5_DIR=hdf5-1.8.2
+#HDF5_DIR=hdf5-1.8.2
+HDF5_DIR=hdf5-1.8.12
+SZIP_DIR=szip-2.1
+!ENDIF
+
+!IFNDEF HDF4_DIR
+HDF4_DIR=hdf-4.2.9
+SZIP_DIR=szip-2.1
 !ENDIF
 
 !IFNDEF NETCDF_DIR
-NETCDF_DIR=netcdf-3.6.1
+#NETCDF_DIR=netcdf-3.6.1
+NETCDF_DIR=netcdf-4.3.0
 !ENDIF
 
 !IFNDEF FITS_DIR
@@ -777,7 +800,7 @@ EXTRAFLAGS =
 
 default: update platform gdal gdalplugins gdal-csharp
 
-gdalpluginlibs: plugin-clear gdal-sde gdal-oci gdal-mrsid gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw ogr-pg gdal-filegdb
+gdalpluginlibs: plugin-clear gdal-sde gdal-oci gdal-mrsid gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw ogr-pg gdal-filegdb
 
 gdalplugins: gdalpluginlibs gdalversion
 
@@ -888,7 +911,7 @@ package:
     xcopy /Y $(BASE_DIR)\SDKShell.bat $(OUTPUT_DIR)
     xcopy /Y $(BASE_DIR)\read-me.txt $(OUTPUT_DIR)
     if exist $(OUTPUT_DIR)-$(PKG_VERSION).zip del $(OUTPUT_DIR)-$(PKG_VERSION).zip
-    7z a -tzip $(OUTPUT_DIR)-$(PKG_VERSION).zip $(OUTPUT_DIR)\bin $(OUTPUT_DIR)\doc changelog.txt SDKShell.bat read-me.txt license.txt
+    7z a -tzip $(OUTPUT_DIR)-$(PKG_VERSION).zip $(OUTPUT_DIR)\bin $(OUTPUT_DIR)\doc changelog.txt SDKShell.bat read-me.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION).zip $(INSTALL_DIR)
     if not exist $(INSTALL_DIR)\doc mkdir $(INSTALL_DIR)\doc
     if not exist $(INSTALL_DIR)\doc\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\doc\release-$(COMPILER_VER)-$(PKG_VERSION)
@@ -920,7 +943,7 @@ package-src:
 package-dev:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
     if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi
-    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) $(SWIG_DIR)\swig.exe $(SWIG_DIR)\Lib Makefile readme.txt changelog.txt license.txt
+    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) $(SWIG_DIR)\swig.exe $(SWIG_DIR)\Lib Makefile readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
     
 package-dev-x64:
@@ -931,7 +954,7 @@ package-dev-x64:
     cd $(GDAL_DIR)
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
     cd $(BASE_DIR)
-    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(OUTPUT_DIR)-x64 $(MS_DIR) $(GDAL_DIR) $(REGEX_DIR) $(SWIG_DIR)\swig.exe $(SWIG_DIR)\Lib Makefile readme.txt changelog.txt license.txt
+    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(OUTPUT_DIR)-x64 $(MS_DIR) $(GDAL_DIR) $(REGEX_DIR) $(SWIG_DIR)\swig.exe $(SWIG_DIR)\Lib Makefile readme.txt changelog.txt license.txt *.rtf
     
 install: package package-dev
     xcopy /Y $(OUTPUT_DIR).zip $(INSTALL_DIR)
@@ -1023,6 +1046,24 @@ mkgdalinst-filegdb:
     -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dogr_FileGDB=ogr_FileGDB.dll" "-dFileGDBBINDIR=$(FILEGDB_BINPATH)" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
+    cd $(BASE_DIR)
+!ENDIF
+!ENDIF
+
+mkgdalinst-netcdf:
+!IFDEF WIX_DIR
+    set PATH=$(BASE_DIR)\$(WIX_DIR);$(PATH)
+    if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
+    -del $(OUTPUT_DIR)\install\GDAL.wixobj
+    -del $(OUTPUT_DIR)\install\GDAL.wixpdb
+    -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi
+!IF EXIST ($(OUTPUT_DIR)\bin\gdal\plugins-external\ogr_FileGDB.dll)    
+!IFDEF WIN64
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dogr_FileGDB=ogr_FileGDB.dll" "-dFileGDBBINDIR=$(FILEGDB_BINPATH)" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+!ELSE
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dogr_FileGDB=ogr_FileGDB.dll" "-dFileGDBBINDIR=$(FILEGDB_BINPATH)" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+!ENDIF
+    -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
 !ENDIF
 !ENDIF
@@ -1212,11 +1253,17 @@ gdal-optfile:
     echo $(JBIG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo $(LIBTIFF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
+!IFDEF SZIP_DIR
+    echo $(SZIP_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
 !IFDEF FITS_DIR
     echo $(FITS_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF HDF5_DIR
     echo $(HDF5_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF HDF5_DIR
+    echo $(HDF4_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF ECW_DIR
     echo $(ECW_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -1598,12 +1645,34 @@ gdal-mrsid: gdal-optfile
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
+
+gdal-hdf4: gdal-optfile
+!IFDEF HDF5_DIR
+    echo HDF4_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
+    echo HDF4_DIR =	$(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install >> $(OUTPUT_DIR)\gdal.opt
+    echo HDF4_LIB =	$(OUTPUT_DIR)\lib\hdfdll.lib $(OUTPUT_DIR)\lib\mfhdfdll.lib  >> $(OUTPUT_DIR)\gdal.opt
+	cd $(GDAL_PATH)\frmts\hdf4
+!IFNDEF NO_CLEAN	
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y gdal_HDF4.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(OUTPUT_DIR)\bin\gdal\plugins
+	copy /Y gdal_HDF4.dll gdal_HDF4Image.dll
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
 	
 gdal-hdf5: gdal-optfile
 !IFDEF HDF5_DIR
     echo HDF5_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
     echo HDF5_DIR =	$(OUTPUT_DIR) >> $(OUTPUT_DIR)\gdal.opt
-    echo HDF5_LIB =	$(OUTPUT_DIR)\lib\hdf5dll.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo HDF5_LIB =	$(OUTPUT_DIR)\lib\hdf5.lib >> $(OUTPUT_DIR)\gdal.opt
 	cd $(GDAL_PATH)\frmts\hdf5
 !IFNDEF NO_CLEAN	
 	nmake /f makefile.vc clean
@@ -2994,8 +3063,85 @@ fribidi:
 
 version:
     echo MSVC_VER=$(MSVC_VER)  _NMAKE_VER=$(_NMAKE_VER)  WIN64=$(WIN64)  BASE_DIR=$(BASE_DIR)
-    
+
+szip:
+!IFDEF SZIP_DIR
+    cd $(BASE_DIR)\$(SZIP_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=release-$(COMPILER_VER)" "-DBUILD_SHARED_LIBS=ON"
+!IFDEF WIN64	
+    devenv /rebuild Release szip.sln /Project szip /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release szip.sln /Project szip /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(SZIP_DIR)\src\*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)\SZconfig.h $(OUTPUT_DIR)\include
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+hdf4lib:
+!IFDEF HDF4_DIR
+!IFNDEF NO_BUILD
+    cd $(BASE_DIR)\$(HDF4_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON"
+!IFDEF WIN64	
+    devenv /rebuild Release hdf4.sln /Project INSTALL /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release hdf4.sln /Project INSTALL /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y $(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.dll $(OUTPUT_DIR)\bin
+	if not exist $(OUTPUT_DIR)\include\hdf4 mkdir $(OUTPUT_DIR)\include\hdf4
+    xcopy  /Y /S $(BASE_DIR)\$(HDF4_DIR)\hdf\src\*.h $(OUTPUT_DIR)\include\hdf4
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
 hdf5lib:
+!IFDEF HDF5_DIR
+    cd $(BASE_DIR)\$(HDF5_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON"
+!IFDEF WIN64	
+    devenv /rebuild Release hdf5.sln /Project ALL_BUILD /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release hdf5.sln /Project ALL_BUILD /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\src\*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\hl\src\*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\*.h $(OUTPUT_DIR)\include
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+    
+hdf5lib2:
 !IFDEF HDF5_DIR
 !IFNDEF NO_BUILD
 !IF $(MSVC_VER) == 1600
@@ -3078,9 +3224,35 @@ mrsidlib:
     xcopy /Y $(BASE_DIR)\$(MRSID_DIR)\Lidar_DSDK\lib\lti_lidar_dsdk.dll $(OUTPUT_DIR)\bin
 !ENDIF    
 !ENDIF
-!ENDIF
+!ENDIF	
 
 netcdf:
+!IFDEF NETCDF_DIR
+    cd $(BASE_DIR)\$(NETCDF_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)" "-DUSE_HDF4=OFF" "-DBUILD_SHARED_LIBS=ON"
+	xcopy /Y $(OUTPUT_DIR)\lib\szip.lib $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\liblib
+!IFDEF WIN64	
+    devenv /rebuild Release netcdf.sln /Project netcdf /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release netcdf.sln /Project netcdf /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    cd $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)
+	xcopy /Y $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\liblib\Release\netcdf.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\liblib\Release\netcdf.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(NETCDF_DIR)\include\netcdf.h $(OUTPUT_DIR)\include
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+netcdf2:
 !IFDEF NETCDF_DIR
 !IFNDEF NO_BUILD
 !IF $(MSVC_VER) == 1600
