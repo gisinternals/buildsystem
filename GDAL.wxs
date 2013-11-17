@@ -366,6 +366,9 @@
                     <Component Id="geos_c.dll" Guid="*">
                         <File Id="geos_c.dll" Name="geos_c.dll" Source="$(var.TargetDir)\geos_c.dll" Vital="yes"/>
                     </Component>
+                    <Component Id="geos.dll" Guid="*">
+                        <File Id="geos.dll" Name="geos.dll" Source="$(var.TargetDir)\geos.dll" Vital="yes"/>
+                    </Component>
                     <Component Id="hdf5.dll" Guid="*">
                         <File Id="hdf5.dll" Name="hdf5.dll" Source="$(var.TargetDir)\hdf5.dll" Vital="yes"/>
                     </Component>
@@ -824,6 +827,7 @@
             <ComponentRef Id="msvcp71.dll" />
             <?endif?>
             <ComponentRef Id="geos_c.dll" />
+            <ComponentRef Id="geos.dll" />
             <ComponentRef Id="iconv.dll" />
             <ComponentRef Id="libcurl.dll" />
             <ComponentRef Id="curl_ca_bundle.crt" />
@@ -962,7 +966,11 @@
                 <ComponentRef Id="gdal_GMT.dll" />
                 <ComponentRef Id="netcdf.dll" />
                 <ComponentRef Id="NetCDFLicense.rtf" />
+                <ComponentRef Id="hdf5.dll" />
+                <ComponentRef Id="hdf5_hl.dll" />
+                <ComponentRef Id="HDF5License.rtf" />
                 <ComponentRef Id="SZIPLicense.rtf" />
+                <ComponentRef Id="szip.dll" />
             </Feature>
             <Feature Id="HDF4" Level="1" Title="HDF4" Description="Hierarchical Data Format Release 4 (HDF4) rasters (for the custom licensing terms please review HDF4License.rtf and SZIPLicense.rtf installed in the /license folder)">
                 <ComponentRef Id="gdal_HDF4.dll" />

@@ -323,7 +323,7 @@ PROJ_DIR = proj-4.8
 !ENDIF
 
 !IFNDEF GEOS_DIR
-GEOS_DIR = geos-3-3
+GEOS_DIR = geos-3.4
 !ENDIF
 
 !IFNDEF ZLIB_DIR
@@ -1116,6 +1116,38 @@ freetype:
 !ENDIF
 
 geos:
+!IFDEF NETCDF_DIR
+    cd $(BASE_DIR)\$(GEOS_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=ON"
+!IFDEF WIN64	
+    devenv /rebuild Release geos.sln /Project geos_c /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release geos.sln /Project geos_c /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    cd $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\lib\Release\geos_c.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\lib\Release\geos.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\bin\Release\geos.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\bin\Release\geos_c.dll $(OUTPUT_DIR)\bin
+	if not exist $(OUTPUT_DIR)\include\geos mkdir $(OUTPUT_DIR)\include\geos
+	xcopy /Y /S $(BASE_DIR)\$(GEOS_DIR)\include\geos\*.h $(OUTPUT_DIR)\include\geos
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\include\geos.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\include\geos\platform.h $(OUTPUT_DIR)\include\geos
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\include\geos\version.h $(OUTPUT_DIR)\include\geos
+	xcopy /Y $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\capi\geos_c.h $(OUTPUT_DIR)\include
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+geos2:
 	cd $(GEOS_DIR)\src
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
@@ -1150,7 +1182,7 @@ gdal-optfile:
 !IFDEF GDAL_GEOS
     echo GEOS_DIR=$(BASE_DIR)\$(GEOS_DIR) >> $(OUTPUT_DIR)\gdal.opt
     echo GEOS_CFLAGS=-I$(OUTPUT_DIR)\include -DHAVE_GEOS >> $(OUTPUT_DIR)\gdal.opt
-    echo GEOS_LIB=$(OUTPUT_DIR)\lib\geos_c_i.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo GEOS_LIB=$(OUTPUT_DIR)\lib\geos_c.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(GEOS_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF    
     echo MSVC_VER=$(MSVC_VER) >> $(OUTPUT_DIR)\gdal.opt
@@ -2249,7 +2281,7 @@ ms-optfile:
 	echo $(FT_LIB) \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF
 !IFDEF MS_GEOS
-	echo geos_c_i.lib \>> $(OUTPUT_DIR)\mapserver.opt
+	echo geos_c.lib \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF
 !IFDEF MS_MING
     echo libming.lib \>> $(OUTPUT_DIR)\mapserver.opt
