@@ -2295,8 +2295,12 @@ ms-cmake:
 	set JAVA_HOME=$(JAVA_HOME)
 	set ORACLE_HOME=$(OCI_DIR)
 	set PYTHONPATH=$(BASE_DIR)\$(PYTHON_DIR)
-	if not exist build mkdir build
-	cd build
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+	if exist build rd /Q /S build
+!ENDIF
+	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python26.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib -DWITH_HARFBUZZ=0 -DWITH_FRIBIDI=0 "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1"
 	cd $(BASE_DIR)
 !ENDIF
@@ -2304,7 +2308,7 @@ ms-cmake:
 ms: ms-optfile ms-cmake
 	cd $(MS_PATH)
 !IFDEF MS_CMAKE_BUILD
-    cd build
+    cd $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_CLEAN
 !IFDEF MS_CMAKE_BUILD
@@ -2350,7 +2354,7 @@ ms: ms-optfile ms-cmake
 ms-csharp:
 !IFDEF MS_CSHARP
 !IFDEF MS_CMAKE_BUILD
-    cd $(MS_PATH)\build
+    cd $(MS_PATH)\$(CMAKE_BUILDDIR)
 !ELSE
 	cd $(MS_PATH)\mapscript\csharp
 !ENDIF
@@ -2395,7 +2399,7 @@ ms-csharp-test:
 ms-java: ms-optfile
 !IFDEF MS_JAVA
 !IFDEF MS_CMAKE_BUILD
-    cd $(MS_PATH)\build
+    cd $(MS_PATH)\$(CMAKE_BUILDDIR)
 !ELSE
 	cd $(MS_PATH)\mapscript\java
 !ENDIF
@@ -2443,7 +2447,7 @@ ms-python:
     SET MSSdk=1
     SET LIB=%LIB%;$(OUTPUT_DIR)\lib
 !IFDEF MS_CMAKE_BUILD
-    cd $(MS_PATH)\build
+    cd $(MS_PATH)\$(CMAKE_BUILDDIR)
 !ELSE
 	cd $(MS_PATH)\mapscript\python
 !ENDIF
@@ -2602,7 +2606,7 @@ ms-sde: ms-optfile
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
 !IFDEF MS_CMAKE_BUILD
-    cd build
+    cd $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_COPY
 !IFNDEF MS_CMAKE_BUILD
@@ -2639,7 +2643,7 @@ ms-oci: ms-optfile
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
 !IFDEF MS_CMAKE_BUILD
-    cd build
+    cd $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
@@ -2671,7 +2675,7 @@ ms-sql2008: ms-optfile
     if not exist $(OUTPUT_DIR)\bin\ms\plugins mkdir $(OUTPUT_DIR)\bin\ms\plugins
     cd $(MS_PATH)
 !IFDEF MS_CMAKE_BUILD
-    cd build
+    cd $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_CLEAN
 !IFNDEF MS_CMAKE_BUILD
