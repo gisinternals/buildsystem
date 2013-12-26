@@ -249,8 +249,8 @@
                                      Value="[WEBSITE_NAME]"
                                      Type="string"/>
                     </Component>
-                    <Component Id="libmap.dll" Guid="*">
-                        <File Id="libmap.dll" Name="libmap.dll" Source="$(var.TargetDir)\libmap.dll" Vital="yes"/>
+                    <Component Id="mapserver.dll" Guid="*">
+                        <File Id="mapserver.dll" Name="mapserver.dll" Source="$(var.TargetDir)\mapserver.dll" Vital="yes"/>
                     </Component>
                     <Component Id="cairo.dll" Guid="*">
                         <File Id="cairo.dll" Name="cairo.dll" Source="$(var.TargetDir)\cairo.dll" Vital="yes"/>
@@ -713,7 +713,7 @@
 
         <?ifdef gdal_dll?>
         <Feature Id="MainProgram" Level="1" Title="Core Components" Absent="disallow" Description="The core components of the package">
-            <ComponentRef Id="libmap.dll" />
+            <ComponentRef Id="mapserver.dll" />
             <ComponentRef Id="cairo.dll" />
             <ComponentRef Id="fribidi.dll" />
             <ComponentRef Id="libfcgi.dll" />

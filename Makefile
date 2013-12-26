@@ -30,6 +30,14 @@ WIN64=YES
 !ENDIF
 !ENDIF
 
+!IFNDEF OSGEO4W_DIR
+!IFDEF WIN64
+OSGEO4W_DIR = E:\OSGeo4W64
+!ELSE
+OSGEO4W_DIR = E:\OSGeo4W
+!ENDIF
+!ENDIF
+
 !IFDEF DEBUG
 MS_PROJECT_DIR=RelWithDebInfo
 !IFDEF WIN64
@@ -422,12 +430,12 @@ VLD_DIR = vld-source\vld
 
 !IFNDEF PYTHON_DIR
 !IFDEF WIN64
-PYTHON_DIR = Python26-AMD64
+PYTHON_DIR = Python27-AMD64
 !ELSE
-PYTHON_DIR = Python26
+PYTHON_DIR = Python27
 !ENDIF
 !IF $(MSVC_VER) == 1310
-PYTHON_DIR = Python26
+PYTHON_DIR = Python27
 !ENDIF
 !ENDIF
 
@@ -535,65 +543,51 @@ SETARGV = "$(VCDIR)\lib\setargv.obj"
 !ENDIF
 
 !IFNDEF FT_DIR
-!IF $(MSVC_VER) == 1400
-!IFDEF WIN64
 FT_DIR=freetype-2.4.11
-FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2005\x64
-FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
 FT_LIB=freetype2411.lib
+!IF $(MSVC_VER) == 1400
+FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
+!IFDEF WIN64
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2005\x64
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC8x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc8
 !ELSE
-FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\win32\vc2005
-FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
-FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC8
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc8
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
-!IFDEF WIN64
-FT_DIR=freetype-2.4.11
-FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2008\x64
 FT_SRCPATH=$(FT_DIR)\builds\win32\vc2008
-FT_LIB=freetype2411.lib
+!IFDEF WIN64
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2008\x64
+
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC9x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc9
 !ELSE
-FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2008
-FT_SRCPATH=$(FT_DIR)\builds\win32\vc2008
-FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC9
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc9
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1600
-!IFDEF WIN64
-FT_DIR=freetype-2.4.11
-FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2010\x64
 FT_SRCPATH=$(FT_DIR)\builds\win32\VC2010
-FT_LIB=freetype2411.lib
+!IFDEF WIN64
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2010\x64
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC10x64
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc10
 !ELSE
-FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2010
-FT_SRCPATH=$(FT_DIR)\builds\win32\VC2010
-FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC10
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc10
 !ENDIF
 !ELSE
-FT_DIR=freetype-2.4.11
 FT_LIBPATH=$(FT_DIR)\objs
 FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
-FT_LIB=freetype2411.lib
 ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC7
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc71
@@ -1429,27 +1423,23 @@ gdal-java-test:
 gdal-python-all:
 !IFNDEF NO_BUILD
 !IFDEF WIN64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26-AMD64
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26-AMD64
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64
 !ELSE
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python26
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27
 !ENDIF
 !ENDIF
 
@@ -2288,10 +2278,23 @@ ms-optfile:
 !ENDIF
     echo libjpeg.lib zdll.lib >> $(OUTPUT_DIR)\mapserver.opt
 	
+ms-osgeo:
+    cd $(MS_PATH)
+	set PYTHONPATH=$(OSGEO4W_DIR)\bin
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+	if exist build rd /Q /S build
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+	$(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OSGEO4W_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DWITH_HARFBUZZ=0 -DWITH_FRIBIDI=0 "-DWITH_THREAD_SAFETY=1"
+!ENDIF
+	cd $(BASE_DIR)
+	
 ms-cmake:
 !IFDEF MS_CMAKE_BUILD
     cd $(MS_PATH)
-	del CMakeCache.txt
 	set JAVA_HOME=$(JAVA_HOME)
 	set ORACLE_HOME=$(OCI_DIR)
 	set PYTHONPATH=$(BASE_DIR)\$(PYTHON_DIR)
@@ -2301,7 +2304,7 @@ ms-cmake:
 !ENDIF
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python26.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib -DWITH_HARFBUZZ=0 -DWITH_FRIBIDI=0 "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1"
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(OUTPUT_DIR)\lib\libsvg.lib" "-DSVGCAIRO_LIBRARY=$(OUTPUT_DIR)\lib\libsvg-cairo.lib" "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python27.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib -DWITH_HARFBUZZ=0 -DWITH_FRIBIDI=0 "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1"
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -3477,7 +3480,7 @@ pixman:
     -del /Q /S release
 !ENDIF
 !IFNDEF NO_BUILD
-    make -f Makefile.win32 CFG=release MMX=off SSE2=off
+    make -f Makefile.win32 CFG=release MMX=on SSE2=on SSSE3=off
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y $(BASE_DIR)\$(PIXMAN_DIR)\pixman\release\pixman-1.lib $(OUTPUT_DIR)\lib
