@@ -117,7 +117,7 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>%cmdname
 echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^</span^>^<br/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 )
 
-set nmakecmd=gdal-autotest GDAL_DIR=..\sdk\%compiler%\%gdal-dir%\gdal GDALTEST_DIR=..\sdk\%compiler%\%gdal-dir%\autotest
+set nmakecmd=op-disable GDAL_DIR=..\sdk\%compiler%\%gdal-dir%\gdal GDALTEST_DIR=..\sdk\%compiler%\%gdal-dir%\autotest
 set cmdname=GDAL autotest
 for /f "tokens=1-7 delims=:.,- " %%a in ("%date% %time%") do set id=%%a%%b%%c-%%d-%%e-%%f-%%g-%logid%
 echo %date% %time%: %cmdname% started ^&nbsp^<a href="http://www.gisinternals.com/sdk/build-output/%compiler%-%id%.txt"^>stdout^</a^>^&nbsp^<a href="http://www.gisinternals.com/sdk/build-output/%compiler%-%id%-err.txt"^>stderr^</a^>^&nbsp >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
