@@ -1260,6 +1260,7 @@ gdal-optfile:
     echo XERCES_INCLUDE=-I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\xercesc >> $(OUTPUT_DIR)\gdal.opt
     echo XERCES_LIB=$(OUTPUT_DIR)\lib\xerces-c_2.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(XERCES_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo ILI_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF
 !IFDEF GDAL_EXPAT
     echo EXPAT_DIR=$(BASE_DIR)\$(EXPAT_DIR) >> $(OUTPUT_DIR)\gdal.opt
@@ -1348,6 +1349,8 @@ gdal-build:
 	xcopy /Y ogr\*.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\mem\memdataset.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\raw\rawdataset.h $(OUTPUT_DIR)\include
+	xcopy /Y frmts\gtiff\libgeotiff\*.h $(OUTPUT_DIR)\include
+	xcopy /Y frmts\gtiff\libgeotiff\*.inc $(OUTPUT_DIR)\include
 	xcopy /Y frmts\vrt\*.h $(OUTPUT_DIR)\include
 	xcopy /Y ogr\ogrsf_frmts\*.h $(OUTPUT_DIR)\include
 	xcopy /Y gdal_i.lib $(OUTPUT_DIR)\lib
@@ -1690,7 +1693,7 @@ gdal-mrsid: gdal-optfile
 !ENDIF
 
 gdal-hdf4: gdal-optfile
-!IFDEF HDF5_DIR
+!IFDEF HDF4_DIR
     echo HDF4_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
     echo HDF4_DIR =	$(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install >> $(OUTPUT_DIR)\gdal.opt
     echo HDF4_LIB =	$(OUTPUT_DIR)\lib\hdfdll.lib $(OUTPUT_DIR)\lib\mfhdfdll.lib  >> $(OUTPUT_DIR)\gdal.opt
