@@ -1,6 +1,6 @@
 set ms_version=6-4
-set ms_rel=0
-set ms_rev=a098e546885dd7244ce6174ec11e6f0410879a41     
+set ms_rel=1
+set ms_rev=44ac0871f511e0678795b601cb5c69a52776e25f
 
 set gdal_major=1
 set gdal_minor=10
