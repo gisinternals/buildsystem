@@ -421,7 +421,7 @@ PGSQL_DIR = postgresql-9.1.2
 !ENDIF
 
 !IFNDEF POPPLER_DIR
-POPPLER_DIR = poppler-0.15.1
+POPPLER_DIR = poppler-0.24.5
 !ENDIF
 
 !IFNDEF VLD_DIR
@@ -1131,7 +1131,7 @@ freetype:
 !ENDIF
 
 geos:
-!IFDEF NETCDF_DIR
+!IFDEF GEOS_DIR
     cd $(BASE_DIR)\$(GEOS_DIR)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
@@ -1280,6 +1280,9 @@ gdal-optfile:
     echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
     echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(OUTPUT_DIR)\gdal.opt
     echo POPPLER_HAS_OPTCONTENT = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_0_20_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_0_23_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(OUTPUT_DIR)\gdal.opt
     echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
@@ -3614,6 +3617,37 @@ visual-leak-detector:
 !ENDIF
 
 poppler:
+!IFDEF POPPLER_DIR
+    cd $(BASE_DIR)\$(POPPLER_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" "-DENABLE_LIBOPENJPEG=OFF" "-DENABLE_RELOCATABLE=OFF" "-DTIFF_LIBRARY=$(OUTPUT_DIR)\lib\libtiff_i.lib" "-DBUILD_SHARED_LIBS=ON"
+!IFDEF WIN64	
+    devenv /rebuild Release poppler.sln /Project poppler /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release poppler.sln /Project poppler /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    cd $(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)
+	xcopy /Y Release\poppler.lib $(OUTPUT_DIR)\lib
+	if not exist $(OUTPUT_DIR)\include\poppler mkdir $(OUTPUT_DIR)\include\poppler
+	xcopy /Y poppler\poppler-config.h $(OUTPUT_DIR)\include\poppler
+	cd $(BASE_DIR)\$(POPPLER_DIR)
+    xcopy /Y /S poppler\*.h $(OUTPUT_DIR)\include\poppler
+    if not exist $(OUTPUT_DIR)\include\poppler\goo mkdir $(OUTPUT_DIR)\include\poppler\goo
+    xcopy /Y /S goo\*.h $(OUTPUT_DIR)\include\poppler\goo
+    if not exist $(OUTPUT_DIR)\include\poppler\splash mkdir $(OUTPUT_DIR)\include\poppler\splash
+    xcopy /Y /S splash\*.h $(OUTPUT_DIR)\include\poppler\splash
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+poppler2:
 !IFDEF POPPLER_DIR
 !IF $(MSVC_VER) == 1600
 !IFDEF WIN64
