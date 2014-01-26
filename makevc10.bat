@@ -145,7 +145,18 @@ set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat
 
+set ms-osgeo4w-ver=dev-%ms_osgeo4w_version%
+set pkg-version=gdal-mapserver
+
+cmd /C makeosgeo4w.bat
+
+set ms-osgeo4w-ver=dev-%ms_osgeo4w_version_dev%
+set ms-dir=mapserver
+
+cmd /C makeosgeo4w.bat
+
 set logid=%compiler%-sdk
+set ms-dir=mapserver-%ms_version%
 
 set nmakecmd=package-dev GDAL_DIR=..\sdk\%compiler%\%gdal-dir%\gdal MS_DIR=..\sdk\%compiler%\%ms-dir% INSTALL_DIR=C:\Inetpub\wwwroot\sdk\downloads
 set cmdname=Packaging-dev
@@ -177,8 +188,11 @@ set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%
 set MS_REVISION=%ms_rev%
 set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%
+set ms-osgeo4w-ver=%ms_osgeo4w_version_dev%
 
 cmd /C makepackage.bat
+
+cmd /C makeosgeo4w.bat
 
 :exit
 

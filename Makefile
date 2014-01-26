@@ -33,8 +33,10 @@ WIN64=YES
 !IFNDEF OSGEO4W_DIR
 !IFDEF WIN64
 OSGEO4W_DIR = E:\OSGeo4W64
+OSGEO4W_ARCH = x86
 !ELSE
 OSGEO4W_DIR = E:\OSGeo4W
+OSGEO4W_ARCH = x86_64
 !ENDIF
 !ENDIF
 
@@ -940,7 +942,7 @@ package-src:
     
 package-dev:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
-    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi
+    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.bz2
     7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) $(SWIG_DIR)\swig.exe $(SWIG_DIR)\Lib Makefile readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
     
@@ -2306,17 +2308,91 @@ ms-optfile:
     echo libjpeg.lib zdll.lib >> $(OUTPUT_DIR)\mapserver.opt
 	
 ms-osgeo:
+!IFDEF MS_CMAKE_BUILD
+    SET PATH=$(OSGEO4W_DIR)\apps\msys\bin;$(PATH)
     cd $(MS_PATH)
-	set PYTHONPATH=$(OSGEO4W_DIR)\bin
-!IFNDEF NO_CLEAN
-    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
-	if exist build rd /Q /S build
+	xcopy /Y cgiutil.h $(OSGEO4W_DIR)\include
+	xcopy /Y hittest.h $(OSGEO4W_DIR)\include
+	xcopy /Y dxfcolor.h $(OSGEO4W_DIR)\include
+	xcopy /Y map*.h $(OSGEO4W_DIR)\include
+    cd $(CMAKE_BUILDDIR)
+    xcopy /Y $(MS_PROJECT_DIR)\mapserver.dll $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\msplugin_mssql2008.dll $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\msplugin_oracle.dll $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\mapserv.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\msencrypt.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\legend.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\scalebar.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\shp2img.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\shptree.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\shptreevis.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\shptreetst.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\sortshp.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\tile4ms.exe $(OSGEO4W_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\mapserver.lib $(OSGEO4W_DIR)\lib
+	xcopy /Y $(MS_PROJECT_DIR)\msplugin_mssql2008.lib $(OSGEO4W_DIR)\lib
+	xcopy /Y $(MS_PROJECT_DIR)\msplugin_oracle.lib $(OSGEO4W_DIR)\lib
+	xcopy /Y mapserver-config.h $(OSGEO4W_DIR)\include
+	xcopy /Y mapserver-version.h $(OSGEO4W_DIR)\include
+	$(OSGEO4W_DIR)\bin\mapserv -v
+	cd $(OSGEO4W_DIR)
+	tar -cvf mapserver-$(MS_OSGEO4W_VER)-1.tar lib/mapserver.lib lib/msplugin_mssql2008.lib lib/msplugin_oracle.lib include/map*.h include/cgiutil.h include/hittest.h include/dxfcolor.h bin/mapserver.dll bin/msplugin_mssql2008.dll bin/msplugin_oracle.dll bin/mapserv.exe bin/msencrypt.exe bin/legend.exe bin/scalebar.exe bin/shp2img.exe bin/shptree.exe bin/shptreevis.exe bin/shptreetst.exe bin/sortshp.exe  bin/tile4ms.exe
+	bzip2 -f mapserver-$(MS_OSGEO4W_VER)-1.tar
+	xcopy /Y $(OSGEO4W_DIR)\mapserver-$(MS_OSGEO4W_VER)-1.tar.bz2 $(OUTPUT_DIR)\install
+	if exist $(OUTPUT_DIR)\install xcopy /Y $(OSGEO4W_DIR)\mapserver-$(MS_OSGEO4W_VER)-1.tar.bz2 $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+	cd $(BASE_DIR)
 !ENDIF
-!IFNDEF NO_BUILD
-    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
-	cd $(CMAKE_BUILDDIR)
-	$(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OSGEO4W_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DWITH_HARFBUZZ=0 -DWITH_FRIBIDI=0 "-DWITH_THREAD_SAFETY=1"
+
+ms-python-osgeo:
+!IFDEF MS_CMAKE_BUILD
+    SET PATH=$(OSGEO4W_DIR)\apps\msys\bin;$(PATH)
+    cd $(MS_PATH)
+	xcopy /Y $(OUTPUT_DIR)\bin\ms\python\mapscript.py $(OSGEO4W_DIR)\apps\Python27\Lib\site-packages
+	xcopy /Y $(OUTPUT_DIR)\bin\ms\python\_mapscript.pyd $(OSGEO4W_DIR)\apps\Python27\Lib\site-packages
+	xcopy /Y $(OUTPUT_DIR)\lib\ms-python\_mapscript.lib $(OSGEO4W_DIR)\apps\Python27\libs
+	cd $(OSGEO4W_DIR)
+	tar -cvf mapscript-python-$(MS_OSGEO4W_VER)-1.tar apps/Python27/Lib/site-packages/mapscript.py apps/Python27/Lib/site-packages/_mapscript.pyd apps/Python27/libs/_mapscript.lib
+	bzip2 -f mapscript-python-$(MS_OSGEO4W_VER)-1.tar
+	if exist $(OUTPUT_DIR)\install xcopy /Y $(OSGEO4W_DIR)\mapscript-python-$(MS_OSGEO4W_VER)-1.tar.bz2 $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+	cd $(BASE_DIR)
 !ENDIF
+
+ms-java-osgeo:
+!IFDEF MS_CMAKE_BUILD
+    SET PATH=$(OSGEO4W_DIR)\apps\msys\bin;$(PATH)
+    cd $(MS_PATH)
+	xcopy /Y $(OUTPUT_DIR)\bin\ms\java\mapscript.jar $(OSGEO4W_DIR)\lib
+	xcopy /Y $(OUTPUT_DIR)\bin\ms\java\javamapscript.dll $(OSGEO4W_DIR)\bin
+	if not exist $(OSGEO4W_DIR)\apps\mapserver mkdir $(OSGEO4W_DIR)\apps\mapserver
+	if not exist $(OSGEO4W_DIR)\apps\mapserver\java mkdir $(OSGEO4W_DIR)\apps\mapserver\java
+	xcopy /Y $(MS_PATH)\mapscript\java\examples\*.java $(OSGEO4W_DIR)\apps\mapserver\java
+	cd $(OSGEO4W_DIR)
+	tar -cvf mapscript-java-$(MS_OSGEO4W_VER)-1.tar apps/mapserver/java/*.java bin/javamapscript.dll lib/mapscript.jar
+	bzip2 -f mapscript-java-$(MS_OSGEO4W_VER)-1.tar
+	if exist $(OUTPUT_DIR)\install xcopy /Y $(OSGEO4W_DIR)\mapscript-java-$(MS_OSGEO4W_VER)-1.tar.bz2 $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+	cd $(BASE_DIR)
+!ENDIF
+
+fribidi-osgeo:
+    SET PATH=$(OSGEO4W_DIR)\apps\msys\bin;$(PATH)
+    xcopy /Y $(OUTPUT_DIR)\lib\fribidi.lib $(OSGEO4W_DIR)\lib
+	xcopy /Y $(OUTPUT_DIR)\bin\fribidi.dll $(OSGEO4W_DIR)\bin
+	xcopy /Y $(OUTPUT_DIR)\include\fribidi*.h $(OSGEO4W_DIR)\include
+	cd $(OSGEO4W_DIR)
+	tar -cvf $(FRIBIDI_DIR)-1.tar lib/fribidi.lib include/fribidi*.h bin/fribidi.dll
+	bzip2 -f $(FRIBIDI_DIR)-1.tar
+	if exist $(OUTPUT_DIR)\install xcopy /Y $(OSGEO4W_DIR)\$(FRIBIDI_DIR)-1.tar.bz2 $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+	cd $(BASE_DIR)
+	
+cairo-osgeo:
+    SET PATH=$(OSGEO4W_DIR)\apps\msys\bin;$(PATH)
+    xcopy /Y $(OUTPUT_DIR)\lib\cairo.lib $(OSGEO4W_DIR)\lib
+	xcopy /Y $(OUTPUT_DIR)\bin\cairo.dll $(OSGEO4W_DIR)\bin
+	xcopy /Y $(OUTPUT_DIR)\include\cairo*.h $(OSGEO4W_DIR)\include
+	cd $(OSGEO4W_DIR)
+	tar -cvf $(CAIRO_DIR)-1.tar lib/cairo.lib include/cairo*.h bin/cairo.dll
+	bzip2 -f $(CAIRO_DIR)-1.tar
+	if exist $(OUTPUT_DIR)\install xcopy /Y $(OSGEO4W_DIR)\$(CAIRO_DIR)-1.tar.bz2 $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 	cd $(BASE_DIR)
 	
 ms-cmake:
@@ -2354,6 +2430,7 @@ ms: ms-optfile ms-cmake
 	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shp2img /ProjectConfig $(MS_PROJECT_CONFIG)
 	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptree /ProjectConfig $(MS_PROJECT_CONFIG)
 	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptreevis /ProjectConfig $(MS_PROJECT_CONFIG)
+	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptreetst /ProjectConfig $(MS_PROJECT_CONFIG)
 	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project sortshp /ProjectConfig $(MS_PROJECT_CONFIG)
 	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project legend /ProjectConfig $(MS_PROJECT_CONFIG)
 	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project scalebar /ProjectConfig $(MS_PROJECT_CONFIG)
@@ -2504,13 +2581,16 @@ ms-python:
 !ENDIF
 !IFNDEF NO_COPY
     if not exist $(OUTPUT_DIR)\bin\ms\python mkdir $(OUTPUT_DIR)\bin\ms\python
+	if not exist $(OUTPUT_DIR)\lib\ms-python mkdir $(OUTPUT_DIR)\lib\ms-python
 !IFDEF MS_CMAKE_BUILD
     xcopy /Y mapscript\python\mapscript.py $(OUTPUT_DIR)\bin\ms\python
 	xcopy /Y mapscript\python\$(MS_PROJECT_DIR)\*.pyd $(OUTPUT_DIR)\bin\ms\python
+	xcopy /Y mapscript\python\$(MS_PROJECT_DIR)\*.lib $(OUTPUT_DIR)\lib\ms-python
 !ELSE
     cd ..\$(PYTHON_OUTDIR)
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\ms\python
 	xcopy /Y *.pyd $(OUTPUT_DIR)\bin\ms\python
+	xcopy /Y *.lib $(OUTPUT_DIR)\lib\ms-python
 !ENDIF
 !ENDIF
 	cd $(BASE_DIR)
