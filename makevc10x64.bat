@@ -121,6 +121,7 @@ call setversions.bat
 
 if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
+if "%1" == "osgeo4w" @goto osgeo4w
 
 set logid=%compiler%-dev
 set gdal-dir=gdal-trunk
@@ -142,15 +143,7 @@ set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat
 
-set ms-osgeo4w-ver=dev-%ms_osgeo4w_version%
-set pkg-version=gdal-mapserver
-
-cmd /C makeosgeo4w.bat
-
-set ms-osgeo4w-ver=dev-%ms_osgeo4w_version_dev%
-set ms-dir=mapserver
-
-cmd /C makeosgeo4w.bat
+:dev
 
 set logid=%compiler%-sdk
 set ms-dir=mapserver-%ms_version%
@@ -172,6 +165,24 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^
 echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished at %date% %time%^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
 
 echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
+
+:osgeo4w
+if exist ms-osgeo4w-x64-build.txt set /p buildnumber=<ms-osgeo4w-x64-build.txt
+if not exist ms-osgeo4w-x64-build.txt set buildnumber=1
+set /A buildnumber+=1
+echo %buildnumber% >ms-osgeo4w-x64-build.txt
+
+set ms-osgeo4w-ver=%ms_osgeo4w_version%
+set ms-osgeo4w-pkg=stable-dev
+set pkg-version=gdal-mapserver
+
+cmd /C makeosgeo4w.bat
+
+set ms-osgeo4w-ver=%ms_osgeo4w_version_dev%
+set ms-osgeo4w-pkg=dev
+set ms-dir=mapserver
+
+cmd /C makeosgeo4w.bat
 
 @goto exit
 
