@@ -2343,7 +2343,7 @@ ms-osgeo:
 	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)
 	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)
 	xcopy /Y $(OSGEO4W_DIR)\mapserver-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)
-	echo rsync -avz -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapserver-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/ >$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
+	echo rsync -avz -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapserver-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
 	
 	cd $(BASE_DIR)
 !ENDIF
@@ -2360,7 +2360,7 @@ ms-python-osgeo:
 	bzip2 -f mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
 	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-python-$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-python-$(MS_OSGEO4W_PKG)
 	xcopy /Y $(OSGEO4W_DIR)\mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2  $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-python-$(MS_OSGEO4W_PKG)
-	echo rsync -avz -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
+	echo rsync -avz -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -2378,10 +2378,18 @@ ms-java-osgeo:
 	bzip2 -f mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
 	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-java-$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-java-$(MS_OSGEO4W_PKG)
 	xcopy /Y $(OSGEO4W_DIR)\mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2  $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-java-$(MS_OSGEO4W_PKG)
-	echo rsync -avz -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
+	echo rsync -avz -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
 	
 	cd $(BASE_DIR)
 !ENDIF
+
+upload-osgeo:
+	cd $(RSYNC_DIR)
+	upload$(OSGEO4W_ARCH).bat
+	SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    -if exist $(OUTPUT_DIR)\bin\curl\curl.exe $(OUTPUT_DIR)\bin\curl\curl.exe "http://upload.osgeo.org/cgi-bin/osgeo4w-regen.sh"
+	-if exist $(OUTPUT_DIR)\bin\curl\curl.exe $(OUTPUT_DIR)\bin\curl\curl.exe "http://upload.osgeo.org/cgi-bin/osgeo4w-promote.sh"
+	cd $(BASE_DIR)
 
 fribidi-osgeo:
     SET PATH=$(OSGEO4W_DIR)\apps\msys\bin;$(PATH)
