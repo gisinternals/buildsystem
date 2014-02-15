@@ -68,6 +68,10 @@ MS_REVISION=HEAD
 GDAL_REVISION=HEAD
 !ENDIF
 
+!IFNDEF MAPMANAGER_REVISION
+MAPMANAGER_REVISION=HEAD
+!ENDIF
+
 !IFNDEF SPECIFY_FEATURES
 GDAL_GEOS = YES
 GDAL_POSTGIS = YES
@@ -124,6 +128,10 @@ BASE_DIR = $(MAKEDIR)
 
 !IFNDEF INSTALL_DIR
 INSTALL_DIR = C:\Inetpub\wwwroot\sdk
+!ENDIF
+
+!IFNDEF MAPMANAGER_DIR
+MAPMANAGER_DIR = MapManager
 !ENDIF
 
 !IFNDEF CMAKE_DIR
@@ -2338,12 +2346,12 @@ ms-osgeo:
 	xcopy /Y mapserver-version.h $(OSGEO4W_DIR)\include
 	$(OSGEO4W_DIR)\bin\mapserv -v
 	cd $(OSGEO4W_DIR)
-	tar -cvf mapserver-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar lib/mapserver.lib lib/msplugin_mssql2008.lib lib/msplugin_oracle.lib include/map*.h include/cgiutil.h include/hittest.h include/dxfcolor.h bin/mapserver.dll bin/msplugin_mssql2008.dll bin/msplugin_oracle.dll bin/mapserv.exe bin/msencrypt.exe bin/legend.exe bin/scalebar.exe bin/shp2img.exe bin/shptree.exe bin/shptreevis.exe bin/shptreetst.exe bin/sortshp.exe  bin/tile4ms.exe
-	bzip2 -f mapserver-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
+	tar -cvf mapserver$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar lib/mapserver.lib lib/msplugin_mssql2008.lib lib/msplugin_oracle.lib include/map*.h include/cgiutil.h include/hittest.h include/dxfcolor.h bin/mapserver.dll bin/msplugin_mssql2008.dll bin/msplugin_oracle.dll bin/mapserv.exe bin/msencrypt.exe bin/legend.exe bin/scalebar.exe bin/shp2img.exe bin/shptree.exe bin/shptreevis.exe bin/shptreetst.exe bin/sortshp.exe  bin/tile4ms.exe
+	bzip2 -f mapserver$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
 	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)
-	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)
-	xcopy /Y $(OSGEO4W_DIR)\mapserver-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)
-	echo rsync -avz --chmod 744 -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapserver-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
+	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)
+	xcopy /Y $(OSGEO4W_DIR)\mapserver$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)
+	echo rsync -avz --chmod 744 -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver$(MS_OSGEO4W_PKG)/mapserver$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
 	
 	cd $(BASE_DIR)
 !ENDIF
@@ -2356,11 +2364,11 @@ ms-python-osgeo:
 	xcopy /Y $(OUTPUT_DIR)\bin\ms\python\_mapscript.pyd $(OSGEO4W_DIR)\apps\Python27\Lib\site-packages
 	xcopy /Y $(OUTPUT_DIR)\lib\ms-python\_mapscript.lib $(OSGEO4W_DIR)\apps\Python27\libs
 	cd $(OSGEO4W_DIR)
-	tar -cvf mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar apps/Python27/Lib/site-packages/mapscript.py apps/Python27/Lib/site-packages/_mapscript.pyd apps/Python27/libs/_mapscript.lib
-	bzip2 -f mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
-	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-python-$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-python-$(MS_OSGEO4W_PKG)
-	xcopy /Y $(OSGEO4W_DIR)\mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2  $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-python-$(MS_OSGEO4W_PKG)
-	echo rsync -avz --chmod 744 -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/mapscript-python-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
+	tar -cvf mapscript-python$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar apps/Python27/Lib/site-packages/mapscript.py apps/Python27/Lib/site-packages/_mapscript.pyd apps/Python27/libs/_mapscript.lib
+	bzip2 -f mapscript-python$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
+	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)\mapscript-python$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)\mapscript-python$(MS_OSGEO4W_PKG)
+	xcopy /Y $(OSGEO4W_DIR)\mapscript-python$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2  $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)\mapscript-python$(MS_OSGEO4W_PKG)
+	echo rsync -avz --chmod 744 -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver$(MS_OSGEO4W_PKG)/mapscript-python$(MS_OSGEO4W_PKG)/mapscript-python$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver$(MS_OSGEO4W_PKG)/mapscript-python$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -2374,11 +2382,11 @@ ms-java-osgeo:
 	if not exist $(OSGEO4W_DIR)\apps\mapserver\java mkdir $(OSGEO4W_DIR)\apps\mapserver\java
 	xcopy /Y $(MS_PATH)\mapscript\java\examples\*.java $(OSGEO4W_DIR)\apps\mapserver\java
 	cd $(OSGEO4W_DIR)
-	tar -cvf mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar apps/mapserver/java/*.java bin/javamapscript.dll lib/mapscript.jar
-	bzip2 -f mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
-	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-java-$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-java-$(MS_OSGEO4W_PKG)
-	xcopy /Y $(OSGEO4W_DIR)\mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2  $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver-$(MS_OSGEO4W_PKG)\mapscript-java-$(MS_OSGEO4W_PKG)
-	echo rsync -avz --chmod 744 -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver-$(MS_OSGEO4W_PKG)/mapscript-java-$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
+	tar -cvf mapscript-java$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar apps/mapserver/java/*.java bin/javamapscript.dll lib/mapscript.jar
+	bzip2 -f mapscript-java$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar
+	if not exist $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)\mapscript-java$(MS_OSGEO4W_PKG) mkdir $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)\mapscript-java$(MS_OSGEO4W_PKG)
+	xcopy /Y $(OSGEO4W_DIR)\mapscript-java$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2  $(RSYNC_DIR)\$(OSGEO4W_ARCH)\mapserver$(MS_OSGEO4W_PKG)\mapscript-java$(MS_OSGEO4W_PKG)
+	echo rsync -avz --chmod 744 -e "./ssh -i ./id_rsa" ./$(OSGEO4W_ARCH)/mapserver$(MS_OSGEO4W_PKG)/mapscript-java$(MS_OSGEO4W_PKG)/mapscript-java$(MS_OSGEO4W_PKG)-$(MS_OSGEO4W_VER)-$(MS_OSGEO4W_BUILD).tar.bz2 tamas@upload.osgeo.org:/osgeo/download/osgeo4w/$(OSGEO4W_ARCH)/release/mapserver/mapserver$(MS_OSGEO4W_PKG)/mapscript-java$(MS_OSGEO4W_PKG)/ >>$(RSYNC_DIR)\upload$(OSGEO4W_ARCH).bat
 	
 	cd $(BASE_DIR)
 !ENDIF
@@ -3844,6 +3852,37 @@ msvcr:
 !ELSEIF $(MSVC_VER) == 1310
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcr71.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcp71.dll" $(OUTPUT_DIR)\bin
+!ENDIF
+
+mapmanager-build:
+!IF $(MSVC_VER) >= 1600
+	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
+!IFNDEF NO_BUILD
+	devenv /rebuild Release MapManager.sln /Project MapManager
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+mapmanager-update:
+!IF $(MSVC_VER) >= 1600
+	set TERM=msys
+	set "PATH=E:\Git\bin;%PATH%"
+	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
+	git pull origin
+	git reset --hard $(MAPMANAGER_REVISION)
+	cd $(BASE_DIR)
+!ENDIF
+
+mapmanager-installer:
+!IF $(MSVC_VER) >= 1600
+	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
+!IFNDEF NO_BUILD
+	devenv /rebuild Release MapManager.sln /Project Installer
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y Installer\bin\Release\MapManager.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+!ENDIF
+	cd $(BASE_DIR)
 !ENDIF
 
 op-disable:
