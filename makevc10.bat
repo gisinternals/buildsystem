@@ -180,7 +180,7 @@ echo @echo off >E:\builds\rsync\uploadx86.bat
 
 set ms-osgeo4w-ver=%ms_osgeo4w_version%
 set ms-osgeo4w-pkg=-stable-dev
-set pkg-version=gdal-mapserver
+set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
 
 cmd /C makeosgeo4w.bat
 
