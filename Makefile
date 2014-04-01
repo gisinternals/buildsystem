@@ -387,11 +387,11 @@ SWIG_DIR = SWIG-1.3.39
 !ENDIF
 
 !IFNDEF CURL_DIR
-CURL_DIR = curl-7.21.2
+CURL_DIR = curl-7.36.0
 !ENDIF
 
 !IFNDEF OPENSSL_DIR
-OPENSSL_DIR = openssl-1.0.0a
+OPENSSL_DIR = openssl-1.0.1f
 !ENDIF
 
 !IFNDEF PDF_DIR
@@ -2091,7 +2091,62 @@ curl:
 !ENDIF
 !ENDIF
 !IFNDEF NO_COPY
-    xcopy /Y lib\libcurl_imp.lib $(OUTPUT_DIR)\lib
+    rem xcopy /Y lib\libcurl_imp.lib $(OUTPUT_DIR)\lib
+    rem if exist lib\libcurl.dll xcopy /Y lib\libcurl.dll $(OUTPUT_DIR)\bin
+    rem if exist lib\Release\libcurl.dll xcopy /Y lib\Release\libcurl.dll $(OUTPUT_DIR)\bin
+    rem if not exist $(OUTPUT_DIR)\include\curl mkdir $(OUTPUT_DIR)\include\curl
+    rem xcopy /Y /S include\*.h $(OUTPUT_DIR)\include\curl
+    rem if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
+    rem if exist src\curl.exe xcopy /Y src\curl.exe $(OUTPUT_DIR)\bin\curl
+    rem if exist src\Release\curl.exe xcopy /Y src\Release\curl.exe $(OUTPUT_DIR)\bin\curl
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+curl2:
+!IFDEF CURL_DIR
+    cd $(BASE_DIR)\$(CURL_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DHAVE_INET_PTON=0
+!IFDEF WIN64	
+    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y lib\Release\libcurl_imp.lib $(OUTPUT_DIR)\lib
+    if exist lib\libcurl.dll xcopy /Y lib\libcurl.dll $(OUTPUT_DIR)\bin
+    if exist lib\Release\libcurl.dll xcopy /Y lib\Release\libcurl.dll $(OUTPUT_DIR)\bin
+    if not exist $(OUTPUT_DIR)\include\curl mkdir $(OUTPUT_DIR)\include\curl
+    xcopy /Y /S ..\include\curl\*.h $(OUTPUT_DIR)\include\curl
+    if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
+    if exist src\curl.exe xcopy /Y src\curl.exe $(OUTPUT_DIR)\bin\curl
+    if exist src\Release\curl.exe xcopy /Y src\Release\curl.exe $(OUTPUT_DIR)\bin\curl
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+curl3:
+!IFDEF CURL_DIR
+!IFNDEF NO_BUILD
+    cd $(BASE_DIR)\$(CURL_DIR)\winbuild
+!IFNDEF NO_CLEAN
+    rem nmake /f Makefile.vc clean MODE=dll
+!ENDIF
+!IFDEF WIN64	
+    nmake /f Makefile.vc "MACHINE=x64" "MODE=dll" "VC=10" "WITH_SSL=dll" "WITH_ZLIB=dll" WITH_DEVEL=$(OUTPUT_DIR)
+!ELSE
+    nmake /f Makefile.vc "MACHINE=x86" "MODE=dll" "VC=10" "WITH_SSL=dll" "WITH_ZLIB=dll" WITH_DEVEL=$(OUTPUT_DIR)
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y lib\libcurl_imp.lib $(OUTPUT_DIR)\lib
     if exist lib\libcurl.dll xcopy /Y lib\libcurl.dll $(OUTPUT_DIR)\bin
     if exist lib\Release\libcurl.dll xcopy /Y lib\Release\libcurl.dll $(OUTPUT_DIR)\bin
     if not exist $(OUTPUT_DIR)\include\curl mkdir $(OUTPUT_DIR)\include\curl
