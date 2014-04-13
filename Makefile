@@ -391,7 +391,7 @@ CURL_DIR = curl-7.36.0
 !ENDIF
 
 !IFNDEF OPENSSL_DIR
-OPENSSL_DIR = openssl-1.0.1f
+OPENSSL_DIR = openssl-1.0.1g
 !ENDIF
 
 !IFNDEF PDF_DIR
@@ -2046,7 +2046,7 @@ get_ca_bundle:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
     -if exist $(OUTPUT_DIR)\bin\curl\curl.exe $(OUTPUT_DIR)\bin\curl\curl.exe -o $(OUTPUT_DIR)\bin\curl\curl-ca-bundle.crt "http://curl.haxx.se/ca/cacert.pem"
 
-curl:
+curl2:
 !IFDEF CURL_DIR
 !IF $(MSVC_VER) == 1600
 !IFDEF WIN64
@@ -2103,7 +2103,7 @@ curl:
     cd $(BASE_DIR)
 !ENDIF
 
-curl2:
+curl:
 !IFDEF CURL_DIR
     cd $(BASE_DIR)\$(CURL_DIR)
 !IFNDEF NO_CLEAN
