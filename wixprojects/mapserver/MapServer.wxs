@@ -115,6 +115,24 @@
                         <Component Id="MSLicense.rtf" Guid="*">
                             <File Id="MSLicense.rtf" Name="MSLicense.rtf" Source="$(var.BaseDir)\wixprojects\mapserver\MSLicense.rtf" />
                         </Component>
+						<Component Id="GDALLicense.rtf" Guid="*">
+                            <File Id="GDALLicense.rtf" Name="GDALLicense.rtf" Source="$(var.BaseDir)\GDALLicense.rtf" />
+                        </Component>
+                        <Component Id="SZIPLicense.rtf" Guid="*">
+                            <File Id="SZIPLicense.rtf" Name="SZIPLicense.rtf" Source="$(var.BaseDir)\SZIPLicense.rtf" />
+                        </Component>
+                        <Component Id="HDF4License.rtf" Guid="*">
+                            <File Id="HDF4License.rtf" Name="HDF4License.rtf" Source="$(var.BaseDir)\HDF4License.rtf" />
+                        </Component>
+                        <Component Id="HDF5License.rtf" Guid="*">
+                            <File Id="HDF5License.rtf" Name="HDF5License.rtf" Source="$(var.BaseDir)\HDF5License.rtf" />
+                        </Component>
+                        <Component Id="NetCDFLicense.rtf" Guid="*">
+                            <File Id="NetCDFLicense.rtf" Name="NetCDFLicense.rtf" Source="$(var.BaseDir)\NetCDFLicense.rtf" />
+                        </Component>
+                        <Component Id="FITSLicense.rtf" Guid="*">
+                            <File Id="FITSLicense.rtf" Name="FITSLicense.rtf" Source="$(var.BaseDir)\FITSLicense.rtf" />
+                        </Component>
                         <?endif?>
                         <?ifdef msplugin_oracle?>
                         <Component Id="OCILicense.rtf" Guid="*">
@@ -135,6 +153,12 @@
                         </Component>
                         <Component Id="gdal_HDF5Image.dll" Guid="*">
                             <File Id="gdal_HDF5Image.dll" Name="gdal_HDF5Image.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_HDF5Image.dll" />
+                        </Component>
+						<Component Id="gdal_HDF4.dll" Guid="*">
+                            <File Id="gdal_HDF4.dll" Name="gdal_HDF4.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_HDF4.dll" />
+                        </Component>
+                        <Component Id="gdal_HDF4Image.dll" Guid="*">
+                            <File Id="gdal_HDF4Image.dll" Name="gdal_HDF4Image.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_HDF4Image.dll" />
                         </Component>
                         <Component Id="gdal_BAG.dll" Guid="*">
                             <File Id="gdal_BAG.dll" Name="gdal_BAG.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_BAG.dll" />
@@ -297,8 +321,26 @@
                     <Component Id="geos_c.dll" Guid="*">
                         <File Id="geos_c.dll" Name="geos_c.dll" Source="$(var.TargetDir)\geos_c.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="hdf5dll.dll" Guid="*">
-                        <File Id="hdf5dll.dll" Name="hdf5dll.dll" Source="$(var.TargetDir)\hdf5dll.dll" Vital="yes"/>
+					<Component Id="geos.dll" Guid="*">
+                        <File Id="geos.dll" Name="geos.dll" Source="$(var.TargetDir)\geos.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="hdf5.dll" Guid="*">
+                        <File Id="hdf5.dll" Name="hdf5.dll" Source="$(var.TargetDir)\hdf5.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="hdf5_hl.dll" Guid="*">
+                        <File Id="hdf5_hl.dll" Name="hdf5_hl.dll" Source="$(var.TargetDir)\hdf5_hl.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="hdfdll.dll" Guid="*">
+                        <File Id="hdfdll.dll" Name="hdfdll.dll" Source="$(var.TargetDir)\hdfdll.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="mfhdfdll.dll" Guid="*">
+                        <File Id="mfhdfdll.dll" Name="mfhdfdll.dll" Source="$(var.TargetDir)\mfhdfdll.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="xdrdll.dll" Guid="*">
+                        <File Id="xdrdll.dll" Name="xdrdll.dll" Source="$(var.TargetDir)\xdrdll.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="szip.dll" Guid="*">
+                        <File Id="szip.dll" Name="szip.dll" Source="$(var.TargetDir)\szip.dll" Vital="yes"/>
                     </Component>
                     <Component Id="iconv.dll" Guid="*">
                         <File Id="iconv.dll" Name="iconv.dll" Source="$(var.TargetDir)\iconv.dll" Vital="yes"/>
@@ -334,6 +376,9 @@
                     </Component>
                     <Component Id="openjpeg.dll" Guid="*">
                         <File Id="openjpeg.dll" Name="openjpeg.dll" Source="$(var.TargetDir)\openjpeg.dll" Vital="yes"/>
+                    </Component>
+					<Component Id="openjp2.dll" Guid="*">
+                        <File Id="openjp2.dll" Name="openjp2.dll" Source="$(var.TargetDir)\openjp2.dll" Vital="yes"/>
                     </Component>
                     <Component Id="pdflib.dll" Guid="*">
                         <File Id="pdflib.dll" Name="pdflib.dll" Source="$(var.TargetDir)\pdflib.dll" Vital="yes"/>
@@ -724,6 +769,7 @@
             <ComponentRef Id="msvcp71.dll" />
             <?endif?>
             <ComponentRef Id="geos_c.dll" />
+			<ComponentRef Id="geos.dll" />
             <ComponentRef Id="iconv.dll" />
             <ComponentRef Id="libcurl.dll" />
             <ComponentRef Id="curl_ca_bundle.crt" />
@@ -739,9 +785,11 @@
             <ComponentRef Id="spatialite.dll" />
             <ComponentRef Id="xerces_c_2_8.dll" />
             <ComponentRef Id="openjpeg.dll" />
+			<ComponentRef Id="openjp2.dll" />
             <ComponentRef Id="zlib1.dll" />
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="MSLicense.rtf" />
+			<ComponentRef Id="GDALLicense.rtf" />
             <ComponentRef Id="epsg" />
             <ComponentRef Id="world" />
             <ComponentRef Id="WO" />
@@ -858,20 +906,41 @@
             </Feature>
         </Feature>
         <Feature Id="GDALPlugins" Level="1" Title="GDAL Plugins" Display="expand" Description="GDAL plugin library files">
-            <Feature Id="NetCDF" Level="1" Title="NetCDF" Description="Network Common Data Form (NetCDF) rasters">
+            <Feature Id="NetCDF" Level="1" Title="NetCDF" Description="Network Common Data Form (NetCDF) rasters (for the custom licensing terms please review NetCDFLicense.rtf and SZIPLicense.rtf installed in the /license folder)">
                 <ComponentRef Id="gdal_netCDF.dll" />
                 <ComponentRef Id="gdal_GMT.dll" />
                 <ComponentRef Id="netcdf.dll" />
+                <ComponentRef Id="NetCDFLicense.rtf" />
+                <ComponentRef Id="hdf5.dll" />
+                <ComponentRef Id="hdf5_hl.dll" />
+                <ComponentRef Id="HDF5License.rtf" />
+                <ComponentRef Id="SZIPLicense.rtf" />
+                <ComponentRef Id="szip.dll" />
             </Feature>
-            <Feature Id="HDF5" Level="1" Title="HDF5" Description="Hierarchical Data Format Release 5 (HDF5) rasters">
+			<Feature Id="HDF4" Level="1" Title="HDF4" Description="Hierarchical Data Format Release 4 (HDF4) rasters (for the custom licensing terms please review HDF4License.rtf and SZIPLicense.rtf installed in the /license folder)">
+                <ComponentRef Id="gdal_HDF4.dll" />
+                <ComponentRef Id="gdal_HDF4Image.dll" />
+                <ComponentRef Id="hdfdll.dll" />
+                <ComponentRef Id="mfhdfdll.dll" />
+                <ComponentRef Id="xdrdll.dll" />
+                <ComponentRef Id="HDF4License.rtf" />
+                <ComponentRef Id="SZIPLicense.rtf" />
+                <ComponentRef Id="szip.dll" />
+            </Feature>
+            <Feature Id="HDF5" Level="1" Title="HDF5" Description="Hierarchical Data Format Release 5 (HDF5) rasters (for the custom licensing terms please review HDF5License.rtf and SZIPLicense.rtf installed in the /license folder)">
                 <ComponentRef Id="gdal_HDF5.dll" />
                 <ComponentRef Id="gdal_BAG.dll" />
                 <ComponentRef Id="gdal_HDF5Image.dll" />
-                <ComponentRef Id="hdf5dll.dll" />
+                <ComponentRef Id="hdf5.dll" />
+                <ComponentRef Id="hdf5_hl.dll" />
+                <ComponentRef Id="HDF5License.rtf" />
+                <ComponentRef Id="SZIPLicense.rtf" />
+                <ComponentRef Id="szip.dll" />
             </Feature>
-            <Feature Id="FITS" Level="1" Title="FITS" Description="Flexible Image Transport System (FITS) rasters">
+            <Feature Id="FITS" Level="1" Title="FITS" Description="Flexible Image Transport System (FITS) rasters (for the custom licensing terms please review FITSLicense.rtf installed in the /license folder)">
                 <ComponentRef Id="gdal_FITS.dll" />
                 <ComponentRef Id="cfitsio.dll" />
+                <ComponentRef Id="FITSLicense.rtf" />
             </Feature>
 
         </Feature>
