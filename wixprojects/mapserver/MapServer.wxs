@@ -570,6 +570,39 @@
                             <File Id="gdal.jar" Name="gdal.jar" Source="$(var.TargetDir)\gdal\java\gdal.jar" Vital="yes"/>
                         </Component>
                     </Directory>
+					<Directory Id="imgDir" Name="img">
+                        <Component Id="blank.gif" Guid="*">
+                            <File Id="blank.gif" Name="blank.gif" Source="$(var.BaseDir)\wixprojects\mapserver\blank.gif" Vital="yes"/>
+                        </Component>
+						<Component Id="east-mini.png" Guid="*">
+                            <File Id="east-mini.png" Name="east-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\east-mini.png" Vital="yes"/>
+                        </Component>
+						<Component Id="west-mini.png" Guid="*">
+                            <File Id="west-mini.png" Name="west-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\west-mini.png" Vital="yes"/>
+                        </Component>
+						<Component Id="north-mini.png" Guid="*">
+                            <File Id="north-mini.png" Name="north-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\north-mini.png" Vital="yes"/>
+                        </Component>
+						<Component Id="south-mini.png" Guid="*">
+                            <File Id="south-mini.png" Name="south-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\south-mini.png" Vital="yes"/>
+                        </Component>
+						<Component Id="zoom-minus-mini.png" Guid="*">
+                            <File Id="zoom-minus-mini.png" Name="zoom-minus-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\zoom-minus-mini.png" Vital="yes"/>
+                        </Component>
+						<Component Id="zoom-plus-mini.png" Guid="*">
+                            <File Id="zoom-plus-mini.png" Name="zoom-plus-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\zoom-plus-mini.png" Vital="yes"/>
+                        </Component>
+						<Component Id="zoom-world-mini.png" Guid="*">
+                            <File Id="zoom-world-mini.png" Name="zoom-world-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\zoom-world-mini.png" Vital="yes"/>
+                        </Component>
+                    </Directory>
+					<Directory Id="themeDir" Name="theme">
+						<Directory Id="defaultDir" Name="default">
+							<Component Id="style.css" Guid="*">
+								<File Id="style.css" Name="style.css" Source="$(var.BaseDir)\wixprojects\mapserver\theme\default\style.css" Vital="yes"/>
+							</Component>
+						</Directory>
+					</Directory>
                     <Directory Id="gdaldataDir" Name="gdal-data">
                         <Component Id="ecw_cs.wkt" Guid="*">
                             <File Id="ecw_cs.wkt" Name="ecw_cs.wkt" Source="$(var.TargetDir)\gdal-data\ecw_cs.wkt" Vital="yes"/>
@@ -854,6 +887,16 @@
             <ComponentRef Id="trailer.dxf" />
             <ComponentRef Id="header.dxf" />
             <ComponentRef Id="MSShell.bat" />
+			
+			<ComponentRef Id="blank.gif" />
+            <ComponentRef Id="east-mini.png" />
+            <ComponentRef Id="west-mini.png" />
+            <ComponentRef Id="north-mini.png" />
+            <ComponentRef Id="south-mini.png" />
+            <ComponentRef Id="zoom-minus-mini.png" />
+            <ComponentRef Id="zoom-plus-mini.png" />
+            <ComponentRef Id="zoom-world-mini.png" />
+            <ComponentRef Id="style.css" />
         </Feature>
       
         <Feature Id="MSRegIIS" Level="1" Title="IIS Registration" Absent="disallow" Description="Register MapServer in IIS">
