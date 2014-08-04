@@ -387,11 +387,11 @@ SWIG_DIR = SWIG-1.3.39
 !ENDIF
 
 !IFNDEF CURL_DIR
-CURL_DIR = curl-7.36.0
+CURL_DIR = curl-7.37.1
 !ENDIF
 
 !IFNDEF OPENSSL_DIR
-OPENSSL_DIR = openssl-1.0.1g
+OPENSSL_DIR = openssl-1.0.1h
 !ENDIF
 
 !IFNDEF PDF_DIR
@@ -2124,7 +2124,7 @@ curl:
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DHAVE_INET_PTON=0
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DHAVE_INET_PTON=0 -DCURL_DISABLE_LDAPS=OFF -DCURL_LDAP_WIN=OFF
 !IFDEF WIN64	
     devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|x64
 !ELSE
@@ -2487,6 +2487,57 @@ cairo-osgeo:
 	bzip2 -f $(CAIRO_DIR)-1.tar
 	if exist $(OUTPUT_DIR)\install xcopy /Y $(OSGEO4W_DIR)\$(CAIRO_DIR)-1.tar.bz2 $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 	cd $(BASE_DIR)
+	
+curl:
+!IFDEF CURL_DIR
+    cd $(BASE_DIR)\$(CURL_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DHAVE_INET_PTON=0
+!IFDEF WIN64	
+    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y lib\Release\libcurl_imp.lib $(OUTPUT_DIR)\lib
+    if exist lib\libcurl.dll xcopy /Y lib\libcurl.dll $(OUTPUT_DIR)\bin
+    if exist lib\Release\libcurl.dll xcopy /Y lib\Release\libcurl.dll $(OUTPUT_DIR)\bin
+    if not exist $(OUTPUT_DIR)\include\curl mkdir $(OUTPUT_DIR)\include\curl
+    xcopy /Y /S ..\include\curl\*.h $(OUTPUT_DIR)\include\curl
+    if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
+    if exist src\curl.exe xcopy /Y src\curl.exe $(OUTPUT_DIR)\bin\curl
+    if exist src\Release\curl.exe xcopy /Y src\Release\curl.exe $(OUTPUT_DIR)\bin\curl
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+mapcache-build:
+!IFDEF MAPCACHE_DIR
+    cd $(BASE_DIR)\$(MAPCACHE_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=release-$(COMPILER_VER)" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib"
+!IFDEF WIN64	
+    devenv /rebuild Release mapcache.sln /Project mapcache /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release mapcache.sln /Project mapcache /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.lib $(OUTPUT_DIR)\lib
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
 	
 ms-cmake:
 !IFDEF MS_CMAKE_BUILD
