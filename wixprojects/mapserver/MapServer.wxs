@@ -572,28 +572,28 @@
                     </Directory>
 					<Directory Id="imgDir" Name="img">
                         <Component Id="blank.gif" Guid="*">
-                            <File Id="blank.gif" Name="blank.gif" Source="$(var.BaseDir)\wixprojects\mapserver\blank.gif" Vital="yes"/>
+                            <File Id="blank.gif" Name="blank.gif" Source="$(var.BaseDir)\wixprojects\mapserver\img\blank.gif" Vital="yes"/>
                         </Component>
-						<Component Id="east-mini.png" Guid="*">
-                            <File Id="east-mini.png" Name="east-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\east-mini.png" Vital="yes"/>
+						<Component Id="east_mini.png" Guid="*">
+                            <File Id="east_mini.png" Name="east-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\img\east-mini.png" Vital="yes"/>
                         </Component>
-						<Component Id="west-mini.png" Guid="*">
-                            <File Id="west-mini.png" Name="west-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\west-mini.png" Vital="yes"/>
+						<Component Id="west_mini.png" Guid="*">
+                            <File Id="west_mini.png" Name="west-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\img\west-mini.png" Vital="yes"/>
                         </Component>
-						<Component Id="north-mini.png" Guid="*">
-                            <File Id="north-mini.png" Name="north-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\north-mini.png" Vital="yes"/>
+						<Component Id="north_mini.png" Guid="*">
+                            <File Id="north_mini.png" Name="north-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\img\north-mini.png" Vital="yes"/>
                         </Component>
-						<Component Id="south-mini.png" Guid="*">
-                            <File Id="south-mini.png" Name="south-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\south-mini.png" Vital="yes"/>
+						<Component Id="south_mini.png" Guid="*">
+                            <File Id="south_mini.png" Name="south-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\img\south-mini.png" Vital="yes"/>
                         </Component>
-						<Component Id="zoom-minus-mini.png" Guid="*">
-                            <File Id="zoom-minus-mini.png" Name="zoom-minus-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\zoom-minus-mini.png" Vital="yes"/>
+						<Component Id="zoom_minus_mini.png" Guid="*">
+                            <File Id="zoom_minus_mini.png" Name="zoom-minus-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\img\zoom-minus-mini.png" Vital="yes"/>
                         </Component>
-						<Component Id="zoom-plus-mini.png" Guid="*">
-                            <File Id="zoom-plus-mini.png" Name="zoom-plus-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\zoom-plus-mini.png" Vital="yes"/>
+						<Component Id="zoom_plus_mini.png" Guid="*">
+                            <File Id="zoom_plus_mini.png" Name="zoom-plus-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\img\zoom-plus-mini.png" Vital="yes"/>
                         </Component>
-						<Component Id="zoom-world-mini.png" Guid="*">
-                            <File Id="zoom-world-mini.png" Name="zoom-world-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\zoom-world-mini.png" Vital="yes"/>
+						<Component Id="zoom_world_mini.png" Guid="*">
+                            <File Id="zoom_world_mini.png" Name="zoom-world-mini.png" Source="$(var.BaseDir)\wixprojects\mapserver\img\zoom-world-mini.png" Vital="yes"/>
                         </Component>
                     </Directory>
 					<Directory Id="themeDir" Name="theme">
@@ -889,13 +889,13 @@
             <ComponentRef Id="MSShell.bat" />
 			
 			<ComponentRef Id="blank.gif" />
-            <ComponentRef Id="east-mini.png" />
-            <ComponentRef Id="west-mini.png" />
-            <ComponentRef Id="north-mini.png" />
-            <ComponentRef Id="south-mini.png" />
-            <ComponentRef Id="zoom-minus-mini.png" />
-            <ComponentRef Id="zoom-plus-mini.png" />
-            <ComponentRef Id="zoom-world-mini.png" />
+            <ComponentRef Id="east_mini.png" />
+            <ComponentRef Id="west_mini.png" />
+            <ComponentRef Id="north_mini.png" />
+            <ComponentRef Id="south_mini.png" />
+            <ComponentRef Id="zoom_minus_mini.png" />
+            <ComponentRef Id="zoom_plus_mini.png" />
+            <ComponentRef Id="zoom_world_mini.png" />
             <ComponentRef Id="style.css" />
         </Feature>
       

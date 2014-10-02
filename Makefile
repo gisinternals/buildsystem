@@ -322,6 +322,10 @@ EXPAT_DIR = expat-2.0.1
 !ENDIF
 !ENDIF
 
+!IFNDEF EXPAT2_DIR
+EXPAT2_DIR = expat-2.1.0
+!ENDIF
+
 !IFNDEF LIBKML_DIR
 !IF $(MSVC_VER) == 1600
 LIBKML_DIR=libkml-svn-VC10
@@ -374,6 +378,26 @@ MS_DIR = mapserver-6-0
 
 !IFNDEF MS_PATH
 MS_PATH = $(BASE_DIR)\$(MS_DIR)
+!ENDIF
+
+!IFNDEF MAPCACHE_DIR
+MAPCACHE_DIR = mapcache-1-2
+!ENDIF
+
+!IFNDEF PCRE_DIR
+PCRE_DIR = pcre-8.35
+!ENDIF
+
+!IFNDEF APR_DIR
+APR_DIR = apr-1.5.1
+!ENDIF
+
+!IFNDEF APR_UTIL_DIR
+APR_UTIL_DIR = apr-util-1.5.3
+!ENDIF
+
+!IFNDEF APR_ICONV_DIR
+APR_ICONV_DIR = apr-iconv-1.2.1
 !ENDIF
 
 !IFNDEF MS_CMAKE_BUILD
@@ -2526,15 +2550,91 @@ mapcache-build:
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=release-$(COMPILER_VER)" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib"
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=release-$(COMPILER_VER)" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DFCGI_LIBRARY=$(OUTPUT_DIR)\lib\libfcgi.lib" "-DAPR_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DAPR_LIBRARY=$(OUTPUT_DIR)\lib\libapr-1.lib" "-DAPU_LIBRARY=$(OUTPUT_DIR)\lib\libaprutil-1.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" "-DWITH_APACHE=OFF" "-DWITH_MAPSERVER=ON" "-DMAPSERVER_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DMAPSERVER_LIBRARY=$(OUTPUT_DIR)\lib\mapserver.lib" "-DBUILD_SHARED_LIBS=OFF" "-DSQLITE_LIBRARY=$(OUTPUT_DIR)\lib\spatialite_i.lib" "-DWITH_FCGI=OFF"
 !IFDEF WIN64	
-    devenv /rebuild Release mapcache.sln /Project mapcache /ProjectConfig "Release|x64
+    devenv /rebuild Release mapcache.sln /ProjectConfig "Release|x64
 !ELSE
-    devenv /rebuild Release mapcache.sln /Project mapcache /ProjectConfig "Release|Win32"
+    devenv /rebuild Release mapcache.sln /ProjectConfig "Release|Win32"
 !ENDIF
 !ENDIF
 !IFNDEF NO_COPY
-    xcopy /Y $(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\cgi\Release\*.exe $(OUTPUT_DIR)\bin\ms\apps
+	xcopy /Y $(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\util\Release\*.exe $(OUTPUT_DIR)\bin\ms\apps
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+pcre-build:
+!IFDEF MAPCACHE_DIR
+    cd $(BASE_DIR)\$(PCRE_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" 
+!IFDEF WIN64	
+    devenv /rebuild Release PCRE.sln /Project pcre /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release PCRE.sln /Project pcre /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(CMAKE_BUILDDIR)\Release\pcre.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(CMAKE_BUILDDIR)\pcre.h $(OUTPUT_DIR)\include
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+apr-build:
+!IFDEF MAPCACHE_DIR
+    cd $(BASE_DIR)\$(APR_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" 
+!IFDEF WIN64	
+    devenv /rebuild Release apr.sln /Project libapr-1 /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release apr.sln /Project libapr-1 /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(APR_DIR)\$(CMAKE_BUILDDIR)\Release\libapr-1.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(APR_DIR)\$(CMAKE_BUILDDIR)\Release\libapr-1.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(APR_DIR)\$(CMAKE_BUILDDIR)\apr.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(APR_DIR)\include\apr*.h $(OUTPUT_DIR)\include
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+apr-util-build:
+!IFDEF MAPCACHE_DIR
+    cd $(BASE_DIR)\$(APR_UTIL_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DAPU_HAVE_CRYPTO=ON"
+!IFDEF WIN64	
+    devenv /rebuild Release APR-Util.sln /Project libaprutil-1 /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release APR-Util.sln /Project libaprutil-1 /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\Release\libaprutil-1.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\Release\libexpat.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\Release\libaprutil-1.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\include\*.h $(OUTPUT_DIR)\include
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
@@ -2589,7 +2689,12 @@ ms: ms-optfile ms-cmake
 	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
 !IFDEF MS_CMAKE_BUILD
     xcopy /Y $(MS_PROJECT_DIR)\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(MS_PROJECT_DIR)\*.lib $(OUTPUT_DIR)\lib
 	xcopy /Y $(MS_PROJECT_DIR)\*.exe $(OUTPUT_DIR)\bin\ms\apps
+	xcopy /Y $(MS_PATH)\$(CMAKE_BUILDDIR)\mapserver*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(MS_PATH)\map*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(MS_PATH)\cgiutil.h $(OUTPUT_DIR)\include
+	xcopy /Y $(MS_PATH)\hittest.h $(OUTPUT_DIR)\include
 !ELSE
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\ms\apps
@@ -3268,6 +3373,31 @@ libkml:
 	cd ..\third_party\boost_1_34_1
 	if not exist $(OUTPUT_DIR)\include\boost mkdir $(OUTPUT_DIR)\include\boost
     xcopy /Y /S boost\*.hpp $(OUTPUT_DIR)\include\boost
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+expat2:
+!IFDEF MAPCACHE_DIR
+    cd $(BASE_DIR)\$(EXPAT2_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" 
+!IFDEF WIN64	
+    devenv /rebuild Release expat.sln /Project expat /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release expat.sln /Project expat /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(EXPAT2_DIR)\$(CMAKE_BUILDDIR)\Release\expat.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(EXPAT2_DIR)\$(CMAKE_BUILDDIR)\Release\expat.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(EXPAT2_DIR)\lib\expat.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(EXPAT2_DIR)\lib\expat_external.h $(OUTPUT_DIR)\include
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
