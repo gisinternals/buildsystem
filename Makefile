@@ -381,7 +381,7 @@ MS_PATH = $(BASE_DIR)\$(MS_DIR)
 !ENDIF
 
 !IFNDEF MAPCACHE_DIR
-MAPCACHE_DIR = mapcache-1-2
+MAPCACHE_DIR = mapcache-dev
 !ENDIF
 
 !IFNDEF PCRE_DIR
@@ -963,11 +963,16 @@ package:
     if not exist $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.exe $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
-	
+	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION).zip" downloads
+    if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.exe downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+	uploadftpdir $(OUTPUT_DIR)\doc\*.txt downloads/doc/release-$(COMPILER_VER)-$(PKG_VERSION)	
+
 package-libs:
     if exist $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip
     7z a -tzip $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(OUTPUT_DIR)\lib $(OUTPUT_DIR)\include
     xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip" downloads
 	
 package-src:
     if exist $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip
@@ -982,12 +987,14 @@ package-src:
 	cd $(BASE_DIR)
     7z a -tzip -xr!?git\ -xr!?svn\ $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(MS_DIR) $(GDAL_DIR)
     xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-src.zip" downloads
     
 package-dev:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
     if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.bz2
     7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) $(SWIG_DIR)\swig.exe $(SWIG_DIR)\Lib Makefile readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-src.zip" downloads
     
 package-dev-x64:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
@@ -1002,6 +1009,8 @@ package-dev-x64:
 install: package package-dev
     xcopy /Y $(OUTPUT_DIR).zip $(INSTALL_DIR)
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR).zip" downloads
+	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
     
 mkgdalinst: mkgdalinst-core mkgdalinst-oci mkgdalinst-ecw mkgdalinst-mrsid mkgdalinst-filegdb
     
