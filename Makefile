@@ -994,7 +994,7 @@ package-dev:
     if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.bz2
     7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) $(SWIG_DIR)\swig.exe $(SWIG_DIR)\Lib Makefile readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
-	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-src.zip" downloads
+	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
     
 package-dev-x64:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
@@ -4138,6 +4138,7 @@ mapmanager-installer:
 !ENDIF
 !IFNDEF NO_COPY
 	xcopy /Y Installer\bin\Release\MapManager.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+	uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads\release-$(COMPILER_VER)-$(PKG_VERSION)
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
