@@ -4134,11 +4134,11 @@ mapmanager-installer:
 !IF $(MSVC_VER) >= 1600
 	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
 !IFNDEF NO_BUILD
-	devenv /rebuild Release MapManager.sln /Project Installer
+	rem devenv /rebuild Release MapManager.sln /Project Installer
 !ENDIF
 !IFNDEF NO_COPY
 	xcopy /Y Installer\bin\Release\MapManager.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
-	uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads\release-$(COMPILER_VER)-$(PKG_VERSION)
+	$(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
