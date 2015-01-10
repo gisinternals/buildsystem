@@ -549,7 +549,7 @@ XERCES_DIR=xerces-c-src_2_8_0
 !ENDIF
 
 !IFNDEF KEA_DIR
-KEA_DIR=kealib-1.4.4\trunk
+KEA_DIR=kealib-1.4.4
 !ENDIF
 
 !IFNDEF HDF5_DIR
@@ -853,7 +853,7 @@ EXTRAFLAGS =
 default: update platform gdal gdalplugins gdal-csharp
 
 gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw ogr-pg gdal-filegdb gdal-kea
-
+	
 gdalplugins: gdalpluginlibs gdalversion
 
 msplugins:
@@ -1370,6 +1370,9 @@ gdal-optfile:
 !ENDIF
 !IFDEF HDF5_DIR
     echo $(HDF5_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF HDF5_DIR
+    echo $(KEA_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF HDF5_DIR
     echo $(HDF4_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -3571,15 +3574,15 @@ hdf4lib:
 
 kea:
 !IFDEF KEA_DIR
-    cd $(BASE_DIR)\$(KEA_DIR)
+    cd $(BASE_DIR)\$(KEA_DIR)\trunk
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_LIB_PATH=$(OUTPUT_DIR)\lib" "-DHDF5_INCLUDE_DIR=$(OUTPUT_DIR)\include"
-	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\include\libkea\kea-config.h $(BASE_DIR)\$(KEA_DIR)\include\libkea
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(KEA_DIR)\trunk\$(CMAKE_BUILDDIR)\install" "-DHDF5_LIB_PATH=$(OUTPUT_DIR)\lib" "-DHDF5_INCLUDE_DIR=$(OUTPUT_DIR)\include"
+	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\trunk\$(CMAKE_BUILDDIR)\include\libkea\kea-config.h $(BASE_DIR)\$(KEA_DIR)\trunk\include\libkea
 !IFDEF WIN64	
     devenv /rebuild Release LIBKEA.sln /Project ALL_BUILD /ProjectConfig "Release|x64
 !ELSE
@@ -3587,10 +3590,10 @@ kea:
 !ENDIF
 !ENDIF
 !IFNDEF NO_COPY
-    xcopy /Y $(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\src\Release\*.lib $(OUTPUT_DIR)\lib
-	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\src\Release\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(KEA_DIR)\trunk\$(CMAKE_BUILDDIR)\src\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\trunk\$(CMAKE_BUILDDIR)\src\Release\*.dll $(OUTPUT_DIR)\bin
 	if not exist $(OUTPUT_DIR)\include\libkea mkdir $(OUTPUT_DIR)\include\libkea
-	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\include\libkea\*.h $(OUTPUT_DIR)\include\libkea
+	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\trunk\include\libkea\*.h $(OUTPUT_DIR)\include\libkea
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
