@@ -548,9 +548,13 @@ FTGL_DIR = ftgl-2.1.3~rc5
 XERCES_DIR=xerces-c-src_2_8_0
 !ENDIF
 
+!IFNDEF KEA_DIR
+KEA_DIR=kealib-1.4.4\trunk
+!ENDIF
+
 !IFNDEF HDF5_DIR
 #HDF5_DIR=hdf5-1.8.2
-HDF5_DIR=hdf5-1.8.12
+HDF5_DIR=hdf5-1.8.14
 SZIP_DIR=szip-2.1
 !ENDIF
 
@@ -561,7 +565,7 @@ SZIP_DIR=szip-2.1
 
 !IFNDEF NETCDF_DIR
 #NETCDF_DIR=netcdf-3.6.1
-NETCDF_DIR=netcdf-4.3.0
+NETCDF_DIR=netcdf-4.3.2
 !ENDIF
 
 !IFNDEF FITS_DIR
@@ -848,7 +852,7 @@ EXTRAFLAGS =
 
 default: update platform gdal gdalplugins gdal-csharp
 
-gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw ogr-pg gdal-filegdb
+gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw ogr-pg gdal-filegdb gdal-kea
 
 gdalplugins: gdalpluginlibs gdalversion
 
@@ -871,7 +875,7 @@ gdalbindings: gdal-csharp gdal-python
 
 graph: zlib libpng jpeg gd
 
-platform: zlib libpng jpeg geos proj iconv freexl spatialite openssl curl freetype pgsql gd libxml minizip fits agg ming fastcgi expat pdf fribidi netcdf libjbig libtiff libecw mrsidlib fontconfig pixman cairo ftgl xerces hdf5lib mysql libopenjpeg poppler giflib visual-leak-detector msvcr libsvg libsvg-cairo
+platform: zlib libpng jpeg geos proj iconv freexl spatialite openssl curl freetype pgsql gd libxml minizip fits agg ming fastcgi expat pdf fribidi libjbig libtiff libecw mrsidlib fontconfig pixman cairo ftgl xerces hdf5lib netcdf kea mysql libopenjpeg poppler giflib visual-leak-detector msvcr libsvg libsvg-cairo
 
 rebuild: remove-output gdal-optfile gdal gdalpluginlibs gdal-csharp gdal-java ms ms-csharp msplugins gdalversion gdal-python package package-dev
 
@@ -1794,6 +1798,28 @@ gdal-hdf5: gdal-optfile
 	copy /Y gdal_HDF5.dll gdal_BAG.dll
 !ENDIF
 	cd $(BASE_DIR)
+!ENDIF
+
+gdal-kea: gdal-optfile
+!IFDEF KEA_DIR
+!IF EXIST ($(GDAL_PATH)\frmts\kea)
+    echo KEA_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
+    echo KEA_LIB =	$(OUTPUT_DIR)\lib\libkea.lib >> $(OUTPUT_DIR)\gdal.opt
+	echo KEA_CFLAGS = -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
+	cd $(GDAL_PATH)\frmts\kea
+!IFNDEF NO_CLEAN	
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y gdal_KEA.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
 !ENDIF
 
 gdal-netcdf: gdal-optfile
@@ -3543,6 +3569,32 @@ hdf4lib:
     cd $(BASE_DIR)
 !ENDIF
 
+kea:
+!IFDEF KEA_DIR
+    cd $(BASE_DIR)\$(KEA_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_LIB_PATH=$(OUTPUT_DIR)\lib" "-DHDF5_INCLUDE_DIR=$(OUTPUT_DIR)\include"
+	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\include\libkea\kea-config.h $(BASE_DIR)\$(KEA_DIR)\include\libkea
+!IFDEF WIN64	
+    devenv /rebuild Release LIBKEA.sln /Project ALL_BUILD /ProjectConfig "Release|x64
+!ELSE
+    devenv /rebuild Release LIBKEA.sln /Project ALL_BUILD /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\src\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\src\Release\*.dll $(OUTPUT_DIR)\bin
+	if not exist $(OUTPUT_DIR)\include\libkea mkdir $(OUTPUT_DIR)\include\libkea
+	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\include\libkea\*.h $(OUTPUT_DIR)\include\libkea
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
 hdf5lib:
 !IFDEF HDF5_DIR
     cd $(BASE_DIR)\$(HDF5_DIR)
@@ -3552,7 +3604,7 @@ hdf5lib:
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON"
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON"
 !IFDEF WIN64	
     devenv /rebuild Release hdf5.sln /Project ALL_BUILD /ProjectConfig "Release|x64
 !ELSE
@@ -3562,6 +3614,7 @@ hdf5lib:
 !IFNDEF NO_COPY
     xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.lib $(OUTPUT_DIR)\lib
 	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\c++\src\*.h $(OUTPUT_DIR)\include
 	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\src\*.h $(OUTPUT_DIR)\include
 	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\hl\src\*.h $(OUTPUT_DIR)\include
 	xcopy /Y $(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\*.h $(OUTPUT_DIR)\include
@@ -3662,6 +3715,7 @@ netcdf:
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_BUILD
+    if exist $(OUTPUT_DIR)\include\netcdf.h del $(OUTPUT_DIR)\include\netcdf.h
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)" "-DUSE_HDF4=OFF" "-DBUILD_SHARED_LIBS=ON"
