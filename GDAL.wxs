@@ -207,6 +207,11 @@
                             <File Id="gdal_MrSID.dll" Name="gdal_MrSID.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_MrSID.dll" />
                         </Component>
                         <?endif?>
+						<?ifdef gdal_KEA?>
+                        <Component Id="gdal_KEA.dll" Guid="*">
+                            <File Id="gdal_KEA.dll" Name="gdal_KEA.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_KEA.dll" />
+                        </Component>
+						<?endif?>
                         <?ifdef ogr_FileGDB?>
                         <Component Id="ogr_FileGDB.dll" Guid="*">
                             <File Id="ogr_FileGDB.dll" Name="ogr_FileGDB.dll" Source="$(var.TargetDir)\gdal\plugins-external\ogr_FileGDB.dll" />
@@ -371,9 +376,18 @@
                     </Component>
                     <Component Id="hdf5.dll" Guid="*">
                         <File Id="hdf5.dll" Name="hdf5.dll" Source="$(var.TargetDir)\hdf5.dll" Vital="yes"/>
+                    </Component>					
+					<Component Id="libkea.dll" Guid="*">
+						<File Id="libkea.dll" Name="libkea.dll" Source="$(var.TargetDir)\libkea.dll" Vital="yes"/>
+					</Component>
+					<Component Id="hdf5_cpp.dll" Guid="*">
+                        <File Id="hdf5_cpp.dll" Name="hdf5_cpp.dll" Source="$(var.TargetDir)\hdf5_cpp.dll" Vital="yes"/>
                     </Component>
                     <Component Id="hdf5_hl.dll" Guid="*">
                         <File Id="hdf5_hl.dll" Name="hdf5_hl.dll" Source="$(var.TargetDir)\hdf5_hl.dll" Vital="yes"/>
+                    </Component>
+					<Component Id="hdf5_hl_cpp.dll" Guid="*">
+                        <File Id="hdf5_hl_cpp.dll" Name="hdf5_hl_cpp.dll" Source="$(var.TargetDir)\hdf5_hl_cpp.dll" Vital="yes"/>
                     </Component>
                     <Component Id="hdfdll.dll" Guid="*">
                         <File Id="hdfdll.dll" Name="hdfdll.dll" Source="$(var.TargetDir)\hdfdll.dll" Vital="yes"/>
@@ -961,13 +975,28 @@
             </Feature>
         </Feature>
         <Feature Id="GDALPlugins" Level="1" Title="GDAL Plugins" Display="expand" Description="GDAL plugin library files">
+		    <?ifdef gdal_KEA?>
+		    <Feature Id="KEA" Level="1" Title="KEA" Description="KEA Image Format">
+                <ComponentRef Id="gdal_KEA.dll" />
+				<ComponentRef Id="libkea.dll" />
+                <ComponentRef Id="hdf5.dll" />
+				<ComponentRef Id="hdf5_cpp.dll" />
+                <ComponentRef Id="hdf5_hl.dll" />
+				<ComponentRef Id="hdf5_hl_cpp.dll" />
+                <ComponentRef Id="HDF5License.rtf" />
+                <ComponentRef Id="SZIPLicense.rtf" />
+                <ComponentRef Id="szip.dll" />
+            </Feature>
+			<?endif?>
             <Feature Id="NetCDF" Level="1" Title="NetCDF" Description="Network Common Data Form (NetCDF) rasters (for the custom licensing terms please review NetCDFLicense.rtf and SZIPLicense.rtf installed in the /license folder)">
                 <ComponentRef Id="gdal_netCDF.dll" />
                 <ComponentRef Id="gdal_GMT.dll" />
                 <ComponentRef Id="netcdf.dll" />
                 <ComponentRef Id="NetCDFLicense.rtf" />
                 <ComponentRef Id="hdf5.dll" />
+				<ComponentRef Id="hdf5_cpp.dll" />
                 <ComponentRef Id="hdf5_hl.dll" />
+				<ComponentRef Id="hdf5_hl_cpp.dll" />
                 <ComponentRef Id="HDF5License.rtf" />
                 <ComponentRef Id="SZIPLicense.rtf" />
                 <ComponentRef Id="szip.dll" />
@@ -987,7 +1016,9 @@
                 <ComponentRef Id="gdal_BAG.dll" />
                 <ComponentRef Id="gdal_HDF5Image.dll" />
                 <ComponentRef Id="hdf5.dll" />
+				<ComponentRef Id="hdf5_cpp.dll" />
                 <ComponentRef Id="hdf5_hl.dll" />
+				<ComponentRef Id="hdf5_hl_cpp.dll" />
                 <ComponentRef Id="HDF5License.rtf" />
                 <ComponentRef Id="SZIPLicense.rtf" />
                 <ComponentRef Id="szip.dll" />
