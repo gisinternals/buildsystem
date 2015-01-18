@@ -376,10 +376,12 @@
                     </Component>
                     <Component Id="hdf5.dll" Guid="*">
                         <File Id="hdf5.dll" Name="hdf5.dll" Source="$(var.TargetDir)\hdf5.dll" Vital="yes"/>
-                    </Component>					
+                    </Component>
+					<?ifdef gdal_KEA?>					
 					<Component Id="libkea.dll" Guid="*">
 						<File Id="libkea.dll" Name="libkea.dll" Source="$(var.TargetDir)\libkea.dll" Vital="yes"/>
 					</Component>
+					<?endif?>
 					<Component Id="hdf5_cpp.dll" Guid="*">
                         <File Id="hdf5_cpp.dll" Name="hdf5_cpp.dll" Source="$(var.TargetDir)\hdf5_cpp.dll" Vital="yes"/>
                     </Component>
