@@ -188,7 +188,7 @@
                         <?endif?>
                         <?ifdef gdal_ECW_JP2ECW?>
                         <Component Id="ECWLicense.rtf" Guid="*">
-						<?if $(var.ECWSDKVersion) = 50?>
+						<?if $(var.ECWSDKVersion) >= 50?>
 							<File Id="ECW5License.rtf" Name="ECW5License.rtf" Source="$(var.BaseDir)\ECW5License.rtf" />
 						<?else?>
 							<File Id="ECWLicense.rtf" Name="ECWLicense.rtf" Source="$(var.BaseDir)\ECWLicense.rtf" />
@@ -269,7 +269,7 @@
                     <?endif?>
                     <?ifdef gdal_ECW_JP2ECW?>
 					<Component Id="libecwj2.dll" Guid="*">
-					<?if $(var.ECWSDKVersion) = 50?>					    
+					<?if $(var.ECWSDKVersion) >= 50?>					    
 						<File Id="NCSEcw.dll" Name="NCSEcw.dll" Source="$(var.TargetDir)\NCSEcw.dll" Vital="yes"/>
 					<?else?>
 					    <File Id="libecwj2.dll" Name="libecwj2.dll" Source="$(var.TargetDir)\libecwj2.dll" Vital="yes"/>
@@ -820,7 +820,7 @@
         <WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\OCILicense.rtf" />
         <?endif?>
         <?ifdef gdal_ECW_JP2ECW?>
-		<?if $(var.ECWSDKVersion) = 50?>
+		<?if $(var.ECWSDKVersion) >= 50?>
 			<WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\ECW5License.rtf" />
 		<?else?>
 			<WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\ECWLicense.rtf" />
