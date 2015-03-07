@@ -193,6 +193,7 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished
 echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 
 
+@goto exit
 
 :rel
 
