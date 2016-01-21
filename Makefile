@@ -4,139 +4,13 @@
 !INCLUDE $(CONFIG_OPT)
 !ENDIF
 
-!IFNDEF SERVER_URL
-SERVER_URL=http://vbkto.dyndns.org/sdk
-!ENDIF
-
-# common feature configuration flags
-#DEBUG = YES
-#NO_CLEAN = YES
-#NO_BUILD = YES
-#NO_COPY = YES
-#LEAK_CHECK = YES
-
-# buildbot related settings
-!IF "$(OUTPUT_DIR)" == "E:\buildbot\osgeo\slaves\szekerest-msvc80-gdal\release-1400"
-DEBUG = YES
-!ENDIF
-
-!IF "$(OUTPUT_DIR)" == "E:\buildbot\osgeo\slaves\szekerest-msvc90-gdal\release-1500"
-DEBUG = YES
-!ENDIF
-
 !IFNDEF WIN64
 !IF [cl 2>&1|find "x64" >NUL ] == 0
 WIN64=YES
 !ENDIF
 !ENDIF
 
-!IFNDEF OSGEO4W_DIR
-!IFDEF WIN64
-OSGEO4W_DIR = E:\OSGeo4W64
-OSGEO4W_ARCH = x86_64
-!ELSE
-OSGEO4W_DIR = E:\OSGeo4W
-OSGEO4W_ARCH = x86
-!ENDIF
-!ENDIF
-
-!IFNDEF RSYNC_DIR
-RSYNC_DIR = E:\builds\rsync
-!ENDIF
-
-!IFDEF DEBUG
-MS_PROJECT_DIR=RelWithDebInfo
-!IFDEF WIN64
-MS_PROJECT_CONFIG = "RelWithDebInfo|x64"
-!ELSE
-MS_PROJECT_CONFIG = "RelWithDebInfo|Win32"
-!ENDIF
-!ELSE
-MS_PROJECT_DIR=Release
-!IFDEF WIN64
-MS_PROJECT_CONFIG = "Release|x64"
-!ELSE
-MS_PROJECT_CONFIG = "Release|Win32"
-!ENDIF
-!ENDIF
-
-!IFNDEF MS_REVISION
-MS_REVISION=HEAD
-!ENDIF
-
-!IFNDEF GDAL_REVISION
-GDAL_REVISION=HEAD
-!ENDIF
-
-!IFNDEF MAPMANAGER_REVISION
-MAPMANAGER_REVISION=HEAD
-!ENDIF
-
-!IFNDEF SPECIFY_FEATURES
-GDAL_GEOS = YES
-GDAL_POSTGIS = YES
-GDAL_ECW = YES
-GDAL_CURL = YES
-#GDAL_SQLITE = YES
-GDAL_SPATIALITE = YES
-GDAL_CSHARP = YES
-GDAL_PYTHON = YES
-GDAL_JAVA = YES
-GDAL_XERCES = YES
-GDAL_EXPAT = YES
-GDAL_MYSQL = YES
-GDAL_OPENJPEG = YES
-GDAL_KMLSUPEROVERLAY = YES
-#GDAL_DEBUG_VSIMALLOC = YES
-GDAL_PDF = YES
-#GDAL_TIFF = YES
-#GDAL_SDE = YES
-GDAL_LIBKML = YES
-
-MS_PROJ = YES
-MS_FREETYPE = YES
-MS_GEOS = YES
-MS_PNG = YES
-MS_GDAL = YES
-MS_WXS = YES
-MS_AGG = YES
-MS_POSTGIS = YES
-MS_ICONV = YES
-#MS_MING = YES
-MS_SOS = YES
-MS_CSHARP = YES
-MS_JAVA = YES
-MS_PYTHON = YES
-MS_FCGI = YES
-MS_PDF = YES
-MS_FRIBIDI = YES
-#MS_OCI = YES
-MS_CAIRO = YES
-MS_GIFLIB = YES
-MS_OGL = YES
-#MS_SDE = YES
-#MS_PHP = YES
-!ENDIF
-
-
-# directory layout
-
-!IFNDEF BASE_DIR
-BASE_DIR = $(MAKEDIR)
-!ENDIF
-
-!IFNDEF INSTALL_DIR
-INSTALL_DIR = C:\Inetpub\wwwroot\sdk
-!ENDIF
-
-!IFNDEF MAPMANAGER_DIR
-MAPMANAGER_DIR = MapManager
-!ENDIF
-
-!IFNDEF CMAKE_DIR
-CMAKE_DIR = E:\builds\cmake-2.8.12.1-win32-x86
-!ENDIF
-
+# identify compiler version
 !IFNDEF MSVC_VER
 !IF "$(_NMAKE_VER)" == "6.00.8168.0"
 MSVC_VER = 1200
@@ -204,20 +78,188 @@ CMAKE_BUILDDIR = vc10x64
 CMAKE_GENERATOR = "Visual Studio 10"
 CMAKE_BUILDDIR = vc10
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "11.00.50727.1"
+MSVC_VER = 1700
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 11 Win64"
+CMAKE_BUILDDIR = vc11x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 11"
+CMAKE_BUILDDIR = vc11
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "11.00.61030.0"
+MSVC_VER = 1700
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 11 Win64"
+CMAKE_BUILDDIR = vc11x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 11"
+CMAKE_BUILDDIR = vc11
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "12.00.21005.1"
+MSVC_VER = 1800
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 12 Win64"
+CMAKE_BUILDDIR = vc12x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 12"
+CMAKE_BUILDDIR = vc12
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.00.23026.0"
+MSVC_VER = 1900
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 14 Win64"
+CMAKE_BUILDDIR = vc14x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 14"
+CMAKE_BUILDDIR = vc14
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
 !ENDIF
 
+!IFNDEF SERVER_URL
+SERVER_URL=http://vbkto.dyndns.org/sdk
+!ENDIF
+
+# common feature configuration flags
+#DEBUG = YES
+#NO_CLEAN = YES
+#NO_BUILD = YES
+#NO_COPY = YES
+#LEAK_CHECK = YES
+
+# buildbot related settings
+!IF "$(OUTPUT_DIR)" == "E:\buildbot\osgeo\slaves\szekerest-msvc80-gdal\release-1400"
+DEBUG = YES
+!ENDIF
+
+!IF "$(OUTPUT_DIR)" == "E:\buildbot\osgeo\slaves\szekerest-msvc90-gdal\release-1500"
+DEBUG = YES
+!ENDIF
+
+!IFNDEF OSGEO4W_DIR
+!IFDEF WIN64
+OSGEO4W_DIR = E:\OSGeo4W64
+OSGEO4W_ARCH = x86_64
+!ELSE
+OSGEO4W_DIR = E:\OSGeo4W
+OSGEO4W_ARCH = x86
+!ENDIF
+!ENDIF
+
+!IFNDEF RSYNC_DIR
+RSYNC_DIR = E:\builds\rsync
+!ENDIF
+
+!IFDEF DEBUG
+MS_PROJECT_DIR=RelWithDebInfo
+!IFDEF WIN64
+MS_PROJECT_CONFIG = "RelWithDebInfo|x64"
+!ELSE
+MS_PROJECT_CONFIG = "RelWithDebInfo|Win32"
+!ENDIF
+!ELSE
+MS_PROJECT_DIR=Release
+!IFDEF WIN64
+MS_PROJECT_CONFIG = "Release|x64"
+!ELSE
+MS_PROJECT_CONFIG = "Release|Win32"
+!ENDIF
+!ENDIF
+
+!IFNDEF MS_REVISION
+MS_REVISION=HEAD
+!ENDIF
+
+!IFNDEF GDAL_REVISION
+GDAL_REVISION=HEAD
+!ENDIF
+
+!IFNDEF MAPMANAGER_REVISION
+MAPMANAGER_REVISION=HEAD
+!ENDIF
+
+!IFNDEF SPECIFY_FEATURES
+GDAL_GEOS = YES
+GDAL_POSTGIS = YES
+GDAL_ECW = YES
+!IF $(MSVC_VER) >= 1800
+#VC2013 is not yet supported by the ECW5 SDK
+GDAL_ECW3 = YES
+!ENDIF
+GDAL_CURL = YES
+#GDAL_SQLITE = YES
+GDAL_SPATIALITE = YES
+GDAL_CSHARP = YES
+GDAL_PYTHON = YES
+GDAL_JAVA = YES
+GDAL_XERCES = YES
+GDAL_EXPAT = YES
+GDAL_MYSQL = YES
+GDAL_OPENJPEG = YES
+GDAL_KMLSUPEROVERLAY = YES
+#GDAL_DEBUG_VSIMALLOC = YES
+GDAL_PDF = YES
+#GDAL_TIFF = YES
+#GDAL_SDE = YES
+GDAL_LIBKML = YES
+
+MS_PROJ = YES
+MS_FREETYPE = YES
+MS_GEOS = YES
+MS_PNG = YES
+MS_GDAL = YES
+MS_WXS = YES
+MS_AGG = YES
+MS_POSTGIS = YES
+MS_ICONV = YES
+#MS_MING = YES
+MS_SOS = YES
+MS_CSHARP = YES
+MS_JAVA = YES
+MS_PYTHON = YES
+MS_FCGI = YES
+MS_PDF = YES
+MS_FRIBIDI = YES
+#MS_OCI = YES
+MS_CAIRO = YES
+MS_GIFLIB = YES
+#MS_OGL = YES
+#MS_SDE = YES
+#MS_PHP = YES
+!ENDIF
+
+
+# directory layout
+
+!IFNDEF BASE_DIR
+BASE_DIR = $(MAKEDIR)
+!ENDIF
+
+!IFNDEF INSTALL_DIR
+INSTALL_DIR = C:\Inetpub\wwwroot\sdk
+!ENDIF
+
+!IFNDEF MAPMANAGER_DIR
+MAPMANAGER_DIR = MapManager
+!ENDIF
+
+!IFNDEF CMAKE_DIR
+CMAKE_DIR = E:\builds\cmake-3.4.0-win32-x86
+#CMAKE_DIR = E:\builds\cmake-2.8.12.1-win32-x86
+!ENDIF
+
 !IF $(MSVC_VER) >= 1400
-MS_PHP = YES
+#MS_PHP = YES
 !ENDIF
 
 !IFNDEF JAVA_HOME
 !IFDEF WIN64
-JAVA_HOME = C:\Java\jdk1.6.0_12x64
+JAVA_HOME = C:\Java\jdk1.8.0_25x64
 !ELSE
-JAVA_HOME = C:\Java\jdk1.6.0_12
+JAVA_HOME = C:\Java\jdk1.8.0_25
 !ENDIF
 !ENDIF
 
@@ -262,7 +304,7 @@ MSAUTOTEST_DIR = msautotest-5-0
 !ENDIF
 
 !IFNDEF SQLITE_DIR
-SQLITE_DIR = sqlite-3.6.18
+SQLITE_DIR = sqlite-3.10.2
 !ENDIF
 
 !IFNDEF GIFLIB_DIR
@@ -270,15 +312,22 @@ GIFLIB_DIR = giflib-4.1.6
 !ENDIF
 
 !IFNDEF SPATIALITE_DIR
-SPATIALITE_DIR = libspatialite-3.0.0
+SPATIALITE_DIR = libspatialite-4.3.0a
 !ENDIF
 
 !IFNDEF FREEXL_DIR
-FREEXL_DIR = freexl-1.0.0b
+FREEXL_DIR = freexl-1.0.2
 !ENDIF
 
 !IFNDEF FILEGDB_API_DIR
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) == 1700
+FILEGDB_API_DIR = FileGDB_API_VS2012_1_3
+!IFDEF WIN64
+FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin64
+!ELSE
+FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
 FILEGDB_API_DIR = FileGDB_API_VS2010_1_2
 !IFDEF WIN64
 FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin64
@@ -326,7 +375,11 @@ EXPAT2_DIR = expat-2.1.0
 !ENDIF
 
 !IFNDEF LIBKML_DIR
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) == 1800
+LIBKML_DIR=libkml-svn-VC12
+!ELSEIF $(MSVC_VER) == 1700
+LIBKML_DIR=libkml-svn-VC11
+!ELSEIF $(MSVC_VER) == 1600
 LIBKML_DIR=libkml-svn-VC10
 !ELSEIF $(MSVC_VER) == 1500
 LIBKML_DIR=libkml-svn-VC9
@@ -458,7 +511,7 @@ PGSQL_DIR = postgresql-9.1.2
 !ENDIF
 
 !IFNDEF POPPLER_DIR
-POPPLER_DIR = poppler-0.24.5
+POPPLER_DIR = poppler-0.30.0
 !ENDIF
 
 !IFNDEF VLD_DIR
@@ -509,6 +562,12 @@ PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python33-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.3
 PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python34"
+PYTHON_OUTDIR = python\build\lib.win32-3.4
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python34-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.4
+PYTHON_BDIST_OPTS = --formats=msi
 !ENDIF
 
 !IFNDEF PYDIR
@@ -520,7 +579,7 @@ AGG_DIR = agg-2.4
 !ENDIF
 
 !IFNDEF CAIRO_DIR
-CAIRO_DIR = cairo-1.12.14
+CAIRO_DIR = cairo-1.14.0
 !ENDIF
 
 !IFNDEF LIBSVG_DIR
@@ -532,7 +591,7 @@ LIBSVG_CAIRO_DIR = libsvg-cairo-0.1.6
 !ENDIF
 
 !IFNDEF PIXMAN_DIR
-PIXMAN_DIR = pixman-0.28.2
+PIXMAN_DIR = pixman-0.32.6
 !ENDIF
 
 !IFNDEF FONTCONFIG_DIR
@@ -630,6 +689,45 @@ ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC10
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc10
 !ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+FT_SRCPATH=$(FT_DIR)\builds\win32\VC2012
+!IFDEF WIN64
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2012\x64
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC11x64
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc11
+!ELSE
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2012
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC11
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc11
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1800
+FT_SRCPATH=$(FT_DIR)\builds\win32\VC2013
+!IFDEF WIN64
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2013\x64
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC12x64
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc12
+!ELSE
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2013
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC12
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc12
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
+FT_SRCPATH=$(FT_DIR)\builds\win32\VC2015
+!IFDEF WIN64
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2015\x64
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC14x64
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc14
+!ELSE
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2015
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC14
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc14
+!ENDIF
 !ELSE
 FT_LIBPATH=$(FT_DIR)\objs
 FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
@@ -647,19 +745,9 @@ MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC8x64
 MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC8
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
-!IFDEF WIN64
-MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC9x64
+MYSQL_DIR=mysql-6.1.3
 !ELSE
-MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC9
-!ENDIF
-!ELSEIF $(MSVC_VER) == 1600
-!IFDEF WIN64
-MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC10x64
-!ELSE
-MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC10
-!ENDIF
-!ELSE
-MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC7
+MYSQL_DIR=mysql-6.1.5
 !ENDIF
 !ENDIF
 
@@ -688,27 +776,7 @@ OPENJPEG_DIR=openjpegv2\vc7
 !ENDIF
 
 !IFNDEF OPENJPEG2_DIR
-!IF $(MSVC_VER) == 1400
-!IFDEF WIN64
-OPENJPEG2_DIR=openjpeg-2.0.0\vc8x64
-!ELSE
-OPENJPEG2_DIR=openjpeg-2.0.0\vc8
-!ENDIF
-!ELSEIF $(MSVC_VER) == 1500
-!IFDEF WIN64
-OPENJPEG2_DIR=openjpeg-2.0.0\vc9x64
-!ELSE
-OPENJPEG2_DIR=openjpeg-2.0.0\vc9
-!ENDIF
-!ELSEIF $(MSVC_VER) == 1600
-!IFDEF WIN64
-OPENJPEG2_DIR=openjpeg-2.0.0\vc10x64
-!ELSE
-OPENJPEG2_DIR=openjpeg-2.0.0\vc10
-!ENDIF
-!ELSE
-OPENJPEG2_DIR=openjpeg-2.0.0\vc7
-!ENDIF
+OPENJPEG2_DIR=openjpeg-2.1.0
 !ENDIF
 
 !IFNDEF SDE_DIR
@@ -717,12 +785,21 @@ SDE_VERSION=92
 !ENDIF
 
 !IFNDEF OCI_DIR
+!IF $(MSVC_VER) >= 1600
+!IFDEF WIN64
+OCI_DIR = Oracle\instantclient_12_1-x64
+!ELSE
+OCI_DIR = Oracle\instantclient_12_1
+!ENDIF
+OCI_VERSION = 12
+!ELSE
 !IFDEF WIN64
 OCI_DIR = Oracle\instantclient_11_1_7_0-x64
 !ELSE
 OCI_DIR = Oracle\instantclient_11_1_7_0
 !ENDIF
 OCI_VERSION = 11
+!ENDIF
 !ENDIF
 
 # dependent constants
@@ -738,7 +815,61 @@ OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 !ENDIF
 
 !IFNDEF ECW_DIR
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) == 1900
+!IFNDEF GDAL_ECW3
+#ECW_DIR = ECWSDK51
+#ECWDIR = $(BASE_DIR)\$(ECW_DIR)
+#ECWSDK_VERSION=51
+!IFDEF WIN64
+#ECWLIB = $(ECWDIR)\lib\vc120\x64\NCSEcw.lib
+!ELSE
+#ECWLIB = $(ECWDIR)\lib\vc120\win32\NCSEcw.lib
+!ENDIF
+#ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(ECWDIR)\include -I$(ECWDIR)\include\NCSECW\api -I$(ECWDIR)\include\NCSECW\jp2 -I$(ECWDIR)\include\NCSECW\ecw
+!ELSE
+ECW_DIR = libecwj2-3.3-VC14
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1800
+!IFNDEF GDAL_ECW3
+ECW_DIR = ECWSDK51
+ECWDIR = $(BASE_DIR)\$(ECW_DIR)
+ECWSDK_VERSION=51
+!IFDEF WIN64
+ECWLIB = $(ECWDIR)\lib\vc120\x64\NCSEcw.lib
+!ELSE
+ECWLIB = $(ECWDIR)\lib\vc120\win32\NCSEcw.lib
+!ENDIF
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(ECWDIR)\include -I$(ECWDIR)\include\NCSECW\api -I$(ECWDIR)\include\NCSECW\jp2 -I$(ECWDIR)\include\NCSECW\ecw
+!ELSE
+ECW_DIR = libecwj2-3.3-VC12
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+!IFNDEF GDAL_ECW3
+ECW_DIR = ECWSDK51
+ECWDIR = $(BASE_DIR)\$(ECW_DIR)
+ECWSDK_VERSION=51
+!IFDEF WIN64
+ECWLIB = $(ECWDIR)\lib\vc110\x64\NCSEcw.lib
+!ELSE
+ECWLIB = $(ECWDIR)\lib\vc110\win32\NCSEcw.lib
+!ENDIF
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(ECWDIR)\include -I$(ECWDIR)\include\NCSECW\api -I$(ECWDIR)\include\NCSECW\jp2 -I$(ECWDIR)\include\NCSECW\ecw
+!ELSE
+ECW_DIR = libecwj2-3.3-VC11
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
 !IFNDEF GDAL_ECW3
 ECW_DIR = ECWSDK51
 ECWDIR = $(BASE_DIR)\$(ECW_DIR)
@@ -805,6 +936,12 @@ USE_OPENJP2 = 1
 !ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.0." > NUL] == 0)
 GDAL_VER = 2.0
 USE_OPENJP2 = 1
+!ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.1." > NUL] == 0)
+GDAL_VER = 2.1
+USE_OPENJP2 = 1
+!ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.2." > NUL] == 0)
+GDAL_VER = 2.2
+USE_OPENJP2 = 1
 !ENDIF
 
 !IFNDEF GDAL_VERSIONTAG
@@ -833,6 +970,9 @@ GDAL_VERSIONTAG = 20dev
 !ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal200.dll)
 GDAL_VERSIONTAG = 200
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
+!ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal201.dll)
+GDAL_VERSIONTAG = 201
+GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 !ENDIF
 !ENDIF
 
@@ -840,7 +980,7 @@ GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_dsdk=$(MRSID_DLL)" "-dlti_dsdk_name=$(MRSID_DLL_NAME)"
 !ENDIF
 
-!IF EXIST ($(MRSID_RASTER_DIR)\lib\lti_dsdk_9.0.dll)
+!IF EXIST ($(MRSID_RASTER_DIR)\lib\lti_dsdk_9.1.dll)
 MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dmrsid_tbb=$(MRSID_RASTER_DIR)\lib\tbb.dll"
 !ENDIF
 
@@ -852,7 +992,7 @@ EXTRAFLAGS =
 
 default: update platform gdal gdalplugins gdal-csharp
 
-gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw ogr-pg gdal-filegdb gdal-kea
+gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-mrsid-lidar gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw gdal-ecw3 ogr-pg gdal-filegdb gdal-kea
 	
 gdalplugins: gdalpluginlibs gdalversion
 
@@ -875,7 +1015,7 @@ gdalbindings: gdal-csharp gdal-python
 
 graph: zlib libpng jpeg gd
 
-platform: zlib libpng jpeg geos proj iconv freexl spatialite openssl curl freetype pgsql gd libxml minizip fits agg ming fastcgi expat pdf fribidi libjbig libtiff libecw mrsidlib fontconfig pixman cairo ftgl xerces hdf5lib netcdf kea mysql libopenjpeg poppler giflib visual-leak-detector msvcr libsvg libsvg-cairo
+platform: zlib libpng jpeg geos proj iconv freexl spatialite openssl curl freetype pgsql gd libxml minizip fits agg ming fastcgi expat2 pdf fribidi libjbig libtiff libecw mrsidlib fontconfig pixman cairo ftgl xerces szip hdf5lib netcdf kea hdf4lib mysql libopenjpeg poppler giflib visual-leak-detector msvcr libsvg libsvg-cairo harfbuzz
 
 rebuild: remove-output gdal-optfile gdal gdalpluginlibs gdal-csharp gdal-java ms ms-csharp msplugins gdalversion gdal-python package package-dev
 
@@ -1016,7 +1156,7 @@ install: package package-dev
 	uploadftp "$(OUTPUT_DIR).zip" downloads
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
     
-mkgdalinst: mkgdalinst-core mkgdalinst-oci mkgdalinst-ecw mkgdalinst-mrsid mkgdalinst-filegdb
+mkgdalinst: mkgdalinst-core mkgdalinst-oci mkgdalinst-ecw mkgdalinst-ecw3 mkgdalinst-mrsid mkgdalinst-filegdb
     
 mkgdalinst-core:
 !IFDEF WIX_DIR
@@ -1032,6 +1172,7 @@ mkgdalinst-core:
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
+	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi"
 !ENDIF 
 
 mkgdalinst-oci:
@@ -1049,6 +1190,7 @@ mkgdalinst-oci:
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-oracle.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
+	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-oracle.msi"
 !ENDIF
 !ENDIF 
 
@@ -1059,14 +1201,15 @@ mkgdalinst-ecw:
     -del $(OUTPUT_DIR)\install\GDAL.wixobj
     -del $(OUTPUT_DIR)\install\GDAL.wixpdb
     -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi
-!IF EXIST ($(OUTPUT_DIR)\bin\gdal\plugins\gdal_ECW_JP2ECW.dll)    
+!IF EXIST ($(OUTPUT_DIR)\bin\gdal\plugins\gdal_ECW_JP2ECW.dll) || EXIST ($(OUTPUT_DIR)\bin\gdal\plugins-optional\gdal_ECW_JP2ECW.dll)  
 !IFDEF WIN64
-    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" "-dECWSDKVersion=$(ECWSDK_VERSION)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" "-dECWSDKVersion=$(ECWSDK_VERSION)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ELSE
-    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" "-dECWSDKVersion=$(ECWSDK_VERSION)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_ECW_JP2ECW=gdal_ECW_JP2ECW.dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" "-dECWSDKVersion=$(ECWSDK_VERSION)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
+	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi"
 !ENDIF
 !ENDIF 
 
@@ -1088,10 +1231,12 @@ mkgdalinst-mrsid:
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-mrsid.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
+	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-mrsid.msi"
 !ENDIF
 !ENDIF 
 
 mkgdalinst-filegdb:
+!IFDEF FILEGDB_API_DIR
 !IFDEF WIX_DIR
     set PATH=$(BASE_DIR)\$(WIX_DIR);$(PATH)
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
@@ -1106,6 +1251,8 @@ mkgdalinst-filegdb:
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
+	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi"
+!ENDIF
 !ENDIF
 !ENDIF
 
@@ -1124,6 +1271,7 @@ mkgdalinst-netcdf:
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
+	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi"
 !ENDIF
 !ENDIF
 
@@ -1145,6 +1293,7 @@ mkmapserverinst-core:
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" -loc "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxl" -out "$(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\MapServer.wixpdb" "$(OUTPUT_DIR)\install\MapServer.wixobj"
     cd $(BASE_DIR)
+	cert\sign "$(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi"
 !ENDIF
 
 harfbuzz:
@@ -1169,7 +1318,7 @@ freetype:
 !IFNDEF NO_BUILD
     cd $(FT_SRCPATH)
 !IFDEF WIN64
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) >= 1600
     devenv /rebuild "Release" freetype.sln /Project freetype /ProjectConfig "Release|x64"
 !ELSE	
     devenv /rebuild "LIB Release" freetype.sln /Project freetype /ProjectConfig "Release|x64"
@@ -1177,7 +1326,7 @@ freetype:
 !ELSE
 !IF $(MSVC_VER) == 1310
     devenv /rebuild Release freetype.sln /Project freetype
-!ELSEIF $(MSVC_VER) == 1600
+!ELSEIF $(MSVC_VER) >= 1600
     devenv /rebuild "Release" freetype.sln /Project freetype /ProjectConfig "Release|Win32"
 !ELSE
     devenv /rebuild "LIB Release" freetype.sln /Project freetype /ProjectConfig "Release|Win32"
@@ -1202,7 +1351,7 @@ geos:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=ON"
 !IFDEF WIN64	
-    devenv /rebuild Release geos.sln /Project geos_c /ProjectConfig "Release|x64
+    devenv /rebuild Release geos.sln /Project geos_c /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release geos.sln /Project geos_c /ProjectConfig "Release|Win32"
 !ENDIF
@@ -1301,7 +1450,8 @@ gdal-optfile:
 !ENDIF
 !IFDEF GDAL_SPATIALITE
     echo SQLITE_INC=-I$(OUTPUT_DIR)\include -DHAVE_SPATIALITE -DSPATIALITE_AMALGAMATION >> $(OUTPUT_DIR)\gdal.opt
-    echo SQLITE_LIB=$(OUTPUT_DIR)\lib\spatialite_i.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo SQLITE_LIB=$(OUTPUT_DIR)\lib\sqlite3_i.lib $(OUTPUT_DIR)\lib\spatialite_i.lib >> $(OUTPUT_DIR)\gdal.opt
+	echo $(SQLITE_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo $(SPATIALITE_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_KMLSUPEROVERLAY
@@ -1326,32 +1476,33 @@ gdal-optfile:
 !IFDEF GDAL_EXPAT
     echo EXPAT_DIR=$(BASE_DIR)\$(EXPAT_DIR) >> $(OUTPUT_DIR)\gdal.opt
     echo EXPAT_INCLUDE=-I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
-    echo EXPAT_LIB=$(OUTPUT_DIR)\lib\libexpat.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo EXPAT_LIB=$(OUTPUT_DIR)\lib\expat.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(EXPAT_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_LIBKML
 !IFDEF LIBKML_DIR
     echo LIBKML_DIR=$(BASE_DIR)\$(LIBKML_DIR) >> $(OUTPUT_DIR)\gdal.opt
     echo LIBKML_INCLUDE=-I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
-    echo LIBKML_LIBS=$(OUTPUT_DIR)\lib\libkmlbase.lib $(OUTPUT_DIR)\lib\libkmlconvenience.lib $(OUTPUT_DIR)\lib\libkmldom.lib $(OUTPUT_DIR)\lib\libkmlengine.lib $(OUTPUT_DIR)\lib\libkmlregionator.lib $(OUTPUT_DIR)\lib\libkmlxsd.lib $(OUTPUT_DIR)\lib\libexpat.lib $(OUTPUT_DIR)\lib\zdll.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo LIBKML_LIBS=$(OUTPUT_DIR)\lib\libkmlbase.lib $(OUTPUT_DIR)\lib\libkmlconvenience.lib $(OUTPUT_DIR)\lib\libkmldom.lib $(OUTPUT_DIR)\lib\libkmlengine.lib $(OUTPUT_DIR)\lib\libkmlregionator.lib $(OUTPUT_DIR)\lib\libkmlxsd.lib $(OUTPUT_DIR)\lib\expat.lib $(OUTPUT_DIR)\lib\zdll.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(LIBKML_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !ENDIF
 !IFDEF GDAL_PDF
-    echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_HAS_OPTCONTENT = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_0_20_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_0_23_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
-    echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    rem echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
+    rem echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(OUTPUT_DIR)\gdal.opt
+    rem echo POPPLER_HAS_OPTCONTENT = YES >> $(OUTPUT_DIR)\gdal.opt
+    rem echo POPPLER_0_20_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    rem echo POPPLER_0_23_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    rem echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(OUTPUT_DIR)\gdal.opt
+    rem echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
+    rem echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
     echo OPENJPEG_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
     echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
 !IFDEF USE_OPENJP2
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(OUTPUT_DIR)\gdal.opt
+	echo OPENJPEG_VERSION = 20100 >> $(OUTPUT_DIR)\gdal.opt
 	echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSE
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjpeg.lib >> $(OUTPUT_DIR)\gdal.opt
@@ -1414,6 +1565,7 @@ gdal-build:
 	xcopy /Y gcore\*.h $(OUTPUT_DIR)\include
 	xcopy /Y alg\*.h $(OUTPUT_DIR)\include
 	xcopy /Y ogr\*.h $(OUTPUT_DIR)\include
+	xcopy /Y apps\*.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\mem\memdataset.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\raw\rawdataset.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\gtiff\libgeotiff\*.h $(OUTPUT_DIR)\include
@@ -1517,23 +1669,27 @@ gdal-java-test:
 gdal-python-all:
 !IFNDEF NO_BUILD
 !IFDEF WIN64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_DIR=SWIG-2.0.4
 !ELSE
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34 SWIG_DIR=SWIG-2.0.4
 !ENDIF
 !ENDIF
 
@@ -1543,7 +1699,7 @@ gdal-python: gdal-optfile
     SET MSSdk=1
 	cd $(GDAL_PATH)\swig
 	echo [build_ext] > python\setup.cfg
-    echo include_dirs = ../../port;../../gcore;../../alg;../../ogr/ >> python\setup.cfg
+    echo include_dirs = ../../port;../../gcore;../../alg;../../ogr/;../../ogr/ogrsf_frmts;../../gnm;../../apps >> python\setup.cfg
     echo library_dirs = ../../ >> python\setup.cfg
     echo libraries = gdal_i >> python\setup.cfg
     cd python
@@ -1752,12 +1908,51 @@ gdal-mrsid: gdal-optfile
     if exist $(OUTPUT_DIR)\bin\lti_dsdk.dll del $(OUTPUT_DIR)\bin\lti_dsdk.dll
     if exist $(OUTPUT_DIR)\bin\lti_lidar_dsdk.dll del $(OUTPUT_DIR)\bin\lti_lidar_dsdk.dll
 	if exist $(OUTPUT_DIR)\bin\lti_dsdk_9.0.dll del $(OUTPUT_DIR)\bin\lti_dsdk_9.0.dll
+	if exist $(OUTPUT_DIR)\bin\lti_dsdk_9.1.dll del $(OUTPUT_DIR)\bin\lti_dsdk_9.1.dll
     if exist $(OUTPUT_DIR)\bin\lti_lidar_dsdk_1.1.dll del $(OUTPUT_DIR)\bin\lti_lidar_dsdk_1.1.dll
 	if exist $(OUTPUT_DIR)\bin\tbb.dll del $(OUTPUT_DIR)\bin\tbb.dll
 	xcopy /Y gdal_MrSID.dll $(OUTPUT_DIR)\bin\gdal\plugins
 	if exist $(MRSID_DLL) xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
 	if exist $(LIDAR_DLL) xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
 	if exist $(MRSID_RASTER_DIR)\lib\tbb.dll xcopy /Y $(MRSID_RASTER_DIR)\lib\tbb.dll $(OUTPUT_DIR)\bin
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+gdal-mrsid-lidar: gdal-optfile
+!IFDEF MRSID_DIR
+    echo MRSID_DIR=$(BASE_DIR)\$(MRSID_DIR) >> $(OUTPUT_DIR)\gdal.opt
+    echo MRSID_RDLLBUILD = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo MRSID_LDLLBUILD = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo MRSID_INCLUDE=$(MRSID_INCLUDE) >> $(OUTPUT_DIR)\gdal.opt
+    echo MRSID_LIB=$(MRSID_LIB) advapi32.lib user32.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo MRSID_PLUGIN = YES >> $(OUTPUT_DIR)\gdal.opt
+    
+    echo MRSID_RASTER_DIR = $(MRSID_RASTER_DIR)
+    echo MRSID_RVER       = $(MRSID_RVER)
+    echo MRSID_JP2        = $(MRSID_JP2)
+    echo MRSID_ESDK       = $(MRSID_ESDK)
+    echo MRSID_RDLLBUILD  = $(MRSID_RDLLBUILD)
+    echo MRSID_LIDAR_DIR  = $(MRSID_LIDAR_DIR)
+    echo MRSID_LVER       = $(MRSID_LVER)
+    echo MRSID_LDLLBUILD  = $(MRSID_LDLLBUILD)
+    echo MRSID_CONFIG     = $(MRSID_CONFIG)
+    echo MRSID_FLAGS      = $(MRSID_FLAGS)
+    echo MRSID_INCLUDE    = $(MRSID_INCLUDE)
+    echo MRSID_LIB        = $(MRSID_LIB)
+    echo MRSID_DLL        = $(MRSID_DLL)
+    echo LIDAR_DLL        = $(LIDAR_DLL)
+    
+    cd $(GDAL_PATH)\frmts\mrsid_lidar
+!IFNDEF NO_CLEAN	
+	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt 
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y gdal_MG4Lidar.dll $(OUTPUT_DIR)\bin\gdal\plugins
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
@@ -1869,6 +2064,32 @@ gdal-fits: gdal-optfile
 	cd $(BASE_DIR)
 !ENDIF
 
+gdal-pdf: gdal-optfile
+!IFDEF GDAL_PDF
+    echo PDF_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_HAS_OPTCONTENT = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_0_20_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_0_23_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) $(OUTPUT_DIR)\lib\libtiff_i.lib $(OUTPUT_DIR)\lib\libpng.lib $(OUTPUT_DIR)\lib\libjpeg.lib $(OUTPUT_DIR)\lib\zdll.lib advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+
+	cd $(GDAL_PATH)\frmts\pdf
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+!ENDIF
+!IFNDEF NO_COPY
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_PDF.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
 gdal-kmlsuperoverlay: gdal-optfile
 !IFDEF GDAL_KMLSUPEROVERLAY
 !IF EXIST ($(GDAL_PATH)\frmts\kmlsuperoverlay)
@@ -1955,7 +2176,7 @@ gdal-ecw: gdal-optfile
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
     xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins
 !ELSE
-	if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
     xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
 !ENDIF
 !ENDIF    
@@ -2199,7 +2420,7 @@ curl:
 !IFNDEF NO_BUILD
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DHAVE_INET_PTON=0 -DCURL_DISABLE_LDAPS=OFF -DCURL_LDAP_WIN=OFF
 !IFDEF WIN64	
-    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|x64
+    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|Win32"
 !ENDIF
@@ -2432,7 +2653,7 @@ ms-optfile:
 !ENDIF
 !IFDEF MS_AGG
     if not exist $(MS_PATH)\renderers\agg echo agg.lib \>> $(OUTPUT_DIR)\mapserver.opt
-	echo libexpat.lib \>> $(OUTPUT_DIR)\mapserver.opt
+	echo expat.lib \>> $(OUTPUT_DIR)\mapserver.opt
 !ENDIF
 !IFDEF MS_CAIRO
 	echo cairo.lib libsvg.lib libsvg-cairo.lib \>> $(OUTPUT_DIR)\mapserver.opt
@@ -2572,7 +2793,7 @@ curl:
 !IFNDEF NO_BUILD
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DHAVE_INET_PTON=0
 !IFDEF WIN64	
-    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|x64
+    devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release curl.sln /Project curl /ProjectConfig "Release|Win32"
 !ENDIF
@@ -2601,7 +2822,7 @@ mapcache-build:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=release-$(COMPILER_VER)" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DFCGI_LIBRARY=$(OUTPUT_DIR)\lib\libfcgi.lib" "-DAPR_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DAPR_LIBRARY=$(OUTPUT_DIR)\lib\libapr-1.lib" "-DAPU_LIBRARY=$(OUTPUT_DIR)\lib\libaprutil-1.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" "-DWITH_APACHE=OFF" "-DWITH_MAPSERVER=ON" "-DMAPSERVER_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DMAPSERVER_LIBRARY=$(OUTPUT_DIR)\lib\mapserver.lib" "-DBUILD_SHARED_LIBS=OFF" "-DSQLITE_LIBRARY=$(OUTPUT_DIR)\lib\spatialite_i.lib" "-DWITH_FCGI=OFF"
 !IFDEF WIN64	
-    devenv /rebuild Release mapcache.sln /ProjectConfig "Release|x64
+    devenv /rebuild Release mapcache.sln /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release mapcache.sln /ProjectConfig "Release|Win32"
 !ENDIF
@@ -2625,7 +2846,7 @@ pcre-build:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" 
 !IFDEF WIN64	
-    devenv /rebuild Release PCRE.sln /Project pcre /ProjectConfig "Release|x64
+    devenv /rebuild Release PCRE.sln /Project pcre /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release PCRE.sln /Project pcre /ProjectConfig "Release|Win32"
 !ENDIF
@@ -2648,7 +2869,7 @@ apr-build:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" 
 !IFDEF WIN64	
-    devenv /rebuild Release apr.sln /Project libapr-1 /ProjectConfig "Release|x64
+    devenv /rebuild Release apr.sln /Project libapr-1 /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release apr.sln /Project libapr-1 /ProjectConfig "Release|Win32"
 !ENDIF
@@ -2673,14 +2894,14 @@ apr-util-build:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DAPU_HAVE_CRYPTO=ON"
 !IFDEF WIN64	
-    devenv /rebuild Release APR-Util.sln /Project libaprutil-1 /ProjectConfig "Release|x64
+    devenv /rebuild Release APR-Util.sln /Project libaprutil-1 /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release APR-Util.sln /Project libaprutil-1 /ProjectConfig "Release|Win32"
 !ENDIF
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\Release\libaprutil-1.lib $(OUTPUT_DIR)\lib
-	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\Release\libexpat.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\Release\expat.lib $(OUTPUT_DIR)\lib
 	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\Release\libaprutil-1.dll $(OUTPUT_DIR)\bin
 	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\$(CMAKE_BUILDDIR)\*.h $(OUTPUT_DIR)\include
 	xcopy /Y $(BASE_DIR)\$(APR_UTIL_DIR)\include\*.h $(OUTPUT_DIR)\include
@@ -2700,7 +2921,7 @@ ms-cmake:
 !ENDIF
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(OUTPUT_DIR)\lib\libsvg.lib" "-DSVGCAIRO_LIBRARY=$(OUTPUT_DIR)\lib\libsvg-cairo.lib" "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python27.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" "-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR)\include\harfbuzz" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1"
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" -DWITH_THREADS=1 -DWITH_PYTHON=1 -DWITH_JAVA=1 -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 -DWITH_ORACLE_PLUGIN=1 -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(OUTPUT_DIR)\lib\libsvg.lib" "-DSVGCAIRO_LIBRARY=$(OUTPUT_DIR)\lib\libsvg-cairo.lib" "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DPYTHON_LIBRARY=$(BASE_DIR)\$(PYTHON_DIR)\libs\python27.lib" "-DPYTHON_INCLUDE_DIR=$(BASE_DIR)\$(PYTHON_DIR)\include" "-DPYTHON_EXECUTABLE=$(BASE_DIR)\$(PYTHON_DIR)\python.exe" "-DORACLE_INCLUDE_DIR=$(BASE_DIR)\$(OCI_DIR)\sdk\include" "-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR)\include\harfbuzz" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR)\lib\gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR)\lib\libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH) -DMS_EXTERNAL_LIBS=WS2_32.Lib "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1" "-DPKG_CONFIG_EXECUTABLE=C:\Program Files (x86)\Mono\bin\pkg-config.exe" "-DICONV_DLL=$(OUTPUT_DIR)\bin\iconv.dll"
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -3180,7 +3401,7 @@ libxml:
     nmake /f makefile.msvc clean
 !ENDIF
 !IFNDEF NO_BUILD
-    cscript configure.js compiler=msvc vcmanifest=yes include=$(BASE_DIR)\$(ICONV_DIR)\include lib=$(BASE_DIR)\$(ICONV_DIR)\lib
+    cscript configure.js compiler=msvc vcmanifest=yes include=$(OUTPUT_DIR)\include lib=$(OUTPUT_DIR)\lib
     nmake /f makefile.msvc
     nmake /f makefile.msvc install PREFIX=$(BASE_DIR)\$(LIBXML_DIR)\Release
 !ENDIF
@@ -3226,6 +3447,10 @@ spatialite:
     nmake /f makefile.vc clean
 !ENDIF
 !IFNDEF NO_BUILD
+    xcopy /Y src\headers\*.h $(OUTPUT_DIR)\include
+    if not exist $(OUTPUT_DIR)\include\spatialite mkdir $(OUTPUT_DIR)\include\spatialite
+    xcopy /Y src\headers\spatialite\*.h $(OUTPUT_DIR)\include\spatialite
+	xcopy /Y src\headers\spatialite\sqlite3.h $(OUTPUT_DIR)\include
 !IFDEF WIN64
     nmake /f makefile.vc OUTPUT_DIR=$(OUTPUT_DIR) WIN64=YES
 !ELSE
@@ -3235,10 +3460,6 @@ spatialite:
 !IFNDEF NO_COPY
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
-    xcopy /Y headers\*.h $(OUTPUT_DIR)\include
-    if not exist $(OUTPUT_DIR)\include\spatialite mkdir $(OUTPUT_DIR)\include\spatialite
-    xcopy /Y headers\spatialite\*.h $(OUTPUT_DIR)\include\spatialite
-	xcopy /Y headers\spatialite\sqlite3.h $(OUTPUT_DIR)\include
 !ENDIF
     cd $(BASE_DIR)
 	
@@ -3248,16 +3469,47 @@ freexl:
     nmake /f makefile.vc clean
 !ENDIF
 !IFNDEF NO_BUILD
+	xcopy /Y headers\*.h $(OUTPUT_DIR)\include
     nmake /f makefile.vc OUTPUT_DIR=$(OUTPUT_DIR)
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
-    xcopy /Y headers\*.h $(OUTPUT_DIR)\include
 !ENDIF
     cd $(BASE_DIR)
-
+	
 mysql:
+!IFDEF MYSQL_DIR
+!IFNDEF NO_BUILD
+    cd $(BASE_DIR)\$(MYSQL_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\install"
+!IFDEF WIN64	
+    devenv /rebuild Release libmysql.sln /Project libmysql /ProjectConfig "Release|x64"
+!ELSE
+    devenv /rebuild Release libmysql.sln /Project libmysql /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\Release\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\include\my*.h $(OUTPUT_DIR)\include
+	if not exist $(OUTPUT_DIR)\include\mysql mkdir $(OUTPUT_DIR)\include\mysql
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\mysql\*.h $(OUTPUT_DIR)\include\mysql
+	if not exist $(OUTPUT_DIR)\include\mysql\psi mkdir $(OUTPUT_DIR)\include\mysql\psi
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\mysql\psi\*.h $(OUTPUT_DIR)\include\mysql\psi
+    if not exist $(OUTPUT_DIR)\include\atomic mkdir $(OUTPUT_DIR)\include\atomic
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\atomic\*.h $(OUTPUT_DIR)\include\atomic
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+
+mysql2:
 !IFDEF MYSQL_DIR
 !IFNDEF NO_BUILD
     cd $(MYSQL_DIR)
@@ -3340,7 +3592,31 @@ fastcgi:
 xerces:
 !IFDEF XERCES_DIR
 !IFNDEF NO_BUILD
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) == 1900
+!IFDEF WIN64
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC14\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|x64"
+!ELSE
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC14\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|Win32"
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1800
+!IFDEF WIN64
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC12\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|x64"
+!ELSE
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC12\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|Win32"
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+!IFDEF WIN64
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC11\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|x64"
+!ELSE
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC11\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|Win32"
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
     cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC10\xerces-all
     devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|x64"
@@ -3371,7 +3647,31 @@ xerces:
     cd $(BASE_DIR)
 !ENDIF
 !IFNDEF NO_COPY
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) == 1900
+!IFDEF WIN64
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC14\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC14\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1800
+!IFDEF WIN64
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC12\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC12\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC12\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC12\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+!IFDEF WIN64
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC11\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC11\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC11\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC11\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
     xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC10\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC10\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
@@ -3427,7 +3727,7 @@ libkml:
 !ENDIF
 
 expat2:
-!IFDEF MAPCACHE_DIR
+!IFDEF EXPAT2_DIR
     cd $(BASE_DIR)\$(EXPAT2_DIR)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
@@ -3437,7 +3737,7 @@ expat2:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" 
 !IFDEF WIN64	
-    devenv /rebuild Release expat.sln /Project expat /ProjectConfig "Release|x64
+    devenv /rebuild Release expat.sln /Project expat /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release expat.sln /Project expat /ProjectConfig "Release|Win32"
 !ENDIF
@@ -3532,6 +3832,8 @@ fribidi:
 
 version:
     echo MSVC_VER=$(MSVC_VER)  _NMAKE_VER=$(_NMAKE_VER)  WIN64=$(WIN64)  BASE_DIR=$(BASE_DIR)
+	
+hdfsuite: szip hdf5lib kea netcdf hdf4lib
 
 szip:
 !IFDEF SZIP_DIR
@@ -3544,7 +3846,7 @@ szip:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=release-$(COMPILER_VER)" "-DBUILD_SHARED_LIBS=ON"
 !IFDEF WIN64	
-    devenv /rebuild Release szip.sln /Project szip /ProjectConfig "Release|x64
+    devenv /rebuild Release szip.sln /Project szip /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release szip.sln /Project szip /ProjectConfig "Release|Win32"
 !ENDIF
@@ -3569,7 +3871,7 @@ hdf4lib:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON"
 !IFDEF WIN64	
-    devenv /rebuild Release hdf4.sln /Project INSTALL /ProjectConfig "Release|x64
+    devenv /rebuild Release hdf4.sln /Project INSTALL /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release hdf4.sln /Project INSTALL /ProjectConfig "Release|Win32"
 !ENDIF
@@ -3595,7 +3897,7 @@ kea:
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(KEA_DIR)\trunk\$(CMAKE_BUILDDIR)\install" "-DHDF5_LIB_PATH=$(OUTPUT_DIR)\lib" "-DHDF5_INCLUDE_DIR=$(OUTPUT_DIR)\include"
 	xcopy /Y $(BASE_DIR)\$(KEA_DIR)\trunk\$(CMAKE_BUILDDIR)\include\libkea\kea-config.h $(BASE_DIR)\$(KEA_DIR)\trunk\include\libkea
 !IFDEF WIN64	
-    devenv /rebuild Release LIBKEA.sln /Project ALL_BUILD /ProjectConfig "Release|x64
+    devenv /rebuild Release LIBKEA.sln /Project ALL_BUILD /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release LIBKEA.sln /Project ALL_BUILD /ProjectConfig "Release|Win32"
 !ENDIF
@@ -3620,7 +3922,7 @@ hdf5lib:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON"
 !IFDEF WIN64	
-    devenv /rebuild Release hdf5.sln /Project ALL_BUILD /ProjectConfig "Release|x64
+    devenv /rebuild Release hdf5.sln /Project ALL_BUILD /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release hdf5.sln /Project ALL_BUILD /ProjectConfig "Release|Win32"
 !ENDIF
@@ -3735,7 +4037,7 @@ netcdf:
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)" "-DUSE_HDF4=OFF" "-DBUILD_SHARED_LIBS=ON"
 	xcopy /Y $(OUTPUT_DIR)\lib\szip.lib $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\liblib
 !IFDEF WIN64	
-    devenv /rebuild Release netcdf.sln /Project netcdf /ProjectConfig "Release|x64
+    devenv /rebuild Release netcdf.sln /Project netcdf /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release netcdf.sln /Project netcdf /ProjectConfig "Release|Win32"
 !ENDIF
@@ -3818,9 +4120,21 @@ netcdf2:
 
 libecw:
 !IFDEF ECW_DIR
-!IF $(ECWSDK_VERSION) == 51
+!IF $(ECWSDK_VERSION) >= 50
 !IFNDEF NO_COPY
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) == 1800
+!IFDEF WIN64
+    xcopy /Y $(ECWDIR)\redistributable\vc120\x64\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(ECWDIR)\redistributable\vc120\Win32\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+!IFDEF WIN64
+    xcopy /Y $(ECWDIR)\redistributable\vc110\x64\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(ECWDIR)\redistributable\vc110\Win32\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
     xcopy /Y $(ECWDIR)\redistributable\vc100\x64\NCSEcw.dll $(OUTPUT_DIR)\bin
 !ELSE
@@ -3938,7 +4252,11 @@ pixman:
     -del /Q /S release
 !ENDIF
 !IFNDEF NO_BUILD
+!IFDEF WIN64
+    make -f Makefile.win32 CFG=release MMX=off SSE2=on SSSE3=off
+!ELSE
     make -f Makefile.win32 CFG=release MMX=on SSE2=on SSSE3=off
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y $(BASE_DIR)\$(PIXMAN_DIR)\pixman\release\pixman-1.lib $(OUTPUT_DIR)\lib
@@ -3955,6 +4273,7 @@ cairo:
     -del /Q /S release
 !ENDIF
 !IFNDEF NO_BUILD
+    -del $(OUTPUT_DIR)\include\cairo*.h
     make -f Makefile.win32 CFG=release OUTPUT_DIR=$(OUTPUT_DIR)
     cd release
 	if exist cairo.dll.manifest mt -manifest cairo.dll.manifest -outputresource:cairo.dll;2
@@ -4058,7 +4377,7 @@ poppler:
 	cd $(CMAKE_BUILDDIR)
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" "-DENABLE_LIBOPENJPEG=OFF" "-DENABLE_RELOCATABLE=OFF" "-DTIFF_LIBRARY=$(OUTPUT_DIR)\lib\libtiff_i.lib" "-DBUILD_SHARED_LIBS=ON"
 !IFDEF WIN64	
-    devenv /rebuild Release poppler.sln /Project poppler /ProjectConfig "Release|x64
+    devenv /rebuild Release poppler.sln /Project poppler /ProjectConfig "Release|x64"
 !ELSE
     devenv /rebuild Release poppler.sln /Project poppler /ProjectConfig "Release|Win32"
 !ENDIF
@@ -4134,7 +4453,7 @@ poppler2:
     cd $(BASE_DIR)
 !ENDIF
 
-libopenjpeg:
+libopenjpeg_save:
 !IFDEF OPENJPEG_DIR
     cd $(OPENJPEG_DIR)
 !IFNDEF NO_BUILD
@@ -4148,6 +4467,33 @@ libopenjpeg:
     cd $(BASE_DIR)
 !ENDIF
 
+libopenjpeg:
+!IFDEF OPENJPEG2_DIR
+    cd $(BASE_DIR)\$(OPENJPEG2_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(OPENJPEG2_DIR)\trunk\$(CMAKE_BUILDDIR)\install" "-DTIFF_LIBRARY=$(OUTPUT_DIR)\lib\libtiff_i.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib"
+!IFDEF WIN64	
+    devenv /rebuild Release openjpeg.sln /Project openjp2 /ProjectConfig "Release|x64"
+!ELSE
+    devenv /rebuild Release openjpeg.sln /Project openjp2 /ProjectConfig "Release|Win32"
+!ENDIF
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\$(CMAKE_BUILDDIR)\bin\Release\openjp2.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\$(CMAKE_BUILDDIR)\bin\Release\openjp2.dll $(OUTPUT_DIR)\bin
+	if not exist $(OUTPUT_DIR)\include\openjpeg-2.1 mkdir $(OUTPUT_DIR)\include\openjpeg-2.1
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\src\lib\openjp2\openjpeg.h $(OUTPUT_DIR)\include\openjpeg-2.1
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\src\lib\openjp2\opj_stdint.h $(OUTPUT_DIR)\include\openjpeg-2.1
+    xcopy /Y $(BASE_DIR)\$(OPENJPEG2_DIR)\$(CMAKE_BUILDDIR)\src\lib\openjp2\opj*.h $(OUTPUT_DIR)\include\openjpeg-2.1	
+!ENDIF
+    cd $(BASE_DIR)
+!ENDIF
+	
 libopenjpeg2:
 !IFDEF OPENJPEG2_DIR
     cd $(OPENJPEG2_DIR)
@@ -4166,13 +4512,45 @@ libopenjpeg2:
 !ENDIF
 
 msvcr:
-!IF $(MSVC_VER) == 1600
+!IF $(MSVC_VER) == 1900
+!IFDEF WIN64
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1800
+!IFDEF WIN64
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x64\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x64\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x86\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x86\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+!IFDEF WIN64
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x64\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x64\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x64\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x64\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
 !ELSE
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1500
+!IFDEF WIN64
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1310
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcr71.dll" $(OUTPUT_DIR)\bin

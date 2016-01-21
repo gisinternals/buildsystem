@@ -1,43 +1,34 @@
 
-
-!IF $(MSVC_VER) == 1600
-!IF EXIST("$(GDAL_PATH)\frmts\mrsid\nmake.opt")
+!IF $(MSVC_VER) == 1800
 !IFDEF WIN64
-MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win64-vs10
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win64-vc12
 !ELSE
-MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win32-vs10
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win32-vc12
 !ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+!IFDEF WIN64
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win64-vc11
+!ELSE
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win32-vc11
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1600
+!IFDEF WIN64
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win64-vs10
+!ELSE
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win32-vs10
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
-!IF EXIST("$(GDAL_PATH)\frmts\mrsid\nmake.opt")
 !IFDEF WIN64
-MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win64-vc9
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win64-vc9
 !ELSE
-MRSID_DIR=mrsid\MrSID_DSDK-9.0.0.3864-win32-vc9
-!ENDIF
-!ELSE
-!IFDEF WIN64
-MRSID_DIR=mrsid\Geo_DSDK-7.0.0.2181.win64-vc9
-!ELSE
-MRSID_DIR=mrsid\Geo_DSDK-7.0.0.2181.win32-vc9
-!ENDIF
+MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win32-vc9
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1400
-!IF EXIST("$(GDAL_PATH)\frmts\mrsid\nmake.opt")
 !IFDEF WIN64
 MRSID_DIR=mrsid\Raster_DSDK_8.0_win64-vc8
 !ELSE
 MRSID_DIR=mrsid\Raster_DSDK_8.0_win32-vc8
 !ENDIF
-!ELSE
-!IFDEF WIN64
-MRSID_DIR=mrsid\Geo_DSDK-7.0.0.2167.win64-vc8
-!ELSE
-MRSID_DIR=mrsid\Geo_DSDK-7.0.0.2167.win32-vc8
-!ENDIF
-!ENDIF
-!ELSE
-MRSID_DIR=mrsid\Geo_DSDK-7.0.0.2167.win32-vc7
 !ENDIF
 
 
@@ -449,6 +440,10 @@ MRSID_DLL_NAME =        lti_dsdk.dll
 MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk.lib" $(MRSID_LIB)
 MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.0.dll"
 MRSID_DLL_NAME =        lti_dsdk_9.0.dll
+!ELSE IF EXIST("$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.1.dll")
+MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk.lib" $(MRSID_LIB)
+MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.1.dll"
+MRSID_DLL_NAME =        lti_dsdk_9.1.dll
 !ELSE IF EXIST("$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.dll")
 MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.lib" $(MRSID_LIB)
 MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.dll"
@@ -567,6 +562,7 @@ MRSID_LIB =        "$(MRSID_LIDAR_DIR)\lib\$(MRSID_CONFIG)\lti_lidar_dsdk.lib" $
 # Report the configuration summary
 #
 !IF DEFINED(MRSID_SHOW_CONFIG)
+!MESSAGE MRSID_DIR = $(MRSID_DIR)
 !MESSAGE MRSID_RASTER_DIR = $(MRSID_RASTER_DIR)
 !MESSAGE MRSID_RVER       = $(MRSID_RVER)
 !MESSAGE MRSID_JP2        = $(MRSID_JP2)
