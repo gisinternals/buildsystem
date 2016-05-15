@@ -114,7 +114,6 @@
 
 
 
-
 set compiler=vc10x64
 
 call setversions.bat
@@ -166,48 +165,6 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished
 
 echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 
-:osgeo4w
-set logid=%compiler%-osgeo4w-stable-dev
-set ms-dir=mapserver-%ms_version%
-if exist ms-osgeo4w-x64-build.txt set /p buildnumber=<ms-osgeo4w-x64-build.txt
-if not exist ms-osgeo4w-x64-build.txt set buildnumber=1
-set /A buildnumber+=1
-echo %buildnumber% >ms-osgeo4w-x64-build.txt
-echo @echo off >E:\builds\rsync\uploadx86_64.bat
-
-set ms-osgeo4w-ver=%ms_osgeo4w_version%
-set ms-osgeo4w-pkg=-stable-dev
-set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
-
-cmd /C makeosgeo4w.bat
-
-set logid=%compiler%-osgeo4w-dev
-set ms-osgeo4w-ver=%ms_osgeo4w_version_dev%
-set ms-osgeo4w-pkg=-dev
-set ms-dir=mapserver
-
-cmd /C makeosgeo4w.bat
-
-:upload
-
-set nmakecmd=upload-osgeo
-set cmdname=Uploading-osgeo4w
-for /f "tokens=1-7 delims=:.,- " %%a in ("%date% %time%") do set id=%%a%%b%%c-%%d-%%e-%%f-%%g-%logid%
-echo %date% %time%: %cmdname% started ^&nbsp^<a href="http://build.gisinternals.com/sdk/build-output/%compiler%-%id%.txt"^>stdout^</a^>^&nbsp^<a href="http://build.gisinternals.com/sdk/build-output/%compiler%-%id%-err.txt"^>stderr^</a^>^&nbsp >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
-nmake %nmakecmd% >C:\Inetpub\wwwroot\sdk\build-output\%compiler%-%id%.txt 2>C:\Inetpub\wwwroot\sdk\build-output\%compiler%-%id%-err.txt
-IF ERRORLEVEL 1 (
-echo ^<span style="background-color:Red;color:Black;font-weight:bold"^>%cmdname% Failed^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
-echo ^<span style="background-color:Red;color:Black;font-weight:bold"^>Failed^</span^>^<br/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
-@goto exit
-) else (
-echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>%cmdname% OK^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
-echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^</span^>^<br/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
-)
-
-echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished at %date% %time%^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
-
-echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
-
 
 @goto exit
 
@@ -222,7 +179,7 @@ set MS_REVISION=%ms_rev%
 set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%
 
-cmd /C makepackage.bat
+rem cmd /C makepackage.bat
 
 set logid=%compiler%-osgeo4w-release
 set buildnumber=1

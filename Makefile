@@ -198,7 +198,10 @@ GDAL_JAVA = YES
 GDAL_XERCES = YES
 GDAL_EXPAT = YES
 GDAL_MYSQL = YES
+GDAL_MSSQL = YES
 GDAL_OPENJPEG = YES
+GDAL_AMIGOCLOUD = YES
+GDAL_GNM = YES
 GDAL_KMLSUPEROVERLAY = YES
 #GDAL_DEBUG_VSIMALLOC = YES
 GDAL_PDF = YES
@@ -319,23 +322,38 @@ SPATIALITE_DIR = libspatialite-4.3.0a
 FREEXL_DIR = freexl-1.0.2
 !ENDIF
 
+!IFNDEF SQLNCLI_VERSION
+SQLNCLI_VERSION = 11
+!ENDIF
+
+!IFNDEF SQLNCLI_DIR
+SQLNCLI_DIR = C:\Program Files (x86)\Microsoft SQL Server\$(SQLNCLI_VERSION)0\SDK
+!ENDIF
+
 !IFNDEF FILEGDB_API_DIR
-!IF $(MSVC_VER) == 1700
-FILEGDB_API_DIR = FileGDB_API_VS2012_1_3
+!IF $(MSVC_VER) == 1800
+FILEGDB_API_DIR = FileGDB_API_VS2013_1_4
+!IFDEF WIN64
+FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin64
+!ELSE
+FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1700
+FILEGDB_API_DIR = FileGDB_API_VS2012_1_4
 !IFDEF WIN64
 FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin64
 !ELSE
 FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1600
-FILEGDB_API_DIR = FileGDB_API_VS2010_1_2
+FILEGDB_API_DIR = FileGDB_API_VS2010_1_4
 !IFDEF WIN64
 FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin64
 !ELSE
 FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
-FILEGDB_API_DIR = FileGDB_API_VS2008_1_2
+FILEGDB_API_DIR = FileGDB_API_VS2008_1_3
 !IFDEF WIN64
 FILEGDB_BINPATH = $(BASE_DIR)\$(FILEGDB_API_DIR)\bin64
 !ELSE
@@ -973,6 +991,7 @@ GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 !ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal201.dll)
 GDAL_VERSIONTAG = 201
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
+GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 !ENDIF
 !ENDIF
 
@@ -992,7 +1011,7 @@ EXTRAFLAGS =
 
 default: update platform gdal gdalplugins gdal-csharp
 
-gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-mrsid-lidar gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw gdal-ecw3 ogr-pg gdal-filegdb gdal-kea
+gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-mrsid-lidar gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw gdal-ecw3 ogr-pg gdal-filegdb gdal-kea gdal-amigocloud ogr-mssql
 	
 gdalplugins: gdalpluginlibs gdalversion
 
@@ -1166,9 +1185,9 @@ mkgdalinst-core:
     -del $(OUTPUT_DIR)\install\GDAL.wixpdb
     -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi
 !IFDEF WIN64
-    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "$(GDAL_KEA_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "$(GDAL_KEA_DEF)" "$(GDAL_MSSQL_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ELSE
-    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "$(GDAL_KEA_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
+    -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "$(GDAL_KEA_DEF)" "$(GDAL_MSSQL_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ENDIF
     -Light.exe -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
@@ -1515,6 +1534,12 @@ gdal-optfile:
     echo TIFF_OPTS=-DBIGTIFF_SUPPORT
     echo $(JBIG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo $(LIBTIFF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF GDAL_AMIGOCLOUD
+    echo AMIGOCLOUD_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
+!ENDIF
+!IFDEF GDAL_GNM
+    echo INCLUDE_GNM_FRMTS=YES >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF
 !IFDEF SZIP_DIR
     echo $(SZIP_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -2023,6 +2048,24 @@ gdal-kea: gdal-optfile
 !ENDIF
 !ENDIF
 
+gdal-amigocloud: gdal-optfile
+!IF EXIST ($(GDAL_PATH)\ogr\ogrsf_frmts\amigocloud)
+    echo AMIGOCLOUD_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
+	cd $(GDAL_PATH)\ogr\ogrsf_frmts\amigocloud
+!IFNDEF NO_CLEAN	
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
+!IFNDEF NO_COPY
+	xcopy /Y ogr_AmigoCloud.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
 gdal-netcdf: gdal-optfile
 !IFDEF NETCDF_DIR
     echo NETCDF_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
@@ -2153,6 +2196,32 @@ ogr-pg: gdal-optfile
 	xcopy /Y ogr_PG.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
 !ENDIF
 	cd $(BASE_DIR)
+!ENDIF
+
+ogr-mssql: gdal-optfile
+!IFDEF GDAL_MSSQL_DEF
+!IFDEF GDAL_MSSQL
+    echo SQLNCLI_VERSION = $(SQLNCLI_VERSION) >> $(OUTPUT_DIR)\gdal.opt
+    echo SQLNCLI_DIR = $(SQLNCLI_DIR) >> $(OUTPUT_DIR)\gdal.opt
+!IFDEF WIN64
+	echo SQLNCLI_LIB = "$(SQLNCLI_DIR)\Lib\x64\sqlncli$(SQLNCLI_VERSION).lib" >> $(OUTPUT_DIR)\gdal.opt
+!ELSE
+	echo SQLNCLI_LIB = "$(SQLNCLI_DIR)\Lib\x86\sqlncli$(SQLNCLI_VERSION).lib" >> $(OUTPUT_DIR)\gdal.opt
+!ENDIF
+    echo SQLNCLI_INCLUDE = "-I$(SQLNCLI_DIR)\Include" -DSQLNCLI_VERSION=$(SQLNCLI_VERSION) -DMSSQL_BCP_SUPPORTED=1 >> $(OUTPUT_DIR)\gdal.opt
+    cd $(GDAL_PATH)\ogr\ogrsf_frmts\mssqlspatial
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+!ENDIF
+!IFNDEF NO_COPY
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
 !ENDIF
 
 gdal-ecw: gdal-optfile
@@ -4580,10 +4649,10 @@ mapmanager-installer:
 !IF $(MSVC_VER) >= 1600
 	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
 !IFNDEF NO_BUILD
-	rem devenv /rebuild Release MapManager.sln /Project Installer
+	devenv /rebuild Release MapManager.sln /Project Installer
+	$(BASE_DIR)\cert\sign "$(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi"
 !ENDIF
 !IFNDEF NO_COPY
-	xcopy /Y Installer\bin\Release\MapManager.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 	$(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 !ENDIF
 	cd $(BASE_DIR)

@@ -1,6 +1,6 @@
 @SET VSINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio 9.0
 @SET VCINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC
-@SET FrameworkDir=C:\WINDOWS\Microsoft.NET\Framework
+@SET FrameworkDir=C:\Windows\Microsoft.NET\Framework
 @SET FrameworkVersion=v2.0.50727
 @SET Framework35Version=v3.5
 @if "%VSINSTALLDIR%"=="" goto error_no_VSINSTALLDIR
@@ -20,12 +20,12 @@
 @rem
 @rem Root of Visual Studio IDE installed files.
 @rem
-@set DevEnvDir=%VSINSTALLDIR%\Common7\IDE
+@set DevEnvDir=C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE
 
-@set PATH=%DevEnvDir%;%VCINSTALLDIR%\BIN;%VSINSTALLDIR%\Common7\Tools;%VSINSTALLDIR%\Common7\Tools\bin;%FrameworkDir%\%Framework35Version%;%FrameworkDir%\%Framework35Version%\Microsoft .NET Framework 3.5 (Pre-Release Version);%FrameworkDir%\%FrameworkVersion%;%VCINSTALLDIR%\VCPackages;%PATH%
-@set INCLUDE=%VCINSTALLDIR%\ATLMFC\INCLUDE;%VCINSTALLDIR%\INCLUDE;%INCLUDE%
-@set LIB=%VCINSTALLDIR%\ATLMFC\LIB;%VCINSTALLDIR%\LIB;%LIB%
-@set LIBPATH=%FrameworkDir%\%Framework35Version%;%FrameworkDir%\%FrameworkVersion%;%VCINSTALLDIR%\ATLMFC\LIB;%VCINSTALLDIR%\LIB;%LIBPATH%
+@set PATH=C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE;C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\BIN;C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\Tools;C:\Windows\Microsoft.NET\Framework\v3.5;C:\Windows\Microsoft.NET\Framework\v2.0.50727;C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\VCPackages;%PATH%
+@set INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\ATLMFC\INCLUDE;C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\INCLUDE;%INCLUDE%
+@set LIB=C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\ATLMFC\LIB;C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\LIB;%LIB%
+@set LIBPATH=C:\Windows\Microsoft.NET\Framework\v3.5;C:\Windows\Microsoft.NET\Framework\v2.0.50727;C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\ATLMFC\LIB;C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\LIB;%LIBPATH%
 
 @goto end
 
@@ -36,7 +36,6 @@
 @exit /B 0
 
 :GetWindowsSdkDirHelper
-@SET WindowsSdkDir=
 @for /F "tokens=1,2*" %%i in ('reg query "%1\SOFTWARE\Microsoft\Microsoft SDKs\Windows" /v "CurrentInstallFolder"') DO (
 	if "%%i"=="CurrentInstallFolder" (
 		SET "WindowsSdkDir=%%k"
@@ -59,10 +58,12 @@
 
 set compiler=vc9
 
+
 call setversions.bat
 
 if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
+if "%1" == "osgeo4w" @goto osgeo4w
 
 set logid=%compiler%-dev
 set gdal-dir=gdal-trunk
@@ -84,12 +85,15 @@ set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat
 
+:dev
+
 set logid=%compiler%-sdk
+set ms-dir=mapserver-%ms_version%
 
 set nmakecmd=package-dev GDAL_DIR=..\sdk\%compiler%\%gdal-dir%\gdal MS_DIR=..\sdk\%compiler%\%ms-dir% INSTALL_DIR=C:\Inetpub\wwwroot\sdk\downloads
 set cmdname=Packaging-dev
 for /f "tokens=1-7 delims=:.,- " %%a in ("%date% %time%") do set id=%%a%%b%%c-%%d-%%e-%%f-%%g-%logid%
-echo %date% %time%: %cmdname% started ^&nbsp^<a href="http://build.gisinternals.com/sdk/build-output/%compiler%-%id%.txt"^>stdout^</a^>^&nbsp^<a href="http://build.gisinternals.com/sdk/build-output/%compiler%-%id%-err.txt"^>stderr^</a^>^&nbsp >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
+echo %date% %time%: %cmdname% started ^&nbsp^<a href="%compiler%-%id%.txt"^>stdout^</a^>^&nbsp^<a href="%compiler%-%id%-err.txt"^>stderr^</a^>^&nbsp >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 nmake %nmakecmd% >C:\Inetpub\wwwroot\sdk\build-output\%compiler%-%id%.txt 2>C:\Inetpub\wwwroot\sdk\build-output\%compiler%-%id%-err.txt
 IF ERRORLEVEL 1 (
 echo ^<span style="background-color:Red;color:Black;font-weight:bold"^>%cmdname% Failed^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
@@ -103,6 +107,7 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^
 echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished at %date% %time%^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
 
 echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
+
 
 @goto exit
 
@@ -118,6 +123,7 @@ set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat
+
 
 :exit
 

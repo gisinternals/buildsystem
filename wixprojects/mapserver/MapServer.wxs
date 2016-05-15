@@ -13,6 +13,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "4136470C-DEC2-4207-80EF-28D24619F3FF" ?>
     <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2010 Win64)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "52BA80B5-AA39-460A-BB1D-79082111F2E8" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2012 Win64)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "20EBF1E3-D8B2-45C6-AC35-AE1613A435FA" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2013 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef msplugin_oracle?>
@@ -25,6 +31,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "7F432EFF-EF2B-4EB7-8A3A-92FF6048458C" ?>
     <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2010 Win64)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "09AFDE47-3722-4EA4-9FAE-593A1D0B7811" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2012 Win64)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "3BC674AE-A432-44E9-AC89-CDB58FD9D4AB" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2013 Win64)" ?>
     <?endif?>
     <?endif?>
     <?else?>
@@ -42,6 +54,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "BD05FFAE-6676-4004-9EAC-B1475F87D9E3" ?>
     <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2010)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "518322D3-3D79-49D2-9D4A-D3A2A3A7D143" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2012)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "91BBF4C0-078A-4431-ADCE-5F93D8A4662B" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2013)" ?>
     <?endif?>
     <?endif?>
     <?ifdef msplugin_oracle?>
@@ -57,12 +75,18 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "6A33DB9A-861A-487C-84B7-CD0C5522DCAA" ?>
     <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2010)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "115DB5E9-8B12-4EF4-AF60-D6E49021DC67" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2012)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "8B6ECDB4-6DE2-430F-92A5-08C172297558" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2013)" ?>
     <?endif?>
     <?endif?>
     <?endif?>
     
     <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.0.0" Manufacturer="GISInternals" UpgradeCode="F70375C2-6571-4A8C-AEA9-3F253A1735E0">
-		<Package InstallerVersion="300" Compressed="yes" Description="$(var.ProductName) Installer"/>
+		<Package InstallerVersion="405" Compressed="yes" Description="$(var.ProductName) Installer"/>
 
     <!-- Check to see if IIS is installed. It it's not, error out. -->
     <Property Id="IIS_MAJOR_VERSION">
@@ -351,8 +375,8 @@
                     <Component Id="libeay32.dll" Guid="*">
                         <File Id="libeay32.dll" Name="libeay32.dll" Source="$(var.TargetDir)\libeay32.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="libexpat.dll" Guid="*">
-                        <File Id="libexpat.dll" Name="libexpat.dll" Source="$(var.TargetDir)\libexpat.dll" Vital="yes"/>
+                    <Component Id="expat.dll" Guid="*">
+                        <File Id="expat.dll" Name="expat.dll" Source="$(var.TargetDir)\expat.dll" Vital="yes"/>
                     </Component>
                     <Component Id="libmysql.dll" Guid="*">
                         <File Id="libmysql.dll" Name="libmysql.dll" Source="$(var.TargetDir)\libmysql.dll" Vital="yes"/>
@@ -374,14 +398,8 @@
                     <Component Id="netcdf.dll" Guid="*">
                         <File Id="netcdf.dll" Name="netcdf.dll" Source="$(var.TargetDir)\netcdf.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="openjpeg.dll" Guid="*">
-                        <File Id="openjpeg.dll" Name="openjpeg.dll" Source="$(var.TargetDir)\openjpeg.dll" Vital="yes"/>
-                    </Component>
-					<Component Id="openjp2.dll" Guid="*">
+                    <Component Id="openjp2.dll" Guid="*">
                         <File Id="openjp2.dll" Name="openjp2.dll" Source="$(var.TargetDir)\openjp2.dll" Vital="yes"/>
-                    </Component>
-                    <Component Id="pdflib.dll" Guid="*">
-                        <File Id="pdflib.dll" Name="pdflib.dll" Source="$(var.TargetDir)\pdflib.dll" Vital="yes"/>
                     </Component>
                     <Component Id="proj.dll" Guid="*">
                         <File Id="proj.dll" Name="proj.dll" Source="$(var.TargetDir)\proj.dll" Vital="yes"/>
@@ -389,8 +407,11 @@
                     <Component Id="spatialite.dll" Guid="*">
                         <File Id="spatialite.dll" Name="spatialite.dll" Source="$(var.TargetDir)\spatialite.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="sqlite3.dll" Guid="*">
+					<Component Id="sqlite3.dll" Guid="*">
                         <File Id="sqlite3.dll" Name="sqlite3.dll" Source="$(var.TargetDir)\sqlite3.dll" Vital="yes"/>
+                    </Component>
+					<Component Id="freexl.dll" Guid="*">
+                        <File Id="freexl.dll" Name="freexl.dll" Source="$(var.TargetDir)\freexl.dll" Vital="yes"/>
                     </Component>
                     <Component Id="ssleay32.dll" Guid="*">
                         <File Id="ssleay32.dll" Name="ssleay32.dll" Source="$(var.TargetDir)\ssleay32.dll" Vital="yes"/>
@@ -808,17 +829,16 @@
             <ComponentRef Id="curl_ca_bundle.crt" />
             <ComponentRef Id="ssleay32.dll" />
             <ComponentRef Id="libeay32.dll" />
-            <ComponentRef Id="libexpat.dll" />
+            <ComponentRef Id="expat.dll" />
             <ComponentRef Id="libpq.dll" />
             <ComponentRef Id="libmysql.dll" />
             <ComponentRef Id="libxml2.dll" />
             <ComponentRef Id="proj.dll" />
-            <ComponentRef Id="pdflib.dll" />
-            <ComponentRef Id="sqlite3.dll" />
             <ComponentRef Id="spatialite.dll" />
+			<ComponentRef Id="sqlite3.dll" />
+			<ComponentRef Id="freexl.dll" />
             <ComponentRef Id="xerces_c_2_8.dll" />
-            <ComponentRef Id="openjpeg.dll" />
-			<ComponentRef Id="openjp2.dll" />
+            <ComponentRef Id="openjp2.dll" />
             <ComponentRef Id="zlib1.dll" />
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="MSLicense.rtf" />
@@ -1086,6 +1106,38 @@
             <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC100_CRT_x86.msm" DiskId="1" Language="0"/>
         </DirectoryRef>
         <Feature Id="VCRedist" Title="Visual C++ 10.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+				<?elseif $(var.Compiler) = 1700?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC110_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 11.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC110_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 11.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+		<?elseif $(var.Compiler) = 1800?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC120_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
             <MergeRef Id="VCRedist"/>
         </Feature>
 		<?endif?>

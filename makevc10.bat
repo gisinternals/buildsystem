@@ -118,6 +118,7 @@
 :end
 
 
+
 set compiler=vc10
 
 call setversions.bat
@@ -125,6 +126,7 @@ call setversions.bat
 if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
 if "%1" == "osgeo4w" @goto osgeo4w
+if "%1" == "mapmanager" @goto mapmanager
 
 set logid=%compiler%-dev
 set gdal-dir=gdal-trunk
@@ -180,19 +182,26 @@ echo @echo off >E:\builds\rsync\uploadx86.bat
 
 set ms-osgeo4w-ver=%ms_osgeo4w_version%
 set ms-osgeo4w-pkg=-stable-dev
+
 set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
 
-cmd /C makeosgeo4w.bat
-
-set logid=%compiler%-mapmanager-stable-dev
-cmd /C makemapmanager.bat
+rem cmd /C makeosgeo4w.bat
 
 set logid=%compiler%-osgeo4w-dev
 set ms-osgeo4w-ver=%ms_osgeo4w_version_dev%
 set ms-osgeo4w-pkg=-dev
 set ms-dir=mapserver
 
-cmd /C makeosgeo4w.bat
+rem cmd /C makeosgeo4w.bat
+
+:mapmanager
+set gdal-dir=gdal-%gdal_version%
+set ms-dir=mapserver-%ms_version%
+set msautotest-dir=msautotest-%ms_version%
+set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
+set gdal-tag=%gdal_stable_tag%
+set logid=%compiler%-mapmanager-stable-dev
+cmd /C makemapmanager.bat
 
 :upload
 
@@ -236,7 +245,7 @@ echo @echo off >E:\builds\rsync\uploadx86.bat
 set ms-osgeo4w-ver=%ms_osgeo4w_version%
 set ms-osgeo4w-pkg=
 
-cmd /C makeosgeo4w.bat
+rem cmd /C makeosgeo4w.bat
 
 set logid=%compiler%-mapmanager-release
 cmd /C makemapmanager.bat

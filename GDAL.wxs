@@ -13,6 +13,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "AE94084D-5C64-4DBD-B548-2B00DCC6D5FB" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2010 Win64)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "C43A61A2-7086-432B-8C26-A9D7865EF4A8" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2012 Win64)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "5740BBBC-A2C2-4D92-A074-6FA5BFA8804A" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2013 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -25,6 +31,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "F55B6459-5A02-4E35-8969-BD45EE529D06" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2010 Win64)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "CF4F2A21-4927-40F0-BB6A-C07446B9207C" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2012 Win64)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "C7DBFB7F-494C-49C7-97BD-2A05EB0DE3DF" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2013 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -37,6 +49,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "1F02C51B-B1D8-4EF5-80A1-05BE2E871327" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2010 Win64)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "0C1ACA3F-2000-40C7-99AA-8AB5F575417B" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2012 Win64)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "DAB3A892-377F-4D4F-936A-EBC305EB7CA2" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2012 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -49,6 +67,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "C7A5A05D-7277-4BE3-B41C-F14477823033" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2010 Win64)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "9DC540FA-9064-4660-8D0F-A772B4111BF6" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2012 Win64)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "5C4FA629-5E72-4838-A1B1-4C2B11D95E97" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2013 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -61,6 +85,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "85E216C4-DDDF-4657-A57E-BA74900E8080" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2010 Win64)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "AF7861F2-1CE9-4AFB-8DE1-2FDC18E8A188" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2012 Win64)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "E062A6E5-77C9-4768-8ACC-2AED251271C9" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2013 Win64)" ?>
     <?endif?>
     <?endif?>
     <?else?>
@@ -78,6 +108,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "60F34B78-F226-4155-B582-8A3E1547CC44" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2010)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "E2EADE7E-8D1B-4E5A-8338-CF272FF90949" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2012)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "EFB37E0F-216D-481C-85B5-1CF48CEDFFFC" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2013)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -93,6 +129,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "5677DD54-0BF1-4CCF-857E-939B44F3980F" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2010)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "B8FC8148-4505-4039-9649-DD86BFCBFFF8" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2012)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "7C0899A7-78DE-44CD-A6CD-16859D6A6775" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2013)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -108,6 +150,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "28B1568B-B62E-4223-B102-14884B2C2D76" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2010)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "749CF2E2-DFF3-49B0-9F97-945C2F0C83B3" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2012)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "CA80C0CA-AC19-4C52-B724-507F059ACB2B" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2013)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -123,6 +171,12 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "738B113E-5608-43A9-BF98-13EAB7D22BB3" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2010)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "0FF9586E-61BE-4A95-BCD8-A6630325BD81" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2012)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "48EF38CA-F5FC-472B-8CBD-A562EC55A380" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2013)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -138,12 +192,18 @@
     <?elseif $(var.Compiler) = 1600?>
     <?define UpgradeCode = "7E797B42-095B-4940-A14A-0EBFA87DCAF8" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2010)" ?>
+	<?elseif $(var.Compiler) = 1700?>
+    <?define UpgradeCode = "369B2391-B9C4-4E2F-ACEA-F8EC8EB771D0" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2012)" ?>
+	<?elseif $(var.Compiler) = 1800?>
+    <?define UpgradeCode = "68F40E6C-90DB-407B-BA6D-77EF70CA150A" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2013)" ?>
     <?endif?>
     <?endif?>
     <?endif?>
     
     <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.0.0" Manufacturer="OSGeo" UpgradeCode="F70375C2-6571-4A8C-AEA9-3F253A1735E0">
-		<Package InstallerVersion="300" Compressed="yes" Description="$(var.ProductName) Installer"/>
+		<Package InstallerVersion="405" Compressed="yes" Description="$(var.ProductName) Installer"/>
 
 		<Media Id="1" Cabinet="GDAL.cab" EmbedCab="yes" />
 
@@ -199,7 +259,11 @@
                     <Directory Id="gdalpluginsDir" Name="gdalplugins">
                         <?ifdef gdal_ECW_JP2ECW?>
                         <Component Id="gdal_ECW_JP2ECW.dll" Guid="*">
-                            <File Id="gdal_ECW_JP2ECW.dll" Name="gdal_ECW_JP2ECW.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_ECW_JP2ECW.dll" />
+							<?if $(var.ECWSDKVersion) >= 50?>
+								<File Id="gdal_ECW_JP2ECW.dll" Name="gdal_ECW_JP2ECW.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_ECW_JP2ECW.dll" />
+							<?else?>
+								<File Id="gdal_ECW_JP2ECW.dll" Name="gdal_ECW_JP2ECW.dll" Source="$(var.TargetDir)\gdal\plugins-optional\gdal_ECW_JP2ECW.dll" />
+							<?endif?>
                         </Component>
                         <?endif?>
                         <?ifdef gdal_MrSID?>
@@ -210,6 +274,11 @@
 						<?ifdef gdal_KEA?>
                         <Component Id="gdal_KEA.dll" Guid="*">
                             <File Id="gdal_KEA.dll" Name="gdal_KEA.dll" Source="$(var.TargetDir)\gdal\plugins\gdal_KEA.dll" />
+                        </Component>
+						<?endif?>
+						<?ifdef ogr_MSSQLSpatial?>
+                        <Component Id="ogr_MSSQLSpatial.dll" Guid="*">
+                            <File Id="ogr_MSSQLSpatial.dll" Name="ogr_MSSQLSpatial.dll" Source="$(var.TargetDir)\gdal\plugins-optional\ogr_MSSQLSpatial.dll" />
                         </Component>
 						<?endif?>
                         <?ifdef ogr_FileGDB?>
@@ -412,8 +481,8 @@
                     <Component Id="libeay32.dll" Guid="*">
                         <File Id="libeay32.dll" Name="libeay32.dll" Source="$(var.TargetDir)\libeay32.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="libexpat.dll" Guid="*">
-                        <File Id="libexpat.dll" Name="libexpat.dll" Source="$(var.TargetDir)\libexpat.dll" Vital="yes"/>
+                    <Component Id="expat.dll" Guid="*">
+                        <File Id="expat.dll" Name="expat.dll" Source="$(var.TargetDir)\expat.dll" Vital="yes"/>
                     </Component>
                     <Component Id="libmysql.dll" Guid="*">
                         <File Id="libmysql.dll" Name="libmysql.dll" Source="$(var.TargetDir)\libmysql.dll" Vital="yes"/>
@@ -435,14 +504,8 @@
                     <Component Id="netcdf.dll" Guid="*">
                         <File Id="netcdf.dll" Name="netcdf.dll" Source="$(var.TargetDir)\netcdf.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="openjpeg.dll" Guid="*">
-                        <File Id="openjpeg.dll" Name="openjpeg.dll" Source="$(var.TargetDir)\openjpeg.dll" Vital="yes"/>
-                    </Component>
                     <Component Id="openjp2.dll" Guid="*">
                         <File Id="openjp2.dll" Name="openjp2.dll" Source="$(var.TargetDir)\openjp2.dll" Vital="yes"/>
-                    </Component>
-                    <Component Id="pdflib.dll" Guid="*">
-                        <File Id="pdflib.dll" Name="pdflib.dll" Source="$(var.TargetDir)\pdflib.dll" Vital="yes"/>
                     </Component>
                     <Component Id="proj.dll" Guid="*">
                         <File Id="proj.dll" Name="proj.dll" Source="$(var.TargetDir)\proj.dll" Vital="yes"/>
@@ -450,8 +513,11 @@
                     <Component Id="spatialite.dll" Guid="*">
                         <File Id="spatialite.dll" Name="spatialite.dll" Source="$(var.TargetDir)\spatialite.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="sqlite3.dll" Guid="*">
+					<Component Id="sqlite3.dll" Guid="*">
                         <File Id="sqlite3.dll" Name="sqlite3.dll" Source="$(var.TargetDir)\sqlite3.dll" Vital="yes"/>
+                    </Component>
+					<Component Id="freexl.dll" Guid="*">
+                        <File Id="freexl.dll" Name="freexl.dll" Source="$(var.TargetDir)\freexl.dll" Vital="yes"/>
                     </Component>
                     <Component Id="ssleay32.dll" Guid="*">
                         <File Id="ssleay32.dll" Name="ssleay32.dll" Source="$(var.TargetDir)\ssleay32.dll" Vital="yes"/>
@@ -849,16 +915,15 @@
             <ComponentRef Id="curl_ca_bundle.crt" />
             <ComponentRef Id="ssleay32.dll" />
             <ComponentRef Id="libeay32.dll" />
-            <ComponentRef Id="libexpat.dll" />
+            <ComponentRef Id="expat.dll" />
             <ComponentRef Id="libpq.dll" />
             <ComponentRef Id="libmysql.dll" />
             <ComponentRef Id="libxml2.dll" />
             <ComponentRef Id="proj.dll" />
-            <ComponentRef Id="pdflib.dll" />
-            <ComponentRef Id="sqlite3.dll" />
             <ComponentRef Id="spatialite.dll" />
+			<ComponentRef Id="sqlite3.dll" />
+			<ComponentRef Id="freexl.dll" />
             <ComponentRef Id="xerces_c_2_8.dll" />
-            <ComponentRef Id="openjpeg.dll" />
             <ComponentRef Id="openjp2.dll" />
             <ComponentRef Id="zlib1.dll" />
             <ComponentRef Id="ApplicationShortcut" />
@@ -988,6 +1053,11 @@
                 <ComponentRef Id="HDF5License.rtf" />
                 <ComponentRef Id="SZIPLicense.rtf" />
                 <ComponentRef Id="szip.dll" />
+            </Feature>
+			<?endif?>
+			<?ifdef ogr_MSSQLSpatial?>
+		    <Feature Id="MSSQLSpatial" Level="1000" Title="MSSQLSpatial" Description="MSSQL driver for SQL Server Native Client 11.0 (sqlncli11.dll). This driver supports bulk insert for fast data upload. SQL Server Native Client 11.0 should be pre-installed on the system.">
+                <ComponentRef Id="ogr_MSSQLSpatial.dll" />
             </Feature>
 			<?endif?>
             <Feature Id="NetCDF" Level="1" Title="NetCDF" Description="Network Common Data Form (NetCDF) rasters (for the custom licensing terms please review NetCDFLicense.rtf and SZIPLicense.rtf installed in the /license folder)">
@@ -1167,6 +1237,38 @@
             <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC100_CRT_x86.msm" DiskId="1" Language="0"/>
         </DirectoryRef>
         <Feature Id="VCRedist" Title="Visual C++ 10.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+		<?elseif $(var.Compiler) = 1700?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC110_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 11.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC110_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 11.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+		<?elseif $(var.Compiler) = 1800?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC120_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
             <MergeRef Id="VCRedist"/>
         </Feature>
 		<?endif?>

@@ -1,6 +1,6 @@
 @SET VSINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio 9.0
 @SET VCINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC
-@SET FrameworkDir=C:\WINDOWS\Microsoft.NET\Framework64
+@SET FrameworkDir=C:\Windows\Microsoft.NET\Framework64
 @SET FrameworkVersion=v2.0.50727
 @SET Framework35Version=v3.5
 @if "%VSINSTALLDIR%"=="" goto error_no_VSINSTALLDIR
