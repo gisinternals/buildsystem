@@ -203,6 +203,8 @@ set gdal-tag=%gdal_stable_tag%
 set logid=%compiler%-mapmanager-stable-dev
 cmd /C makemapmanager.bat
 
+@goto exit
+
 :upload
 
 set nmakecmd=upload-osgeo
@@ -236,7 +238,7 @@ set MS_REVISION=%ms_rev%
 set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%
 
-cmd /C makepackage.bat
+rem cmd /C makepackage.bat
 
 set logid=%compiler%-osgeo4w-release
 set buildnumber=1
@@ -247,7 +249,7 @@ set ms-osgeo4w-pkg=
 
 rem cmd /C makeosgeo4w.bat
 
-set logid=%compiler%-mapmanager-release
+set logid=%compiler%-mapmanager-ms-%ms_version%
 cmd /C makemapmanager.bat
 
 :exit

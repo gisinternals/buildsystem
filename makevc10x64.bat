@@ -179,7 +179,7 @@ set MS_REVISION=%ms_rev%
 set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%
 
-rem cmd /C makepackage.bat
+cmd /C makepackage.bat
 
 set logid=%compiler%-osgeo4w-release
 set buildnumber=1
@@ -188,7 +188,7 @@ echo @echo off >E:\builds\rsync\uploadx86_64.bat
 set ms-osgeo4w-ver=%ms_osgeo4w_version%
 set ms-osgeo4w-pkg=
 
-cmd /C makeosgeo4w.bat
+rem cmd /C makeosgeo4w.bat
 
 
 :exit
