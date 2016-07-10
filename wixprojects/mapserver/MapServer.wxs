@@ -416,8 +416,8 @@
                     <Component Id="ssleay32.dll" Guid="*">
                         <File Id="ssleay32.dll" Name="ssleay32.dll" Source="$(var.TargetDir)\ssleay32.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="xerces_c_2_8.dll" Guid="*">
-                        <File Id="xerces_c_2_8.dll" Name="xerces-c_2_8.dll" Source="$(var.TargetDir)\xerces-c_2_8.dll" Vital="yes"/>
+                    <Component Id="xerces_c_3_1.dll" Guid="*">
+                        <File Id="xerces_c_3_1.dll" Name="xerces-c_3_1.dll" Source="$(var.TargetDir)\xerces-c_3_1.dll" Vital="yes"/>
                     </Component>
                     <Component Id="zlib1.dll" Guid="*">
                         <File Id="zlib1.dll" Name="zlib1.dll" Source="$(var.TargetDir)\zlib1.dll" Vital="yes"/>
@@ -837,7 +837,7 @@
             <ComponentRef Id="spatialite.dll" />
 			<ComponentRef Id="sqlite3.dll" />
 			<ComponentRef Id="freexl.dll" />
-            <ComponentRef Id="xerces_c_2_8.dll" />
+            <ComponentRef Id="xerces_c_3_1.dll" />
             <ComponentRef Id="openjp2.dll" />
             <ComponentRef Id="zlib1.dll" />
             <ComponentRef Id="ApplicationShortcut" />

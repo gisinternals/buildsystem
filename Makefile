@@ -120,7 +120,7 @@ CMAKE_BUILDDIR = vc14
 !ENDIF
 
 !IFNDEF SERVER_URL
-SERVER_URL=http://vbkto.dyndns.org/sdk
+SERVER_URL=http://www.gisinternals.com/sdk
 !ENDIF
 
 # common feature configuration flags
@@ -246,7 +246,7 @@ INSTALL_DIR = C:\Inetpub\wwwroot\sdk
 !ENDIF
 
 !IFNDEF MAPMANAGER_DIR
-MAPMANAGER_DIR = MapManager
+MAPMANAGER_DIR = MapManager-$(MS_VERSION)
 !ENDIF
 
 !IFNDEF CMAKE_DIR
@@ -621,7 +621,7 @@ FTGL_DIR = ftgl-2.1.3~rc5
 !ENDIF
 
 !IFNDEF XERCES_DIR
-XERCES_DIR=xerces-c-src_2_8_0
+XERCES_DIR=xerces-c-3.1.3
 !ENDIF
 
 !IFNDEF KEA_DIR
@@ -990,6 +990,10 @@ GDAL_VERSIONTAG = 200
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 !ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal201.dll)
 GDAL_VERSIONTAG = 201
+GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
+GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
+!ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal202.dll)
+GDAL_VERSIONTAG = 202
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 !ENDIF
@@ -1488,7 +1492,7 @@ gdal-optfile:
 !IFDEF GDAL_XERCES
     echo XERCES_DIR=$(BASE_DIR)\$(XERCES_DIR) >> $(OUTPUT_DIR)\gdal.opt
     echo XERCES_INCLUDE=-I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\xercesc >> $(OUTPUT_DIR)\gdal.opt
-    echo XERCES_LIB=$(OUTPUT_DIR)\lib\xerces-c_2.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo XERCES_LIB=$(OUTPUT_DIR)\lib\xerces-c_3.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(XERCES_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo ILI_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF
@@ -1507,14 +1511,14 @@ gdal-optfile:
 !ENDIF
 !ENDIF
 !IFDEF GDAL_PDF
-    rem echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
-    rem echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(OUTPUT_DIR)\gdal.opt
-    rem echo POPPLER_HAS_OPTCONTENT = YES >> $(OUTPUT_DIR)\gdal.opt
-    rem echo POPPLER_0_20_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
-    rem echo POPPLER_0_23_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
-    rem echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(OUTPUT_DIR)\gdal.opt
-    rem echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
-    rem echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo POPPLER_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_HAS_OPTCONTENT = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_0_20_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_0_23_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
     echo OPENJPEG_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
@@ -3718,63 +3722,63 @@ xerces:
 !IFNDEF NO_COPY
 !IF $(MSVC_VER) == 1900
 !IFDEF WIN64
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC14\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC14\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC14\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC14\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1800
 !IFDEF WIN64
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC12\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC12\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC12\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC12\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC12\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC12\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC12\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC12\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1700
 !IFDEF WIN64
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC11\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC11\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC11\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC11\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC11\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC11\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC11\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC11\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC10\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC10\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC10\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC10\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC10\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC10\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC10\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC10\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
 !IFDEF WIN64
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC9\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC9\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC9\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC9\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC9\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC9\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC9\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC9\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1400
 !IFDEF WIN64
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC8\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC8\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC8\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC8\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC8\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC8\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC8\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC8\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSE
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC7.1\Release\xerces-c_2.lib $(OUTPUT_DIR)\lib
-    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC7.1\Release\xerces-c_2_8.dll $(OUTPUT_DIR)\bin	
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC7.1\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC7.1\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin	
 !ENDIF
     if not exist $(OUTPUT_DIR)\include\xercesc mkdir $(OUTPUT_DIR)\include\xercesc
     cd $(BASE_DIR)\$(XERCES_DIR)\src
     xcopy  /Y /S xercesc\*.h $(OUTPUT_DIR)\include\xercesc
     xcopy  /Y /S xercesc\*.hpp $(OUTPUT_DIR)\include\xercesc
     xcopy  /Y /S xercesc\*.c $(OUTPUT_DIR)\include\xercesc
-    cd $(BASE_DIR)
 !ENDIF
+	cd $(BASE_DIR)
 !ENDIF
 
 libkml:
@@ -4640,8 +4644,8 @@ mapmanager-update:
 	set TERM=msys
 	set "PATH=E:\Git\bin;%PATH%"
 	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
-	git pull origin
-	git reset --hard $(MAPMANAGER_REVISION)
+	git pull origin ms-$(MS_VERSION)
+	rem git reset --hard $(MAPMANAGER_REVISION)
 	cd $(BASE_DIR)
 !ENDIF
 
