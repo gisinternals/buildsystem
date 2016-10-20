@@ -770,23 +770,11 @@
                         <Component Id="s57attributes.csv" Guid="*">
                             <File Id="s57attributes.csv" Name="s57attributes.csv" Source="$(var.TargetDir)\gdal-data\s57attributes.csv" Vital="yes"/>
                         </Component>
-                        <Component Id="s57attributes_aml.csv" Guid="*">
-                            <File Id="s57attributes_aml.csv" Name="s57attributes_aml.csv" Source="$(var.TargetDir)\gdal-data\s57attributes_aml.csv" Vital="yes"/>
-                        </Component>
-                        <Component Id="s57attributes_iw.csv" Guid="*">
-                            <File Id="s57attributes_iw.csv" Name="s57attributes_iw.csv" Source="$(var.TargetDir)\gdal-data\s57attributes_iw.csv" Vital="yes"/>
-                        </Component>
                         <Component Id="s57expectedinput.csv" Guid="*">
                             <File Id="s57expectedinput.csv" Name="s57expectedinput.csv" Source="$(var.TargetDir)\gdal-data\s57expectedinput.csv" Vital="yes"/>
                         </Component>
                         <Component Id="s57objectclasses.csv" Guid="*">
                             <File Id="s57objectclasses.csv" Name="s57objectclasses.csv" Source="$(var.TargetDir)\gdal-data\s57objectclasses.csv" Vital="yes"/>
-                        </Component>
-                        <Component Id="s57objectclasses_aml.csv" Guid="*">
-                            <File Id="s57objectclasses_aml.csv" Name="s57objectclasses_aml.csv" Source="$(var.TargetDir)\gdal-data\s57objectclasses_aml.csv" Vital="yes"/>
-                        </Component>
-                        <Component Id="s57objectclasses_iw.csv" Guid="*">
-                            <File Id="s57objectclasses_iw.csv" Name="s57objectclasses_iw.csv" Source="$(var.TargetDir)\gdal-data\s57objectclasses_iw.csv" Vital="yes"/>
                         </Component>
                         <Component Id="stateplane.csv" Guid="*">
                             <File Id="stateplane.csv" Name="stateplane.csv" Source="$(var.TargetDir)\gdal-data\stateplane.csv" Vital="yes"/>
@@ -971,12 +959,8 @@
             <ComponentRef Id="projop_wparm.csv" />
             <ComponentRef Id="s57agencies.csv" />
             <ComponentRef Id="s57attributes.csv" />
-            <ComponentRef Id="s57attributes_aml.csv" />
-            <ComponentRef Id="s57attributes_iw.csv" />
             <ComponentRef Id="s57expectedinput.csv" />
             <ComponentRef Id="s57objectclasses.csv" />
-            <ComponentRef Id="s57objectclasses_aml.csv" />
-            <ComponentRef Id="s57objectclasses_iw.csv" />
             <ComponentRef Id="stateplane.csv" />
             <ComponentRef Id="unit_of_measure.csv" />
             <?if $(var.VersionTag) != 17 And $(var.VersionTag) != 17dev?>
