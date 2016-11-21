@@ -238,7 +238,7 @@ set MS_REVISION=%ms_rev%
 set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%
 
-rem cmd /C makepackage.bat
+cmd /C makepackage.bat
 
 set logid=%compiler%-osgeo4w-release
 set buildnumber=1
