@@ -2435,7 +2435,7 @@ openssl:
 
 get_ca_bundle:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
-    -if exist $(OUTPUT_DIR)\bin\curl\curl.exe $(OUTPUT_DIR)\bin\curl\curl.exe -o $(OUTPUT_DIR)\bin\curl\curl-ca-bundle.crt "http://curl.haxx.se/ca/cacert.pem"
+    -if exist $(OUTPUT_DIR)\bin\curl\curl.exe $(OUTPUT_DIR)\bin\curl\curl.exe -o $(OUTPUT_DIR)\bin\curl\curl-ca-bundle.crt "https://curl.haxx.se/ca/cacert.pem"
 
 curl2:
 !IFDEF CURL_DIR
