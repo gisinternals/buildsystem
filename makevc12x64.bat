@@ -188,11 +188,11 @@ echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 
 :rel
 
-set logid=%compiler%-released-%gdal_version%-%ms_version%
+set logid=%compiler%-released-%gdal_version%-%ms_version%%variant%
 set gdal-dir=gdal-%gdal_version%
 set ms-dir=mapserver-%ms_version%
 set msautotest-dir=msautotest-%ms_version%
-set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%-%ms_rel%
+set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%-%ms_rel%%variant%
 set MS_REVISION=%ms_rev%
 set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%

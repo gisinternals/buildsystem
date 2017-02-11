@@ -2003,6 +2003,7 @@ gdal-hdf4: gdal-optfile
     echo HDF4_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
     echo HDF4_DIR =	$(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install >> $(OUTPUT_DIR)\gdal.opt
     echo HDF4_LIB =	$(OUTPUT_DIR)\lib\hdfdll.lib $(OUTPUT_DIR)\lib\mfhdfdll.lib  >> $(OUTPUT_DIR)\gdal.opt
+    echo HDF4_INCLUDE = $(OUTPUT_DIR)\include\hdf4 >> $(OUTPUT_DIR)\gdal.opt
 	cd $(GDAL_PATH)\frmts\hdf4
 !IFNDEF NO_CLEAN	
 	nmake /f makefile.vc clean
@@ -3017,7 +3018,7 @@ ms: ms-optfile ms-cmake
 !ENDIF
 !IFNDEF NO_CLEAN
 !IFDEF MS_CMAKE_BUILD
-    devenv /clean $(MS_PROJECT_DIR) MapServer.sln /ProjectConfig $(MS_PROJECT_CONFIG) 
+    devenv /clean $(MS_PROJECT_DIR) MapServer.sln /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	del mapscriptvars
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
@@ -3025,16 +3026,7 @@ ms: ms-optfile ms-cmake
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project mapserv /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shp2img /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptree /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptreevis /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project shptreetst /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project sortshp /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project legend /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project scalebar /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msencrypt /ProjectConfig $(MS_PROJECT_CONFIG)
-	devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project tile4ms /ProjectConfig $(MS_PROJECT_CONFIG)
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
 !ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -3078,7 +3070,7 @@ ms-csharp:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project csharpmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    rem devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project csharpmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -3123,7 +3115,7 @@ ms-java: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project javamapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    rem devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project javamapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -3170,7 +3162,7 @@ ms-python:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project _pythonmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
+    rem devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project _pythonmapscript /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
 	$(BASE_DIR)\$(SWIG_DIR)\swig.exe -python -shadow -o mapscript_wrap.c ../mapscript.i
 !ENDIF
@@ -3330,7 +3322,7 @@ ms-sde: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_sde91 /ProjectConfig $(MS_PROJECT_CONFIG)
+    rem devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_sde91 /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -3367,7 +3359,7 @@ ms-oci: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_oracle /ProjectConfig $(MS_PROJECT_CONFIG)
+    rem devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_oracle /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -3398,7 +3390,7 @@ ms-sql2008: ms-optfile
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF MS_CMAKE_BUILD
-    devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_mssql2008 /ProjectConfig $(MS_PROJECT_CONFIG)
+    rem devenv /build $(MS_PROJECT_DIR) MapServer.sln /Project msplugin_mssql2008 /ProjectConfig $(MS_PROJECT_CONFIG)
 !ELSE
     nmake /f makefile.vc plugins EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 !ENDIF
@@ -3962,10 +3954,10 @@ hdf4lib:
 !ENDIF
 !ENDIF
 !IFNDEF NO_COPY
-	xcopy /Y $(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
 	xcopy /Y $(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\bin\Release\*.dll $(OUTPUT_DIR)\bin
 	if not exist $(OUTPUT_DIR)\include\hdf4 mkdir $(OUTPUT_DIR)\include\hdf4
-    xcopy  /Y /S $(BASE_DIR)\$(HDF4_DIR)\hdf\src\*.h $(OUTPUT_DIR)\include\hdf4
+    xcopy  /Y /S $(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include\hdf4
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
