@@ -1481,6 +1481,7 @@ gdal-optfile:
 !IFDEF GDAL_SQLITE
     echo SQLITE_INC=-I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
     echo SQLITE_LIB=$(OUTPUT_DIR)\lib\sqlite3_i.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(OUTPUT_DIR)\gdal.opt
     echo $(SQLITE_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_SPATIALITE
