@@ -972,6 +972,9 @@ USE_OPENJP2 = 1
 !ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.2." > NUL] == 0)
 GDAL_VER = 2.2
 USE_OPENJP2 = 1
+!ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.3." > NUL] == 0)
+GDAL_VER = 2.3
+USE_OPENJP2 = 1
 !ENDIF
 
 !IFNDEF GDAL_VERSIONTAG
@@ -1006,6 +1009,10 @@ GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 !ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal202.dll)
 GDAL_VERSIONTAG = 202
+GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
+GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
+!ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal203.dll)
+GDAL_VERSIONTAG = 203
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 !ENDIF
@@ -1079,6 +1086,7 @@ update: get_ca_bundle
     set TERM=msys
 	set "PATH=E:\Git\bin;%PATH%"
 	cd $(MS_DIR)
+	git reset --hard HEAD
 	git pull origin
 	git reset --hard $(MS_REVISION)
 	rem svn update --revision $(MS_REVISION) --non-interactive  > $(OUTPUT_DIR)\doc\ms_revision.txt
