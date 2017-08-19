@@ -187,7 +187,7 @@ GDAL_POSTGIS = YES
 GDAL_ECW = YES
 !IF $(MSVC_VER) >= 1800
 #VC2013 is not yet supported by the ECW5 SDK
-GDAL_ECW3 = YES
+#GDAL_ECW3 = YES
 !ENDIF
 GDAL_CURL = YES
 #GDAL_SQLITE = YES
@@ -865,9 +865,9 @@ ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1800
 !IFNDEF GDAL_ECW3
-ECW_DIR = ECWSDK51
+ECW_DIR = ECWSDK53
 ECWDIR = $(BASE_DIR)\$(ECW_DIR)
-ECWSDK_VERSION=51
+ECWSDK_VERSION=53
 !IFDEF WIN64
 ECWLIB = $(ECWDIR)\lib\vc120\x64\NCSEcw.lib
 !ELSE
@@ -883,9 +883,9 @@ ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1700
 !IFNDEF GDAL_ECW3
-ECW_DIR = ECWSDK51
+ECW_DIR = ECWSDK53
 ECWDIR = $(BASE_DIR)\$(ECW_DIR)
-ECWSDK_VERSION=51
+ECWSDK_VERSION=53
 !IFDEF WIN64
 ECWLIB = $(ECWDIR)\lib\vc110\x64\NCSEcw.lib
 !ELSE
@@ -1684,7 +1684,7 @@ gdal-csharp-test:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
 	cd $(GDAL_PATH)\swig\csharp
-	nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	rem nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -3104,7 +3104,7 @@ ms-csharp-test:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\csharp;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
 	cd $(MS_PATH)\mapscript\csharp
-	nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+	rem nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 	cd $(BASE_DIR)
 !ENDIF
 
