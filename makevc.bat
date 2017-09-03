@@ -7,3 +7,5 @@ echo starting makevc11.bat
 cmd /c makevc11.bat
 echo starting makevc12.bat
 cmd /c makevc12.bat
+echo starting makevc14.bat
+cmd /c makevc14.bat

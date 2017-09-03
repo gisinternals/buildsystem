@@ -114,6 +114,24 @@ CMAKE_BUILDDIR = vc14x64
 CMAKE_GENERATOR = "Visual Studio 14"
 CMAKE_BUILDDIR = vc14
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.00.24210.0"
+MSVC_VER = 1900
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 14 Win64"
+CMAKE_BUILDDIR = vc14x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 14"
+CMAKE_BUILDDIR = vc14
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.11.25507.1"
+MSVC_VER = 1911
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 Win64"
+CMAKE_BUILDDIR = vc15x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15"
+CMAKE_BUILDDIR = vc15
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
@@ -207,7 +225,9 @@ GDAL_KMLSUPEROVERLAY = YES
 GDAL_PDF = YES
 #GDAL_TIFF = YES
 #GDAL_SDE = YES
+!IF $(MSVC_VER) < 1900
 GDAL_LIBKML = YES
+!ENDIF
 
 MS_PROJ = YES
 MS_FREETYPE = YES
@@ -250,7 +270,7 @@ MAPMANAGER_DIR = MapManager-$(MS_VERSION)
 !ENDIF
 
 !IFNDEF CMAKE_DIR
-CMAKE_DIR = E:\builds\cmake-3.4.0-win32-x86
+CMAKE_DIR = E:\builds\cmake-3.9.1-win32-x86
 #CMAKE_DIR = E:\builds\cmake-2.8.12.1-win32-x86
 !ENDIF
 
@@ -260,9 +280,9 @@ CMAKE_DIR = E:\builds\cmake-3.4.0-win32-x86
 
 !IFNDEF JAVA_HOME
 !IFDEF WIN64
-JAVA_HOME = C:\Java\jdk1.8.0_25x64
+JAVA_HOME = C:\Java\jdk1.8.0_144x64
 !ELSE
-JAVA_HOME = C:\Java\jdk1.8.0_25
+JAVA_HOME = C:\Java\jdk1.8.0_144
 !ENDIF
 !ENDIF
 
@@ -754,6 +774,19 @@ ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
 FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC14
 FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc14
 !ENDIF
+!ELSEIF $(MSVC_VER) == 1911
+FT_SRCPATH=$(FT_DIR)\builds\win32\VC2017
+!IFDEF WIN64
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2017\x64
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC15x64
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc15
+!ELSE
+FT_LIBPATH=$(FT_DIR)\objs\Win32\vc2017
+ODBC_DIR="C:\Program Files (x86)\Microsoft Visual Studio 8\VC\PlatformSDK"
+FTGL_LIBPATH=$(FTGL_DIR)\msvc\build-VC15
+FTGL_SRCPATH=$(FTGL_DIR)\msvc\vc15
+!ENDIF
 !ELSE
 FT_LIBPATH=$(FT_DIR)\objs
 FT_SRCPATH=$(FT_DIR)\builds\win32\visualc
@@ -772,6 +805,8 @@ MYSQL_DIR=mysql-6.0.2\mysql-6.0.2-VC8
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
 MYSQL_DIR=mysql-6.1.3
+!ELSEIF $(MSVC_VER) >= 1900
+MYSQL_DIR=mysql-6.1.11
 !ELSE
 MYSQL_DIR=mysql-6.1.5
 !ENDIF
@@ -811,7 +846,14 @@ SDE_VERSION=92
 !ENDIF
 
 !IFNDEF OCI_DIR
-!IF $(MSVC_VER) >= 1600
+!IF $(MSVC_VER) == 1900
+!IFDEF WIN64
+OCI_DIR = Oracle\instantclient_12_2-x64
+!ELSE
+OCI_DIR = Oracle\instantclient_12_2
+!ENDIF
+OCI_VERSION = 12
+!ELSEIF $(MSVC_VER) >= 1600
 !IFDEF WIN64
 OCI_DIR = Oracle\instantclient_12_1-x64
 !ELSE
@@ -845,7 +887,7 @@ OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 !ENDIF
 
 !IFNDEF ECW_DIR
-!IF $(MSVC_VER) == 1900
+!IF $(MSVC_VER) == 1911
 !IFNDEF GDAL_ECW3
 #ECW_DIR = ECWSDK51
 #ECWDIR = $(BASE_DIR)\$(ECW_DIR)
@@ -856,6 +898,24 @@ OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 #ECWLIB = $(ECWDIR)\lib\vc120\win32\NCSEcw.lib
 !ENDIF
 #ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(ECWDIR)\include -I$(ECWDIR)\include\NCSECW\api -I$(ECWDIR)\include\NCSECW\jp2 -I$(ECWDIR)\include\NCSECW\ecw
+!ELSE
+ECW_DIR = libecwj2-3.3-VC15
+ECWSDK_VERSION=33
+ECWLIB = $(OUTPUT_DIR)\lib\libecwj2.lib
+ECWDIR = $(OUTPUT_DIR)
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(OUTPUT_DIR)\include /D_MBCS /D_UNICODE /DUNICODE /D_WINDOWS /DLIBECWJ2 /DWIN32 /D_WINDLL -DNO_X86_MMI
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
+!IFNDEF GDAL_ECW3
+ECW_DIR = ECWSDK53
+ECWDIR = $(BASE_DIR)\$(ECW_DIR)
+ECWSDK_VERSION=53
+!IFDEF WIN64
+ECWLIB = $(ECWDIR)\lib\vc140\x64\NCSEcw.lib
+!ELSE
+ECWLIB = $(ECWDIR)\lib\vc140\win32\NCSEcw.lib
+!ENDIF
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) -I$(ECWDIR)\include -I$(ECWDIR)\include\NCSECW\api -I$(ECWDIR)\include\NCSECW\jp2 -I$(ECWDIR)\include\NCSECW\ecw
 !ELSE
 ECW_DIR = libecwj2-3.3-VC14
 ECWSDK_VERSION=33
@@ -1720,23 +1780,23 @@ gdal-java-test:
 gdal-python-all:
 !IFNDEF NO_BUILD
 !IFDEF WIN64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_DIR=SWIG-2.0.4
 !ELSE
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_DIR=SWIG-2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_DIR=SWIG-2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34 SWIG_DIR=SWIG-2.0.4
@@ -3679,7 +3739,15 @@ fastcgi:
 xerces:
 !IFDEF XERCES_DIR
 !IFNDEF NO_BUILD
-!IF $(MSVC_VER) == 1900
+!IF $(MSVC_VER) == 1911
+!IFDEF WIN64
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC15\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|x64"
+!ELSE
+    cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC15\xerces-all
+    devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|Win32"
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
 !IFDEF WIN64
     cd $(BASE_DIR)\$(XERCES_DIR)\Projects\Win32\VC14\xerces-all
     devenv /rebuild Release xerces-all.sln /Project XercesLib /ProjectConfig "Release|x64"
@@ -3734,7 +3802,15 @@ xerces:
     cd $(BASE_DIR)
 !ENDIF
 !IFNDEF NO_COPY
-!IF $(MSVC_VER) == 1900
+!IF $(MSVC_VER) == 1911
+!IFDEF WIN64
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC15\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC15\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC15\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win32\VC15\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
 !IFDEF WIN64
     xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_3.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\Build\Win64\VC14\Release\xerces-c_3_1.dll $(OUTPUT_DIR)\bin
@@ -4102,14 +4178,14 @@ mrsidlib:
 !IF EXIST("$(BASE_DIR)\$(MRSID_DIR)\Raster_DSDK\lib\lti_dsdk_dll.dll")
     xcopy /Y $(BASE_DIR)\$(MRSID_DIR)\Raster_DSDK\lib\lti_dsdk_dll.dll $(OUTPUT_DIR)\bin
 !ENDIF
-!IF EXIST("$(BASE_DIR)\$(MRSID_DIR)\Raster_DSDK\lib\lti_dsdk.dll")
-    xcopy /Y $(BASE_DIR)\$(MRSID_DIR)\Raster_DSDK\lib\lti_dsdk.dll $(OUTPUT_DIR)\bin
+!IF EXIST($(MRSID_DLL))
+    xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
 !ENDIF
-!IF EXIST("$(BASE_DIR)\$(MRSID_DIR)\Lidar_DSDK\lib\lti_lidar_dsdk.dll")
-    xcopy /Y $(BASE_DIR)\$(MRSID_DIR)\Lidar_DSDK\lib\lti_lidar_dsdk.dll $(OUTPUT_DIR)\bin
-!ENDIF    
+!IF EXIST($(LIDAR_DLL))
+    xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
 !ENDIF
-!ENDIF	
+!ENDIF
+!ENDIF
 
 netcdf:
 !IFDEF NETCDF_DIR
@@ -4209,7 +4285,13 @@ libecw:
 !IFDEF ECW_DIR
 !IF $(ECWSDK_VERSION) >= 50
 !IFNDEF NO_COPY
-!IF $(MSVC_VER) == 1800
+!IF $(MSVC_VER) == 1900
+!IFDEF WIN64
+    xcopy /Y $(ECWDIR)\redistributable\vc140\x64\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y $(ECWDIR)\redistributable\vc140\Win32\NCSEcw.dll $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1800
 !IFDEF WIN64
     xcopy /Y $(ECWDIR)\redistributable\vc120\x64\NCSEcw.dll $(OUTPUT_DIR)\bin
 !ELSE
@@ -4599,7 +4681,15 @@ libopenjpeg2:
 !ENDIF
 
 msvcr:
-!IF $(MSVC_VER) == 1900
+!IF $(MSVC_VER) == 1911
+!IFDEF WIN64
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x64\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x64\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x86\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x86\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
 !IFDEF WIN64
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin

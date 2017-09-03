@@ -19,6 +19,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "20EBF1E3-D8B2-45C6-AC35-AE1613A435FA" ?>
     <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2013 Win64)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "3CFC081D-0A2E-4DB2-971D-28B1945713B0" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2015 Win64)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "3CDA4DA9-304B-4EDA-9A18-F8C8DFBB3361" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2017 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef msplugin_oracle?>
@@ -37,6 +43,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "3BC674AE-A432-44E9-AC89-CDB58FD9D4AB" ?>
     <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2013 Win64)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "D4C5C269-FD6E-4810-B588-27855C4CA29C" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2015 Win64)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "D4C5C269-FD6E-4810-B588-27855C4CA29C" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2017 Win64)" ?>
     <?endif?>
     <?endif?>
     <?else?>
@@ -60,6 +72,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "91BBF4C0-078A-4431-ADCE-5F93D8A4662B" ?>
     <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2013)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "F0E3647E-4661-46D3-BABB-D75A27AC6E28" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2015)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "51BDD066-D7CD-4237-A834-58B9806B60BB" ?>
+    <?define ProductName = "GISInternals MapServer $(var.MSVersionTag) (MSVC 2017)" ?>
     <?endif?>
     <?endif?>
     <?ifdef msplugin_oracle?>
@@ -78,9 +96,15 @@
 	<?elseif $(var.Compiler) = 1700?>
     <?define UpgradeCode = "115DB5E9-8B12-4EF4-AF60-D6E49021DC67" ?>
     <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2012)" ?>
-	<?elseif $(var.Compiler) = 1700?>
+	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "8B6ECDB4-6DE2-430F-92A5-08C172297558" ?>
     <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2013)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "05D3FF41-4827-4D0B-AD7E-1305D0F7D072" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2015)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "B78E3B0E-903D-43A8-8F91-6A09CBA54DF8" ?>
+    <?define ProductName = "GISInternals MapServer Oracle Plugin $(var.VersionTag) (MSVC 2017)" ?>
     <?endif?>
     <?endif?>
     <?endif?>
@@ -1122,6 +1146,38 @@
             <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
         </DirectoryRef>
         <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+		<?elseif $(var.Compiler) = 1900?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC140_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC140_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+		<?elseif $(var.Compiler) = 1911?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 15.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC141_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 15.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
             <MergeRef Id="VCRedist"/>
         </Feature>
 		<?endif?>

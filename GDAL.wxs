@@ -19,6 +19,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "5740BBBC-A2C2-4D92-A074-6FA5BFA8804A" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2013 Win64)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "D011D20D-0971-4CDC-8CB5-8D8419776125" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2015 Win64)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "00A196BA-AAA6-4D03-AA8F-25CBD80F13D4" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2017 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -37,6 +43,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "C7DBFB7F-494C-49C7-97BD-2A05EB0DE3DF" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2013 Win64)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "5A826C0D-C881-4C4C-A291-0AD00535792A" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2015 Win64)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "A952BE15-20FB-4E49-999A-143B2AA7DF7F" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2017 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -54,7 +66,13 @@
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2012 Win64)" ?>
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "DAB3A892-377F-4D4F-936A-EBC305EB7CA2" ?>
-    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2012 Win64)" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2013 Win64)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "D26ED40B-35C1-4678-AE71-FDD776507662" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2015 Win64)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "A726E66E-D874-4584-9B29-9292558A63B5" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2017 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -73,6 +91,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "5C4FA629-5E72-4838-A1B1-4C2B11D95E97" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2013 Win64)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "06A94160-D161-444F-9F07-1B4CF525F5E2" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2015 Win64)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "3E108C70-BC6B-4B36-90A2-6F20498AE1D4" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2017 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -91,6 +115,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "E062A6E5-77C9-4768-8ACC-2AED251271C9" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2013 Win64)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "5A1BD798-1071-4F18-BF7D-CE7A7B9E31AC" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2015 Win64)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "AC1961D0-651C-42A8-93C6-264EF797A8FE" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2017 Win64)" ?>
     <?endif?>
     <?endif?>
     <?else?>
@@ -114,6 +144,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "EFB37E0F-216D-481C-85B5-1CF48CEDFFFC" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2013)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "49089AF0-7FDE-4986-A568-B94A87833C7A" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2015)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "CE3ADE9F-EC4B-4655-81A4-A2A03A81B4FB" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2017)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -135,6 +171,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "7C0899A7-78DE-44CD-A6CD-16859D6A6775" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2013)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "28A546D6-4C07-4B19-90EA-5764B71D42FF" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2015)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "01DFE0A1-3A33-4EEA-8E77-AC3CAF1F25FD" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2017)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -156,6 +198,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "CA80C0CA-AC19-4C52-B724-507F059ACB2B" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2013)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "049772A2-1730-413A-B241-C8D1FE40CDF4" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2015)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "9087FCCF-A4CA-471C-A70C-4B6FEC5E0887" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2017)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -177,6 +225,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "48EF38CA-F5FC-472B-8CBD-A562EC55A380" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2013)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "6191247E-A6E1-4202-B2A1-C4F000EB98CD" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2015)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "0C61784B-A506-4B80-9288-7901E54EC359" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2017)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -198,6 +252,12 @@
 	<?elseif $(var.Compiler) = 1800?>
     <?define UpgradeCode = "68F40E6C-90DB-407B-BA6D-77EF70CA150A" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2013)" ?>
+	<?elseif $(var.Compiler) = 1900?>
+    <?define UpgradeCode = "D7926341-BC23-4726-8DEB-C0A3D304819E" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2015)" ?>
+	<?elseif $(var.Compiler) = 1911?>
+    <?define UpgradeCode = "89C9320C-3C0E-4841-8D3D-5CEB0D60CA46" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2017)" ?>
     <?endif?>
     <?endif?>
     <?endif?>
@@ -1253,6 +1313,38 @@
             <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0"/>
         </DirectoryRef>
         <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+		<?elseif $(var.Compiler) = 1900?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC140_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC140_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 14.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+		<?elseif $(var.Compiler) = 1911?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC141_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 15.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC141_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 15.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
             <MergeRef Id="VCRedist"/>
         </Feature>
 		<?endif?>

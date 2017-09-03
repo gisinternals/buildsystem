@@ -1,5 +1,16 @@
-
-!IF $(MSVC_VER) == 1800
+!IF $(MSVC_VER) == 1911
+!IFDEF WIN64
+MRSID_DIR=mrsid\MrSID_DSDK-9.5.4.4705-win64-vc15
+!ELSE
+MRSID_DIR=mrsid\MrSID_DSDK-9.5.4.4705-win32-vc15
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
+!IFDEF WIN64
+MRSID_DIR=mrsid\MrSID_DSDK-9.5.4.4703-win64-vc14
+!ELSE
+MRSID_DIR=mrsid\MrSID_DSDK-9.5.4.4703-win32-vc14
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1800
 !IFDEF WIN64
 MRSID_DIR=mrsid\MrSID_DSDK-9.1.0.4045-win64-vc12
 !ELSE
@@ -444,6 +455,10 @@ MRSID_DLL_NAME =        lti_dsdk_9.0.dll
 MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk.lib" $(MRSID_LIB)
 MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.1.dll"
 MRSID_DLL_NAME =        lti_dsdk_9.1.dll
+!ELSE IF EXIST("$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.5.dll")
+MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk.lib" $(MRSID_LIB)
+MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\lti_dsdk_9.5.dll"
+MRSID_DLL_NAME =        lti_dsdk_9.5.dll
 !ELSE IF EXIST("$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.dll")
 MRSID_LIB =        "$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.lib" $(MRSID_LIB)
 MRSID_DLL =        "$(MRSID_RASTER_DIR)\lib\$(MRSID_CONFIG)\lti_dsdk_dll.dll"
