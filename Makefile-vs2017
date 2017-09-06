@@ -132,6 +132,15 @@ CMAKE_BUILDDIR = vc15x64
 CMAKE_GENERATOR = "Visual Studio 15"
 CMAKE_BUILDDIR = vc15
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.10.25019.0"
+MSVC_VER = 1911
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc17
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
