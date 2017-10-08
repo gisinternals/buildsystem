@@ -1056,7 +1056,7 @@ GDAL_VER = 2.2
 USE_OPENJP2 = 1
 !ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.3." > NUL] == 0)
 GDAL_VER = 2.3
-USE_OPENJP2 = 1
+USE_OPENJP2_NEW_METHOD = 1
 !ENDIF
 
 !IFNDEF GDAL_VERSIONTAG
@@ -1629,14 +1629,17 @@ gdal-optfile:
 !ENDIF
 !IFDEF GDAL_OPENJPEG
     echo OPENJPEG_ENABLED = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
-!IFDEF USE_OPENJP2
+!IFDEF USE_OPENJP2_NEW_METHOD
+    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include\openjpeg-2.1 >> $(OUTPUT_DIR)\gdal.opt
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(OUTPUT_DIR)\gdal.opt
-	echo OPENJPEG_VERSION = 20100 >> $(OUTPUT_DIR)\gdal.opt
-	echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ELSEIFDEF USE_OPENJP2
+    echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo OPENJPEG_VERSION = 20100 >> $(OUTPUT_DIR)\gdal.opt
+    echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSE
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjpeg.lib >> $(OUTPUT_DIR)\gdal.opt
-	echo $(OPENJPEG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo $(OPENJPEG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !ENDIF
 !IFDEF GDAL_TIFF
