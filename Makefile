@@ -1634,6 +1634,7 @@ gdal-optfile:
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSEIFDEF USE_OPENJP2
+    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
     echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(OUTPUT_DIR)\gdal.opt
     echo OPENJPEG_VERSION = 20100 >> $(OUTPUT_DIR)\gdal.opt
     echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
