@@ -156,7 +156,7 @@ set msautotest-dir=msautotest
 set pkg-version=gdal-mapserver
 set gdal-tag=%gdal_dev_tag%
 
-cmd /C makepackage.bat
+rem cmd /C makepackage.bat
 
 :stable
 
