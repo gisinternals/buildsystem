@@ -1778,7 +1778,7 @@ gdal-csharp-test:
 	cd $(BASE_DIR)
 !ENDIF
 
-gdal-java:	
+gdal-java: gdal-optfile
 !IFDEF GDAL_JAVA
 	cd $(GDAL_PATH)\swig\java
 !IFNDEF NO_CLEAN
