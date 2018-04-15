@@ -60,7 +60,7 @@ if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
 
 set logid=%compiler%-dev
-set gdal-dir=gdal-trunk
+set gdal-dir=gdal
 set ms-dir=mapserver
 set msautotest-dir=msautotest
 set pkg-version=gdal-mapserver

@@ -74,7 +74,7 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>%cmdname
 echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^</span^>^<br/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 )
 
-set nmakecmd=gdal-java GDAL_DIR=..\sdk\%compiler%\%gdal-dir%\gdal
+set nmakecmd=gdal-java GDAL_DIR=..\sdk\%compiler%\%gdal-dir%\gdal SWIG_DIR=SWIG-2.0.4
 set cmdname=GDAL java build
 for /f "tokens=1-7 delims=:.,- " %%a in ("%date% %time%") do set id=%%a%%b%%c-%%d-%%e-%%f-%%g-%logid%
 echo %date% %time%: %cmdname% started ^&nbsp^<a href="%baseurl%%compiler%-%id%.txt"^>stdout^</a^>^&nbsp^<a href="%baseurl%%compiler%-%id%-err.txt"^>stderr^</a^>^&nbsp >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html

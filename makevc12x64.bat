@@ -140,7 +140,7 @@ if "%1" == "rel" @goto rel
 if "%1" == "osgeo4w" @goto osgeo4w
 
 set logid=%compiler%-dev
-set gdal-dir=gdal-trunk
+set gdal-dir=gdal
 set ms-dir=mapserver
 set msautotest-dir=msautotest
 set pkg-version=gdal-mapserver

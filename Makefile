@@ -329,7 +329,7 @@ GDALTEST_SCRIPT =run_all.py
 !ENDIF
 
 !IFNDEF GDALTEST_DIR_SRC
-GDALTEST_DIR_SRC = E:\sdk\vc7\gdal-trunk\autotest
+GDALTEST_DIR_SRC = E:\sdk\vc7\gdal\autotest
 !ENDIF
 
 !IFNDEF MSAUTOTEST_DIR
@@ -1174,12 +1174,14 @@ update: get_ca_bundle
 	git reset --hard HEAD
 	git pull origin
 	git reset --hard $(MS_REVISION)
-	rem svn update --revision $(MS_REVISION) --non-interactive  > $(OUTPUT_DIR)\doc\ms_revision.txt
 	git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\ms_revision.txt
 	type $(OUTPUT_DIR)\doc\ms_revision.txt
 	cd $(BASE_DIR)
 	cd $(GDAL_DIR)
-	svn update --revision $(GDAL_REVISION) --non-interactive  > $(OUTPUT_DIR)\doc\gdal_revision.txt
+	git reset --hard HEAD
+	git pull origin
+	git reset --hard $(GDAL_REVISION)
+	git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\gdal_revision.txt
 	type $(OUTPUT_DIR)\doc\gdal_revision.txt
 	cd $(BASE_DIR)
 	
@@ -3106,7 +3108,7 @@ ms-cmake:
 !ENDIF
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR:\=/)/lib/zdll.lib" -DWITH_THREADS=1 $(MS_CMAKE_PYTHON) $(MS_CMAKE_JAVA) -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 $(MS_CMAKE_ORACLE) -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(OUTPUT_DIR)\lib\libsvg.lib" "-DSVGCAIRO_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libsvg-cairo.lib" "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/harfbuzz" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR:\=/)/lib/gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR:\=/)/lib/freetype2411.lib" "-DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DMS_EXTERNAL_LIBS=WS2_32.Lib "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1" "-DPKG_CONFIG_EXECUTABLE=C:\Program Files (x86)\Mono\bin\pkg-config.exe" "-DICONV_DLL=$(OUTPUT_DIR:\=/)/bin/iconv.dll" -DCMAKE_BUILD_TYPE=$(MS_PROJECT_DIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR:\=/)/lib/zdll.lib" -DWITH_THREADS=1 $(MS_CMAKE_PYTHON) $(MS_CMAKE_JAVA) -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 $(MS_CMAKE_ORACLE) -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(OUTPUT_DIR)\lib\libsvg.lib" "-DSVGCAIRO_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libsvg-cairo.lib" "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/harfbuzz" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR:\=/)/lib/gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR:\=/)/lib/freetype2411.lib" "-DPROTOBUFC_COMPILER=$(OUTPUT_DIR:\=/)/bin/protoc.exe" "-DPROTOBUFC_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/protobuf-c" "-DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DMS_EXTERNAL_LIBS=WS2_32.Lib "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1" "-DPKG_CONFIG_EXECUTABLE=C:\Program Files (x86)\Mono\bin\pkg-config.exe" "-DICONV_DLL=$(OUTPUT_DIR:\=/)/bin/iconv.dll" -DCMAKE_BUILD_TYPE=$(MS_PROJECT_DIR)
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -4562,6 +4564,42 @@ visual-leak-detector:
     xcopy  /Y $(BASE_DIR)\$(VLD_DIR)\Win32\Release\vld.lib $(OUTPUT_DIR)\lib
 !ENDIF
 !ENDIF
+!ENDIF
+
+protobuf-build:
+!IFDEF POPPLER_DIR
+    cd $(BASE_DIR)\protobuf\cmake
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-Dprotobuf_BUILD_TESTS=OFF" 
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+protobuf-c-build:
+!IFDEF POPPLER_DIR
+    cd $(BASE_DIR)\protobuf-c\build-cmake
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DMSVC_STATIC_BUILD=ON"
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
+!ENDIF
+	cd $(BASE_DIR)
 !ENDIF
 
 poppler:
