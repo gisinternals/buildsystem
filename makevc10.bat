@@ -201,7 +201,7 @@ set msautotest-dir=msautotest-%ms_version%
 set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
 set gdal-tag=%gdal_stable_tag%
 set logid=%compiler%-mapmanager-stable-dev
-cmd /C makemapmanager.bat
+rem cmd /C makemapmanager.bat
 
 @goto exit
 
@@ -250,7 +250,7 @@ set ms-osgeo4w-pkg=
 rem cmd /C makeosgeo4w.bat
 
 set logid=%compiler%-mapmanager-ms-%ms_version%
-cmd /C makemapmanager.bat
+rem cmd /C makemapmanager.bat
 
 :exit
 

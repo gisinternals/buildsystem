@@ -4821,7 +4821,11 @@ mapmanager-build:
 !IF $(MSVC_VER) >= 1600
 	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
 !IFNDEF NO_BUILD
+!IF $(MSVC_VER) >= 1900
+    devenv /rebuild Release MapManager2015.sln /Project MapManager
+!ELSE
 	devenv /rebuild Release MapManager.sln /Project MapManager
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
@@ -4840,7 +4844,11 @@ mapmanager-installer:
 !IF $(MSVC_VER) >= 1600
 	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
 !IFNDEF NO_BUILD
+!IF $(MSVC_VER) >= 1900
+    devenv /rebuild Release MapManager2015.sln /Project Installer
+!ELSE
 	devenv /rebuild Release MapManager.sln /Project Installer
+!ENDIF
 	$(BASE_DIR)\cert\sign "$(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi"
 !ENDIF
 !IFNDEF NO_COPY
