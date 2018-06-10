@@ -346,7 +346,7 @@ MSAUTOTEST_DIR = msautotest-5-0
 !ENDIF
 
 !IFNDEF SQLITE_DIR
-SQLITE_DIR = sqlite-3.10.2
+SQLITE_DIR = sqlite-3.24.0
 !ENDIF
 
 !IFNDEF GIFLIB_DIR
@@ -548,7 +548,15 @@ JBIG_DIR= jbigkit-2.0
 !ENDIF
 
 !IFNDEF LIBTIFF_DIR
-LIBTIFF_DIR= tiff-4.0.3
+LIBTIFF_DIR=tiff-4.0.9
+!ENDIF
+
+!IFNDEF LIBGEOTIFF_DIR
+LIBGEOTIFF_DIR=libgeotiff-1.4.2
+!ENDIF
+
+!IFNDEF LASZIP_DIR
+LASZIP_DIR=laszip-src-3.2.2
 !ENDIF
 
 !IFNDEF FCGI_DIR
@@ -560,7 +568,7 @@ ICONV_DIR = libiconv-1.11.1
 !ENDIF
 
 !IFNDEF LIBXML_DIR
-LIBXML_DIR = libxml2-2.7.7
+LIBXML_DIR = libxml2-2.9.8
 !ENDIF
 
 !IFNDEF GETTEXT_DIR
@@ -568,7 +576,7 @@ GETTEXT_DIR = gettext-0.13
 !ENDIF
 
 !IFNDEF PGSQL_DIR
-PGSQL_DIR = postgresql-9.1.2
+PGSQL_DIR = postgresql-9.6.8
 !ENDIF
 
 !IFNDEF POPPLER_DIR
@@ -668,7 +676,7 @@ FTGL_DIR = ftgl-2.1.3~rc5
 !ENDIF
 
 !IFNDEF XERCES_DIR
-XERCES_DIR=xerces-c-3.1.4
+XERCES_DIR=xerces-c-3.2.1
 !ENDIF
 
 !IFNDEF KEA_DIR
@@ -720,12 +728,12 @@ SETARGV = "$(VCDIR)\lib\setargv.obj"
 !ENDIF
 
 !IFNDEF HARFBUZZ_DIR
-HARFBUZZ_DIR=harfbuzz-0.9.25
+HARFBUZZ_DIR=harfbuzz-1.8.0
 !ENDIF
 
 !IFNDEF FT_DIR
-FT_DIR=freetype-2.4.11
-FT_LIB=freetype2411.lib
+FT_DIR=freetype-2.9.1
+FT_LIB=freetype.lib
 !IF $(MSVC_VER) == 1400
 FT_SRCPATH=$(FT_DIR)\builds\win32\vc2005
 !IFDEF WIN64
@@ -868,7 +876,7 @@ OPENJPEG_DIR=openjpegv2\vc7
 !ENDIF
 
 !IFNDEF OPENJPEG2_DIR
-OPENJPEG2_DIR=openjpeg-2.1.0
+OPENJPEG2_DIR=openjpeg-2.3.0
 !ENDIF
 
 !IFNDEF SDE_DIR
@@ -1444,6 +1452,27 @@ mkmapserverinst-core:
 
 harfbuzz:
 !IFDEF HARFBUZZ_DIR
+    cd $(BASE_DIR)\$(HARFBUZZ_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DHB_HAVE_FREETYPE=ON" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(OUTPUT_DIR)\lib\libpng.lib $(OUTPUT_DIR)\lib\zdll.lib"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(HARFBUZZ_DIR)\$(CMAKE_BUILDDIR)\$(MS_PROJECT_DIR)\harfbuzz.lib $(OUTPUT_DIR)\lib
+	if exist $(OUTPUT_DIR)\include\harfbuzz rmdir /s /q $(OUTPUT_DIR)\include\harfbuzz
+	mkdir $(OUTPUT_DIR)\include\harfbuzz
+    xcopy /Y /S $(BASE_DIR)\$(HARFBUZZ_DIR)\src\hb*.h $(OUTPUT_DIR)\include\harfbuzz
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+harfbuzz-old:
+!IFDEF HARFBUZZ_DIR
     cd $(HARFBUZZ_DIR)\src
 !IFNDEF NO_CLEAN
     nmake -f Makefile.vc clean
@@ -1458,8 +1487,28 @@ harfbuzz:
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
-	
+
 freetype:
+!IFDEF FT_DIR
+    cd $(BASE_DIR)\$(FT_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DZLIB_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\zdll.lib"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(FT_DIR)\$(CMAKE_BUILDDIR)\$(MS_PROJECT_DIR)\freetype.lib $(OUTPUT_DIR)\lib
+	if exist $(OUTPUT_DIR)\include\freetype rmdir /s /q $(OUTPUT_DIR)\include\freetype
+    xcopy /Y /S $(BASE_DIR)\$(FT_DIR)\include\*.h $(OUTPUT_DIR)\include
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+	
+freetype-old:
 !IFDEF FT_DIR
 !IFNDEF NO_BUILD
     cd $(FT_SRCPATH)
@@ -1642,7 +1691,7 @@ gdal-optfile:
     echo POPPLER_0_20_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
     echo POPPLER_0_23_OR_LATER = YES >> $(OUTPUT_DIR)\gdal.opt
     echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(OUTPUT_DIR)\gdal.opt
-    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) $(OUTPUT_DIR)\lib\harfbuzz.lib advapi32.lib gdi32.lib >> $(OUTPUT_DIR)\gdal.opt
     echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
@@ -1667,6 +1716,7 @@ gdal-optfile:
     echo TIFF_OPTS=-DBIGTIFF_SUPPORT
     echo $(JBIG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo $(LIBTIFF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+	echo $(LIBGEOTIFF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_AMIGOCLOUD
     echo AMIGOCLOUD_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
@@ -3038,6 +3088,91 @@ mapcache-build:
     cd $(BASE_DIR)
 !ENDIF
 
+tiff-build:
+!IFDEF POPPLER_DIR
+    cd $(BASE_DIR)\$(LIBTIFF_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
+    xcopy /Y $(BASE_DIR)\$(LIBTIFF_DIR)\$(CMAKE_BUILDDIR)\libtiff\$(MS_PROJECT_DIR)\tiff.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(LIBTIFF_DIR)\$(CMAKE_BUILDDIR)\libtiff\$(MS_PROJECT_DIR)\tiff.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(LIBTIFF_DIR)\$(CMAKE_BUILDDIR)\libtiff\$(MS_PROJECT_DIR)\tiffxx.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(LIBTIFF_DIR)\libtiff\tiff.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(LIBTIFF_DIR)\libtiff\tiffio.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(LIBTIFF_DIR)\libtiff\tiffvers.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(LIBTIFF_DIR)\$(CMAKE_BUILDDIR)\libtiff\tiffconf.h $(OUTPUT_DIR)\include
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+geotiff-build:
+!IFDEF POPPLER_DIR
+    cd $(BASE_DIR)\$(LIBGEOTIFF_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)"
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
+	xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\$(CMAKE_BUILDDIR)\lib\$(MS_PROJECT_DIR)\geotiff.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\$(CMAKE_BUILDDIR)\lib\$(MS_PROJECT_DIR)\xtiff.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\*.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\*.inc $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\$(CMAKE_BUILDDIR)\*.h $(OUTPUT_DIR)\include
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+laszip:
+!IFDEF LASZIP_DIR
+    cd $(BASE_DIR)\$(LASZIP_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)"
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+pdal-build:
+!IFDEF POPPLER_DIR
+    cd $(BASE_DIR)\pdal
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    set ORACLE_HOME=
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DGEOS_LIBRARY=$(OUTPUT_DIR:\=/)/lib/geos_c.lib" "-DGEOS_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include" "-DPOSTGRESQL_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libpqdll.lib"
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
 pcre-build:
 !IFDEF MAPCACHE_DIR
     cd $(BASE_DIR)\$(PCRE_DIR)
@@ -3124,7 +3259,7 @@ ms-cmake:
 !ENDIF
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR:\=/)/lib/zdll.lib" -DWITH_THREADS=1 $(MS_CMAKE_PYTHON) $(MS_CMAKE_JAVA) -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 $(MS_CMAKE_ORACLE) -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(OUTPUT_DIR)\lib\libsvg.lib" "-DSVGCAIRO_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libsvg-cairo.lib" "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/harfbuzz" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR:\=/)/lib/gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR:\=/)/lib/freetype2411.lib" "-DPROTOBUFC_COMPILER=$(OUTPUT_DIR:\=/)/bin/protoc.exe" "-DPROTOBUFC_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/protobuf-c" "-DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DMS_EXTERNAL_LIBS=WS2_32.Lib "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1" "-DPKG_CONFIG_EXECUTABLE=C:\Program Files (x86)\Mono\bin\pkg-config.exe" "-DICONV_DLL=$(OUTPUT_DIR:\=/)/bin/iconv.dll" -DCMAKE_BUILD_TYPE=$(MS_PROJECT_DIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR);$(BASE_DIR)\$(OCI_DIR)\sdk\lib\msvc" "-DJPEG_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR:\=/)/lib/zdll.lib" -DWITH_THREADS=1 $(MS_CMAKE_PYTHON) $(MS_CMAKE_JAVA) -DWITH_CSHARP=1 -DWITH_PHP=0 -DWITH_ORACLESPATIAL=0 $(MS_CMAKE_ORACLE) -DWITH_MSSQL2008=1 -DWITH_KML=1 -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(OUTPUT_DIR)\lib\libsvg.lib" "-DSVGCAIRO_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libsvg-cairo.lib" "-DSWIG_EXECUTABLE=$(BASE_DIR)\SWIG-1.3.39\swig.exe" "-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/harfbuzz" -DWITH_GD=1 "-DGD_LIBRARY=$(OUTPUT_DIR:\=/)/lib/gd.lib" "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libpqdll.lib" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR:\=/)/lib/freetype.lib" "-DPROTOBUFC_COMPILER=$(OUTPUT_DIR:\=/)/bin/protoc.exe" "-DPROTOBUFC_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/protobuf-c" "-DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj_i.lib" -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1 -DWITH_SOS=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DMS_EXTERNAL_LIBS=WS2_32.Lib "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG" "-DWITH_THREAD_SAFETY=1" "-DPKG_CONFIG_EXECUTABLE=C:\Program Files (x86)\Mono\bin\pkg-config.exe" "-DICONV_DLL=$(OUTPUT_DIR:\=/)/bin/iconv.dll" -DCMAKE_BUILD_TYPE=$(MS_PROJECT_DIR)
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -3543,6 +3678,7 @@ pgsql:
     cd $(BASE_DIR)
 !IFNDEF NO_COPY
     xcopy /Y $(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
+	xcopy /Y $(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
 !ENDIF
 
 iconv:
@@ -3587,7 +3723,7 @@ iconv:
 libxml:
     cd $(LIBXML_DIR)
 !IFNDEF NO_CLEAN
-    if exist Release rd /Q /S Release
+    if exist Release rmdir /s /q Release
     mkdir Release
 !ENDIF
     cd win32
@@ -3601,7 +3737,7 @@ libxml:
 !ENDIF
     cd ..\..
 !IFNDEF NO_COPY
-    xcopy /Y $(BASE_DIR)\$(LIBXML_DIR)\Release\lib\libxml2.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(LIBXML_DIR)\Release\bin\libxml2.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(LIBXML_DIR)\Release\lib\libxml2.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S $(BASE_DIR)\$(LIBXML_DIR)\Release\include\* $(OUTPUT_DIR)\include
 !ENDIF 
@@ -3642,7 +3778,8 @@ spatialite:
 !ENDIF
 !IFNDEF NO_BUILD
     xcopy /Y src\headers\*.h $(OUTPUT_DIR)\include
-    if not exist $(OUTPUT_DIR)\include\spatialite mkdir $(OUTPUT_DIR)\include\spatialite
+	if exist $(OUTPUT_DIR)\include\spatialite rmdir /s /q $(OUTPUT_DIR)\include\spatialite
+    mkdir $(OUTPUT_DIR)\include\spatialite
     xcopy /Y src\headers\spatialite\*.h $(OUTPUT_DIR)\include\spatialite
 	xcopy /Y src\headers\spatialite\sqlite3.h $(OUTPUT_DIR)\include
 !IFDEF WIN64
@@ -3784,6 +3921,33 @@ fastcgi:
 !ENDIF
 
 xerces:
+!IFDEF XERCES_DIR
+    cd $(BASE_DIR)\$(XERCES_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)\src\$(MS_PROJECT_DIR)\xerces-c_3.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)\src\$(MS_PROJECT_DIR)\xerces-c_3_2.dll $(OUTPUT_DIR)\bin
+    if exist $(OUTPUT_DIR)\include\xercesc rmdir /s /q $(OUTPUT_DIR)\include\xercesc
+	mkdir $(OUTPUT_DIR)\include\xercesc
+    cd $(BASE_DIR)\$(XERCES_DIR)\src
+    xcopy  /Y /S xercesc\*.h $(OUTPUT_DIR)\include\xercesc
+    xcopy  /Y /S xercesc\*.hpp $(OUTPUT_DIR)\include\xercesc
+    xcopy  /Y /S xercesc\*.c $(OUTPUT_DIR)\include\xercesc
+	cd $(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)\src
+	xcopy  /Y /S xercesc\*.hpp $(OUTPUT_DIR)\include\xercesc
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+xerces2:
 !IFDEF XERCES_DIR
 !IFNDEF NO_BUILD
 !IF $(MSVC_VER) == 1911
@@ -4427,7 +4591,7 @@ php:
     cd $(BASE_DIR)
 !ENDIF
 
-libtiff:
+libtiff-old:
 !IFDEF LIBTIFF_DIR
     cd $(LIBTIFF_DIR)
 !IFNDEF NO_CLEAN
@@ -4627,7 +4791,7 @@ poppler:
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype2411.lib" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" "-DENABLE_LIBOPENJPEG=OFF" "-DENABLE_RELOCATABLE=OFF" "-DTIFF_LIBRARY=$(OUTPUT_DIR)\lib\libtiff_i.lib" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DFREETYPE_LIBRARY=$(OUTPUT_DIR)\lib\freetype.lib" "-DJPEG_LIBRARY=$(OUTPUT_DIR)\lib\libjpeg.lib" "-DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib" "-DENABLE_LIBOPENJPEG=OFF" "-DENABLE_RELOCATABLE=OFF" "-DTIFF_LIBRARY=$(OUTPUT_DIR)\lib\libtiff_i.lib" "-DBUILD_SHARED_LIBS=ON"
 !IFDEF WIN64	
     devenv /rebuild Release poppler.sln /Project poppler /ProjectConfig "Release|x64"
 !ELSE
