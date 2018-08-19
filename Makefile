@@ -150,6 +150,15 @@ CMAKE_BUILDDIR = vc17x64
 CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc17
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.15.26726.0"
+MSVC_VER = 1911
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc17
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
@@ -1856,7 +1865,7 @@ gdal-csharp-test:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
 	cd $(GDAL_PATH)\swig\csharp
-	rem nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -3361,7 +3370,7 @@ ms-csharp-test:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\csharp;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
 	cd $(MS_PATH)\mapscript\csharp
-	rem nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+	nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
 	cd $(BASE_DIR)
 !ENDIF
 

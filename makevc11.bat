@@ -134,6 +134,13 @@ set compiler=vc11
 
 call setversions.bat
 
+set gdal_minor=2
+set gdal_stable_tag=202
+set gdal_dev_tag=202
+set gdal_rel=3
+set gdal_rev=40801
+set gdal_version=%gdal_major%.%gdal_minor%
+
 if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
 if "%1" == "osgeo4w" @goto osgeo4w
