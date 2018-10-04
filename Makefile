@@ -1151,7 +1151,7 @@ GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_dsdk=$(MRSID_DLL)" "-dlti_dsdk_name=$(MRSID_DLL_NAME)"
 !ENDIF
 
-!IF EXIST ($(MRSID_RASTER_DIR)\lib\lti_dsdk_9.1.dll)
+!IF EXIST ($(MRSID_RASTER_DIR)\lib\tbb.dll)
 MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dmrsid_tbb=$(MRSID_RASTER_DIR)\lib\tbb.dll"
 !ENDIF
 
