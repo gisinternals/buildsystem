@@ -304,9 +304,9 @@ CMAKE_DIR = E:\builds\cmake-3.9.1-win32-x86
 
 !IFNDEF JAVA_HOME
 !IFDEF WIN64
-JAVA_HOME = C:\Java\jdk1.8.0_144x64
+JAVA_HOME = C:\Java\jdk1.8.0_191x64
 !ELSE
-JAVA_HOME = C:\Java\jdk1.8.0_144
+JAVA_HOME = C:\Java\jdk1.8.0_191
 !ENDIF
 !ENDIF
 
@@ -659,6 +659,24 @@ PYTHON_OUTDIR = python\build\lib.win32-3.4
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python34-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.4
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python35"
+PYTHON_OUTDIR = python\build\lib.win32-3.5
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python35-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.5
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python36"
+PYTHON_OUTDIR = python\build\lib.win32-3.6
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python36-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.6
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python37"
+PYTHON_OUTDIR = python\build\lib.win32-3.7
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python37-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.7
 PYTHON_BDIST_OPTS = --formats=msi
 !ENDIF
 
@@ -1908,6 +1926,12 @@ gdal-python-all:
     rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_DIR=SWIG-2.0.4
 	nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_DIR=SWIG-2.0.4
 !ELSE
@@ -1919,6 +1943,12 @@ gdal-python-all:
     rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_DIR=SWIG-2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_DIR=SWIG-2.0.4
 	nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_DIR=SWIG-2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_DIR=SWIG-2.0.4
 !ENDIF
