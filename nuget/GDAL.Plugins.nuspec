@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata minClientVersion="3.3">
+    <id>GDAL.Plugins</id>
+    <version>$version$</version>
+    <authors>Tamas Szekeres</authors>
+    <owners>SharpMap-Team</owners>
+    <licenseUrl>http://trac.osgeo.org/gdal/wiki/FAQGeneral#WhatlicensedoesGDALOGRuse</licenseUrl>
+    <projectUrl>http://www.gdal.org/</projectUrl>
+    <iconUrl>http://www.gdal.org/gdalicon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>GDAL is a translator library for raster geospatial data formats that is released under an X/MIT style Open Source license by the Open Source Geospatial Foundation. As a library, it presents a single abstract data model to the calling application for all supported formats.</description>
+    <tags>GDAL OGR Geospatial</tags>
+    <dependencies>
+      <dependency id="GDAL.Native" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\release-1911\bin\hdf5.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\hdf5_hl.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\hdf5_cpp.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\hdfdll.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\mfhdfdll.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\xdrdll.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\szip.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\cfitsio.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\libecwj2.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\netcdf.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\libkea.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\tbb.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\libpq.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\lti_lidar_dsdk_1.1.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\lti_dsdk_9.5.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1911\bin\gdal\plugins\*.*" target="build\gdal\x86\plugins" exclude="..\release-1911\bin\gdal\plugins\gdal_GEOR.dll;..\release-1911\bin\gdal\plugins\ogr_OCI.dll"/>
+    <file src="..\release-1911\bin\gdal\plugins-optional\*.*" target="build\gdal\x86\plugins"/>
+
+    <file src="..\release-1911-x64\bin\hdf5.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\hdf5_hl.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\hdf5_cpp.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\hdfdll.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\mfhdfdll.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\xdrdll.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\szip.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\cfitsio.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\libecwj2.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\netcdf.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\libkea.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\tbb.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\libpq.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\lti_lidar_dsdk_1.1.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\lti_dsdk_9.5.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1911-x64\bin\gdal\plugins\*.*" target="build\gdal\x64\plugins" exclude="..\release-1911-x64\bin\gdal\plugins\gdal_GEOR.dll;..\release-1911-x64\bin\gdal\plugins\ogr_OCI.dll"/>
+    <file src="..\release-1911-x64\bin\gdal\plugins-optional\*.*" target="build\gdal\x64\plugins"/>
+
+    <file src="..\ECWLicense.rtf" target="gdal" />
+    <file src="..\ECW5License.rtf" target="gdal" />
+    <file src="..\FITSLicense.rtf" target="gdal" />
+    <file src="..\HDF4License.rtf" target="gdal" />
+    <file src="..\HDF5License.rtf" target="gdal" />
+    <file src="..\NetCDFLicense.rtf" target="gdal" />
+    <file src="..\MRSIDLicense.rtf" target="gdal" />
+    <file src="Gdal.Plugins.targets" target="build/net40" />
+  </files>
+</package>

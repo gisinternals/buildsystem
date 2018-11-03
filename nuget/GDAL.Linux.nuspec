@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata minClientVersion="3.3">
+    <id>GDAL.Linux</id>
+    <version>$version$</version>
+    <authors>Tamas Szekeres</authors>
+    <owners>SharpMap-Team</owners>
+    <licenseUrl>http://trac.osgeo.org/gdal/wiki/FAQGeneral#WhatlicensedoesGDALOGRuse</licenseUrl>
+    <projectUrl>http://www.gdal.org/</projectUrl>
+    <iconUrl>http://www.gdal.org/gdalicon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>GDAL is a translator library for raster geospatial data formats that is released under an X/MIT style Open Source license by the Open Source Geospatial Foundation. As a library, it presents a single abstract data model to the calling application for all supported formats.</description>
+    <tags>GDAL OGR Geospatial</tags>
+    <dependencies>
+      <dependency id="GDAL" version="$version$" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="*.config" target="build\net40\"/>
+    <file src="GDAL.Linux.targets" target="build\net40\"/>
+  </files>
+</package>

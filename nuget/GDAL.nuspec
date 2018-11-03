@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata minClientVersion="3.3">
+    <id>GDAL</id>
+    <version>$version$</version>
+    <authors>Tamas Szekeres</authors>
+    <owners>SharpMap-Team</owners>
+    <licenseUrl>http://trac.osgeo.org/gdal/wiki/FAQGeneral#WhatlicensedoesGDALOGRuse</licenseUrl>
+    <projectUrl>http://www.gdal.org/</projectUrl>
+    <iconUrl>http://www.gdal.org/gdalicon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>GDAL is a translator library for raster geospatial data formats that is released under an X/MIT style Open Source license by the Open Source Geospatial Foundation. As a library, it presents a single abstract data model to the calling application for all supported formats.</description>
+    <tags>GDAL OGR Geospatial</tags>
+  </metadata>
+  <files>
+    <file src="..\release-1911-x64\bin\gdal\csharp\*_csharp.dll" target="lib\net40" />
+    <file src="GdalConfiguration.cs.pp" target="content" />
+    <file src="GdalConfiguration.vb.pp" target="content" />
+    <file src="GdalConfiguration.cs.pp" target="contentFiles\cs\any" />
+    <file src="GdalConfiguration.vb.pp" target="contentFiles\vb\any" />
+  </files>
+</package>
