@@ -69,8 +69,11 @@ set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%
 set MS_REVISION=%ms_rev%
 set GDAL_REVISION=%gdal_rev%
 set gdal-tag=%gdal_stable_tag%
+set gdal-release-ver=%gdal_version%.%gdal_rel%
 
 cmd /C makepackage.bat
+
+cmd /C makenuget.bat
 
 
 :exit

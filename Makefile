@@ -1118,6 +1118,9 @@ USE_OPENJP2_NEW_METHOD = 1
 !ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.4." > NUL] == 0)
 GDAL_VER = 2.4
 USE_OPENJP2_NEW_METHOD = 1
+!ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.5." > NUL] == 0)
+GDAL_VER = 2.5
+USE_OPENJP2_NEW_METHOD = 1
 !ENDIF
 
 !IFNDEF GDAL_VERSIONTAG
@@ -1162,6 +1165,10 @@ GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 GDAL_VERSIONTAG = 204
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
+!ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal205.dll)
+GDAL_VERSIONTAG = 205
+GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
+GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 !ENDIF
 !ENDIF
 
@@ -1181,7 +1188,7 @@ EXTRAFLAGS =
 
 default: update platform gdal gdalplugins gdal-csharp
 
-gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-mrsid-lidar gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw gdal-ecw3 ogr-pg gdal-filegdb gdal-kea gdal-amigocloud ogr-mssql
+gdalpluginlibs: gdal-sde gdal-oci gdal-mrsid gdal-mrsid-lidar gdal-hdf4 gdal-hdf5 gdal-netcdf gdal-fits gdal-ecw gdal-ecw3 ogr-pg gdal-filegdb gdal-kea gdal-amigocloud ogr-mssql ogr-mssql-msodbc
 	
 gdalplugins: gdalpluginlibs gdalversion
 
@@ -1291,6 +1298,7 @@ updatecmd:
     echo pause>>update-$(COMPILER_VER).bat
 	
 package:
+    if exist $(OUTPUT_DIR)\install $(BASE_DIR)\cert\signdir $(OUTPUT_DIR)\install
     xcopy /Y $(BASE_DIR)\SDKShell.bat $(OUTPUT_DIR)
     xcopy /Y $(BASE_DIR)\read-me.txt $(OUTPUT_DIR)
     if exist $(OUTPUT_DIR)-$(PKG_VERSION).zip del $(OUTPUT_DIR)-$(PKG_VERSION).zip
@@ -1367,7 +1375,6 @@ mkgdalinst-core:
 !ENDIF
     -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
-	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi"
 !ENDIF 
 
 mkgdalinst-oci:
@@ -1385,7 +1392,6 @@ mkgdalinst-oci:
 !ENDIF
     -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-oracle.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
-	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-oracle.msi"
 !ENDIF
 !ENDIF 
 
@@ -1404,7 +1410,6 @@ mkgdalinst-ecw:
 !ENDIF
     -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
-	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi"
 !ENDIF
 !ENDIF 
 
@@ -1426,7 +1431,6 @@ mkgdalinst-mrsid:
 !ENDIF
     -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-mrsid.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
-	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-mrsid.msi"
 !ENDIF
 !ENDIF 
 
@@ -1446,7 +1450,6 @@ mkgdalinst-filegdb:
 !ENDIF
     -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
-	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi"
 !ENDIF
 !ENDIF
 !ENDIF
@@ -1466,9 +1469,23 @@ mkgdalinst-netcdf:
 !ENDIF
     -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
     cd $(BASE_DIR)
-	cert\sign "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi"
 !ENDIF
 !ENDIF
+
+gdal-nuget:
+    cd nuget
+    nuget pack GDAL.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.Native.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.Plugins.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.Linux.nuspec -version $(GDAL_RELEASE_VER)
+    sign GDAL.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL.Native.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL.Linux.$(GDAL_RELEASE_VER).nupkg
+    push GDAL.Native.$(GDAL_RELEASE_VER).nupkg
+    push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
+    push GDAL.$(GDAL_RELEASE_VER).nupkg
+    cd $(BASE_DIR)
 
 mkmapserverinst:
     set PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\ms\apps;$(PATH)
@@ -1488,7 +1505,6 @@ mkmapserverinst-core:
 !ENDIF
     -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" -loc "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxl" -out "$(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\MapServer.wixpdb" "$(OUTPUT_DIR)\install\MapServer.wixobj"
     cd $(BASE_DIR)
-	cert\sign "$(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi"
 !ENDIF
 
 harfbuzz:
@@ -2456,6 +2472,33 @@ ogr-mssql: gdal-optfile
 !IFNDEF NO_COPY
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
 	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+!ENDIF
+
+ogr-mssql-msodbc: gdal-optfile
+!IFDEF GDAL_MSSQL_DEF
+!IFDEF GDAL_MSSQL
+    echo MSODBCSQL_VERSION = $(MSODBCSQL_VERSION) >> $(OUTPUT_DIR)\gdal.opt
+    echo MSODBCSQL_DIR = $(MSODBCSQL_DIR) >> $(OUTPUT_DIR)\gdal.opt
+!IFDEF WIN64
+	echo MSODBCSQL_LIB = "$(MSODBCSQL_DIR)\Lib\x64\msodbcsql$(MSODBCSQL_VERSION).lib" >> $(OUTPUT_DIR)\gdal.opt
+!ELSE
+	echo MSODBCSQL_LIB = "$(MSODBCSQL_DIR)\Lib\x86\msodbcsql$(MSODBCSQL_VERSION).lib" >> $(OUTPUT_DIR)\gdal.opt
+!ENDIF
+    echo MSODBCSQL_INCLUDE = "-I$(MSODBCSQL_DIR)\Include" -DMSODBCSQL_VERSION=$(MSODBCSQL_VERSION) -DMSSQL_BCP_SUPPORTED=1 >> $(OUTPUT_DIR)\gdal.opt
+    cd $(GDAL_PATH)\ogr\ogrsf_frmts\mssqlspatial
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+!ENDIF
+!IFNDEF NO_COPY
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
+	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF

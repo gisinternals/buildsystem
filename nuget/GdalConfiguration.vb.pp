@@ -44,9 +44,9 @@ Namespace $rootnamespace$
         Private Shared _configuredGdal As Boolean
 
 
-        /// <summary>
-        /// Construction of Gdal/Ogr
-        /// </summary>
+        ''' <summary>
+        ''' Construction of Gdal/Ogr
+        ''' </summary>
         Private Shared Sub New()
             Dim executingAssemblyFile As String = New Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath
             Dim executingDirectory As String = Path.GetDirectoryName(executingAssemblyFile)
