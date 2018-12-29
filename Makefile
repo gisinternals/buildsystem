@@ -1490,10 +1490,14 @@ gdal-nuget:
     sign GDAL.Native.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Linux.$(GDAL_RELEASE_VER).nupkg
-    push GDAL.Native.$(GDAL_RELEASE_VER).nupkg
-    push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
-    push GDAL.$(GDAL_RELEASE_VER).nupkg
     cd $(BASE_DIR)
+    
+gdal-nuget-push:
+    cd nuget
+    nuget setApiKey $(NUGET_GDAL_API_KEY)
+    nuget push GDAL.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    nuget push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    nuget push GDAL.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
 
 mkmapserverinst:
     set PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\ms\apps;$(PATH)
@@ -1680,6 +1684,8 @@ gdal-optfile:
     echo MSVC_VLD_FLAGS=-DMSVC_USE_VLD=1 -D_DEBUG -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
     echo MSVC_VLD_LIB=$(OUTPUT_DIR)\lib\vld.lib >> $(OUTPUT_DIR)\gdal.opt
     echo OPTFLAGS= /nologo /MDd /EHsc /Zi /W4 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /Fd$(GDAL_ROOT)\gdal.pdb >> $(OUTPUT_DIR)\gdal.opt
+!ELSE
+    echo OPTFLAGS= /nologo /MP /MD /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF    
 !ENDIF
     echo SETARGV=$(SETARGV) >> $(OUTPUT_DIR)\gdal.opt
@@ -1888,7 +1894,7 @@ gdal-csharp:
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF DEBUG
-	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt DEBUG=YES
+	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt DEBUG=1
 !ELSE
 	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
 !ENDIF	

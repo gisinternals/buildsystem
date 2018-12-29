@@ -1,7 +1,7 @@
 '******************************************************************************
 '*
-'* Name:     GdalConfiguration.cs.pp
-'* Project:  GDAL CSharp Interface
+'* Name:     GdalConfiguration.vb.pp
+'* Project:  GDAL VB.NET Interface
 '* Purpose:  A static configuration utility class to enable GDAL/OGR.
 '* Author:   Felix Obermaier
 '*
@@ -30,8 +30,10 @@
 Option Infer On
 
 Imports System
+Imports System.Diagnostics
 Imports System.IO
 Imports System.Reflection
+Imports System.Runtime.InteropServices
 Imports Gdal = OSGeo.GDAL.Gdal
 Imports Ogr = OSGeo.OGR.Ogr
 
@@ -39,37 +41,59 @@ Namespace $rootnamespace$
     ''' <summary>
     ''' Configuration class for GDAL/OGR
     ''' </summary>
-    Public Partial Shared Class GdalConfiguration
+    Public Partial Class GdalConfiguration
         Private Shared _configuredOgr As Boolean
         Private Shared _configuredGdal As Boolean
+        Private Shared _usable As Boolean
 
+        <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)>
+        Public Shared Function SetDefaultDllDirectories(ByVal directoryFlags As UInteger) As Boolean
+
+        End Function
+
+        '    LOAD_LIBRARY_SEARCH_USER_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32
+        Private Const DllSearchFlags As UInteger = &H400 Or &H800
+
+        <DllImport("kernel32.dll", CharSet:=CharSet.Unicode, SetLastError:=True)>
+        Public Shared Function AddDllDirectory(ByVal lpPathName As String) As <MarshalAs(UnmanagedType.Bool)> Boolean
+
+        End Function
 
         ''' <summary>
         ''' Construction of Gdal/Ogr
         ''' </summary>
-        Private Shared Sub New()
-            Dim executingAssemblyFile As String = New Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath
-            Dim executingDirectory As String = Path.GetDirectoryName(executingAssemblyFile)
-            If String.IsNullOrEmpty(executingDirectory) Then Throw New InvalidOperationException("cannot get executing directory")
-            Dim gdalPath As String = Path.Combine(executingDirectory, "gdal")
-            Dim path, nativePath As String
+        Shared Sub New()
+            Dim nativePath As String = Nothing
+            Dim executingDirectory As String = Nothing
+            Dim gdalPath As String = Nothing
+            Try
+                If Not IsWindows Then
+                    Const notSet As String = "_Not_set_"
+                    Dim tmp As String = Gdal.GetConfigOption("GDAL_DATA", notSet)
+                    _usable = (tmp <> notSet)
+                    Return
+                End If
 
-            If IsWindows Then
+                Dim executingAssemblyFile As String = New Uri(Assembly.GetExecutingAssembly.GetName.CodeBase).LocalPath
+                executingDirectory = Path.GetDirectoryName(executingAssemblyFile)
+                If String.IsNullOrEmpty(executingDirectory) Then
+                    Throw New InvalidOperationException("cannot get executing directory")
+                End If
+
+                SetDefaultDllDirectories(DllSearchFlags)
+                gdalPath = Path.Combine(executingDirectory, "gdal")
                 nativePath = Path.Combine(gdalPath, GetPlatform())
-                path = Environment.GetEnvironmentVariable("PATH")
-                path = nativePath & ";" & Path.Combine(nativePath, "plugins") & ";" & path
-            Else
-                nativePath = gdalPath
-                path = Environment.GetEnvironmentVariable("LD_LIBRARY_PATH")
-                path = nativePath & ":" & Path.Combine(nativePath, "plugins") & ":" & path
-            End If
+                If Not Directory.Exists(nativePath) Then
+                    Throw New DirectoryNotFoundException($"GDAL native directory not found at '{nativePath}'")
+                End If
 
-            ' Prepend native path to environment path, to ensure the
-            ' right libs are being used.
-            Environment.SetEnvironmentVariable("PATH", path)
+                If Not File.Exists(Path.Combine(nativePath, "gdal_wrap.dll")) Then
+                    Throw New FileNotFoundException($"GDAL native wrapper file not found at '{Path.Combine(nativePath, ", gdal_wrap.dll, ")}'")
+                End If
 
-            ' Set environment variables
-            If IsWindows Then
+                AddDllDirectory(nativePath)
+                AddDllDirectory(Path.Combine(nativePath, "plugins"))
+                ' Set the additional GDAL environment variables.
                 Dim gdalData As String = Path.Combine(gdalPath, "data")
                 Environment.SetEnvironmentVariable("GDAL_DATA", gdalData)
                 Gdal.SetConfigOption("GDAL_DATA", gdalData)
@@ -81,66 +105,114 @@ Namespace $rootnamespace$
                 Dim projSharePath As String = Path.Combine(gdalPath, "share")
                 Environment.SetEnvironmentVariable("PROJ_LIB", projSharePath)
                 Gdal.SetConfigOption("PROJ_LIB", projSharePath)
-            End If
+                _usable = True
+            Catch e As Exception
+                _usable = False
+                Trace.WriteLine(e, "error")
+                Trace.WriteLine($"Executing directory: {executingDirectory}", "error")
+                Trace.WriteLine($"gdal directory: {gdalPath}", "error")
+                Trace.WriteLine($"native directory: {nativePath}", "error")
+                'throw;
+            End Try
+
         End Sub
 
+        ''' <summary>
+        ''' Gets a value indicating if the GDAL package is set up properly.
+        ''' </summary>
+        Public Shared ReadOnly Property Usable As Boolean
+            Get
+                Return _usable
+            End Get
+        End Property
+        
         ''' <summary>
         ''' Method to ensure the static constructor is being called.
         ''' </summary>
         ''' <remarks>Be sure to call this function before using Gdal/Ogr/Osr</remarks>
-        Sub ConfigureOgr()
-            If _configuredOgr Then Return
-            Ogr.RegisterAll()
+        Public Shared Sub ConfigureOgr()
+            If Not _usable Then
+                Return
+            End If
+            
+            If _configuredOgr Then
+                Return
+            End If
+            
+            ' Register drivers
+            Ogr.RegisterAll
             _configuredOgr = True
             PrintDriversOgr()
         End Sub
-
+        
         ''' <summary>
         ''' Method to ensure the static constructor is being called.
         ''' </summary>
         ''' <remarks>Be sure to call this function before using Gdal/Ogr/Osr</remarks>
-        Sub ConfigureGdal()
-            If _configuredGdal Then Return
-            Gdal.AllRegister()
+        Public Shared Sub ConfigureGdal()
+            If Not _usable Then
+                Return
+            End If
+            
+            If _configuredGdal Then
+                Return
+            End If
+            
+            ' Register drivers
+            Gdal.AllRegister
             _configuredGdal = True
             PrintDriversGdal()
         End Sub
-
+        
         ''' <summary>
         ''' Function to determine which platform we're on
         ''' </summary>
-        Private Function GetPlatform() As String
-            If IsWindows Then Return If(IntPtr.Size = 4, "x86", "x64")
-            Return If(IntPtr.Size = 4, "i386", "x86_x64")
+        Private Shared Function GetPlatform() As String
+            If (Environment.Is64BitProcess) Then Return "x64"
+            return "x86"
         End Function
-
+        
         ''' <summary>
         ''' Gets a value indicating if we are on a windows platform
         ''' </summary>
         Private Shared ReadOnly Property IsWindows As Boolean
             Get
-                Return Not (Environment.OSVersion.Platform = PlatformID.Unix OrElse Environment.OSVersion.Platform = PlatformID.MacOSX)
+                Dim res = Not ((Environment.OSVersion.Platform = PlatformID.Unix)  _
+                            OrElse (Environment.OSVersion.Platform = PlatformID.MacOSX))
+                Return res
             End Get
         End Property
-
+        
         Private Shared Sub PrintDriversOgr()
-#If DEBUG Then
-            Dim num = Ogr.GetDriverCount()
-            For i As var = 0 To num - 1
-                Dim driver = Ogr.GetDriver(i)
-                Console.WriteLine(String.Format("OGR {0}: {1}", i, driver.Name))
-            Next
-#End If
+            #if (DEBUG)
+            If _usable Then
+                Dim num = Ogr.GetDriverCount
+                Dim i = 0
+                Do While (i < num)
+                    Dim driver = Ogr.GetDriver(i)
+                    Trace.WriteLine($"OGR {i}: {driver.GetName()}", "Debug")
+                    i = (i + 1)
+                Loop
+                
+            End If
+            
+            #End If 
         End Sub
-
+        
         Private Shared Sub PrintDriversGdal()
-#If DEBUG Then
-            Dim num = Gdal.GetDriverCount()
-            For i As var = 0 To num - 1
-                Dim driver = Gdal.GetDriver(i)
-                Console.WriteLine(String.Format("GDAL {0}: {1}-{2}", i, driver.ShortName, driver.LongName))
-            Next
-#End If
+            #if (DEBUG)
+            If _usable Then
+                Dim num = Gdal.GetDriverCount
+                Dim i = 0
+                Do While (i < num)
+                    Dim driver = Gdal.GetDriver(i)
+                    Trace.WriteLine($"GDAL {i}: {driver.ShortName}-{driver.LongName}")
+                    i = (i + 1)
+                Loop
+                
+            End If
+            
+            #End If 
         End Sub
     End Class
 End Namespace
