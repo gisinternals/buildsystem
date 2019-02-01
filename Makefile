@@ -2297,7 +2297,7 @@ gdal-kea: gdal-optfile
 !IFDEF KEA_DIR
 !IF EXIST ($(GDAL_PATH)\frmts\kea)
     echo KEA_PLUGIN=YES >> $(OUTPUT_DIR)\gdal.opt
-    echo KEA_LIB =	$(OUTPUT_DIR)\lib\libkea.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo KEA_LIB =	$(OUTPUT_DIR)\lib\libkea.lib $(OUTPUT_DIR)\lib\hdf5.lib $(OUTPUT_DIR)\lib\hdf5_cpp.lib >> $(OUTPUT_DIR)\gdal.opt
 	echo KEA_CFLAGS = -I$(OUTPUT_DIR)\include >> $(OUTPUT_DIR)\gdal.opt
 	cd $(GDAL_PATH)\frmts\kea
 !IFNDEF NO_CLEAN	
