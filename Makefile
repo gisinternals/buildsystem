@@ -489,7 +489,11 @@ REGEX_PATH=$(BASE_DIR)\$(REGEX_DIR)
 !ENDIF
 
 !IFNDEF PROJ_DIR
-PROJ_DIR = proj-4.8
+PROJ_DIR = proj-master
+!ENDIF
+
+!IFNDEF PROJ_DATUMGRID_DIR
+PROJ_DATUMGRID_DIR = proj-datumgrid-1.8
 !ENDIF
 
 !IFNDEF GEOS_DIR
@@ -1129,6 +1133,7 @@ USE_OPENJP2_NEW_METHOD = 1
 !ELSE IF ([type $(GDAL_PATH)\VERSION|find "2.5." > NUL] == 0)
 GDAL_VER = 2.5
 USE_OPENJP2_NEW_METHOD = 1
+USE_PROJ6 = 1
 !ENDIF
 
 !IFNDEF GDAL_VERSIONTAG
@@ -1821,6 +1826,10 @@ gdal-optfile:
 !ENDIF
 !IFDEF NETCDF_DIR
     echo $(NETCDF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF USE_PROJ6
+    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(OUTPUT_DIR)\gdal.opt
+    echo PROJ_LIBRARY = $(OUTPUT_DIR)\lib\proj_6_0.lib >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF
 
 gdal-clean:
@@ -2558,8 +2567,56 @@ proj-optfile:
     echo MSVC_VER=$(MSVC_VER) >> proj.opt
     echo INSTDIR=$(OUTPUT_DIR)\bin\proj >> proj.opt
     echo PROJ_LIB_DIR=$(OUTPUT_DIR)\bin\proj\SHARE >> proj.opt
+    
+proj:
+!IFDEF HARFBUZZ_DIR
+    cd $(BASE_DIR)\$(PROJ_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+    if exist data\proj.db del data\proj.db
+    if exist data\all.sql.in del data\all.sql.in
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(MS_PROJECT_DIR) -DBUILD_LIBPROJ_SHARED=ON
+    $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
+!ENDIF
+!IFNDEF NO_COPY
+    rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
+    xcopy /Y lib\$(MS_PROJECT_DIR)\proj_6_0.lib $(OUTPUT_DIR)\lib
+    xcopy /Y bin\$(MS_PROJECT_DIR)\proj_6_0.dll $(OUTPUT_DIR)\bin
+    if not exist $(OUTPUT_DIR)\bin\proj6 mkdir $(OUTPUT_DIR)\bin\proj6
+	if not exist $(OUTPUT_DIR)\bin\proj6\apps mkdir $(OUTPUT_DIR)\bin\proj6\apps
+    xcopy /Y bin\$(MS_PROJECT_DIR)\*.exe $(OUTPUT_DIR)\bin\proj6\apps
+    if not exist $(OUTPUT_DIR)\bin\proj6\share mkdir $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\world $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\other.extra $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\nad27 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\GL27 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\nad83 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\nad.lst $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\CH $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\ITRF2000 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\ITRF2008 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\ITRF2014 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\proj.db $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\proj.db $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DATUMGRID_DIR)\* $(OUTPUT_DIR)\bin\proj6\share
+    if exist $(OUTPUT_DIR)\include\proj6 rmdir /s /q $(OUTPUT_DIR)\include\proj6
+	mkdir $(OUTPUT_DIR)\include\proj6
+    mkdir $(OUTPUT_DIR)\include\proj6\proj
+    xcopy /Y $(BASE_DIR)\$(PROJ_DIR)\include\proj\*.hpp $(OUTPUT_DIR)\include\proj6\proj
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\src\proj.h $(OUTPUT_DIR)\include\proj6
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\src\proj_api.h $(OUTPUT_DIR)\include\proj6
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\src\proj_experimental.h $(OUTPUT_DIR)\include\proj6
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\src\proj_constants.h $(OUTPUT_DIR)\include\proj6
+    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\src\geodesic.h $(OUTPUT_DIR)\include\proj6
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
 
-proj: proj-optfile
+proj-old: proj-optfile
 	cd $(PROJ_DIR)
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
@@ -3876,6 +3933,7 @@ sqlite:
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
+    xcopy /Y *.exe $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
     xcopy /Y sqlite3.h $(OUTPUT_DIR)\include
 !ENDIF
