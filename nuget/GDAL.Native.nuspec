@@ -17,7 +17,7 @@
   </metadata>
   <files>
     <!-- x64 -->
-        <file src="..\release-1911-x64\bin\gdal203.dll" target="build\gdal\x64" />
+        <file src="..\release-1911-x64\bin\gdal204.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\xerces-c_3_2.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\VCRUNTIME140.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\sqlite3.dll" target="build\gdal\x64" />
@@ -39,7 +39,7 @@
         <file src="..\release-1911-x64\bin\zlib1.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\gdal\csharp\*_wrap.dll" target="build\gdal\x64" />
     <!-- x86 -->
-        <file src="..\release-1911\bin\gdal203.dll" target="build\gdal\x86" />
+        <file src="..\release-1911\bin\gdal204.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\xerces-c_3_2.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\VCRUNTIME140.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\sqlite3.dll" target="build\gdal\x86" />
