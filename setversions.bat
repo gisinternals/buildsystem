@@ -1,8 +1,8 @@
 set ms_version=7-2
-set ms_rel=1
-set ms_rev=d5c22cd3113ba85f5b1f1c406fe4055f75d04ce3       
+set ms_rel=2
+set ms_rev=7fe9b2b9f74796731cba2f7f09c8f41875f020e4      
 set ms_osgeo4w_version=7.0.7
-set ms_osgeo4w_version_dev=7.2.1
+set ms_osgeo4w_version_dev=7.2.2
 
 set gdal_major=2
 set gdal_minor=4
