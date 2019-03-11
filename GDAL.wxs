@@ -711,18 +711,9 @@
                     <Component Id="projinfo.exe" Guid="*">
                         <File Id="projinfo.exe" Name="projinfo.exe" Source="$(var.TargetDir)\proj6\apps\projinfo.exe" />
                     </Component>
-                    <!-- <Component Id="gdalconstjni.dll" Guid="*">
-                        <File Id="gdalconstjni.dll" Name="gdalconstjni.dll" Source="$(var.TargetDir)\gdal\java\gdalconstjni.dll" Vital="yes"/>
+                    <Component Id="gdalalljni.dll" Guid="*">
+                        <File Id="gdalalljni.dll" Name="gdalalljni.dll" Source="$(var.TargetDir)\gdal\java\gdalalljni.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="gdaljni.dll" Guid="*">
-                        <File Id="gdaljni.dll" Name="gdaljni.dll" Source="$(var.TargetDir)\gdal\java\gdaljni.dll" Vital="yes"/>
-                    </Component>
-                    <Component Id="ogrjni.dll" Guid="*">
-                        <File Id="ogrjni.dll" Name="ogrjni.dll" Source="$(var.TargetDir)\gdal\java\ogrjni.dll" Vital="yes"/>
-                    </Component>
-                    <Component Id="osrjni.dll" Guid="*">
-                        <File Id="osrjni.dll" Name="osrjni.dll" Source="$(var.TargetDir)\gdal\java\osrjni.dll" Vital="yes"/>
-                    </Component> -->
                     <Component Id="ogr_wrap.dll" Guid="*">
                         <File Id="ogr_wrap.dll" Name="ogr_wrap.dll" Source="$(var.TargetDir)\gdal\csharp\ogr_wrap.dll" Vital="yes"/>
                     </Component>
@@ -812,11 +803,11 @@
                             <File Id="gdal_csharp.dll" Name="gdal_csharp.dll" Source="$(var.TargetDir)\gdal\csharp\gdal_csharp.dll" Vital="yes"/>
                         </Component>
                     </Directory>
-                    <!-- <Directory Id="javaDir" Name="java">
+                    <Directory Id="javaDir" Name="java">
                         <Component Id="gdal.jar" Guid="*">
                             <File Id="gdal.jar" Name="gdal.jar" Source="$(var.TargetDir)\gdal\java\gdal.jar" Vital="yes"/>
                         </Component>
-                    </Directory> -->
+                    </Directory>
                     <Directory Id="gdaldataDir" Name="gdal-data">
                         <Component Id="ecw_cs.wkt" Guid="*">
                             <File Id="ecw_cs.wkt" Name="ecw_cs.wkt" Source="$(var.TargetDir)\gdal-data\ecw_cs.wkt" Vital="yes"/>
@@ -1206,13 +1197,10 @@
             <ComponentRef Id="gdal_csharp.dll" />
             <ComponentRef Id="gdal_wrap.dll" />
         </Feature>
-        <!-- <Feature Id="JavaBindings" Level="1" Title="Java Bindings" Display="expand" Description="GDAL Java Bindings">
+        <Feature Id="JavaBindings" Level="1" Title="Java Bindings" Display="expand" Description="GDAL Java Bindings">
             <ComponentRef Id="gdal.jar" />
-            <ComponentRef Id="gdalconstjni.dll" />
-            <ComponentRef Id="gdaljni.dll" />
-            <ComponentRef Id="ogrjni.dll" />
-            <ComponentRef Id="osrjni.dll" />
-        </Feature> -->
+            <ComponentRef Id="gdalalljni.dll" />
+        </Feature>
         <Feature Id="PythonBindings" Level="1" Title="Python Applications" Display="expand" Description="GDAL Python Applications (The bindings are installed separately)">
             <ComponentRef Id="epsg_tr.py" />
             <ComponentRef Id="esri2wkt.py" />
