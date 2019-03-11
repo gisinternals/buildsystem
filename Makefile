@@ -1690,7 +1690,7 @@ gdal-optfile:
     echo MSVC_VLD_LIB=$(OUTPUT_DIR)\lib\vld.lib >> $(OUTPUT_DIR)\gdal.opt
     echo OPTFLAGS= /nologo /MDd /EHsc /Zi /W4 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /Fd$(GDAL_ROOT)\gdal.pdb >> $(OUTPUT_DIR)\gdal.opt
 !ELSE
-    echo OPTFLAGS= /nologo /MP /MD /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(OUTPUT_DIR)\gdal.opt
+    echo OPTFLAGS= /nologo /MP /MD /Zi /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF    
 !ENDIF
     echo SETARGV=$(SETARGV) >> $(OUTPUT_DIR)\gdal.opt
@@ -1855,7 +1855,8 @@ gdal-build:
 	xcopy /Y ogr\*.h $(OUTPUT_DIR)\include
 	xcopy /Y apps\*.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\mem\memdataset.h $(OUTPUT_DIR)\include
-	xcopy /Y frmts\raw\rawdataset.h $(OUTPUT_DIR)\include
+	if exist frmts\raw\rawdataset.h xcopy /Y frmts\raw\rawdataset.h $(OUTPUT_DIR)\include
+    if exist gcore\rawdataset.h xcopy /Y gcore\rawdataset.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\gtiff\libgeotiff\*.h $(OUTPUT_DIR)\include
 	xcopy /Y frmts\gtiff\libgeotiff\*.inc $(OUTPUT_DIR)\include
 	xcopy /Y frmts\vrt\*.h $(OUTPUT_DIR)\include
