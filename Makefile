@@ -489,7 +489,7 @@ REGEX_PATH=$(BASE_DIR)\$(REGEX_DIR)
 !ENDIF
 
 !IFNDEF PROJ_DIR
-PROJ_DIR = proj-master
+PROJ_DIR = proj-6.0
 !ENDIF
 
 !IFNDEF PROJ_DATUMGRID_DIR
@@ -1921,7 +1921,7 @@ gdal-csharp:
 gdal-csharp-test:	
 !IFDEF GDAL_CSHARP
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj6\SHARE
 	cd $(GDAL_PATH)\swig\csharp
 	nmake /f makefile.vc test EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
 	cd $(BASE_DIR)
@@ -2570,16 +2570,16 @@ proj-optfile:
     echo PROJ_LIB_DIR=$(OUTPUT_DIR)\bin\proj\SHARE >> proj.opt
     
 proj:
-!IFDEF HARFBUZZ_DIR
+!IFDEF PROJ_DIR
     cd $(BASE_DIR)\$(PROJ_DIR)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
     if exist data\proj.db del data\proj.db
     if exist data\all.sql.in del data\all.sql.in
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(MS_PROJECT_DIR) -DBUILD_LIBPROJ_SHARED=ON
     $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR)
 !ENDIF
@@ -2591,18 +2591,17 @@ proj:
 	if not exist $(OUTPUT_DIR)\bin\proj6\apps mkdir $(OUTPUT_DIR)\bin\proj6\apps
     xcopy /Y bin\$(MS_PROJECT_DIR)\*.exe $(OUTPUT_DIR)\bin\proj6\apps
     if not exist $(OUTPUT_DIR)\bin\proj6\share mkdir $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\world $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\other.extra $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\nad27 $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\GL27 $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\nad83 $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\nad.lst $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\CH $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\ITRF2000 $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\ITRF2008 $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\ITRF2014 $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\proj.db $(OUTPUT_DIR)\bin\proj6\share
-    xcopy /Y /S $(BASE_DIR)\$(PROJ_DIR)\data\proj.db $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\world $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\other.extra $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\nad27 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\GL27 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\nad83 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\nad.lst $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\CH $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\ITRF2000 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\ITRF2008 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\ITRF2014 $(OUTPUT_DIR)\bin\proj6\share
+    xcopy /Y /S data\proj.db $(OUTPUT_DIR)\bin\proj6\share
     xcopy /Y /S $(BASE_DIR)\$(PROJ_DATUMGRID_DIR)\* $(OUTPUT_DIR)\bin\proj6\share
     if exist $(OUTPUT_DIR)\include\proj6 rmdir /s /q $(OUTPUT_DIR)\include\proj6
 	mkdir $(OUTPUT_DIR)\include\proj6
