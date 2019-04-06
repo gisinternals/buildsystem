@@ -1237,7 +1237,7 @@ rebuild-gdal: remove-output gdal-optfile gdal
 remove-output:
     del $(OUTPUT_DIR)\bin\gdal*.dll
     del $(OUTPUT_DIR)\bin\libmap.dll
-    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi
+    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.wxs $(OUTPUT_DIR)\install\*.wixobj $(OUTPUT_DIR)\install\*.wixpdb
     if exist $(OUTPUT_DIR)\bin\gdal rd /Q /S $(OUTPUT_DIR)\bin\gdal
     if exist $(OUTPUT_DIR)\bin\gdal-data rd /Q /S $(OUTPUT_DIR)\bin\gdal-data
     if exist $(OUTPUT_DIR)\bin\ms rd /Q /S $(OUTPUT_DIR)\bin\ms
@@ -1381,12 +1381,14 @@ mkgdalinst-core:
     -del $(OUTPUT_DIR)\install\GDAL.wixobj
     -del $(OUTPUT_DIR)\install\GDAL.wixpdb
     -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi
+    -heat.exe dir $(OUTPUT_DIR)\bin\gdal-data -out $(OUTPUT_DIR)\install\gdal-data.wxs -var var.SourceDir -cg GdalData -dr gdaldataDir -g1 -ag -ke -srd -scom -sreg
+    -candle.exe "-dSourceDir=$(OUTPUT_DIR)\bin\gdal-data" -out "$(OUTPUT_DIR)\install\gdal-data.wixobj" $(OUTPUT_DIR)\install\gdal-data.wxs
 !IFDEF WIN64
     -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "$(GDAL_KEA_DEF)" "$(GDAL_MSSQL_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ELSE
     -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "$(GDAL_KEA_DEF)" "$(GDAL_MSSQL_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ENDIF
-    -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj"
+    -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj" "$(OUTPUT_DIR)\install\gdal-data.wixobj"
     cd $(BASE_DIR)
 !ENDIF 
 
@@ -1520,7 +1522,7 @@ mkmapserverinst-core:
 !ELSE
     -candle.exe "-dMSVersionTag=$(MS_VERSION)" "-dVersionTag=$(GDAL_VERSIONTAG)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\MapServer.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxs"
 !ENDIF
-    -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" -loc "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxl" -out "$(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\MapServer.wixpdb" "$(OUTPUT_DIR)\install\MapServer.wixobj"
+    -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixIIsExtension.dll" -loc "$(BASE_DIR)\wixprojects\mapserver\MapServer.wxl" -out "$(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\MapServer.wixpdb" "$(OUTPUT_DIR)\install\MapServer.wixobj" "$(OUTPUT_DIR)\install\gdal-data.wixobj"
     cd $(BASE_DIR)
 !ENDIF
 
