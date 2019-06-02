@@ -8,7 +8,7 @@ set gdal_major=2
 set gdal_minor=4
 set gdal_stable_tag=204
 set gdal_dev_tag=204
-set gdal_rel=0
-set gdal_rev=aa91a0cb4ea864a14a2c9c49193af24cbc4ba375
+set gdal_rel=1
+set gdal_rev=e8cfc11f414650e5c128b2b630d8b22de70fe968
 
 set gdal_version=%gdal_major%.%gdal_minor%
