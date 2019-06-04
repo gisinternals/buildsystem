@@ -17,12 +17,13 @@
   </metadata>
   <files>
     <!-- x64 -->
-        <file src="..\release-1911-x64\bin\gdal204.dll" target="build\gdal\x64" />
+        <file src="..\release-1911-x64\bin\gdal300.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\xerces-c_3_2.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\VCRUNTIME140.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\sqlite3.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\spatialite.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\proj.dll" target="build\gdal\x64" />
+        <file src="..\release-1911-x64\bin\proj_6_0.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\openjp2.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\MSVCP140.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\libxml2.dll" target="build\gdal\x64" />
@@ -39,12 +40,13 @@
         <file src="..\release-1911-x64\bin\zlib1.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\gdal\csharp\*_wrap.dll" target="build\gdal\x64" />
     <!-- x86 -->
-        <file src="..\release-1911\bin\gdal204.dll" target="build\gdal\x86" />
+        <file src="..\release-1911\bin\gdal300.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\xerces-c_3_2.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\VCRUNTIME140.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\sqlite3.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\spatialite.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\proj.dll" target="build\gdal\x86" />
+        <file src="..\release-1911\bin\proj_6_0.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\openjp2.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\MSVCP140.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\libxml2.dll" target="build\gdal\x86" />
@@ -61,7 +63,7 @@
         <file src="..\release-1911\bin\zlib1.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\gdal\csharp\*_wrap.dll" target="build\gdal\x86" />
     <!-- Common -->
-        <file src="..\release-1911\bin\proj\share\*.*" target="build\gdal\share" />
+        <file src="..\release-1911\bin\proj6\share\*" target="build\gdal\share" />
         <file src="..\release-1911\bin\gdal-data\*.*" target="build\gdal\data" />
         <file src="..\license.txt" target="build\gdal" />
         <file src="..\GDALLicense.rtf" target="build\gdal" />

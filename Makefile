@@ -1198,6 +1198,10 @@ GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 GDAL_VERSIONTAG = 206
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
+!ELSE IF EXIST ($(OUTPUT_DIR)\bin\gdal300.dll)
+GDAL_VERSIONTAG = 300
+GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
+GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 !ENDIF
 !ENDIF
 
