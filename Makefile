@@ -489,7 +489,7 @@ REGEX_PATH=$(BASE_DIR)\$(REGEX_DIR)
 !ENDIF
 
 !IFNDEF PROJ_DIR
-PROJ_DIR = proj-6.0
+PROJ_DIR = proj-6.1
 !ENDIF
 
 !IFNDEF PROJ_DATUMGRID_DIR
@@ -1851,7 +1851,7 @@ gdal-optfile:
 !ENDIF
 !IFDEF USE_PROJ6
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(OUTPUT_DIR)\gdal.opt
-    echo PROJ_LIBRARY = $(OUTPUT_DIR)\lib\proj_6_0.lib >> $(OUTPUT_DIR)\gdal.opt
+    echo PROJ_LIBRARY = $(OUTPUT_DIR)\lib\proj_6_1.lib >> $(OUTPUT_DIR)\gdal.opt
 !ENDIF
 
 gdal-clean:
@@ -2607,8 +2607,8 @@ proj:
 !ENDIF
 !IFNDEF NO_COPY
     rem $(CMAKE_DIR)\bin\cmake --build . --config $(MS_PROJECT_DIR) --target install
-    xcopy /Y lib\$(MS_PROJECT_DIR)\proj_6_0.lib $(OUTPUT_DIR)\lib
-    xcopy /Y bin\$(MS_PROJECT_DIR)\proj_6_0.dll $(OUTPUT_DIR)\bin
+    xcopy /Y lib\$(MS_PROJECT_DIR)\proj_6_1.lib $(OUTPUT_DIR)\lib
+    xcopy /Y bin\$(MS_PROJECT_DIR)\proj_6_1.dll $(OUTPUT_DIR)\bin
     if not exist $(OUTPUT_DIR)\bin\proj6 mkdir $(OUTPUT_DIR)\bin\proj6
 	if not exist $(OUTPUT_DIR)\bin\proj6\apps mkdir $(OUTPUT_DIR)\bin\proj6\apps
     xcopy /Y bin\$(MS_PROJECT_DIR)\*.exe $(OUTPUT_DIR)\bin\proj6\apps
