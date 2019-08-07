@@ -758,12 +758,12 @@ FITS_DIR=fits-3.14
 
 !IF $(MSVC_VER) == 1911
 !IFDEF WIN64
-!IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x64\setargv.obj")
-SETARGV = "$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x64\setargv.obj"
+!IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x64\wsetargv.obj")
+SETARGV = "$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x64\wsetargv.obj"
 !ENDIF
 !ELSE
-!IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x86\setargv.obj")
-SETARGV = "$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x86\setargv.obj"
+!IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x86\wsetargv.obj")
+SETARGV = "$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x86\wsetargv.obj"
 !ENDIF
 !ENDIF
 !ELSE
@@ -774,9 +774,9 @@ VCDIR=$(VCINSTALLDIR)
 !ENDIF
 
 !IFDEF WIN64
-SETARGV = "$(VCDIR)\lib\amd64\setargv.obj"
+SETARGV = "$(VCDIR)\lib\amd64\wsetargv.obj"
 !ELSE
-SETARGV = "$(VCDIR)\lib\setargv.obj"
+SETARGV = "$(VCDIR)\lib\wsetargv.obj"
 !ENDIF
 !ENDIF
 
