@@ -1,6 +1,6 @@
 @echo Setting environment for using Microsoft Visual Studio 2015 x86 tools.
 
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\vcvars32.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\vcvars32.bat" 10.0.17763.0
 E:
 
 set compiler=vc14

@@ -1,6 +1,6 @@
 @echo Setting environment for using Microsoft Visual Studio 2017 x86 tools.
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 10.0.17763.0
 E:
 
 set compiler=vc15
