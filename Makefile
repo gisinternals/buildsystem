@@ -213,7 +213,7 @@ FREETYPE_1 = $(OUTPUT_DIR)\build\freetype_1.install
 FREETYPE_2 = $(OUTPUT_DIR)\build\freetype_2.install
 GEOS_LIB = $(OUTPUT_DIR)\lib\geos_c.lib
 FRIBIDI_LIB = $(OUTPUT_DIR)\lib\fribidi.lib
-LIBICONV_LIB = $(OUTPUT_DIR)\lib\iconv.lib
+LIBICONV_LIB = $(OUTPUT_DIR)\lib\iconv2.lib
 PGSQL_LIB = $(OUTPUT_DIR)\lib\libpqdll.lib
 PROJ4_LIB = $(OUTPUT_DIR)\lib\proj_4_9.lib
 PROJ6_LIB = $(OUTPUT_DIR)\lib\proj_6_2.lib
@@ -227,6 +227,7 @@ PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
 PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\proto_c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_OPT = $(OUTPUT_DIR)\build\gdal.opt
+GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
 
 # Update enabled flags
@@ -253,6 +254,7 @@ SPATIALITE_ENABLED = 1
 FREEXL_ENABLED = 1
 LIBXML2_ENABLED = 1
 GDAL_ENABLED = 1
+GDAL_CSHARP_ENABLED = 1
 MAPSERVER_ENABLED = 1
 XERCES_ENABLED = 1
 LIBEXPAT_ENABLED = 1
@@ -400,7 +402,7 @@ EXTRAFLAGS =
 
 default: $(MAPSERVER_LIB)
 
-test: $(PROTOBUF_C_LIB)
+test: $(GDAL_CSHARP_DLL)
 
 test2: $(FREEXL_LIB)
 
@@ -498,14 +500,10 @@ $(MSVCR_DLL): $(OUTPUT_DIR)
     echo msvcr71 > $(MSVCR_DLL)
 !ENDIF
 !ENDIF
-  
-$(ZLIB_DIR):
-!IFDEF ZLIB_ENABLED
-    git clone -b $(ZLIB_BRANCH) $(ZLIB_SRC) $(ZLIB_DIR)
-!ENDIF
     
-$(ZLIB_LIB): $(ZLIB_DIR) $(MSVCR_DLL)
+$(ZLIB_LIB): $(MSVCR_DLL)
 !IFDEF ZLIB_ENABLED
+    if not exist $(ZLIB_DIR) git clone -b $(ZLIB_BRANCH) $(ZLIB_SRC) $(ZLIB_DIR)
     cd $(BASE_DIR)\$(ZLIB_DIR)
     git reset --hard HEAD
     git checkout $(ZLIB_BRANCH)
@@ -523,14 +521,10 @@ $(ZLIB_LIB): $(ZLIB_DIR) $(MSVCR_DLL)
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
 !ENDIF
-
-$(OPENSSL_DIR):
-!IFDEF OPENSSL_ENABLED
-    git clone -b $(OPENSSL_BRANCH) $(OPENSSL_SRC) $(OPENSSL_DIR)
-!ENDIF
     
-$(OPENSSL_LIB): $(OPENSSL_DIR) $(MSVCRT_DLL) $(ZLIB_LIB)
+$(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 !IFDEF OPENSSL_ENABLED
+    if not exist $(OPENSSL_DIR) git clone -b $(OPENSSL_BRANCH) $(OPENSSL_SRC) $(OPENSSL_DIR)
     cd $(BASE_DIR)\$(OPENSSL_DIR)
     git reset --hard HEAD
     git checkout $(OPENSSL_BRANCH)
@@ -552,15 +546,11 @@ $(OPENSSL_LIB): $(OPENSSL_DIR) $(MSVCRT_DLL) $(ZLIB_LIB)
     if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
     xcopy /Y apps\openssl.exe $(OUTPUT_DIR)\bin\curl
     cd $(BASE_DIR)
-!ENDIF   
-
-$(CURL_DIR):
-!IFDEF CURL_ENABLED
-    git clone -b $(CURL_BRANCH) $(CURL_SRC) $(CURL_DIR)
 !ENDIF
         
-$(CURL_LIB): $(CURL_DIR) $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) 
+$(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) 
 !IFDEF CURL_ENABLED
+    if not exist $(CURL_DIR) git clone -b $(CURL_BRANCH) $(CURL_SRC) $(CURL_DIR)
     cd $(BASE_DIR)\$(CURL_DIR)
     git reset --hard HEAD
     git checkout $(CURL_BRANCH)
@@ -590,20 +580,14 @@ $(CURL_CA_BUNDLE): $(CURL_EXE)
     $(CURL_EXE) -o "$(CURL_CA_BUNDLE)" "http://curl.haxx.se/ca/cacert.pem"
 !ENDIF
     
-$(LIBPNG_DIR):
+$(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
 !IFDEF LIBPNG_ENABLED
-    if not exist $(LIBPNG_DIR) mkdir $(LIBPNG_DIR)    
+    if not exist $(LIBPNG_DIR) mkdir $(LIBPNG_DIR)
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     cd $(LIBPNG_DIR)
-    $(CURL_EXE) -L -k -o "libpng.zip" "$(LIBPNG_SRC)"
-    7z x -y libpng.zip
-    cd $(BASE_DIR)
-!ENDIF
-    
-$(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(LIBPNG_DIR) $(MSVCRT_DLL) $(ZLIB_LIB)
-!IFDEF LIBPNG_ENABLED
-    cd $(BASE_DIR)\$(LIBPNG_DIR)\$(LIBPNG_VER)
+    if not exist $(LIBPNG_VER) $(CURL_EXE) -L -k -o "libpng.zip" "$(LIBPNG_SRC)" & 7z x -y libpng.zip
+    cd $(LIBPNG_VER)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -619,21 +603,15 @@ $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(LIBPNG_DIR) $(MSVCRT_DLL) $(ZLIB_
 	cd $(BASE_DIR)
 !ENDIF
 
-$(JPEG_DIR):
+$(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
 !IFDEF JPEG_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(JPEG_DIR) mkdir $(JPEG_DIR)
     cd $(JPEG_DIR)
-    $(CURL_EXE) -L -k -o "jpeg.zip" "$(JPEG_SRC)"
-    7z x -y jpeg.zip
-    cd $(BASE_DIR)
-!ENDIF
-
-$(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(JPEG_DIR) $(MSVCRT_DLL)
-!IFDEF JPEG_ENABLED
+    if not exist $(JPEG_VER) $(CURL_EXE) -L -k -o "jpeg.zip" "$(JPEG_SRC)" & 7z x -y jpeg.zip  
     xcopy /Y $(BASE_DIR)\support\win32.mak $(BASE_DIR)\$(JPEG_DIR)\$(JPEG_VER)
-	cd $(BASE_DIR)\$(JPEG_DIR)\$(JPEG_VER)
+	cd $(JPEG_VER)
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 	del *.manifest
@@ -650,15 +628,11 @@ $(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(JPEG_DIR) $(MSVCRT_DLL)
     xcopy /Y *.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ENDIF
-    
-$(FREETYPE_DIR):
-!IFDEF FREETYPE_ENABLED
-    git clone -b $(FREETYPE_BRANCH) $(FREETYPE_SRC) $(FREETYPE_DIR)
-!ENDIF
 
-$(FREETYPE_1): $(FREETYPE_DIR) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
+$(FREETYPE_1): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
 !IFDEF FREETYPE_ENABLED
-    cd $(BASE_DIR)\$(FREETYPE_DIR)
+    if not exist $(FREETYPE_DIR) git clone -b $(FREETYPE_BRANCH) $(FREETYPE_SRC) $(FREETYPE_DIR)
+    cd $(FREETYPE_DIR)
     git reset --hard HEAD
     git checkout $(FREETYPE_BRANCH)
 !IFNDEF NO_CLEAN
@@ -676,7 +650,7 @@ $(FREETYPE_1): $(FREETYPE_DIR) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
 	cd $(BASE_DIR)
 !ENDIF
 
-$(FREETYPE_2): $(FREETYPE_DIR) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
+$(FREETYPE_2): $(FREETYPE_1) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
 !IFDEF FREETYPE_ENABLED
     cd $(BASE_DIR)\$(FREETYPE_DIR)
     git reset --hard HEAD
@@ -696,13 +670,9 @@ $(FREETYPE_2): $(FREETYPE_DIR) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPN
 	cd $(BASE_DIR)
 !ENDIF
 
-$(HARFBUZZ_DIR):
+$(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
 !IFDEF HARFBUZZ_ENABLED
-    git clone -b $(HARFBUZZ_BRANCH) $(HARFBUZZ_SRC) $(HARFBUZZ_DIR)
-!ENDIF
-
-$(HARFBUZZ_LIB): $(HARFBUZZ_DIR) $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
-!IFDEF HARFBUZZ_ENABLED
+    if not exist $(HARFBUZZ_DIR) git clone -b $(HARFBUZZ_BRANCH) $(HARFBUZZ_SRC) $(HARFBUZZ_DIR)
     cd $(BASE_DIR)\$(HARFBUZZ_DIR)
     git reset --hard HEAD
     git checkout $(HARFBUZZ_BRANCH)
@@ -720,13 +690,9 @@ $(HARFBUZZ_LIB): $(HARFBUZZ_DIR) $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLI
 	cd $(BASE_DIR)
 !ENDIF
 
-$(GEOS_DIR):
+$(GEOS_LIB): $(MSVCRT_DLL)
 !IFDEF GEOS_ENABLED
-    git clone -b $(GEOS_BRANCH) $(GEOS_SRC) $(GEOS_DIR)
-!ENDIF
-
-$(GEOS_LIB): $(GEOS_DIR) $(MSVCRT_DLL)
-!IFDEF GEOS_ENABLED
+    if not exist $(GEOS_DIR) git clone -b $(GEOS_BRANCH) $(GEOS_SRC) $(GEOS_DIR)
     cd $(BASE_DIR)\$(GEOS_DIR)
     git reset --hard HEAD
     git checkout $(GEOS_BRANCH)
@@ -746,14 +712,10 @@ $(GEOS_LIB): $(GEOS_DIR) $(MSVCRT_DLL)
 	cd $(BASE_DIR)
 !ENDIF
 
-$(LIBEXPAT_DIR):
+$(LIBEXPAT_LIB):
 !IFDEF LIBEXPAT_ENABLED
-    git clone -b $(LIBEXPAT_BRANCH) $(LIBEXPAT_SRC) $(LIBEXPAT_DIR)
-!ENDIF
-
-$(LIBEXPAT_LIB): $(LIBEXPAT_DIR)
-!IFDEF LIBEXPAT_ENABLED
-    cd $(BASE_DIR)\$(LIBEXPAT_DIR)
+    if not exist $(LIBEXPAT_DIR) git clone -b $(LIBEXPAT_BRANCH) $(LIBEXPAT_SRC) $(LIBEXPAT_DIR)
+    cd $(LIBEXPAT_DIR)
     git reset --hard HEAD
     git checkout $(LIBEXPAT_BRANCH)
     cd expat
@@ -773,14 +735,10 @@ $(LIBEXPAT_LIB): $(LIBEXPAT_DIR)
 	cd $(BASE_DIR)
 !ENDIF
 
-$(XERCES_DIR):
+$(XERCES_LIB):
 !IFDEF XERCES_ENABLED
-    svn co $(XERCES_SRC)/$(XERCES_BRANCH) $(XERCES_DIR)
-!ENDIF
-
-$(XERCES_LIB): $(XERCES_DIR)
-!IFDEF XERCES_ENABLED
-    cd $(BASE_DIR)\$(XERCES_DIR)
+    if not exist $(XERCES_DIR) svn co $(XERCES_SRC)/$(XERCES_BRANCH) $(XERCES_DIR)
+    cd $(XERCES_DIR)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -843,13 +801,9 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
 	cd $(BASE_DIR)
 !ENDIF
 
-$(FRIBIDI_DIR):
+$(FRIBIDI_LIB):
 !IFDEF FRIBIDI_ENABLED
-    git clone -b $(FRIBIDI_BRANCH) $(FRIBIDI_SRC) $(FRIBIDI_DIR)
-!ENDIF
-
-$(FRIBIDI_LIB): $(FRIBIDI_DIR)
-!IFDEF FRIBIDI_ENABLED
+    if not exist $(FRIBIDI_DIR) git clone -b $(FRIBIDI_BRANCH) $(FRIBIDI_SRC) $(FRIBIDI_DIR)
     set NINJA = $(NINJA_DIR)
     cd $(FRIBIDI_DIR)
     git reset --hard HEAD
@@ -867,15 +821,11 @@ $(FRIBIDI_LIB): $(FRIBIDI_DIR)
     xcopy /Y /S $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
 !ENDIF
-
-$(PROJ4_DIR):
-!IFDEF PROJ4_ENABLED
-    git clone -b $(PROJ4_BRANCH) $(PROJ_SRC) $(PROJ4_DIR)
-!ENDIF
     
-$(PROJ4_LIB): $(PROJ4_DIR) $(MSVCRT_DLL)
+$(PROJ4_LIB): $(MSVCRT_DLL)
 !IFDEF PROJ4_ENABLED
-    cd $(BASE_DIR)\$(PROJ4_DIR)
+    if not exist $(PROJ4_DIR) git clone -b $(PROJ4_BRANCH) $(PROJ_SRC) $(PROJ4_DIR)
+    cd $(PROJ4_DIR)
     git reset --hard HEAD
     git checkout $(PROJ4_BRANCH)
     xcopy /Y $(BASE_DIR)\support\proj4\null $(BASE_DIR)\$(PROJ4_DIR)\nad
@@ -902,15 +852,11 @@ $(PROJ4_LIB): $(PROJ4_DIR) $(MSVCRT_DLL)
     copy /Y $(PROJ4_LIB) $(OUTPUT_DIR)\lib\proj_i.lib
 	cd $(BASE_DIR)
 !ENDIF
-
-$(PROJ6_DIR):
-!IFDEF PROJ6_ENABLED
-    git clone -b $(PROJ6_BRANCH) $(PROJ_SRC) $(PROJ6_DIR)
-!ENDIF
     
-$(PROJ6_LIB): $(PROJ6_DIR) $(MSVCRT_DLL) $(SQLITE_LIB)
+$(PROJ6_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
 !IFDEF PROJ6_ENABLED
-    cd $(BASE_DIR)\$(PROJ6_DIR)
+    if not exist $(PROJ6_DIR) git clone -b $(PROJ6_BRANCH) $(PROJ_SRC) $(PROJ6_DIR)
+    cd $(PROJ6_DIR)
     git reset --hard HEAD
     git checkout $(PROJ6_BRANCH)
 !IFNDEF NO_CLEAN
@@ -937,20 +883,14 @@ $(PROJ6_LIB): $(PROJ6_DIR) $(MSVCRT_DLL) $(SQLITE_LIB)
 	cd $(BASE_DIR)
 !ENDIF
 
-$(SQLITE_DIR):
+$(SQLITE_LIB): $(MSVCRT_DLL)
 !IFDEF SQLITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SQLITE_DIR) mkdir $(SQLITE_DIR)
     cd $(SQLITE_DIR)
-    $(CURL_EXE) -L -k -o "sqlite.zip" "$(SQLITE_SRC)"
-    7z x -y sqlite.zip
-    cd $(BASE_DIR)
-!ENDIF
-
-$(SQLITE_LIB): $(SQLITE_DIR) $(MSVCRT_DLL)
-!IFDEF SQLITE_ENABLED
-    cd $(SQLITE_DIR)\sqlite
+    if not exist sqlite $(CURL_EXE) -L -k -o "sqlite.zip" "$(SQLITE_SRC)" & 7z x -y sqlite.zip  
+    cd sqlite
 !IFNDEF NO_CLEAN
     nmake /f Makefile.msc clean
 !ENDIF
@@ -969,20 +909,14 @@ $(SQLITE_LIB): $(SQLITE_DIR) $(MSVCRT_DLL)
     cd $(BASE_DIR)
 !ENDIF
 
-$(FREEXL_DIR):
-!IFDEF SPATIALITE_ENABLED
+$(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
+!IFDEF FREEXL_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FREEXL_DIR) mkdir $(FREEXL_DIR)
     cd $(FREEXL_DIR)
-    $(CURL_EXE) -L -k -o "freexl.zip" "$(FREEXL_SRC)"
-    7z x -y freexl.zip
-    cd $(BASE_DIR)
-!ENDIF
-
-$(FREEXL_LIB): $(FREEXL_DIR) $(LIBICONV_LIB) $(MSVCRT_DLL)
-!IFDEF FREEXL_ENABLED
-    cd $(FREEXL_DIR)\$(FREEXL_VER)
+    if not exist $(FREEXL_VER) $(CURL_EXE) -L -k -o "freexl.zip" "$(FREEXL_SRC)" & 7z x -y freexl.zip
+    cd $(FREEXL_VER)
 !IFNDEF NO_CLEAN
     nmake /f makefile.vc clean
 !ENDIF
@@ -1001,20 +935,14 @@ $(FREEXL_LIB): $(FREEXL_DIR) $(LIBICONV_LIB) $(MSVCRT_DLL)
     cd $(BASE_DIR)
 !ENDIF
 
-$(SPATIALITE_DIR):
-!IFDEF FREEXL_ENABLED
+$(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
+!IFDEF SQLITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SPATIALITE_DIR) mkdir $(SPATIALITE_DIR)
     cd $(SPATIALITE_DIR)
-    $(CURL_EXE) -L -k -o "spatialite.zip" "$(SPATIALITE_SRC)"
-    7z x -y spatialite.zip
-    cd $(BASE_DIR)
-!ENDIF
-
-$(SPATIALITE_LIB): $(SPATIALITE_DIR) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
-!IFDEF SQLITE_ENABLED
-    cd $(SPATIALITE_DIR)\$(SPATIALITE_VER)
+    if not exist $(SPATIALITE_VER) $(CURL_EXE) -L -k -o "spatialite.zip" "$(SPATIALITE_SRC)" & 7z x -y spatialite.zip
+    cd $(SPATIALITE_VER)
 !IFNDEF NO_CLEAN
     nmake /f makefile.vc clean
 !ENDIF
@@ -1037,8 +965,9 @@ $(SPATIALITE_LIB): $(SPATIALITE_DIR) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $
     cd $(BASE_DIR)
 !ENDIF
 
-$(LIBXML2_LIB): $(LIBXML2_DIR) $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
+$(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFDEF LIBXML2_ENABLED
+    if not exist $(LIBXML2_DIR) git clone -b $(LIBXML2_BRANCH) $(LIBXML2_SRC) $(LIBXML2_DIR)
     cd $(LIBXML2_DIR)
 !IFNDEF NO_CLEAN
     if exist Release rmdir /s /q Release
@@ -1058,11 +987,6 @@ $(LIBXML2_LIB): $(LIBXML2_DIR) $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
     xcopy /Y $(BASE_DIR)\$(LIBXML2_DIR)\Release\lib\libxml2.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S $(BASE_DIR)\$(LIBXML2_DIR)\Release\include\libxml2\* $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
-!ENDIF
-    
-$(GDAL_DIR):
-!IFDEF GDAL_ENABLED
-    git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
 !ENDIF
 
 $(GDAL_OPT):
@@ -1222,9 +1146,10 @@ $(GDAL_OPT):
 !ENDIF
 !ENDIF
 
-$(GDAL_LIB): $(GDAL_DIR) $(GDAL_OPT) $(MSVCRT_DLL) $(CURL_LIB) $(GEOS_LIB) $(PROJ4_LIB) $(PROJ6_LIB) $(PGSQL_LIB)
+$(GDAL_LIB): $(GDAL_OPT) $(MSVCRT_DLL) $(CURL_LIB) $(GEOS_LIB) $(PROJ4_LIB) $(PROJ6_LIB) $(PGSQL_LIB)
 !IFDEF GDAL_ENABLED
-    cd $(GDAL_PATH)
+    if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
+    cd $(GDAL_DIR)
     git reset --hard HEAD
     git checkout $(GDAL_BRANCH)
     cd gdal
@@ -1263,13 +1188,29 @@ $(GDAL_LIB): $(GDAL_DIR) $(GDAL_OPT) $(MSVCRT_DLL) $(CURL_LIB) $(GEOS_LIB) $(PRO
 	cd $(BASE_DIR)
 !ENDIF
 
-$(MAPSERVER_DIR):
-!IFDEF MAPSERVER_ENABLED
-    git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
+$(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_OPT)
+!IFDEF GDAL_CSHARP_ENABLED
+	cd $(GDAL_DIR)\swig\csharp
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+!ENDIF
+!IFNDEF NO_BUILD
+!IFDEF DEBUG
+	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt DEBUG=1
+!ELSE
+	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+!ENDIF	
+	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+!ENDIF
+	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
+	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\csharp
+	xcopy /Y *.exe $(OUTPUT_DIR)\bin\gdal\csharp
+	cd $(BASE_DIR)
 !ENDIF
 
-$(MAPSERVER_LIB): $(MAPSERVER_DIR) $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(LIBPNG_LIB) $(CURL_LIB) $(FREETYPE_2) $(GEOS_LIB) $(FRIBIDI_LIB) $(PROJ4_LIB) $(PGSQL_LIB) $(GDAL_LIB) 
+$(MAPSERVER_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(LIBPNG_LIB) $(CURL_LIB) $(FREETYPE_2) $(GEOS_LIB) $(FRIBIDI_LIB) $(PROJ4_LIB) $(PGSQL_LIB) $(GDAL_LIB) 
 !IFDEF MAPSERVER_ENABLED
+    if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
 	cd $(MAPSERVER_DIR) 
 !IFNDEF NO_CLEAN
     git reset --hard HEAD
@@ -1292,14 +1233,10 @@ $(MAPSERVER_LIB): $(MAPSERVER_DIR) $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(LIBPN
 	ms\apps\mapserv -v > $(OUTPUT_DIR)\doc\ms_version.txt
 	cd $(BASE_DIR)
 !ENDIF
-
-$(PGSQL_DIR):
-!IFDEF PGSQL_ENABLE
-    git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
-!ENDIF
     
 $(PGSQL_LIB):
 !IFDEF PGSQL_ENABLED
+    if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
     cd $(BASE_DIR)\$(PGSQL_DIR)
     rem git reset --hard HEAD
     rem git checkout $(PGSQL_BRANCH)
@@ -1322,26 +1259,24 @@ $(PGSQL_LIB):
     xcopy /Y $(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
 	xcopy /Y $(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
 !ENDIF
-
-$(LIBICONV_DIR):
-!IFDEF LIBICONV_ENABLED
-    rem git clone -b $(LIBICONV_BRANCH) $(LIBICONV_SRC) $(LIBICONV_DIR)
-    rem SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
-    rem SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    rem $(CURL_EXE) -L -k -o $(LIBICONV_DIR)\build-aux\ar-lib "https://git.savannah.gnu.org/gitweb/?p=automake.git;a=blob_plain;f=lib/ar-lib;hb=HEAD"
-    rem $(CURL_EXE) -L -k -o $(LIBICONV_DIR)\build-aux\compile "https://git.savannah.gnu.org/gitweb/?p=automake.git;a=blob_plain;f=lib/compile;hb=HEAD"
-!ENDIF
     
-$(LIBICONV_LIB): $(LIBICONV_DIR)
-    echo INCLUDE='$(INCLUDE)' >$(LIBICONV_DIR)\build-aux\vcvars.sh
-    echo LIB='$(LIB)' >>$(LIBICONV_DIR)\build-aux\vcvars.sh
-    echo LIBPATH='$(LIBPATH)' >>$(LIBICONV_DIR)\build-aux\vcvars.sh
-    echo PATH=`cygpath -u "$(VCINSTALLDIR)bin\amd64"`:"$$PATH" >>$(LIBICONV_DIR)\build-aux\vcvars.sh
-    echo export INCLUDE LIB LIBPATH PATH >>$(LIBICONV_DIR)\build-aux\vcvars.sh
-    echo ./configure --host=i686-w64-mingw32 --prefix=/cygdrive/e/buildsystem/src/libiconv-1.16/install CC="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/compile cl -nologo" CFLAGS="-MD" CXX="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/compile cl -nologo" CXXFLAGS="-MD" CPPFLAGS="-D_WIN32_WINNT=_WIN32_WINNT_WIN7 -I/cygdrive/e/buildsystem/release-1900-x64/include" LDFLAGS="msvcrt.lib legacy_stdio_definitions.lib -L/cygdrive/e/buildsystem/release-1900-x64/lib" LD="link" NM="dumpbin -symbols" STRIP=":" AR="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/ar-lib lib" RANLIB=":" >>$(LIBICONV_DIR)\build-aux\vcvars.sh
-    echo make >>$(LIBICONV_DIR)\build-aux\vcvars.sh
-    echo install-lib >>$(LIBICONV_DIR)\build-aux\vcvars.sh
-    E:\cygwin\bin\dos2unix.exe $(LIBICONV_DIR)\build-aux\vcvars.sh
+$(LIBICONV_LIB):
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(LIBICONV_DIR) mkdir $(LIBICONV_DIR)
+    cd $(LIBICONV_DIR)
+    if not exist libiconv.tar.gz $(CURL_EXE) -L -k -o "libiconv.tar.gz" "$(LIBICONV_SRC)"
+    if not exist $(LIBICONV_VER) 7z e libiconv.tar.gz && 7z x $(LIBICONV_VER).tar
+    cd $(LIBICONV_VER)
+    echo INCLUDE='$(INCLUDE)' >build-aux\vcvars.sh
+    echo LIB='$(LIB)' >>build-aux\vcvars.sh
+    echo LIBPATH='$(LIBPATH)' >>build-aux\vcvars.sh
+    echo PATH=`cygpath -u "$(VCINSTALLDIR)bin\amd64"`:"$$PATH" >>build-aux\vcvars.sh
+    echo export INCLUDE LIB LIBPATH PATH >>build-aux\vcvars.sh
+    echo ./configure --host=i686-w64-mingw32 --prefix=/cygdrive/e/buildsystem/src/libiconv-1.16/install CC="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/compile cl -nologo" CFLAGS="-MD" CXX="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/compile cl -nologo" CXXFLAGS="-MD" CPPFLAGS="-D_WIN32_WINNT=_WIN32_WINNT_WIN7 -I/cygdrive/e/buildsystem/release-1900-x64/include" LDFLAGS="msvcrt.lib legacy_stdio_definitions.lib -L/cygdrive/e/buildsystem/release-1900-x64/lib" LD="link" NM="dumpbin -symbols" STRIP=":" AR="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/ar-lib lib" RANLIB=":" >>build-aux\vcvars.sh
+    echo make >>build-aux\vcvars.sh
+    echo install-lib >>build-aux\vcvars.sh
+    E:\cygwin\bin\dos2unix.exe build-aux\vcvars.sh
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\install\lib\iconv.dll.lib $(OUTPUT_DIR)\lib\iconv.lib
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\install\include\*.h $(OUTPUT_DIR)\include

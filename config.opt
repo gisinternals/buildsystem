@@ -56,7 +56,7 @@ FREETYPE_BRANCH = VER-2-10-1
 HARFBUZZ_BRANCH = 2.6.1
 GEOS_BRANCH = 3.7.2
 FRIBIDI_BRANCH = v1.0.5
-LIBICONV_BRANCH = v1.16
+LIBICONV_VER = libiconv-1.15
 PGSQL_BRANCH = REL9_1_2
 PROJ4_BRANCH = 4.9.3
 PROJ6_BRANCH = 6.2.0
@@ -98,8 +98,8 @@ GEOS_SRC = https://git.osgeo.org/gitea/geos/geos.git
 FRIBIDI_DIR = $(SRC_DIR)\fribidi
 FRIBIDI_SRC = https://github.com/fribidi/fribidi.git
 
-LIBICONV_DIR = $(SRC_DIR)\libiconv-1.15
-LIBICONV_SRC = https://git.savannah.gnu.org/git/libiconv.git
+LIBICONV_DIR = $(SRC_DIR)\libiconv
+LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.15.tar.gz
 
 PGSQL_DIR = $(SRC_DIR)\postgresql-9.6.8
 PGSQL_SRC = https://github.com/postgres/postgres.git
