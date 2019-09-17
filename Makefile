@@ -198,8 +198,16 @@ CMAKE_BUILDDIR = vc17
 SERVER_URL=http://www.gisinternals.com/sdk
 !ENDIF
 
+!IFNDEF SWIG_DIR
+SWIG_VER = swigwin-1.3.39
+SWIG_SRC = https://sourceforge.net/projects/swig/files/swigwin/swigwin-1.3.39/$(SWIG_VER).zip/download
+SWIG_DIR = $(SRC_DIR)\swig
+SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\$(SWIG_VER)\swig.exe
+!ENDIF
+
 #specify build targets
 MSVCR_DLL = $(OUTPUT_DIR)\build\msvcr.install
+SWIG_INSTALL = $(OUTPUT_DIR)\build\$(SWIG_VER).install
 ZLIB_LIB = $(OUTPUT_DIR)\lib\zlib.lib
 OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
@@ -227,6 +235,7 @@ PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
 PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\proto_c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_OPT = $(OUTPUT_DIR)\build\gdal.opt
+GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\gdal_csharp.opt
 GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
 
@@ -376,10 +385,6 @@ REGEX_PATH=$(BASE_DIR)\$(REGEX_DIR)
 
 !IFNDEF MS_PATH
 MS_PATH = $(BASE_DIR)\$(MS_DIR)
-!ENDIF
-
-!IFNDEF SWIG_DIR
-SWIG_DIR = SWIG-1.3.39
 !ENDIF
 
 !IFNDEF PYDIR
@@ -909,6 +914,15 @@ $(SQLITE_LIB): $(MSVCRT_DLL)
     cd $(BASE_DIR)
 !ENDIF
 
+$(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(SWIG_DIR) mkdir $(SWIG_DIR)
+    cd $(SWIG_DIR)
+    if not exist $(SWIG_VER) $(CURL_EXE) -L -k -o "$(SWIG_VER).zip" "$(SWIG_SRC)" & 7z x -y $(SWIG_VER).zip
+    echo >$(OUTPUT_DIR)\build\$(SWIG_VER).install
+    cd $(BASE_DIR)
+
 $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFDEF FREEXL_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
@@ -991,8 +1005,7 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 
 $(GDAL_OPT):
 !IFDEF GDAL_ENABLED
-    echo SWIG=$(BASE_DIR)\$(SWIG_DIR)\swig.exe > $(GDAL_OPT)
-	echo swig - $(SWIG_DIR) > $(OUTPUT_DIR)\doc\gdal_deps.txt
+	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo PYDIR=$(PYDIR) >> $(GDAL_OPT)
 	echo $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo GDAL_ROOT=$(GDAL_PATH)\gdal >> $(GDAL_OPT)
@@ -1188,19 +1201,23 @@ $(GDAL_LIB): $(GDAL_OPT) $(MSVCRT_DLL) $(CURL_LIB) $(GEOS_LIB) $(PROJ4_LIB) $(PR
 	cd $(BASE_DIR)
 !ENDIF
 
-$(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_OPT)
+$(GDAL_CSHARP_OPT): $(GDAL_OPT) $(SWIG_INSTALL)
+    copy /Y $(GDAL_OPT) $(GDAL_CSHARP_OPT)
+    echo SWIG=$(SWIG_EXE) >>$(GDAL_CSHARP_OPT)
+
+$(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 !IFDEF GDAL_CSHARP_ENABLED
-	cd $(GDAL_DIR)\swig\csharp
+	cd $(GDAL_DIR)\gdal\swig\csharp
 !IFNDEF NO_CLEAN
-	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
 !IFDEF DEBUG
-	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt DEBUG=1
+	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT) DEBUG=1
 !ELSE
-	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 !ENDIF	
-	nmake /f makefile.vc EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	nmake /f makefile.vc EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 !ENDIF
 	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\csharp
