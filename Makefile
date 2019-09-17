@@ -223,6 +223,8 @@ FREEXL_LIB = $(OUTPUT_DIR)\lib\freexl.lib
 LIBXML2_LIB = $(OUTPUT_DIR)\lib\libxml2.lib
 XERCES_LIB = $(OUTPUT_DIR)\lib\xerces-c_3D.lib
 LIBEXPAT_LIB = $(OUTPUT_DIR)\lib\expat.lib
+PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
+PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\proto_c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_OPT = $(OUTPUT_DIR)\build\gdal.opt
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
@@ -254,6 +256,8 @@ GDAL_ENABLED = 1
 MAPSERVER_ENABLED = 1
 XERCES_ENABLED = 1
 LIBEXPAT_ENABLED = 1
+PROTOBUF_ENABLED = 1
+PROTOBUF_C_ENABLED = 1
 
 # set up mapserver configuration
 MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/)
@@ -396,7 +400,7 @@ EXTRAFLAGS =
 
 default: $(MAPSERVER_LIB)
 
-test: $(LIBEXPAT_LIB)
+test: $(PROTOBUF_C_LIB)
 
 test2: $(FREEXL_LIB)
 
@@ -790,6 +794,52 @@ $(XERCES_LIB): $(XERCES_DIR)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S install\include\* $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ENDIF
+
+$(PROTOBUF_LIB): $(ZLIB_LIB)
+!IFDEF LIBEXPAT_ENABLED
+    if not exist $(PROTOBUF_DIR) git clone -b $(PROTOBUF_BRANCH) $(PROTOBUF_SRC) $(PROTOBUF_DIR)
+    cd $(PROTOBUF_DIR)
+    git reset --hard HEAD
+    git checkout $(PROTOBUF_BRANCH)
+    cd cmake
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_DIR)\cmake\$(CMAKE_BUILDDIR)\install" "-Dprotobuf_BUILD_TESTS=OFF" 
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)\$(PROTOBUF_DIR)\cmake\$(CMAKE_BUILDDIR)\install
+    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y bin\*.exe $(OUTPUT_DIR)\bin
+    xcopy /Y /S include\* $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ENDIF
+
+$(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
+!IFDEF LIBEXPAT_ENABLED
+    if not exist $(PROTOBUF_C_DIR) git clone -b $(PROTOBUF_C_BRANCH) $(PROTOBUF_C_SRC) $(PROTOBUF_C_DIR)
+    cd $(PROTOBUF_C_DIR)
+    git reset --hard HEAD
+    git checkout $(PROTOBUF_C_BRANCH)
+    cd build-cmake
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_C_DIR)\build-cmake\$(CMAKE_BUILDDIR)\install" "-DMSVC_STATIC_BUILD=ON"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)\$(PROTOBUF_C_DIR)\build-cmake\$(CMAKE_BUILDDIR)\install
+    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y bin\*.exe $(OUTPUT_DIR)\bin
+    xcopy /Y /S include\* $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ENDIF
 

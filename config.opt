@@ -1,0 +1,143 @@
+# common feature configuration flags
+#DEBUG = 1
+#NO_CLEAN = 1
+#NO_BUILD = 1
+
+# Prerequisite locations
+PYTHON_DIR = E:\builds\Python36
+
+# GDAL feature selection flags
+GDAL_GEOS = YES
+GDAL_POSTGIS = YES
+GDAL_ECW = YES
+GDAL_CURL = YES
+#GDAL_SPATIALITE = YES
+GDAL_CSHARP = YES
+#GDAL_PYTHON = YES
+#GDAL_JAVA = YES
+#GDAL_XERCES = YES
+#GDAL_EXPAT = YES
+#GDAL_MYSQL = YES
+GDAL_MSSQL = YES
+#GDAL_OPENJPEG = YES
+#GDAL_AMIGOCLOUD = YES
+#GDAL_GNM = YES
+#GDAL_KMLSUPEROVERLAY = YES
+#GDAL_PDF = YES
+#GDAL_LIBKML = YES
+
+# MapServer feature selection flags
+MS_PROJ = YES
+#MS_FREETYPE = YES
+MS_GEOS = YES
+#MS_PNG = YES
+MS_GDAL = YES
+MS_POSTGIS = YES
+#MS_ICONV = YES
+#MS_SOS = YES
+MS_CSHARP = YES
+#MS_JAVA = YES
+#MS_PYTHON = YES
+#MS_FCGI = YES
+#MS_PDF = YES
+#MS_FRIBIDI = YES
+#MS_CAIRO = YES
+#MS_GIFLIB = YES
+#MS_PROTOBUFC = YES
+MS_LIBXML2 = YES
+
+# Dependency versions
+ZLIB_BRANCH = v1.2.11
+OPENSSL_BRANCH = OpenSSL_1_1_1d
+CURL_BRANCH = curl-7_65_3
+LIBPNG_VER = lpng1637
+JPEG_VER = jpeg-9c
+FREETYPE_BRANCH = VER-2-10-1
+HARFBUZZ_BRANCH = 2.6.1
+GEOS_BRANCH = 3.7.2
+FRIBIDI_BRANCH = v1.0.5
+LIBICONV_BRANCH = v1.16
+PGSQL_BRANCH = REL9_1_2
+PROJ4_BRANCH = 4.9.3
+PROJ6_BRANCH = 6.2.0
+GDAL_BRANCH = v2.4.2
+LIBXML2_BRANCH = v2.9.9
+MAPSERVER_BRANCH = rel-7-4-2
+XERCES_BRANCH = Xerces-C_3_2_2
+LIBEXPAT_BRANCH = R_2_2_8
+PROTOBUF_BRANCH = v3.9.1
+PROTOBUF_C_BRANCH = v1.3.2
+
+# Source directories and locations
+SRC_DIR = src
+
+ZLIB_DIR = $(SRC_DIR)\zlib
+ZLIB_SRC = https://github.com/madler/zlib.git
+
+OPENSSL_DIR = $(SRC_DIR)\openssl
+OPENSSL_SRC = https://github.com/openssl/openssl.git
+
+CURL_DIR = $(SRC_DIR)\curl
+CURL_SRC = https://github.com/curl/curl.git
+
+LIBPNG_DIR = $(SRC_DIR)\libpng
+LIBPNG_SRC = https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/lpng1637.zip/download
+
+JPEG_DIR = $(SRC_DIR)\jpeg
+JPEG_SRC = https://www.ijg.org/files/jpegsr9c.zip
+
+FREETYPE_DIR = $(SRC_DIR)\freetype2
+FREETYPE_SRC = https://git.sv.nongnu.org/r/freetype/freetype2.git
+
+HARFBUZZ_DIR = $(SRC_DIR)\harfbuzz
+HARFBUZZ_SRC = https://github.com/harfbuzz/harfbuzz.git
+
+GEOS_DIR = $(SRC_DIR)\geos
+GEOS_SRC = https://git.osgeo.org/gitea/geos/geos.git
+
+FRIBIDI_DIR = $(SRC_DIR)\fribidi
+FRIBIDI_SRC = https://github.com/fribidi/fribidi.git
+
+LIBICONV_DIR = $(SRC_DIR)\libiconv-1.15
+LIBICONV_SRC = https://git.savannah.gnu.org/git/libiconv.git
+
+PGSQL_DIR = $(SRC_DIR)\postgresql-9.6.8
+PGSQL_SRC = https://github.com/postgres/postgres.git
+
+PROJ4_DIR = $(SRC_DIR)\proj4
+PROJ6_DIR = $(SRC_DIR)\proj6
+PROJ_SRC = https://github.com/OSGeo/PROJ.git
+
+SQLITE_DIR = $(SRC_DIR)\sqlite
+SQLITE_VER = jpeg-9c
+SQLITE_SRC = https://www.sqlite.org/src/zip/sqlite.zip?r=release
+
+SPATIALITE_DIR = $(SRC_DIR)\spatialite
+SPATIALITE_VER = libspatialite-4.3.0a
+SPATIALITE_SRC = http://www.gaia-gis.it/gaia-sins/libspatialite-4.3.0a.zip
+
+FREEXL_DIR = $(SRC_DIR)\freexl
+FREEXL_VER = freexl-1.0.5
+FREEXL_SRC = http://www.gaia-gis.it/gaia-sins/freexl-1.0.5.zip
+
+GDAL_DIR = $(SRC_DIR)\gdal
+GDAL_SRC = https://github.com/OSGeo/gdal.git
+
+MAPSERVER_DIR = $(SRC_DIR)\mapserver
+MAPSERVER_SRC = https://github.com/mapserver/mapserver.git
+
+LIBXML2_DIR = $(SRC_DIR)\libxml2
+LIBXML2_SRC = https://gitlab.gnome.org/GNOME/libxml2.git
+
+XERCES_DIR = $(SRC_DIR)\xerces
+XERCES_SRC = https://svn.apache.org/repos/asf/xerces/c/tags
+
+LIBEXPAT_DIR = $(SRC_DIR)\libexpat
+LIBEXPAT_SRC = https://github.com/libexpat/libexpat.git
+
+PROTOBUF_DIR = $(SRC_DIR)\protobuf
+PROTOBUF_SRC = https://github.com/protocolbuffers/protobuf.git
+
+PROTOBUF_C_DIR = $(SRC_DIR)\protobuf_c
+PROTOBUF_C_SRC = https://github.com/protobuf-c/protobuf-c.git
+
