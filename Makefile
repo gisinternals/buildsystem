@@ -221,6 +221,8 @@ SQLITE_LIB = $(OUTPUT_DIR)\lib\sqlite3.lib
 SPATIALITE_LIB = $(OUTPUT_DIR)\lib\spatialite.lib
 FREEXL_LIB = $(OUTPUT_DIR)\lib\freexl.lib
 LIBXML2_LIB = $(OUTPUT_DIR)\lib\libxml2.lib
+XERCES_LIB = $(OUTPUT_DIR)\lib\xerces-c_3D.lib
+LIBEXPAT_LIB = $(OUTPUT_DIR)\lib\expat.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_OPT = $(OUTPUT_DIR)\build\gdal.opt
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
@@ -250,6 +252,8 @@ FREEXL_ENABLED = 1
 LIBXML2_ENABLED = 1
 GDAL_ENABLED = 1
 MAPSERVER_ENABLED = 1
+XERCES_ENABLED = 1
+LIBEXPAT_ENABLED = 1
 
 # set up mapserver configuration
 MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/)
@@ -392,7 +396,7 @@ EXTRAFLAGS =
 
 default: $(MAPSERVER_LIB)
 
-test: $(SPATIALITE_LIB)
+test: $(LIBEXPAT_LIB)
 
 test2: $(FREEXL_LIB)
 
@@ -508,11 +512,11 @@ $(ZLIB_LIB): $(ZLIB_DIR) $(MSVCR_DLL)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
     $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(ZLIB_DIR)\$(CMAKE_BUILDDIR)\install"
-    rem $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
-    rem xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
-    rem xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
-    rem xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
 !ENDIF
 
@@ -738,6 +742,57 @@ $(GEOS_LIB): $(GEOS_DIR) $(MSVCRT_DLL)
 	cd $(BASE_DIR)
 !ENDIF
 
+$(LIBEXPAT_DIR):
+!IFDEF LIBEXPAT_ENABLED
+    git clone -b $(LIBEXPAT_BRANCH) $(LIBEXPAT_SRC) $(LIBEXPAT_DIR)
+!ENDIF
+
+$(LIBEXPAT_LIB): $(LIBEXPAT_DIR)
+!IFDEF LIBEXPAT_ENABLED
+    cd $(BASE_DIR)\$(LIBEXPAT_DIR)
+    git reset --hard HEAD
+    git checkout $(LIBEXPAT_BRANCH)
+    cd expat
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBEXPAT_DIR)\expat\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)\$(LIBEXPAT_DIR)\expat\$(CMAKE_BUILDDIR)\install
+    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y /S include\*.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ENDIF
+
+$(XERCES_DIR):
+!IFDEF XERCES_ENABLED
+    svn co $(XERCES_SRC)/$(XERCES_BRANCH) $(XERCES_DIR)
+!ENDIF
+
+$(XERCES_LIB): $(XERCES_DIR)
+!IFDEF XERCES_ENABLED
+    cd $(BASE_DIR)\$(XERCES_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y /S install\include\* $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ENDIF
+
 $(FRIBIDI_DIR):
 !IFDEF FRIBIDI_ENABLED
     git clone -b $(FRIBIDI_BRANCH) $(FRIBIDI_SRC) $(FRIBIDI_DIR)
@@ -794,6 +849,7 @@ $(PROJ4_LIB): $(PROJ4_DIR) $(MSVCRT_DLL)
     if not exist $(OUTPUT_DIR)\bin\proj\share mkdir $(OUTPUT_DIR)\bin\proj\share
     xcopy /Y $(BASE_DIR)\$(PROJ4_DIR)\$(CMAKE_BUILDDIR)\install\share\* $(OUTPUT_DIR)\bin\proj\share
     xcopy /Y $(BASE_DIR)\$(PROJ4_DIR)\nad\ntv1_can.dat $(OUTPUT_DIR)\bin\proj\share
+    copy /Y $(PROJ4_LIB) $(OUTPUT_DIR)\lib\proj_i.lib
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -858,6 +914,7 @@ $(SQLITE_LIB): $(SQLITE_DIR) $(MSVCRT_DLL)
     xcopy /Y *.exe $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
     xcopy /Y sqlite3.h $(OUTPUT_DIR)\include
+    copy /Y $(SQLITE_LIB) $(OUTPUT_DIR)\lib\sqlite3_i.lib
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
@@ -882,11 +939,11 @@ $(FREEXL_LIB): $(FREEXL_DIR) $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
 	echo INSTDIR=$(BASE_DIR)\$(FREEXL_DIR)\install >nmake.opt
     echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$(OUTPUT_DIR)\lib' | Out-File -encoding ASCII makefile.vc"
+    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
     cd src
     powershell -Command "(gc freexl.c) -replace 'round \(double num\)', 'round_unused (double num)' | Out-File -encoding ASCII freexl.c"
     cd ..
-    nmake /f makefile.vc install
+    nmake /f makefile.vc install "LIBDIR=$(OUTPUT_DIR)\lib"
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\include\*.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -913,13 +970,7 @@ $(SPATIALITE_LIB): $(SPATIALITE_DIR) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $
 !ENDIF
 !IFNDEF NO_BUILD
     powershell -Command "(gc config-msvc.h) -replace '#define HAVE_UNISTD_H 1', '/* #undef HAVE_UNISTD_H */' | Out-File -encoding ASCII config-msvc.h"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib\\proj_i.lib', '$(PROJ4_LIB)' | Out-File -encoding ASCII makefile.vc"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib\\geos_c.lib', '$(GEOS_LIB)' | Out-File -encoding ASCII makefile.vc"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib\\freexl_i.lib', '$(FREEXL_LIB)' | Out-File -encoding ASCII makefile.vc"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib\\sqlite3_i.lib', '$(SQLITE_LIB)' | Out-File -encoding ASCII makefile.vc"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib\\zlib.lib', '$(ZLIB_LIB)' | Out-File -encoding ASCII makefile.vc"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib\\iconv.lib', '$(LIBICONV_LIB)' | Out-File -encoding ASCII makefile.vc"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib\\libxml2.lib', '$(LIBXML2_LIB)' | Out-File -encoding ASCII makefile.vc" 
+    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
     cd src
     cd gaiageo
     powershell -Command "(gc gg_extras.c) -replace 'rint \(double x\)', 'rint_unused (double x)' | Out-File -encoding ASCII gg_extras.c"
@@ -928,11 +979,11 @@ $(SPATIALITE_LIB): $(SPATIALITE_DIR) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $
     echo INSTDIR=$(BASE_DIR)\$(SPATIALITE_DIR)\install >nmake.opt
     echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
     if exist $(BASE_DIR)\$(SPATIALITE_DIR)\install rd /Q /S $(BASE_DIR)\$(SPATIALITE_DIR)\install
-    nmake /f makefile.vc install
+    nmake /f makefile.vc install LIBDIR=$(OUTPUT_DIR)\lib
 !ENDIF
-    xcopy /Y /S $(BASE_DIR)\$(FREEXL_DIR)\install\include\*.h $(OUTPUT_DIR)\include
-    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
-    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S $(BASE_DIR)\$(SPATIALITE_DIR)\install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(SPATIALITE_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(SPATIALITE_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     cd $(BASE_DIR)
 !ENDIF
 
