@@ -1295,8 +1295,15 @@ $(LIBICONV_LIB):
     $(CYGWIN_DIR)\bin\dos2unix.exe libcharset.h.in
     cd ..
     cd ..
+    cd src
+    powershell -Command "(gc Makefile.in) -replace '--output-format=coff', '$$(RCFLAGS)' | Out-File -encoding ASCII Makefile.in"
+    cd ..
+    cd lib
+    powershell -Command "(gc Makefile.in) -replace '--output-format=coff', '$$(RCFLAGS)' | Out-File -encoding ASCII Makefile.in"
+    cd ..
 !IFNDEF NO_CLEAN
     if exist install rd /Q /S install
+    del /S *.obj
 !ENDIF
     echo INCLUDE='$(INCLUDE)' >build-aux\vcvars.sh
     echo LIB='$(LIB)' >>build-aux\vcvars.sh
@@ -1305,12 +1312,15 @@ $(LIBICONV_LIB):
     echo PATH="$$COMPILERPATH":"$$PATH" >>build-aux\vcvars.sh
     echo SRCDIR=`cygpath -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)"` >>build-aux\vcvars.sh
     echo OUTPUTDIR=`cygpath -u "$(OUTPUT_DIR)"` >>build-aux\vcvars.sh
-    echo export INCLUDE LIB LIBPATH PATH >>build-aux\vcvars.sh
 !IFDEF WIN64
     echo CONFIGHOST=x86_64-w64-mingw32 >>build-aux\vcvars.sh
+    echo RCFLAGS='--output-format=coff --target=pe-x86-64' >>build-aux\vcvars.sh
 !ELSE
     echo CONFIGHOST=i686-w64-mingw32 >>build-aux\vcvars.sh
+    echo RCFLAGS='--output-format=coff --target=pe-i386' >>build-aux\vcvars.sh
 !ENDIF
+    echo export INCLUDE LIB LIBPATH PATH RCFLAGS >>build-aux\vcvars.sh
+
     echo cd $$SRCDIR >>build-aux\vcvars.sh
     echo ./configure --host=$$CONFIGHOST --prefix=$$SRCDIR/install CC="$$SRCDIR/build-aux/compile cl -nologo" CFLAGS="-MD" CXX="$$SRCDIR/build-aux/compile cl -nologo" CXXFLAGS="-MD" CPPFLAGS="-D_WIN32_WINNT=_WIN32_WINNT_WIN7 -I$$OUTPUTDIR/include" LDFLAGS="msvcrt.lib legacy_stdio_definitions.lib -L$$OUTPUTDIR/lib" LD="link" NM="dumpbin -symbols" STRIP=":" AR="$$SRCDIR/build-aux/ar-lib lib" RANLIB=":" >>build-aux\vcvars.sh
 !IFNDEF NO_CLEAN
