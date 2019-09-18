@@ -205,6 +205,10 @@ SWIG_DIR = $(SRC_DIR)\swig
 SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\$(SWIG_VER)\swig.exe
 !ENDIF
 
+!IFNDEF CYGWIN_DIR
+CYGWIN_DIR=E:\cygwin
+!ENDIF
+
 #specify build targets
 MSVCR_DLL = $(OUTPUT_DIR)\build\msvcr.install
 SWIG_INSTALL = $(OUTPUT_DIR)\build\$(SWIG_VER).install
@@ -407,7 +411,7 @@ EXTRAFLAGS =
 
 default: $(MAPSERVER_LIB)
 
-test: $(GDAL_CSHARP_DLL)
+test: $(LIBICONV_LIB)
 
 test2: $(FREEXL_LIB)
 
@@ -1282,19 +1286,43 @@ $(LIBICONV_LIB):
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(LIBICONV_DIR) mkdir $(LIBICONV_DIR)
     cd $(LIBICONV_DIR)
-    if not exist libiconv.tar.gz $(CURL_EXE) -L -k -o "libiconv.tar.gz" "$(LIBICONV_SRC)"
-    if not exist $(LIBICONV_VER) 7z e libiconv.tar.gz && 7z x $(LIBICONV_VER).tar
+    if not exist $(LIBICONV_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBICONV_VER).tar.gz" "$(LIBICONV_SRC)"
+    if not exist $(LIBICONV_VER) 7z e -y $(LIBICONV_VER).tar.gz && 7z x -y $(LIBICONV_VER).tar
     cd $(LIBICONV_VER)
+    cd libcharset
+    cd include
+    powershell -Command "(gc libcharset.h.in) -replace 'extern void libcharset_set_relocation_prefix', 'extern LIBCHARSET_DLL_EXPORTED void libcharset_set_relocation_prefix' | Out-File -encoding ASCII libcharset.h.in"
+    $(CYGWIN_DIR)\bin\dos2unix.exe libcharset.h.in
+    cd ..
+    cd ..
+!IFNDEF NO_CLEAN
+    if exist install rd /Q /S install
+!ENDIF
     echo INCLUDE='$(INCLUDE)' >build-aux\vcvars.sh
     echo LIB='$(LIB)' >>build-aux\vcvars.sh
     echo LIBPATH='$(LIBPATH)' >>build-aux\vcvars.sh
-    echo PATH=`cygpath -u "$(VCINSTALLDIR)bin\amd64"`:"$$PATH" >>build-aux\vcvars.sh
+    for /f "usebackq tokens=*" %i in (`where cl.exe`) do echo COMPILERPATH=`cygpath -u "%~dpi."` >>build-aux\vcvars.sh
+    echo PATH="$$COMPILERPATH":"$$PATH" >>build-aux\vcvars.sh
+    echo SRCDIR=`cygpath -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)"` >>build-aux\vcvars.sh
+    echo OUTPUTDIR=`cygpath -u "$(OUTPUT_DIR)"` >>build-aux\vcvars.sh
     echo export INCLUDE LIB LIBPATH PATH >>build-aux\vcvars.sh
-    echo ./configure --host=i686-w64-mingw32 --prefix=/cygdrive/e/buildsystem/src/libiconv-1.16/install CC="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/compile cl -nologo" CFLAGS="-MD" CXX="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/compile cl -nologo" CXXFLAGS="-MD" CPPFLAGS="-D_WIN32_WINNT=_WIN32_WINNT_WIN7 -I/cygdrive/e/buildsystem/release-1900-x64/include" LDFLAGS="msvcrt.lib legacy_stdio_definitions.lib -L/cygdrive/e/buildsystem/release-1900-x64/lib" LD="link" NM="dumpbin -symbols" STRIP=":" AR="/cygdrive/e/buildsystem/src/libiconv-1.15/build-aux/ar-lib lib" RANLIB=":" >>build-aux\vcvars.sh
+!IFDEF WIN64
+    echo CONFIGHOST=x86_64-w64-mingw32 >>build-aux\vcvars.sh
+!ELSE
+    echo CONFIGHOST=i686-w64-mingw32 >>build-aux\vcvars.sh
+!ENDIF
+    echo cd $$SRCDIR >>build-aux\vcvars.sh
+    echo ./configure --host=$$CONFIGHOST --prefix=$$SRCDIR/install CC="$$SRCDIR/build-aux/compile cl -nologo" CFLAGS="-MD" CXX="$$SRCDIR/build-aux/compile cl -nologo" CXXFLAGS="-MD" CPPFLAGS="-D_WIN32_WINNT=_WIN32_WINNT_WIN7 -I$$OUTPUTDIR/include" LDFLAGS="msvcrt.lib legacy_stdio_definitions.lib -L$$OUTPUTDIR/lib" LD="link" NM="dumpbin -symbols" STRIP=":" AR="$$SRCDIR/build-aux/ar-lib lib" RANLIB=":" >>build-aux\vcvars.sh
+!IFNDEF NO_CLEAN
+    echo make clean >>build-aux\vcvars.sh
+!ENDIF
+!IFNDEF NO_BUILD
     echo make >>build-aux\vcvars.sh
-    echo install-lib >>build-aux\vcvars.sh
-    E:\cygwin\bin\dos2unix.exe build-aux\vcvars.sh
-    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
-    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\install\lib\iconv.dll.lib $(OUTPUT_DIR)\lib\iconv.lib
-    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\install\include\*.h $(OUTPUT_DIR)\include
+    echo make install-lib >>build-aux\vcvars.sh
+!ENDIF
+    $(CYGWIN_DIR)\bin\dos2unix.exe build-aux\vcvars.sh
+    if not exist $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\build-aux\vcvars.sh" & exit 1
+    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\bin\*.dll $(OUTPUT_DIR)\bin
+    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\lib\iconv.dll.lib $(OUTPUT_DIR)\lib\iconv.lib
+    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\include\*.h $(OUTPUT_DIR)\include
     
