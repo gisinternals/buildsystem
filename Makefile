@@ -215,8 +215,8 @@ SWIG_INSTALL = $(OUTPUT_DIR)\build\$(SWIG_VER).install
 ZLIB_LIB = $(OUTPUT_DIR)\lib\zlib.lib
 OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
-CURL_EXE = $(OUTPUT_DIR)\bin\curl\curl.exe
-CURL_CA_BUNDLE = $(OUTPUT_DIR)\bin\curl\curl-ca-bundle.crt
+CURL_EXE = $(OUTPUT_DIR)\bin\curl.exe
+CURL_CA_BUNDLE = $(OUTPUT_DIR)\bin\curl-ca-bundle.crt
 LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16.lib
 JPEG_LIB = $(OUTPUT_DIR)\lib\libjpeg.lib
 FREETYPE_LIB = $(OUTPUT_DIR)\lib\freetype.lib
@@ -225,8 +225,8 @@ FREETYPE_1 = $(OUTPUT_DIR)\build\freetype_1.install
 FREETYPE_2 = $(OUTPUT_DIR)\build\freetype_2.install
 GEOS_LIB = $(OUTPUT_DIR)\lib\geos_c.lib
 FRIBIDI_LIB = $(OUTPUT_DIR)\lib\fribidi.lib
-LIBICONV_LIB = $(OUTPUT_DIR)\lib\iconv2.lib
-PGSQL_LIB = $(OUTPUT_DIR)\lib\libpqdll.lib
+LIBICONV_LIB = $(OUTPUT_DIR)\lib\iconv.lib
+PGSQL_LIB = $(OUTPUT_DIR)\lib\libpq.lib
 PROJ4_LIB = $(OUTPUT_DIR)\lib\proj_4_9.lib
 PROJ6_LIB = $(OUTPUT_DIR)\lib\proj_6_2.lib
 SQLITE_LIB = $(OUTPUT_DIR)\lib\sqlite3.lib
@@ -236,49 +236,121 @@ LIBXML2_LIB = $(OUTPUT_DIR)\lib\libxml2.lib
 XERCES_LIB = $(OUTPUT_DIR)\lib\xerces-c_3D.lib
 LIBEXPAT_LIB = $(OUTPUT_DIR)\lib\expat.lib
 PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
-PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\proto_c.lib
+PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\protobuf-c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_OPT = $(OUTPUT_DIR)\build\gdal.opt
 GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\gdal_csharp.opt
 GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
+SZIP_LIB = $(OUTPUT_DIR)\lib\szip.lib
 
 # Update enabled flags
 MSVCR_ENABLED = 1
+
+!IF !EXIST("$(ZLIB_LIB)")
 ZLIB_ENABLED = 1
-!IF DEFINED(GDAL_CURL) || DEFINED(MS_CLIENT_WMS)  || DEFINED(MS_CLIENT_WFS)
+!ENDIF
+
+!IF !EXIST("$(OPENSSL_LIB)")
 OPENSSL_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(CURL_LIB)")
 CURL_ENABLED = 1
 !ENDIF
+
+!IF !EXIST("$(LIBPNG_LIB)")
 LIBPNG_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(JPEG_LIB)")
 JPEG_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(HARFBUZZ_LIB)")
 FREETYPE_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(HARFBUZZ_LIB)")
 HARFBUZZ_ENABLED = 1
-!IF DEFINED(MS_GEOS) || DEFINED(GDAL_GEOS)
+!ENDIF
+
+!IF !EXIST("$(GEOS_LIB)")
 GEOS_ENABLED = 1
 !ENDIF
+
+!IF !EXIST("$(FRIBIDI_LIB)")
 FRIBIDI_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(LIBICONV_LIB)")
 LIBICONV_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(PGSQL_LIB)")
 PGSQL_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(PROJ6_LIB)")
 PROJ4_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(PROJ6_LIB)")
 PROJ6_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(SQLITE_LIB)")
 SQLITE_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(SPATIALITE_LIB)")
 SPATIALITE_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(FREEXL_LIB)")
 FREEXL_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(LIBXML2_LIB)")
 LIBXML2_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(GDAL_LIB)")
 GDAL_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(GDAL_CSHARP_DLL)")
 GDAL_CSHARP_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(MAPSERVER_LIB)")
 MAPSERVER_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(LIBEXPAT_LIB)")
 XERCES_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(LIBEXPAT_LIB)")
 LIBEXPAT_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(PROTOBUF_LIB)")
 PROTOBUF_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(PROTOBUF_C_LIB)")
 PROTOBUF_C_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(SZIP_LIB)")
+SZIP_ENABLED = 1
+!ENDIF
 
 # set up mapserver configuration
-MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/)
-!IFDEF MS_POSTGIS
-MAPSERVER_OPT = $(MAPSERVER_OPT) "-DPOSTGRESQL_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libpqdll.lib"
-!ELSE
+MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=8.1
+
+!IFNDEF MS_POSTGIS
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_POSTGIS=0
 !ENDIF
 
@@ -286,14 +358,14 @@ MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_POSTGIS=0
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROTOBUFC=0
 !ENDIF
 
-!IFDEF MS_PROJ
-MAPSERVER_OPT = $(MAPSERVER_OPT) "-DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj_4_9.lib"
-!ELSE
+!IFNDEF MS_PROJ
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=0
 !ENDIF
 
 !IFNDEF MS_ICONV
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_ICONV=0
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) "-DICONV_DLL=$(OUTPUT_DIR:\=/)/bin/iconv.dll"
 !ENDIF
 
 !IFNDEF MS_CAIRO
@@ -312,11 +384,26 @@ MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_GIF=0
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_LIBXML2=0
 !ENDIF
 
+!IFDEF MS_CSHARP
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CSHARP=1 "-DSWIG_EXECUTABLE=$(SWIG_EXE)"
+!ENDIF
+
+!IFDEF MS_MSSQL
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_MSSQL2008=1
+!ENDIF
+
+MS_EXTRAFLAGS_CC = -D_WIN32_WINNT=0x0601
 
 !IFDEF DEBUG
 BUILD_CONFIG=RelWithDebInfo
+MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG $(MS_EXTRAFLAGS_CC)" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG -D $(MS_EXTRAFLAGS_CC)"
 !ELSE
 BUILD_CONFIG=Release
+!IFDEF MS_RELEASE_PDB
+MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Zi /O2 $(MS_EXTRAFLAGS_CC)" "-DCMAKE_C_FLAGS_RELEASE=/MD /Zi /O2 $(MS_EXTRAFLAGS_CC)" "-DCMAKE_MODULE_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO" "-DCMAKE_SHARED_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO" "-DCMAKE_EXE_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO"
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=/MD /Zi /Od" "-DCMAKE_C_FLAGS_RELWITHDEBINFO=/MD /Zi /Od $(MS_EXTRAFLAGS_CC)"
+!ENDIF
 !ENDIF
 
 !IFDEF WIN64
@@ -413,7 +500,7 @@ default: $(MAPSERVER_LIB)
 
 test: $(LIBICONV_LIB)
 
-test2: $(FREEXL_LIB)
+test2: $(SZIP_LIB)
 
 op-disable:
     echo This operation is disabled!
@@ -529,6 +616,8 @@ $(ZLIB_LIB): $(MSVCR_DLL)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
+!ELSE
+    @echo $(ZLIB_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
 $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
@@ -552,9 +641,10 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 	xcopy /Y include\openssl\*.h $(OUTPUT_DIR)\include\openssl
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
-    if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
-    xcopy /Y apps\openssl.exe $(OUTPUT_DIR)\bin\curl
+    xcopy /Y apps\openssl.exe $(OUTPUT_DIR)\bin
     cd $(BASE_DIR)
+!ELSE
+    @echo $(OPENSSL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
         
 $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) 
@@ -575,16 +665,17 @@ $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB)
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
-    if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
-    xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin\curl
+    xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin
     cd $(BASE_DIR)
+!ELSE
+    @echo $(CURL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(CURL_EXE): $(CURL_LIB)
 
 $(CURL_CA_BUNDLE): $(CURL_EXE)
 !IFDEF CURL_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     $(CURL_EXE) -o "$(CURL_CA_BUNDLE)" "http://curl.haxx.se/ca/cacert.pem"
 !ENDIF
@@ -592,7 +683,7 @@ $(CURL_CA_BUNDLE): $(CURL_EXE)
 $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
 !IFDEF LIBPNG_ENABLED
     if not exist $(LIBPNG_DIR) mkdir $(LIBPNG_DIR)
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     cd $(LIBPNG_DIR)
     if not exist $(LIBPNG_VER) $(CURL_EXE) -L -k -o "libpng.zip" "$(LIBPNG_SRC)" & 7z x -y libpng.zip
@@ -610,11 +701,13 @@ $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBPNG_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
 !IFDEF JPEG_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(JPEG_DIR) mkdir $(JPEG_DIR)
     cd $(JPEG_DIR)
@@ -636,6 +729,8 @@ $(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
     xcopy /Y *.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(JPEG_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(FREETYPE_1): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
@@ -657,6 +752,8 @@ $(FREETYPE_1): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     echo freetype phase 1 > $(FREETYPE_1)
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(FREETYPE_1) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(FREETYPE_2): $(FREETYPE_1) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
@@ -677,6 +774,8 @@ $(FREETYPE_2): $(FREETYPE_1) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     echo freetype phase 2 > $(FREETYPE_2)
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(FREETYPE_2) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
@@ -697,6 +796,8 @@ $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(HARFBUZZ_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(GEOS_LIB): $(MSVCRT_DLL)
@@ -719,6 +820,8 @@ $(GEOS_LIB): $(MSVCRT_DLL)
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(GEOS_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(LIBEXPAT_LIB):
@@ -742,6 +845,8 @@ $(LIBEXPAT_LIB):
     xcopy /Y bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBEXPAT_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(XERCES_LIB):
@@ -762,10 +867,12 @@ $(XERCES_LIB):
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S install\include\* $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(XERCES_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(PROTOBUF_LIB): $(ZLIB_LIB)
-!IFDEF LIBEXPAT_ENABLED
+!IFDEF PROTOBUF_ENABLED
     if not exist $(PROTOBUF_DIR) git clone -b $(PROTOBUF_BRANCH) $(PROTOBUF_SRC) $(PROTOBUF_DIR)
     cd $(PROTOBUF_DIR)
     git reset --hard HEAD
@@ -785,10 +892,12 @@ $(PROTOBUF_LIB): $(ZLIB_LIB)
     xcopy /Y bin\*.exe $(OUTPUT_DIR)\bin
     xcopy /Y /S include\* $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(PROTOBUF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
-!IFDEF LIBEXPAT_ENABLED
+!IFDEF PROTOBUF_C_ENABLED
     if not exist $(PROTOBUF_C_DIR) git clone -b $(PROTOBUF_C_BRANCH) $(PROTOBUF_C_SRC) $(PROTOBUF_C_DIR)
     cd $(PROTOBUF_C_DIR)
     git reset --hard HEAD
@@ -808,6 +917,8 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
     xcopy /Y bin\*.exe $(OUTPUT_DIR)\bin
     xcopy /Y /S include\* $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(PROTOBUF_C_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(FRIBIDI_LIB):
@@ -829,6 +940,8 @@ $(FRIBIDI_LIB):
     xcopy /Y $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
+!ELSE
+    @echo $(FRIBIDI_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
 $(PROJ4_LIB): $(MSVCRT_DLL)
@@ -860,6 +973,8 @@ $(PROJ4_LIB): $(MSVCRT_DLL)
     xcopy /Y $(BASE_DIR)\$(PROJ4_DIR)\nad\ntv1_can.dat $(OUTPUT_DIR)\bin\proj\share
     copy /Y $(PROJ4_LIB) $(OUTPUT_DIR)\lib\proj_i.lib
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(PROJ4_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
 $(PROJ6_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
@@ -890,11 +1005,13 @@ $(PROJ6_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
     if not exist $(OUTPUT_DIR)\bin\proj6\share mkdir $(OUTPUT_DIR)\bin\proj6\share
     xcopy /Y /S $(BASE_DIR)\$(PROJ6_DIR)\$(CMAKE_BUILDDIR)\install\share\proj\* $(OUTPUT_DIR)\bin\proj6\share
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(PROJ6_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(SQLITE_LIB): $(MSVCRT_DLL)
 !IFDEF SQLITE_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SQLITE_DIR) mkdir $(SQLITE_DIR)
     cd $(SQLITE_DIR)
@@ -916,10 +1033,12 @@ $(SQLITE_LIB): $(MSVCRT_DLL)
     copy /Y $(SQLITE_LIB) $(OUTPUT_DIR)\lib\sqlite3_i.lib
 !ENDIF
     cd $(BASE_DIR)
+!ELSE
+    @echo $(SQLITE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SWIG_DIR) mkdir $(SWIG_DIR)
     cd $(SWIG_DIR)
@@ -929,7 +1048,7 @@ $(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
 
 $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFDEF FREEXL_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FREEXL_DIR) mkdir $(FREEXL_DIR)
     cd $(FREEXL_DIR)
@@ -951,11 +1070,13 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
     xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     cd $(BASE_DIR)
+!ELSE
+    @echo $(FREEXL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
 !IFDEF SQLITE_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SPATIALITE_DIR) mkdir $(SPATIALITE_DIR)
     cd $(SPATIALITE_DIR)
@@ -981,6 +1102,8 @@ $(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(F
     xcopy /Y $(BASE_DIR)\$(SPATIALITE_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(SPATIALITE_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     cd $(BASE_DIR)
+!ELSE
+    @echo $(SPATIALITE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
@@ -1005,6 +1128,8 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
     xcopy /Y $(BASE_DIR)\$(LIBXML2_DIR)\Release\lib\libxml2.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S $(BASE_DIR)\$(LIBXML2_DIR)\Release\include\libxml2\* $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBXML2_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(GDAL_OPT):
@@ -1203,6 +1328,8 @@ $(GDAL_LIB): $(GDAL_OPT) $(MSVCRT_DLL) $(CURL_LIB) $(GEOS_LIB) $(PROJ4_LIB) $(PR
     if exist $(OUTPUT_DIR)\bin\gdal\plugins-optional del $(OUTPUT_DIR)\bin\gdal\plugins-optional\*.dll
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins-external del $(OUTPUT_DIR)\bin\gdal\plugins-external\*.dll
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(GDAL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(GDAL_CSHARP_OPT): $(GDAL_OPT) $(SWIG_INSTALL)
@@ -1227,6 +1354,8 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\csharp
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\gdal\csharp
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(GDAL_CSHARP_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(MAPSERVER_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(LIBPNG_LIB) $(CURL_LIB) $(FREETYPE_2) $(GEOS_LIB) $(FRIBIDI_LIB) $(PROJ4_LIB) $(PGSQL_LIB) $(GDAL_LIB) 
@@ -1250,39 +1379,87 @@ $(MAPSERVER_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(LIBPNG_LIB) $(CURL_LIB
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\*.exe $(OUTPUT_DIR)\bin\ms\apps
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
+!IFDEF MS_RELEASE_PDB
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\mapserver.pdb $(OUTPUT_DIR)\bin
+!ENDIF
+!IFDEF MS_MSSQL
+    if not exist $(OUTPUT_DIR)\bin\ms\plugins\mssql2008 mkdir $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\msplugin_mssql2008.dll $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
+!IFDEF MS_RELEASE_PDB
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\msplugin_mssql2008.pdb $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
+!ENDIF
+!ENDIF
+!IFDEF MS_CSHARP
+    if not exist $(OUTPUT_DIR)\bin\ms\csharp mkdir $(OUTPUT_DIR)\bin\ms\csharp
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\*.exe $(OUTPUT_DIR)\bin\ms\csharp
+!IFDEF MS_RELEASE_PDB
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\$(BUILD_CONFIG)\*.pdb $(OUTPUT_DIR)\bin\ms\csharp
+!ENDIF
+!ENDIF
 	cd $(OUTPUT_DIR)\bin
 	ms\apps\mapserv -v > $(OUTPUT_DIR)\doc\ms_version.txt
 	cd $(BASE_DIR)
+!ELSE
+    @echo $(MAPSERVER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
-$(PGSQL_LIB):
+$(PGSQL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL)
 !IFDEF PGSQL_ENABLED
     if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
     cd $(BASE_DIR)\$(PGSQL_DIR)
     rem git reset --hard HEAD
     rem git checkout $(PGSQL_BRANCH)
-    cd $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq
+    cd src\tools\msvc
+    echo $$config-^>{openssl} = '$(OUTPUT_DIR)'; >config.pl
 !IFNDEF NO_CLEAN
-    nmake /f win32.mak clean
+    clean dist
 !ENDIF
 !IFNDEF NO_BUILD
-!IFDEF WIN64
-    nmake /f win32.mak CPU=AMD64 MSVC_VER=$(MSVC_VER) USE_SSL=1 SSL_INC=$(OUTPUT_DIR)\include SSL_LIB_PATH=$(OUTPUT_DIR)\lib
-!ELSE
-    nmake /f win32.mak MSVC_VER=$(MSVC_VER) USE_SSL=1 SSL_INC=$(OUTPUT_DIR)\include SSL_LIB_PATH=$(OUTPUT_DIR)\lib
+    build libpq
 !ENDIF
-!ENDIF
-    xcopy /Y libpq-fe.h $(OUTPUT_DIR)\include
-    cd Release
+    cd $(BASE_DIR)\$(PGSQL_DIR)\$(BUILD_CONFIG)\libpq
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
-    cd $(BASE_DIR)
-    xcopy /Y $(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
-	xcopy /Y $(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-fe.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-events.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
+!ELSE
+    @echo $(PGSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.    
+!ENDIF
+
+$(SZIP_LIB): $(MSVCRT_DLL)
+!IFDEF SZIP_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(SZIP_DIR) mkdir $(SZIP_DIR)
+    cd $(SZIP_DIR)
+    if not exist $(SZIP_VER).tar.gz $(CURL_EXE) -L -k -o "$(SZIP_VER).tar.gz" "$(SZIP_SRC)"
+    if not exist $(SZIP_VER) 7z e -y $(SZIP_VER).tar.gz && 7z x -y $(SZIP_VER).tar
+    cd $(SZIP_VER)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\$(CMAKE_BUILDDIR)\install
+    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y bin\szip.dll $(OUTPUT_DIR)\bin
+	xcopy /Y /S include\*.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(SZIP_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
 $(LIBICONV_LIB):
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
+!IFDEF LIBICONV_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(LIBICONV_DIR) mkdir $(LIBICONV_DIR)
     cd $(LIBICONV_DIR)
@@ -1335,4 +1512,6 @@ $(LIBICONV_LIB):
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\bin\*.dll $(OUTPUT_DIR)\bin
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\lib\iconv.dll.lib $(OUTPUT_DIR)\lib\iconv.lib
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\include\*.h $(OUTPUT_DIR)\include
-    
+!ELSE
+    @echo $(LIBICONV_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF    
