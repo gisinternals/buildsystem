@@ -48,6 +48,8 @@ MS_MSSQL = YES
 MS_LIBXML2 = YES
 MS_RELEASE_PDB = YES
 
+HDF4_SZIP = YES
+
 # Dependency versions
 ZLIB_BRANCH = v1.2.11
 OPENSSL_BRANCH = OpenSSL_1_1_1d
@@ -70,6 +72,7 @@ LIBEXPAT_BRANCH = R_2_2_8
 PROTOBUF_BRANCH = v3.9.1
 PROTOBUF_C_BRANCH = v1.3.2
 SZIP_VER = szip-2.1.1
+HDF4_VER = hdf-4.2.13
 
 # Source directories and locations
 SRC_DIR = src
@@ -146,4 +149,7 @@ PROTOBUF_C_SRC = https://github.com/protobuf-c/protobuf-c.git
 
 SZIP_DIR = $(SRC_DIR)\szip
 SZIP_SRC = https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz
+
+HDF4_DIR = $(SRC_DIR)\hdf4
+HDF4_SRC = https://support.hdfgroup.org/ftp/HDF/HDF_Current/src/hdf-4.2.13.zip
 

@@ -243,6 +243,7 @@ GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\gdal_csharp.opt
 GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
 SZIP_LIB = $(OUTPUT_DIR)\lib\szip.lib
+HDF4_LIB = $(OUTPUT_DIR)\lib\hdf4.lib
 
 # Update enabled flags
 MSVCR_ENABLED = 1
@@ -345,6 +346,10 @@ PROTOBUF_C_ENABLED = 1
 
 !IF !EXIST("$(SZIP_LIB)")
 SZIP_ENABLED = 1
+!ENDIF
+
+!IF !EXIST("$(HDF4_LIB)")
+HDF4_ENABLED = 1
 !ENDIF
 
 # set up mapserver configuration
@@ -500,7 +505,7 @@ default: $(MAPSERVER_LIB)
 
 test: $(LIBICONV_LIB)
 
-test2: $(SZIP_LIB)
+test2: $(HDF4_LIB)
 
 op-disable:
     echo This operation is disabled!
@@ -1440,21 +1445,54 @@ $(SZIP_LIB): $(MSVCRT_DLL)
     if not exist $(SZIP_VER) 7z e -y $(SZIP_VER).tar.gz && 7z x -y $(SZIP_VER).tar
     cd $(SZIP_VER)
 !IFNDEF NO_CLEAN
-    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+    if exist cmake rd /Q /S cmake
 !ENDIF
 !IFNDEF NO_BUILD
-    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
-	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=ON"
+    if not exist cmake mkdir cmake
+	cd cmake
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
     $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
-    cd $(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\$(CMAKE_BUILDDIR)\install
+    cd $(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install
     xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
 	xcopy /Y bin\szip.dll $(OUTPUT_DIR)\bin
 	xcopy /Y /S include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ELSE
     @echo $(SZIP_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
+!IFDEF HDF4_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(HDF4_DIR) mkdir $(HDF4_DIR)
+    cd $(HDF4_DIR)
+    if not exist $(HDF4_VER).zip $(CURL_EXE) -L -k -o "$(HDF4_VER).zip" "$(HDF4_SRC)" & 7z x -y $(HDF4_VER).zip
+    cd $(HDF4_VER)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+!IFNDEF NO_BUILD
+	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFDEF HDF4_SZIP
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
+!ELSE
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=OFF" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
+!ENDIF
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install
+    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y bin\hdf.dll $(OUTPUT_DIR)\bin
+    xcopy /Y bin\mfhdf.dll $(OUTPUT_DIR)\bin
+    xcopy /Y bin\xdr.dll $(OUTPUT_DIR)\bin
+    if not exist $(OUTPUT_DIR)\include\hdf4 mkdir $(OUTPUT_DIR)\include\hdf4
+    xcopy  /Y /S include\*.h $(OUTPUT_DIR)\include\hdf4
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(HDF4_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
 $(LIBICONV_LIB):
