@@ -1531,6 +1531,7 @@ $(PGSQL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL)
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-events.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
 !ELSE
     @echo $(PGSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.    
 !ENDIF
@@ -1650,6 +1651,7 @@ $(LIBICONV_LIB):
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\bin\*.dll $(OUTPUT_DIR)\bin
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\lib\iconv.dll.lib $(OUTPUT_DIR)\lib\iconv.lib
     copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
 !ELSE
     @echo $(LIBICONV_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF    
