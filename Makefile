@@ -1,11 +1,11 @@
 # predefined constant values
 
+!IFDEF CONFIG_OPT
+!INCLUDE $(CONFIG_OPT)
+!ELSE
 !IF EXIST(config.opt)
 !INCLUDE config.opt 
 !ENDIF
-
-!IFDEF CONFIG_OPT
-!INCLUDE $(CONFIG_OPT)
 !ENDIF
 
 !IFNDEF WIN64
@@ -13,6 +13,9 @@
 WIN64=YES
 !ENDIF
 !ENDIF
+
+# check prerequisites
+
 
 # identify compiler version
 !IFNDEF MSVC_VER
@@ -217,7 +220,7 @@ OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
 CURL_EXE = $(OUTPUT_DIR)\bin\curl.exe
 CURL_CA_BUNDLE = $(OUTPUT_DIR)\bin\curl-ca-bundle.crt
-LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16.lib
+LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16_static.lib
 JPEG_LIB = $(OUTPUT_DIR)\lib\libjpeg.lib
 FREETYPE_LIB = $(OUTPUT_DIR)\lib\freetype.lib
 HARFBUZZ_LIB = $(OUTPUT_DIR)\lib\harfbuzz.lib
@@ -240,10 +243,17 @@ PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\protobuf-c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_OPT = $(OUTPUT_DIR)\build\gdal.opt
 GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\gdal_csharp.opt
-GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
+GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\T1gdal_csharp.dll
+GDAL_MSSQL_OPT = $(OUTPUT_DIR)\build\gdal_mssql.opt
+GDAL_MSSQL_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-optional\ogr_MSSQLSpatial.dll
+GDAL_ECW_OPT = $(OUTPUT_DIR)\build\gdal_ecw.opt
+GDAL_ECW_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_ECW_JP2ECW.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
 SZIP_LIB = $(OUTPUT_DIR)\lib\szip.lib
 HDF4_LIB = $(OUTPUT_DIR)\lib\hdf4.lib
+
+# set default targets (mapserver and the gdal plugins)
+DEFAULT_TARGETS = $(MAPSERVER_LIB)
 
 # set up gdal configuration
 GDAL_DEPS = $(GDAL_OPT) $(MSVCRT_DLL)
@@ -274,6 +284,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(SPATIALITE_LIB)
 
 !IFDEF GDAL_CSHARP
 GDAL_DEPS = $(GDAL_DEPS) $(SWIG_INSTALL)
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_CSHARP_DLL)
 !ENDIF
 
 !IFDEF GDAL_XERCES
@@ -296,9 +307,17 @@ GDAL_DEPS = $(GDAL_DEPS) $(OPENJPEG_LIB)
 GDAL_DEPS = $(GDAL_DEPS) $(POPPLER_LIB)
 !ENDIF
 
+!IFDEF GDAL_ECW
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_ECW_DLL)
+!ENDIF
+
+!IFDEF GDAL_MSSQL
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_MSSQL_DLL)
+!ENDIF
+
 
 # set up mapserver configuration
-MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=8.1 -DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB)
+MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=8.1 -DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB) "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)"
 MAPSERVER_DEPS = $(MSVCRT_DLL) $(JPEG_LIB) $(LIBPNG_LIB) $(FREETYPE_2)
 
 !IFNDEF MS_POSTGIS
@@ -394,6 +413,11 @@ MS_EXTRAFLAGS_CC = -D_WIN32_WINNT=0x0601
 
 # Update enabled flags
 MSVCR_ENABLED = 1
+GDAL_ENABLED = 1
+GDAL_CSHARP_ENABLED = 1
+GDAL_MSSQL_ENABLED = 1
+GDAL_ECW_ENABLED = 1
+MAPSERVER_ENABLED = 1
 
 !IF !EXIST("$(ZLIB_LIB)")
 ZLIB_ENABLED = 1
@@ -463,18 +487,6 @@ FREEXL_ENABLED = 1
 LIBXML2_ENABLED = 1
 !ENDIF
 
-!IF !EXIST("$(GDAL_LIB)")
-GDAL_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(GDAL_CSHARP_DLL)")
-GDAL_CSHARP_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(MAPSERVER_LIB)")
-MAPSERVER_ENABLED = 1
-!ENDIF
-
 !IF !EXIST("$(LIBEXPAT_LIB)")
 XERCES_ENABLED = 1
 !ENDIF
@@ -499,6 +511,35 @@ SZIP_ENABLED = 1
 HDF4_ENABLED = 1
 !ENDIF
 
+# ECW SDK locations
+!IFDEF ECWSDK_DIR
+ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) "-I$(ECWSDK_DIR)\include" "-I$(ECWSDK_DIR)\include\NCSECW\api" "-I$(ECWSDK_DIR)\include\NCSECW\jp2" "-I$(ECWSDK_DIR)\include\NCSECW\ecw"
+!IF $(MSVC_VER) == 1911
+!IFDEF WIN64
+ECWLIB = "$(ECWSDK_DIR)\lib\vc141\x64\NCSEcw.lib"
+ECWDLL = "$(ECWSDK_DIR)\bin\vc141\x64\NCSEcw.dll"
+!ELSE
+ECWLIB = "$(ECWSDK_DIR)\lib\vc141\win32\NCSEcw.lib"
+ECWDLL = "$(ECWSDK_DIR)\bin\vc141\win32\NCSEcw.dll"
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
+!IFDEF WIN64
+ECWLIB = "$(ECWSDK_DIR)\lib\vc140\x64\NCSEcw.lib"
+ECWDLL = "$(ECWSDK_DIR)\bin\vc140\x64\NCSEcw.dll"
+!ELSE
+ECWLIB = "$(ECWSDK_DIR)\lib\vc140\win32\NCSEcw.lib"
+ECWDLL = "$(ECWSDK_DIR)\bin\vc140\win32\NCSEcw.dll"
+!ENDIF
+!ELSEIF $(MSVC_VER) == 1900
+!IFDEF WIN64
+ECWLIB = "$(ECWSDK_DIR)\lib\vc120\x64\NCSEcw.lib"
+ECWDLL = "$(ECWSDK_DIR)\bin\vc120\x64\NCSEcw.dll"
+!ELSE
+ECWLIB = "$(ECWSDK_DIR)\lib\vc120\win32\NCSEcw.lib"
+ECWDLL = "$(ECWSDK_DIR)\bin\vc120\win32\NCSEcw.dll"
+!ENDIF
+!ENDIF
+!ENDIF
 
 !IFDEF DEBUG
 BUILD_CONFIG=RelWithDebInfo
@@ -519,7 +560,6 @@ MS_PROJECT_CONFIG = "$(BUILD_CONFIG)|Win32"
 !ENDIF
 
 # directory layout
-
 !IFNDEF BASE_DIR
 BASE_DIR = $(MAKEDIR)
 !ENDIF
@@ -528,8 +568,24 @@ BASE_DIR = $(MAKEDIR)
 CMAKE_DIR = $(BASE_DIR)\cmake
 !ENDIF
 
-!IFNDEF NINJA_DIR
-NINJA_DIR = $(BASE_DIR)\ninja
+#finding cmake.exe
+!IF EXIST($(CMAKE_DIR)\bin\cmake.exe)
+CMAKE_EXE = $(CMAKE_DIR)\bin\cmake.exe
+!ELSE
+!IF [echo off && for /f "usebackq tokens=*" %i IN (`where cmake.exe`) DO echo found cmake in %i] == 0
+CMAKE_EXE = cmake.exe
+!ELSE
+!ERROR cmake.exe not found. Please install cmake into $(CMAKE_DIR) or make it available in the PATH environment variable!
+!ENDIF
+!ENDIF
+
+#finding ninja.exe
+!IF DEFINED(MS_FRIBIDI) && DEFINED(FRIBIDI_ENABLED)
+!IF [echo off && for /f "usebackq tokens=*" %i IN (`where ninja.exe`) DO echo found ninja in %i] == 0
+NINJA_EXE = ninja.exe
+!ELSE
+!ERROR ninja.exe not found. Please install ninja and make it available in the PATH environment variable!
+!ENDIF
 !ENDIF
 
 !IFNDEF JAVA_HOME
@@ -602,7 +658,7 @@ OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 
 EXTRAFLAGS =
 
-default: $(MAPSERVER_LIB)
+default: $(DEFAULT_TARGETS)
 
 test: $(LIBICONV_LIB)
 
@@ -610,6 +666,31 @@ test2: $(HDF4_LIB)
 
 op-disable:
     echo This operation is disabled!
+    
+gdal-clean:
+    if exist $(GDAL_OPT) del $(GDAL_OPT)
+
+check:
+    @cd $(BASE_DIR)\$(ZLIB_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo zlib - current: %%F built: $(ZLIB_BRANCH)
+    if exist $(BASE_DIR)\$(OPENSSL_DIR) cd $(BASE_DIR)\$(OPENSSL_DIR)
+    if exist $(BASE_DIR)\$(OPENSSL_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo openssl - current: %%F built: $(OPENSSL_BRANCH)
+    @if exist $(BASE_DIR)\$(CURL_DIR) cd $(BASE_DIR)\$(CURL_DIR)
+    @if exist $(BASE_DIR)\$(CURL_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo curl - current: %%F built: $(CURL_BRANCH)
+    @if exist $(BASE_DIR)\$(FREETYPE_DIR) cd $(BASE_DIR)\$(FREETYPE_DIR)
+    @if exist $(BASE_DIR)\$(FREETYPE_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo freetype - current: %%F built: $(FREETYPE_BRANCH)
+    @if exist $(BASE_DIR)\$(HARFBUZZ_DIR) cd $(BASE_DIR)\$(HARFBUZZ_DIR)
+    @if exist $(BASE_DIR)\$(HARFBUZZ_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo harfbuzz - current: %%F built: $(HARFBUZZ_BRANCH)
+    @if exist $(BASE_DIR)\$(FRIBIDI_DIR) cd $(BASE_DIR)\$(FRIBIDI_DIR)
+    @if exist $(BASE_DIR)\$(FRIBIDI_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo fribidi - current: %%F built: $(FRIBIDI_BRANCH)
+    @if exist $(BASE_DIR)\$(GEOS_DIR) cd $(BASE_DIR)\$(GEOS_DIR)
+    @if exist $(BASE_DIR)\$(GEOS_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo geos - current: %%F built: $(GEOS_BRANCH)
+    @if exist $(BASE_DIR)\$(PROJ4_DIR) cd $(BASE_DIR)\$(PROJ4_DIR)
+    @if exist $(BASE_DIR)\$(PROJ4_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo proj4 - current: %%F built: $(PROJ4_BRANCH)
+    @if exist $(BASE_DIR)\$(PROJ6_DIR) cd $(BASE_DIR)\$(PROJ6_DIR)
+    @if exist $(BASE_DIR)\$(PROJ6_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo proj6 - current: %%F built: $(PROJ6_BRANCH)
+
+    @cd $(BASE_DIR) 
 
 $(OUTPUT_DIR):
     if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
@@ -713,8 +794,8 @@ $(ZLIB_LIB): $(MSVCR_DLL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(ZLIB_DIR)\$(CMAKE_BUILDDIR)\install"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(ZLIB_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -763,8 +844,8 @@ $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB)
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zlib.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCMAKE_USE_OPENSSL=ON -DCMAKE_USE_LIBSSH2=OFF -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zlib.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCMAKE_USE_OPENSSL=ON -DCMAKE_USE_LIBSSH2=OFF -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -798,8 +879,8 @@ $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBPNG_DIR)\$(LIBPNG_VER)\$(CMAKE_BUILDDIR)\install"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBPNG_DIR)\$(LIBPNG_VER)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -849,8 +930,8 @@ $(FREETYPE_1): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
 !ENDIF
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\zlib.lib"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install  
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\zlib.lib"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
@@ -871,8 +952,8 @@ $(FREETYPE_2): $(FREETYPE_1) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_
 !ENDIF
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\zlib.lib"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install  
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\zlib.lib"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
@@ -894,8 +975,8 @@ $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HARFBUZZ_DIR)\$(CMAKE_BUILDDIR)\install" "-DHB_HAVE_FREETYPE=ON" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(OUTPUT_DIR)\lib\libpng16.lib $(OUTPUT_DIR)\lib\zlib.lib"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HARFBUZZ_DIR)\$(CMAKE_BUILDDIR)\install" "-DHB_HAVE_FREETYPE=ON" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(OUTPUT_DIR)\lib\libpng16.lib $(OUTPUT_DIR)\lib\zlib.lib"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
@@ -916,8 +997,8 @@ $(GEOS_LIB): $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=ON"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -941,8 +1022,8 @@ $(LIBEXPAT_LIB):
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBEXPAT_DIR)\expat\$(CMAKE_BUILDDIR)\install"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBEXPAT_DIR)\expat\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(LIBEXPAT_DIR)\expat\$(CMAKE_BUILDDIR)\install
     xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
@@ -963,8 +1044,8 @@ $(XERCES_LIB):
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)\install"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -988,8 +1069,8 @@ $(PROTOBUF_LIB): $(ZLIB_LIB)
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_DIR)\cmake\$(CMAKE_BUILDDIR)\install" "-Dprotobuf_BUILD_TESTS=OFF" 
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_DIR)\cmake\$(CMAKE_BUILDDIR)\install" "-Dprotobuf_BUILD_TESTS=OFF" 
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(PROTOBUF_DIR)\cmake\$(CMAKE_BUILDDIR)\install
     xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
@@ -1013,8 +1094,8 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
 !IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_C_DIR)\build-cmake\$(CMAKE_BUILDDIR)\install" "-DMSVC_STATIC_BUILD=ON"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_C_DIR)\build-cmake\$(CMAKE_BUILDDIR)\install" "-DMSVC_STATIC_BUILD=ON"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(PROTOBUF_C_DIR)\build-cmake\$(CMAKE_BUILDDIR)\install
     xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
@@ -1028,7 +1109,6 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
 $(FRIBIDI_LIB):
 !IFDEF FRIBIDI_ENABLED
     if not exist $(FRIBIDI_DIR) git clone -b $(FRIBIDI_BRANCH) $(FRIBIDI_SRC) $(FRIBIDI_DIR)
-    set NINJA = $(NINJA_DIR)
     cd $(FRIBIDI_DIR)
     git reset --hard HEAD
     git checkout $(FRIBIDI_BRANCH)
@@ -1037,8 +1117,8 @@ $(FRIBIDI_LIB):
 !ENDIF
 !IFNDEF NO_BUILD
     $(PYTHON_DIR)\Scripts\meson --prefix $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install --buildtype=release --backend=ninja $(CMAKE_BUILDDIR) -Ddocs=false
-    $(NINJA_DIR)\ninja -v -C $(CMAKE_BUILDDIR)
-    $(NINJA_DIR)\ninja -C $(CMAKE_BUILDDIR) install
+    ninja -v -C $(CMAKE_BUILDDIR)
+    ninja -C $(CMAKE_BUILDDIR) install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -1061,8 +1141,8 @@ $(PROJ4_LIB): $(MSVCRT_DLL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ4_DIR)\$(CMAKE_BUILDDIR)\install" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_LIBPROJ_SHARED=ON
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ4_DIR)\$(CMAKE_BUILDDIR)\install" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_LIBPROJ_SHARED=ON
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
     rem cd $(BASE_DIR)\$(PROJ4_DIR)\nad
     rem nmake /f makefile.vc install-all INSTDIR=$(BASE_DIR)\$(PROJ4_DIR)\$(CMAKE_BUILDDIR)\install PROJ_LIB_DIR=$(BASE_DIR)\$(PROJ4_DIR)\$(CMAKE_BUILDDIR)\install\share
 !ENDIF
@@ -1095,8 +1175,8 @@ $(PROJ6_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ6_DIR)\$(CMAKE_BUILDDIR)\install" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_LIBPROJ_SHARED=ON
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ6_DIR)\$(CMAKE_BUILDDIR)\install" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_LIBPROJ_SHARED=ON
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     if not exist $(OUTPUT_DIR)\bin\proj6 mkdir $(OUTPUT_DIR)\bin\proj6
     if not exist $(OUTPUT_DIR)\bin\proj6\apps mkdir $(OUTPUT_DIR)\bin\proj6\apps
@@ -1462,6 +1542,65 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
     @echo $(GDAL_CSHARP_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(GDAL_ECW_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_ECW_OPT)
+    echo ECW_PLUGIN = YES >> $(GDAL_ECW_OPT)
+    echo ECWDIR=$(ECWSDK_DIR) >> $(GDAL_ECW_OPT)
+    echo ECWLIB=$(ECWLIB) >> $(GDAL_ECW_OPT)
+    echo ECWFLAGS= $(ECWFLAGS) >> $(GDAL_ECW_OPT)
+
+$(GDAL_ECW_DLL): $(GDAL_LIB) $(GDAL_ECW_OPT)
+!IFDEF GDAL_ECW_ENABLED
+    cd $(GDAL_DIR)\gdal\frmts\ecw
+!IFNDEF NO_CLEAN
+    nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_ECW_OPT) _WIN32_WINNT=0x0500
+!ENDIF
+!IFNDEF NO_COPY
+!IFNDEF GDAL_ECW3
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+    xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ELSE
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+    xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
+!ENDIF    
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(GDAL_ECW_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(GDAL_MSSQL_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_MSSQL_OPT)
+    echo SQLNCLI_VERSION = $(SQLNCLI_VERSION) >> $(GDAL_MSSQL_OPT)
+    echo SQLNCLI_DIR = $(SQLNCLI_DIR) >> $(GDAL_MSSQL_OPT)
+!IFDEF WIN64
+	echo SQLNCLI_LIB = "$(SQLNCLI_DIR)\Lib\x64\sqlncli$(SQLNCLI_VERSION).lib" >> $(GDAL_MSSQL_OPT)
+!ELSE
+	echo SQLNCLI_LIB = "$(SQLNCLI_DIR)\Lib\x86\sqlncli$(SQLNCLI_VERSION).lib" >> $(GDAL_MSSQL_OPT)
+!ENDIF
+    echo SQLNCLI_INCLUDE = "-I$(SQLNCLI_DIR)\Include" -DSQLNCLI_VERSION=$(SQLNCLI_VERSION) -DMSSQL_BCP_SUPPORTED=1 >> $(GDAL_MSSQL_OPT)
+
+$(GDAL_MSSQL_DLL): $(GDAL_MSSQL_OPT)
+!IFDEF GDAL_MSSQL_ENABLED
+    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\mssqlspatial
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MSSQL_OPT)
+!ENDIF
+!IFNDEF NO_COPY
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(GDAL_MSSQL_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(MAPSERVER_LIB): $(MAPSERVER_DEPS) 
 !IFDEF MAPSERVER_ENABLED
     if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
@@ -1475,8 +1614,8 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) $(MAPSERVER_OPT)
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) $(MAPSERVER_OPT)
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
 	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
@@ -1551,8 +1690,8 @@ $(SZIP_LIB): $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install
     xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
@@ -1578,11 +1717,11 @@ $(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFDEF HDF4_SZIP
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
 !ELSE
-    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=OFF" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=OFF" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
 !ENDIF
-    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install
     xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
