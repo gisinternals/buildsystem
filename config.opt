@@ -1,9 +1,3 @@
-# common feature configuration flags
-#DEBUG = YES
-#NO_CLEAN = YES
-#NO_BUILD = YES
-BUILD_OUTDATED_TARGETS = YES
-
 # Prerequisite locations
 PYTHON_DIR = E:\builds\Python36
 
@@ -152,4 +146,16 @@ SZIP_SRC = https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1
 
 HDF4_DIR = $(SRC_DIR)\hdf4
 HDF4_SRC = https://support.hdfgroup.org/ftp/HDF/HDF_Current/src/hdf-4.2.13.zip
+
+ECWSDK_DIR = E:\buildsystem\support\ECWSDK\ERDAS ECW JPEG 2000 SDK 5.4.0
+ECWSDK_VERSION=54
+
+FILEGDB_API_DIR = E:\buildsystem\support\FileGDB_API_1_5_1-VS2017
+
+# common feature configuration flags
+#DEBUG = YES
+#NO_CLEAN = YES
+#NO_BUILD = YES
+BUILD_OUTDATED_TARGETS = YES
+
 
