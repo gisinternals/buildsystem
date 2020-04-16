@@ -145,18 +145,36 @@ CMAKE_BUILDDIR = vc15
 MSVC_VER = 1911
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
-CMAKE_BUILDDIR = vc17x64
+CMAKE_BUILDDIR = vc16x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 15 2017"
-CMAKE_BUILDDIR = vc17
+CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.15.26726.0"
 MSVC_VER = 1911
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
-CMAKE_BUILDDIR = vc17x64
+CMAKE_BUILDDIR = vc16x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc16
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.16.27034.0"
+MSVC_VER = 1911
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc16
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.22.27905.0"
+MSVC_VER = 1922
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x86
 CMAKE_BUILDDIR = vc17
 !ENDIF
 !ELSE
@@ -295,7 +313,7 @@ MAPMANAGER_DIR = MapManager-$(MS_VERSION)
 
 !IFNDEF CMAKE_DIR
 CMAKE_DIR = E:\builds\cmake-3.9.1-win32-x86
-#CMAKE_DIR = E:\builds\cmake-2.8.12.1-win32-x86
+#CMAKE_DIR = E:\builds\cmake-3.14.5-win32-x86
 !ENDIF
 
 !IF $(MSVC_VER) >= 1400
@@ -563,7 +581,7 @@ CURL_DIR = curl-7.37.1
 !ENDIF
 
 !IFNDEF OPENSSL_DIR
-OPENSSL_DIR = openssl-1.0.1h
+OPENSSL_DIR = openssl-1.1.1c
 !ENDIF
 
 !IFNDEF PDF_DIR
@@ -759,11 +777,11 @@ FITS_DIR=fits-3.14
 !IF $(MSVC_VER) == 1911
 !IFDEF WIN64
 !IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x64\setargv.obj")
-SETARGV = "$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x64\setargv.obj"
+SETARGV = "$(VCToolsInstallDir)lib\x64\setargv.obj"
 !ENDIF
 !ELSE
 !IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x86\setargv.obj")
-SETARGV = "$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x86\setargv.obj"
+SETARGV = "$(VCToolsInstallDir)lib\x86\setargv.obj"
 !ENDIF
 !ENDIF
 !ELSE
@@ -2757,8 +2775,38 @@ gd:
     xcopy /Y *.h $(OUTPUT_DIR)\include
 !ENDIF
 	cd $(BASE_DIR)
-	
+    
+    
 openssl:
+!IFDEF OPENSSL_DIR
+!IFDEF WIN64
+    cd $(OPENSSL_DIR)\x64
+    perl Configure VC-WIN64A no-asm
+!ELSE
+    cd $(OPENSSL_DIR)\Win32
+    perl Configure VC-WIN32 no-asm
+!ENDIF
+!IFNDEF NO_CLEAN
+	nmake clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake
+!ENDIF
+!IFNDEF NO_COPY
+    if not exist $(OUTPUT_DIR)\include\openssl mkdir $(OUTPUT_DIR)\include\openssl
+	xcopy /Y inc32\openssl\*.h $(OUTPUT_DIR)\include\openssl
+    xcopy /Y out32dll\libeay32.dll $(OUTPUT_DIR)\bin
+    xcopy /Y out32dll\libeay32.lib $(OUTPUT_DIR)\lib
+    xcopy /Y out32dll\ssleay32.dll $(OUTPUT_DIR)\bin
+    xcopy /Y out32dll\ssleay32.lib $(OUTPUT_DIR)\lib
+    if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
+    xcopy /Y out32dll\openssl.exe $(OUTPUT_DIR)\bin\curl
+!ENDIF 
+    cd $(BASE_DIR)
+!ENDIF    
+
+	
+openssl2:
 !IFDEF OPENSSL_DIR
 !IFDEF WIN64
     cd $(OPENSSL_DIR)\x64
@@ -3967,6 +4015,7 @@ spatialite:
     nmake /f makefile.vc clean
 !ENDIF
 !IFNDEF NO_BUILD
+    nmake /f makefile.vc
     xcopy /Y src\headers\*.h $(OUTPUT_DIR)\include
 	if exist $(OUTPUT_DIR)\include\spatialite rmdir /s /q $(OUTPUT_DIR)\include\spatialite
     mkdir $(OUTPUT_DIR)\include\spatialite
@@ -5120,51 +5169,51 @@ libopenjpeg2:
 msvcr:
 !IF $(MSVC_VER) == 1911
 !IFDEF WIN64
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x64\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x64\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x86\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\x86\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1900
 !IFDEF WIN64
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1800
 !IFDEF WIN64
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x64\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x64\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x86\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x86\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1700
 !IFDEF WIN64
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x64\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x64\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x64\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x64\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\redist\x86\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
 !IFDEF WIN64
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
 !ELSE
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%\redist\x86\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCInstallDir%\redist\x86\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1310
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcr71.dll" $(OUTPUT_DIR)\bin
