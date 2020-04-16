@@ -776,13 +776,9 @@ FITS_DIR=fits-3.14
 
 !IF $(MSVC_VER) == 1911
 !IFDEF WIN64
-!IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x64\setargv.obj")
 SETARGV = "$(VCToolsInstallDir)lib\x64\setargv.obj"
-!ENDIF
 !ELSE
-!IF EXIST("$(VCINSTALLDIR)Tools\MSVC\14.11.25503\lib\x86\setargv.obj")
 SETARGV = "$(VCToolsInstallDir)lib\x86\setargv.obj"
-!ENDIF
 !ENDIF
 !ELSE
 !IF $(MSVC_VER) == 1310
