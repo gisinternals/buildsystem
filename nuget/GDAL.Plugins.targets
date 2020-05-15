@@ -96,7 +96,7 @@
           Condition="'$(CollectGdalPluginFiles)' != 'false'">
     <ItemGroup>
       <FilesForPackagingFromProject Include="@(GdalPluginFiles)">
-        <DestinationRelativePath>bin\%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
+        <DestinationRelativePath>bin\gdal\%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
       </FilesForPackagingFromProject>
     </ItemGroup>
   </Target>
