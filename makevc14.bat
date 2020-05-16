@@ -65,6 +65,19 @@ set gdal-tag=%gdal_stable_tag%
 set logid=%compiler%-mapmanager-stable-dev
 cmd /C makemapmanager.bat
 
+:stable
+
+call setversions_gdal24.bat
+
+set logid=%compiler%-stable-%gdal_version%-%ms_version%
+set gdal-dir=gdal-%gdal_version%
+set ms-dir=mapserver-%ms_version%
+set msautotest-dir=msautotest-%ms_version%
+set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
+set gdal-tag=%gdal_stable_tag%
+
+cmd /C makepackage.bat
+
 @goto exit
 
 :rel
@@ -85,6 +98,22 @@ cmd /C makepackage.bat
 set logid=%compiler%-mapmanager-ms-%ms_version%
 cmd /C makemapmanager.bat
 
+@goto exit
+
+call setversions_gdal24.bat
+
+set logid=%compiler%-released-%gdal_version%-%ms_version%%variant%
+set gdal-dir=gdal-%gdal_version%
+set ms-dir=mapserver-%ms_version%
+set msautotest-dir=msautotest-%ms_version%
+set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%-%ms_rel%%variant%
+set MS_REVISION=%ms_rev%
+set GDAL_REVISION=%gdal_rev%
+set gdal-tag=%gdal_stable_tag%
+
+echo %pkg-version%
+
+cmd /C makepackage.bat
 
 :exit
 
