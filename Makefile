@@ -197,6 +197,26 @@ CMAKE_BUILDDIR = vc16
 !ENDIF
 !ENDIF
 
+!IF $(MSVC_VER) == 1911
+!IFDEF WIN64
+SETARGV = "$(VCToolsInstallDir)lib\x64\setargv.obj"
+!ELSE
+SETARGV = "$(VCToolsInstallDir)lib\x86\setargv.obj"
+!ENDIF
+!ELSE
+!IF $(MSVC_VER) == 1310
+VCDIR=$(VCINSTALLDIR)\vc7
+!ELSE
+VCDIR=$(VCINSTALLDIR)
+!ENDIF
+
+!IFDEF WIN64
+SETARGV = "$(VCDIR)\lib\amd64\setargv.obj"
+!ELSE
+SETARGV = "$(VCDIR)\lib\setargv.obj"
+!ENDIF
+!ENDIF
+
 !IFNDEF SERVER_URL
 SERVER_URL=http://www.gisinternals.com/sdk
 !ENDIF
@@ -212,13 +232,15 @@ SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\$(SWIG_VER)\swig.exe
 CYGWIN_DIR=E:\cygwin
 !ENDIF
 
+GDAL_DIR = $(GDAL_DIR)-$(CMAKE_BUILDDIR)
+
 #specify build targets
-MSVCR_DLL = $(OUTPUT_DIR)\build\msvcr.install
+MSVCRT_DLL = $(OUTPUT_DIR)\build\msvcr.install
 SWIG_INSTALL = $(OUTPUT_DIR)\build\$(SWIG_VER).install
 ZLIB_LIB = $(OUTPUT_DIR)\lib\zlib.lib
 OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
-CURL_EXE = $(OUTPUT_DIR)\bin\curl\curl.exe
+CURL_EXE = $(OUTPUT_DIR)\bin\curl.exe
 CURL_CA_BUNDLE = $(OUTPUT_DIR)\bin\curl-ca-bundle.crt
 LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16_static.lib
 JPEG_LIB = $(OUTPUT_DIR)\lib\libjpeg.lib
@@ -233,29 +255,52 @@ PGSQL_LIB = $(OUTPUT_DIR)\lib\libpq.lib
 PROJ4_LIB = $(OUTPUT_DIR)\lib\proj_4_9.lib
 PROJ6_LIB = $(OUTPUT_DIR)\lib\proj_6_2.lib
 SQLITE_LIB = $(OUTPUT_DIR)\lib\sqlite3.lib
-SPATIALITE_LIB = $(OUTPUT_DIR)\lib\spatialite.lib
+SPATIALITE_LIB = $(OUTPUT_DIR)\lib\spatialite_i.lib
 FREEXL_LIB = $(OUTPUT_DIR)\lib\freexl.lib
 LIBXML2_LIB = $(OUTPUT_DIR)\lib\libxml2.lib
-XERCES_LIB = $(OUTPUT_DIR)\lib\xerces-c_3D.lib
-LIBEXPAT_LIB = $(OUTPUT_DIR)\lib\expat.lib
+XERCES_LIB = $(OUTPUT_DIR)\lib\xerces-c_3.lib
+LIBEXPAT_LIB = $(OUTPUT_DIR)\lib\libexpat.lib
 PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
 PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\protobuf-c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
-GDAL_OPT = $(OUTPUT_DIR)\build\gdal.opt
-GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\gdal_csharp.opt
+GDAL_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal.opt
+GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_csharp.opt
+!IFDEF GDAL_CSHARP_DLL_NAME
+GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\$(GDAL_CSHARP_DLL_NAME)
+!ELSE
 GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
-GDAL_MSSQL_OPT = $(OUTPUT_DIR)\build\gdal_mssql.opt
+!ENDIF
+GDAL_MSSQL_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_mssql.opt
 GDAL_MSSQL_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-optional\ogr_MSSQLSpatial.dll
-GDAL_ECW_OPT = $(OUTPUT_DIR)\build\gdal_ecw.opt
+GDAL_ECW_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_ecw.opt
 GDAL_ECW_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_ECW_JP2ECW.dll
-GDAL_FILEGDB_OPT = $(OUTPUT_DIR)\build\gdal_filegdb.opt
-GDAL_FILEGDB_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\ogr_FileGDB.dll
+GDAL_FILEGDB_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_filegdb.opt
+GDAL_FILEGDB_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-external\ogr_FileGDB.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
 SZIP_LIB = $(OUTPUT_DIR)\lib\szip.lib
-HDF4_LIB = $(OUTPUT_DIR)\lib\hdf4.lib
+HDF4_LIB = $(OUTPUT_DIR)\lib\hdf.lib
+CAIRO_LIB = $(OUTPUT_DIR)\lib\cairo.lib
+PIXMAN_LIB = $(OUTPUT_DIR)\lib\pixman-1.lib
+FONTCONFIG_LIB = $(OUTPUT_DIR)\lib\fontconfig.lib
+URIPARSER_LIB = $(OUTPUT_DIR)\lib\uriparser.lib
+LIBSVG_LIB = $(OUTPUT_DIR)\lib\libsvg.lib
+LIBSVGCAIRO_LIB = $(OUTPUT_DIR)\lib\libsvg-cairo.lib
+LIBTIFF_LIB = $(OUTPUT_DIR)\lib\tiff.lib
+OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib
+POPPLER_LIB = $(OUTPUT_DIR)\lib\poppler.lib
+FCGI_LIB = $(OUTPUT_DIR)\lib\libfcgi.lib
+GIF_LIB = $(OUTPUT_DIR)\lib\giflib.lib
+LIBKML_LIB = $(OUTPUT_DIR)\lib\kmlbase.lib
+MINIZIP_LIB = $(OUTPUT_DIR)\lib\minizip.lib
+MYSQL_LIB = $(OUTPUT_DIR)\lib\libmysql.lib
+HDF5_LIB = $(OUTPUT_DIR)\lib\hdf5.lib
+KEA_LIB = $(OUTPUT_DIR)\lib\libkea.lib
+NETCDF_LIB = $(OUTPUT_DIR)\lib\netcdf.lib
+FITS_LIB = $(OUTPUT_DIR)\lib\cfitsio.lib
+BOOST_LIB = $(OUTPUT_DIR)\lib\boost.lib
 
 # set default targets (mapserver and the gdal plugins)
-DEFAULT_TARGETS = $(MAPSERVER_LIB)
+DEFAULT_TARGETS = 
 
 # set up gdal configuration
 GDAL_DEPS = $(OUTPUT_DIR) $(MSVCRT_DLL)
@@ -309,6 +354,30 @@ GDAL_DEPS = $(GDAL_DEPS) $(OPENJPEG_LIB)
 GDAL_DEPS = $(GDAL_DEPS) $(POPPLER_LIB)
 !ENDIF
 
+!IFDEF GDAL_LIBKML
+GDAL_DEPS = $(GDAL_DEPS) $(LIBKML_LIB)
+!ENDIF
+
+!IFDEF GDAL_HDF4
+GDAL_DEPS = $(GDAL_DEPS) $(HDF4_LIB)
+!ENDIF
+
+!IFDEF GDAL_HDF5
+GDAL_DEPS = $(GDAL_DEPS) $(HDF5_LIB)
+!ENDIF
+
+!IFDEF GDAL_FITS
+GDAL_DEPS = $(GDAL_DEPS) $(FITS_LIB)
+!ENDIF
+
+!IFDEF GDAL_KEA
+GDAL_DEPS = $(GDAL_DEPS) $(KEA_LIB)
+!ENDIF
+
+!IFDEF GDAL_NETCDF
+GDAL_DEPS = $(GDAL_DEPS) $(NETCDF_LIB)
+!ENDIF
+
 !IFDEF GDAL_ECW
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_ECW_DLL)
 !ENDIF
@@ -323,7 +392,7 @@ DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_MSSQL_DLL)
 
 
 # set up mapserver configuration
-MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=8.1 -DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB) "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)"
+MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=$(PLATFORMSDK_VERSION) "-DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB:\=/);$(URIPARSER_LIB:\=/)" "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)"
 MAPSERVER_DEPS = $(MSVCRT_DLL) $(JPEG_LIB) $(LIBPNG_LIB) $(FREETYPE_2)
 
 !IFNDEF MS_POSTGIS
@@ -335,6 +404,7 @@ MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PGSQL_LIB)
 !IFNDEF MS_PROTOBUFC
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROTOBUFC=0
 !ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROTOBUFC=1 "-DPROTOBUFC_COMPILER=$(OUTPUT_DIR:\=/)/bin/protoc.exe" "-DPROTOBUFC_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/protobuf-c"
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROTOBUF_C_LIB)
 !ENDIF
 
@@ -361,6 +431,13 @@ MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(LIBICONV_LIB)
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CAIRO=0
 !ELSE
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(CAIRO_LIB)
+!ENDIF
+
+!IFNDEF MS_SVG_CAIRO
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_SVGCAIRO=0
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_SVGCAIRO=1 "-DSVG_LIBRARY=$(LIBSVG_LIB:\=/)" "-DSVGCAIRO_LIBRARY=$(LIBSVGCAIRO_LIB:\=/)"
+MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(LIBSVG_LIB) $(LIBSVGCAIRO_LIB) $(URIPARSER_LIB)
 !ENDIF
 
 !IFNDEF MS_CURL
@@ -391,6 +468,7 @@ MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(LIBXML2_LIB)
 !IFNDEF MS_HARFBUZZ
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_HARFBUZZ=0
 !ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_HARFBUZZ=1 "-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/harfbuzz"
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(HARFBUZZ_LIB)
 !ENDIF
 
@@ -416,6 +494,8 @@ MAPSERVER_DEPS_ALL = $(MAPSERVER_DEPS) $(GDAL_LIB)
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_MSSQL2008=1
 !ENDIF
 
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(MAPSERVER_LIB)
+
 MS_EXTRAFLAGS_CC = -D_WIN32_WINNT=0x0601
 
 # Update enabled flags
@@ -427,96 +507,48 @@ GDAL_ECW_ENABLED = 1
 GDAL_FILEGDB_ENABLED = 1
 MAPSERVER_ENABLED = 1
 
-!IF !EXIST("$(ZLIB_LIB)")
+!IFDEF ENABLE_DEPENDENCIES
 ZLIB_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(OPENSSL_LIB)")
 OPENSSL_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(CURL_LIB)")
 CURL_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(LIBPNG_LIB)")
 LIBPNG_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(JPEG_LIB)")
 JPEG_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(HARFBUZZ_LIB)")
 FREETYPE_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(HARFBUZZ_LIB)")
 HARFBUZZ_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(GEOS_LIB)")
 GEOS_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(FRIBIDI_LIB)")
 FRIBIDI_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(LIBICONV_LIB)")
 LIBICONV_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(PGSQL_LIB)")
 PGSQL_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(PROJ6_LIB)")
 PROJ4_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(PROJ6_LIB)")
 PROJ6_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(SQLITE_LIB)")
 SQLITE_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(SPATIALITE_LIB)")
 SPATIALITE_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(FREEXL_LIB)")
 FREEXL_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(LIBXML2_LIB)")
 LIBXML2_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(LIBEXPAT_LIB)")
 XERCES_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(LIBEXPAT_LIB)")
 LIBEXPAT_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(PROTOBUF_LIB)")
 PROTOBUF_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(PROTOBUF_C_LIB)")
 PROTOBUF_C_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(SZIP_LIB)")
 SZIP_ENABLED = 1
-!ENDIF
-
-!IF !EXIST("$(HDF4_LIB)")
 HDF4_ENABLED = 1
+PIXMAN_ENABLED = 1
+CAIRO_ENABLED = 1
+FONTCONFIG_ENABLED = 1
+URIPARSER_ENABLED = 1
+LIBSVG_ENABLED = 1
+LIBSVGCAIRO_ENABLED = 1
+LIBTIFF_ENABLED = 1
+OPENJPEG_ENABLED = 1
+POPPLER_ENABLED = 1
+FCGI_ENABLED = 1
+GIF_ENABLED = 1
+MINIZIP_ENABLED = 1
+LIBKML_ENABLED = 1
+MYSQL_ENABLED = 1
+HDF5_ENABLED = 1
+KEA_ENABLED = 1
+FITS_ENABLED = 1
+BOOST_ENABLED = 1
 !ENDIF
 
 # ECW SDK locations
@@ -561,13 +593,13 @@ FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin\FileGDBAPI.dll"
 
 !IFDEF DEBUG
 BUILD_CONFIG=RelWithDebInfo
-MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG $(MS_EXTRAFLAGS_CC)" "-DCMAKE_C_FLAGS_RELEASE=/MD /Oi /Ob2 /D NDEBUG -D $(MS_EXTRAFLAGS_CC)"
+MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=/MD /Zi /Od" "-DCMAKE_C_FLAGS_RELWITHDEBINFO=/MD /Zi /Od $(MS_EXTRAFLAGS_CC)"
 !ELSE
 BUILD_CONFIG=Release
 !IFDEF MS_RELEASE_PDB
 MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELEASE=/MD /Zi /O2 $(MS_EXTRAFLAGS_CC)" "-DCMAKE_C_FLAGS_RELEASE=/MD /Zi /O2 $(MS_EXTRAFLAGS_CC)" "-DCMAKE_MODULE_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO" "-DCMAKE_SHARED_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO" "-DCMAKE_EXE_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO"
 !ELSE
-MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=/MD /Zi /Od" "-DCMAKE_C_FLAGS_RELWITHDEBINFO=/MD /Zi /Od $(MS_EXTRAFLAGS_CC)"
+
 !ENDIF
 !ENDIF
 
@@ -621,6 +653,22 @@ NINJA_EXE = ninja.exe
 !ENDIF
 !ENDIF
 
+#finding 7z.exe
+!IF [echo off && for /f "usebackq tokens=*" %i IN (`where 7z.exe`) DO echo found 7zip in %i] == 0
+7Z_EXE = 7z.exe
+!ELSE
+!ERROR 7z.exe not found. Please install 7zip and make it available in the PATH environment variable!
+!ENDIF
+
+#finding tclsh.exe
+!IF DEFINED(GDAL_SQLITE) && DEFINED(SQLITE_ENABLED)
+!IF [echo off && for /f "usebackq tokens=*" %i IN (`where tclsh.exe`) DO echo found tclsh in %i] == 0
+TCLSH_EXE = tclsh.exe
+!ELSE
+!ERROR tclsh.exe not found. Please install TCL and make it available in the PATH environment variable!
+!ENDIF
+!ENDIF
+
 !IFNDEF JAVA_HOME
 !IFDEF WIN64
 JAVA_HOME = C:\Java\jdk1.8.0_191x64
@@ -639,10 +687,6 @@ WIX_DIR = wix
 
 !IFNDEF PHPSDK_DIR
 PHPSDK_DIR = E:\php-sdk
-!ENDIF
-
-!IFNDEF GDAL_PATH
-GDAL_PATH = $(BASE_DIR)\$(GDAL_DIR)
 !ENDIF
 
 !IFNDEF SQLNCLI_VERSION
@@ -691,15 +735,18 @@ OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 
 EXTRAFLAGS =
 
-default: $(DEFAULT_TARGETS)
+default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(LIBICONV_LIB)
+test: $(OPENJPEG_LIB)
 
 show-dependencies:
     @echo $(GDAL_DEPS) $(MAPSERVER_DEPS)
 
 dependencies: $(GDAL_DEPS) $(MAPSERVER_DEPS)
     @echo DEPENDENCY BUILD COMPLETE !!!!
+    
+package-dependencies: dependencies
+    7z a -tzip -xr!release-$(COMPILER_VER)\bin\gdal* -xr!release-$(COMPILER_VER)\bin\ms -x!release-$(COMPILER_VER)\bin\mapserver* -x!release-$(COMPILER_VER)\bin\*gdal* release-$(COMPILER_VER).zip -x!release-$(COMPILER_VER)\build\*.opt -x!release-$(COMPILER_VER)\doc\*.txt -x!release-$(COMPILER_VER)\lib\gdal_i.lib -x!release-$(COMPILER_VER)\lib\mapserver.lib -xr!release-$(COMPILER_VER)\include\mapserver -x!release-$(COMPILER_VER)\include\cpl*.h -x!release-$(COMPILER_VER)\include\gdal*.h -x!release-$(COMPILER_VER)\include\memdataset.h -x!release-$(COMPILER_VER)\include\ogr*.h -x!release-$(COMPILER_VER)\include\commonutils.h -x!release-$(COMPILER_VER)\include\epsg_*.inc  release-$(COMPILER_VER)
 
 op-disable:
     @echo This operation is disabled!
@@ -709,8 +756,8 @@ gdal-clean:
     
 install:
     @if not exist $(INSTALL_SCRIPT) echo Unable to find $(INSTALL_SCRIPT). The install script doesn't exists
-    set ECWDLL=$(ECWDLL)
-    set FILEGDB_DLL=$(FILEGDB_DLL)
+    set ECWSDK_DIR=$(ECWSDK_DIR)
+    set FILEGDB_API_DIR=$(FILEGDB_API_DIR)
     @if exist $(INSTALL_SCRIPT) cmd /C $(INSTALL_SCRIPT)
 
 check:
@@ -736,6 +783,7 @@ check:
     @cd $(BASE_DIR) 
 
 $(OUTPUT_DIR):
+    if exist $(OUTPUT_DIR).zip 7z x -y $(OUTPUT_DIR).zip
     if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
     if not exist $(OUTPUT_DIR)\include mkdir $(OUTPUT_DIR)\include
     if not exist $(OUTPUT_DIR)\bin mkdir $(OUTPUT_DIR)\bin
@@ -744,88 +792,88 @@ $(OUTPUT_DIR):
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
     if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
 
-$(MSVCR_DLL): $(OUTPUT_DIR)
+$(MSVCRT_DLL): $(OUTPUT_DIR)
 !IF $(MSVC_VER) >= 1922
 !IFDEF WIN64
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
-    echo msvcr140-x64 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
-    echo msvcr140-x86 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) >= 1911
 !IFDEF WIN64
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
-    echo msvcr140-x64 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
-    echo msvcr140-x86 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1900
 !IFDEF WIN64
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
-    echo msvcr140-x64 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC140.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC140.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
-    echo msvcr140-x86 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1800
 !IFDEF WIN64
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
-    echo msvcr120-x64 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr120-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC120.CRT\msvcr120.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC120.CRT\msvcp120.dll" $(OUTPUT_DIR)\bin
-    echo msvcr120-x86> $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr120-x86> $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1700
 !IFDEF WIN64
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
-    echo msvcr110-x64 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr110-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC110.CRT\msvcr110.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC110.CRT\msvcp110.dll" $(OUTPUT_DIR)\bin
-    echo msvcr110-x86 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr110-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1600
 !IFDEF WIN64
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x64\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
-    echo msvcr100-x64 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr100-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC100.CRT\msvcr100.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%redist\x86\Microsoft.VC100.CRT\msvcp100.dll" $(OUTPUT_DIR)\bin
-    echo msvcr100-x86 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr100-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1500
 !IFDEF WIN64
     xcopy /Y "%VCInstallDir%\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
-    echo msvcr90-x64 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr90-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCInstallDir%\redist\x86\Microsoft.VC90.CRT\msvcr90.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCInstallDir%\redist\x86\Microsoft.VC90.CRT\msvcp90.dll" $(OUTPUT_DIR)\bin
-    echo msvcr90-x86 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr90-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1310
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcr71.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "C:\Program Files (x86)\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcp71.dll" $(OUTPUT_DIR)\bin
-    echo msvcr71 > $(MSVCR_DLL)
+    if not exist $(MSVCRT_DLL) echo msvcr71 > $(MSVCRT_DLL)
 !ENDIF
     
-$(ZLIB_LIB): $(MSVCR_DLL)
+$(ZLIB_LIB): $(MSVCRT_DLL)
 !IFDEF ZLIB_ENABLED
     if not exist $(ZLIB_DIR) git clone -b $(ZLIB_BRANCH) $(ZLIB_SRC) $(ZLIB_DIR)
     cd $(BASE_DIR)\$(ZLIB_DIR)
@@ -843,6 +891,7 @@ $(ZLIB_LIB): $(MSVCR_DLL)
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y /S install\*.pc $(OUTPUT_DIR)
     cd $(BASE_DIR)
 !ELSE
     @echo $(ZLIB_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -855,9 +904,9 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
     git reset --hard HEAD
     git checkout $(OPENSSL_BRANCH)
 !IFDEF WIN64
-    perl Configure VC-WIN64A no-asm enable-zlib --with-zlib-lib=$(OUTPUT_DIR)\lib\zlib.lib -I$(OUTPUT_DIR)\include
+    perl Configure VC-WIN64A no-asm enable-zlib --with-zlib-lib=$(ZLIB_LIB) -I$(OUTPUT_DIR)\include
 !ELSE
-    perl Configure VC-WIN32 no-asm enable-zlib --with-zlib-lib=$(OUTPUT_DIR)\lib\zlib.lib -I$(OUTPUT_DIR)\include
+    perl Configure VC-WIN32 no-asm enable-zlib --with-zlib-lib=$(ZLIB_LIB) -I$(OUTPUT_DIR)\include
 !ENDIF
 !IFNDEF NO_CLEAN
 	nmake clean
@@ -887,7 +936,7 @@ $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB)
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zlib.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCMAKE_USE_OPENSSL=ON -DCMAKE_USE_LIBSSH2=OFF -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(ZLIB_LIB) -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCMAKE_USE_OPENSSL=ON -DCMAKE_USE_LIBSSH2=OFF -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -905,7 +954,7 @@ $(CURL_CA_BUNDLE): $(CURL_EXE)
 !IFDEF CURL_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    $(CURL_EXE) -o "$(CURL_CA_BUNDLE)" "http://curl.haxx.se/ca/cacert.pem"
+    $(CURL_EXE) -L -k -o "$(CURL_CA_BUNDLE)" "http://curl.haxx.se/ca/cacert.pem"
 !ENDIF
     
 $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
@@ -919,14 +968,16 @@ $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBPNG_DIR)\$(LIBPNG_VER)\$(CMAKE_BUILDDIR)\install"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    if not exist $(OUTPUT_DIR)\lib\libpng mkdir $(OUTPUT_DIR)\lib\libpng
+    xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ELSE
@@ -942,16 +993,17 @@ $(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
     if not exist $(JPEG_VER) $(CURL_EXE) -L -k -o "jpeg.zip" "$(JPEG_SRC)" & 7z x -y jpeg.zip  
     xcopy /Y $(BASE_DIR)\support\win32.mak $(BASE_DIR)\$(JPEG_DIR)\$(JPEG_VER)
 	cd $(JPEG_VER)
+    powershell -Command "(gc makefile.vc) -replace 'cvars\)', 'cvarsdll)' | Out-File -encoding ASCII makefile.vc
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 	del *.manifest
 !ENDIF
 !IFNDEF NO_BUILD
-    if not exist jconfig.h nmake /f makefile.vc  setup-v15
+    if not exist jconfig.h nmake /f makefile.vc  setup-v16
 !IF $(MSVC_VER) >= 1400
-	nmake /f makefile.vc libjpeg.lib "EXTRAFLAGS=/D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE"
+	nmake /f makefile.vc libjpeg.lib "EXTRAFLAGS=/D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE" NODEBUG=1
 !ELSE
-	nmake /f makefile.vc libjpeg.lib
+	nmake /f makefile.vc libjpeg.lib NODEBUG=1
 !ENDIF
 !ENDIF
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
@@ -969,15 +1021,13 @@ $(FREETYPE_1): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
     git checkout $(FREETYPE_BRANCH)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
-    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 !ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\zlib.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
-    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
-    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     echo freetype phase 1 > $(FREETYPE_1)
 	cd $(BASE_DIR)
 !ELSE
@@ -991,11 +1041,11 @@ $(FREETYPE_2): $(FREETYPE_1) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_
     git checkout $(FREETYPE_BRANCH)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
-    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 !ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\zlib.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -1015,17 +1065,164 @@ $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HARFBUZZ_DIR)\$(CMAKE_BUILDDIR)\install" "-DHB_HAVE_FREETYPE=ON" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(OUTPUT_DIR)\lib\libpng16.lib $(OUTPUT_DIR)\lib\zlib.lib"
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DHB_HAVE_FREETYPE=ON" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(OUTPUT_DIR)\lib\libpng16.lib $(ZLIB_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(HARFBUZZ_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(FREETYPE_LIB): $(FREETYPE_2)
+
+$(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB)
+!IFDEF POPPLER_ENABLED
+    if not exist $(POPPLER_DIR) git clone -b $(POPPLER_BRANCH) $(POPPLER_SRC) $(POPPLER_DIR)
+    cd $(BASE_DIR)\$(POPPLER_DIR)
+    git reset --hard HEAD
+    git checkout $(POPPLER_BRANCH)
+    powershell -Command "(gc CMakeLists.txt) -replace 'macro_ensure_version', '#macro_ensure_version' | Out-File -encoding ASCII CMakeLists.txt"
+    cd utils
+    powershell -Command "(gc pdftocairo.cc) -replace 'strcasecmp', '_stricmp' | Out-File -encoding ASCII pdftocairo.cc"
+    cd ..
+    cd goo
+    powershell -Command "(gc JpegWriter.cc) -replace '// JpegWriter.cc', '#include <basetsd.h>' | Out-File -encoding ASCII JpegWriter.cc"
+    cd ..
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\freetype.lib;$(OUTPUT_DIR)\lib\harfbuzz.lib"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\lib\poppler.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(POPPLER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(LIBTIFF_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB)
+!IFDEF LIBTIFF_ENABLED
+    if not exist $(LIBTIFF_DIR) git clone -b $(LIBTIFF_BRANCH) $(LIBTIFF_SRC) $(LIBTIFF_DIR)
+    cd $(BASE_DIR)\$(LIBTIFF_DIR)
+    git reset --hard HEAD
+    git checkout $(LIBTIFF_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBTIFF_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ELSE
-    @echo $(HARFBUZZ_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+    @echo $(LIBTIFF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(OPENJPEG_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB)
+!IFDEF OPENJPEG_ENABLED
+    if not exist $(OPENJPEG_DIR) git clone -b $(OPENJPEG_BRANCH) $(OPENJPEG_SRC) $(OPENJPEG_DIR)
+    cd $(BASE_DIR)\$(OPENJPEG_DIR)
+    git reset --hard HEAD
+    git checkout $(OPENJPEG_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(OPENJPEG_DIR)\$(CMAKE_BUILDDIR)\install" "-DTIFF_LIBRARY=$(LIBTIFF_LIB)" "-DZLIB_LIBRARY=$(ZLIB_LIB)"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\bin\openjp2.dll $(OUTPUT_DIR)\bin
+    xcopy /Y install\bin\opj*.exe $(OUTPUT_DIR)\bin
+    xcopy /Y install\lib\openjp2.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
+    if not exist $(OUTPUT_DIR)\include\openjpeg-2.3 mkdir $(OUTPUT_DIR)\include\openjpeg-2.3
+    xcopy /Y /S install\include\openjpeg-2.3\*.h $(OUTPUT_DIR)\include\openjpeg-2.3
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(OPENJPEG_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(URIPARSER_LIB): $(MSVCRT_DLL)
+!IFDEF URIPARSER_ENABLED
+    if not exist $(URIPARSER_DIR) git clone -b $(URIPARSER_BRANCH) $(URIPARSER_SRC) $(URIPARSER_DIR)
+    cd $(BASE_DIR)\$(URIPARSER_DIR)
+    git reset --hard HEAD
+    git checkout $(URIPARSER_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DBUILD_SHARED_LIBS=OFF" "-DURIPARSER_BUILD_DOCS=OFF" "-DURIPARSER_BUILD_TESTS=OFF" "-DURIPARSER_BUILD_TOOLS=OFF" "-DURIPARSER_MSVC_RUNTIME=/MD"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(URIPARSER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(LIBSVG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(URIPARSER_LIB) $(JPEG_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(CURL_LIB) $(LIBEXPAT_LIB)
+!IFDEF LIBSVG_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(LIBSVG_DIR) mkdir $(LIBSVG_DIR)
+    cd $(LIBSVG_DIR)
+    if not exist $(LIBSVG_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBSVG_VER).tar.gz" "$(LIBSVG_SRC)"
+    if not exist $(LIBSVG_VER) 7z e -y $(LIBSVG_VER).tar.gz && 7z x -y $(LIBSVG_VER).tar
+    xcopy /Y $(BASE_DIR)\support\libsvg\Makefile.vc $(LIBSVG_VER)\src
+    cd $(LIBSVG_VER)\src
+    powershell -Command "(gc svg_image.c) -replace 'png_set_gray_1_2_4_to_8', 'png_set_expand_gray_1_2_4_to_8' | Out-File -encoding ASCII svg_image.c
+!IFNDEF NO_CLEAN
+    nmake -f makefile.vc clean SDK_DIR=$(OUTPUT_DIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake -f makefile.vc SDK_DIR=$(OUTPUT_DIR)
+	cd ..
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(LIBSVG_DIR)\$(LIBSVG_VER)\src\libsvg.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(LIBSVG_DIR)\$(LIBSVG_VER)\src\svg.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBSVG_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(LIBSVGCAIRO_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(LIBSVG_LIB) $(CAIRO_LIB)
+!IFDEF LIBSVG_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(LIBSVGCAIRO_DIR) mkdir $(LIBSVGCAIRO_DIR)
+    cd $(LIBSVGCAIRO_DIR)
+    if not exist $(LIBSVGCAIRO_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBSVGCAIRO_VER).tar.gz" "$(LIBSVGCAIRO_SRC)"
+    if not exist $(LIBSVGCAIRO_VER) 7z e -y $(LIBSVGCAIRO_VER).tar.gz && 7z x -y $(LIBSVGCAIRO_VER).tar
+    xcopy /Y $(BASE_DIR)\support\libsvg-cairo\Makefile.vc $(LIBSVGCAIRO_VER)\src
+    cd $(LIBSVGCAIRO_VER)\src
+!IFNDEF NO_CLEAN
+    nmake -f makefile.vc clean SDK_DIR=$(OUTPUT_DIR)
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake -f makefile.vc SDK_DIR=$(OUTPUT_DIR)
+	cd ..
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(LIBSVGCAIRO_DIR)\$(LIBSVGCAIRO_VER)\src\libsvg-cairo.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(LIBSVGCAIRO_DIR)\$(LIBSVGCAIRO_VER)\src\svg-cairo.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBSVGCAIRO_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(GEOS_LIB): $(MSVCRT_DLL)
@@ -1037,14 +1234,15 @@ $(GEOS_LIB): $(MSVCRT_DLL)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=ON"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
@@ -1062,14 +1260,15 @@ $(LIBEXPAT_LIB):
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBEXPAT_DIR)\expat\$(CMAKE_BUILDDIR)\install"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(LIBEXPAT_DIR)\expat\$(CMAKE_BUILDDIR)\install
     xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S lib\*.cmake $(OUTPUT_DIR)\lib
     xcopy /Y bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
@@ -1084,14 +1283,16 @@ $(XERCES_LIB):
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)\install"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(XERCES_DIR)\$(CMAKE_BUILDDIR)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S install\include\* $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
@@ -1109,16 +1310,12 @@ $(PROTOBUF_LIB): $(ZLIB_LIB)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_DIR)\cmake\$(CMAKE_BUILDDIR)\install" "-Dprotobuf_BUILD_TESTS=OFF" 
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-Dprotobuf_BUILD_TESTS=OFF" 
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
-    cd $(BASE_DIR)\$(PROTOBUF_DIR)\cmake\$(CMAKE_BUILDDIR)\install
-    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
-    xcopy /Y bin\*.exe $(OUTPUT_DIR)\bin
-    xcopy /Y /S include\* $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ELSE
     @echo $(PROTOBUF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1134,16 +1331,12 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROTOBUF_C_DIR)\build-cmake\$(CMAKE_BUILDDIR)\install" "-DMSVC_STATIC_BUILD=ON"
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DMSVC_STATIC_BUILD=ON"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
-    cd $(BASE_DIR)\$(PROTOBUF_C_DIR)\build-cmake\$(CMAKE_BUILDDIR)\install
-    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
-    xcopy /Y bin\*.exe $(OUTPUT_DIR)\bin
-    xcopy /Y /S include\* $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ELSE
     @echo $(PROTOBUF_C_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1249,7 +1442,7 @@ $(SQLITE_LIB): $(MSVCRT_DLL)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f Makefile.msc sqlite3.c
-    cl sqlite3.c -DSQLITE_API=__declspec(dllexport) -link -dll -out:sqlite3.dll
+    cl sqlite3.c -DSQLITE_API=__declspec(dllexport) -DSQLITE_ENABLE_COLUMN_METADATA=1 -link -dll -out:sqlite3.dll
     nmake /f Makefile.msc sqlite3.exe
 !ENDIF
 !IFNDEF NO_COPY
@@ -1285,7 +1478,7 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
     nmake /f makefile.vc clean
 !ENDIF
 !IFNDEF NO_BUILD
-	echo INSTDIR=$(BASE_DIR)\$(FREEXL_DIR)\install >nmake.opt
+	echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
     echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
     powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
     cd src
@@ -1293,25 +1486,24 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
     cd ..
     nmake /f makefile.vc install "LIBDIR=$(OUTPUT_DIR)\lib"
 !ENDIF
-    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\include\*.h $(OUTPUT_DIR)\include
-    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
-    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     cd $(BASE_DIR)
 !ELSE
     @echo $(FREEXL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
-!IFDEF SQLITE_ENABLED
+!IFDEF SPATIALITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SPATIALITE_DIR) mkdir $(SPATIALITE_DIR)
     cd $(SPATIALITE_DIR)
-    if not exist $(SPATIALITE_VER) $(CURL_EXE) -L -k -o "spatialite.zip" "$(SPATIALITE_SRC)" & 7z x -y spatialite.zip
-    cd $(SPATIALITE_VER)
+    if not exist spatialite.zip $(CURL_EXE) -L -k -o "spatialite.zip" "$(SPATIALITE_SRC)"
 !IFNDEF NO_CLEAN
-    nmake /f makefile.vc clean
+    if exist $(SPATIALITE_VER) rmdir /s /q $(SPATIALITE_VER)
+    rem nmake /f makefile.vc clean
 !ENDIF
+    if not exist $(SPATIALITE_VER) 7z x -y spatialite.zip
+    cd $(SPATIALITE_VER)
 !IFNDEF NO_BUILD
     powershell -Command "(gc config-msvc.h) -replace '#define HAVE_UNISTD_H 1', '/* #undef HAVE_UNISTD_H */' | Out-File -encoding ASCII config-msvc.h"
     powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
@@ -1326,6 +1518,7 @@ $(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(F
     nmake /f makefile.vc install LIBDIR=$(OUTPUT_DIR)\lib
 !ENDIF
     xcopy /Y /S $(BASE_DIR)\$(SPATIALITE_DIR)\install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y $(OUTPUT_DIR)\include\sqlite3.h $(OUTPUT_DIR)\include\spatialite
     xcopy /Y $(BASE_DIR)\$(SPATIALITE_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(SPATIALITE_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     cd $(BASE_DIR)
@@ -1364,7 +1557,7 @@ $(GDAL_OPT):
 	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo PYDIR=$(PYDIR) >> $(GDAL_OPT)
 	echo $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-	echo GDAL_ROOT=$(GDAL_PATH)\gdal >> $(GDAL_OPT)
+	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR)\gdal >> $(GDAL_OPT)
 !IFDEF GDAL_GEOS
     echo GEOS_DIR=$(BASE_DIR)\$(GEOS_DIR) >> $(GDAL_OPT)
     echo GEOS_CFLAGS=-I$(OUTPUT_DIR)\include -DHAVE_GEOS >> $(GDAL_OPT)
@@ -1377,9 +1570,14 @@ $(GDAL_OPT):
 !ENDIF
 !IFDEF DEBUG
     echo DEBUG=$(DEBUG) >> $(GDAL_OPT)
-    echo OPTFLAGS= /nologo /MP /MD /Zi /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(GDAL_OPT)   
+    echo OPTFLAGS= /nologo /MP /MD /Zi /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(GDAL_OPT) 
+!ELSE
+!IFDEF GDAL_RELEASE_PDB
+    echo OPTFLAGS= /nologo /MD /Zi /EHsc /O2 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE >> $(GDAL_OPT)
+    echo WITH_PDB=1 >> $(GDAL_OPT)  
+!ENDIF    
 !ENDIF
-    rem echo SETARGV=$(SETARGV) >> $(GDAL_OPT)
+    echo SETARGV=$(SETARGV) >> $(GDAL_OPT)
 !IFDEF GDAL_POSTGIS
     echo PG_INC_DIR = $(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo PG_LIB = $(PGSQL_LIB) wsock32.lib >> $(GDAL_OPT)
@@ -1410,7 +1608,7 @@ $(GDAL_OPT):
     echo spatialite - $(SPATIALITE_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_KMLSUPEROVERLAY
-!IF EXIST ($(GDAL_PATH)\frmts\kmlsuperoverlay)
+!IF EXIST ($(GDAL_DIR)\frmts\kmlsuperoverlay)
     echo KMLSUPEROVERLAY_SUPPORTED = YES >> $(GDAL_OPT)
     echo MINIZIP_INCLUDE = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo MINIZIP_LIBRARY = $(OUTPUT_DIR)\lib\minizip.lib >> $(GDAL_OPT)
@@ -1424,21 +1622,21 @@ $(GDAL_OPT):
 !IFDEF GDAL_XERCES
     echo XERCES_DIR=$(BASE_DIR)\$(XERCES_DIR) >> $(GDAL_OPT)
     echo XERCES_INCLUDE=-I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\xercesc >> $(GDAL_OPT)
-    echo XERCES_LIB=$(OUTPUT_DIR)\lib\xerces-c_3.lib >> $(GDAL_OPT)
+    echo XERCES_LIB=$(XERCES_LIB) >> $(GDAL_OPT)
     echo $(XERCES_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo ILI_ENABLED = YES >> $(GDAL_OPT)
 !ENDIF
 !IFDEF GDAL_EXPAT
     echo EXPAT_DIR=$(BASE_DIR)\$(EXPAT_DIR) >> $(GDAL_OPT)
     echo EXPAT_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo EXPAT_LIB=$(OUTPUT_DIR)\lib\expat.lib >> $(GDAL_OPT)
+    echo EXPAT_LIB=$(LIBEXPAT_LIB) >> $(GDAL_OPT)
     echo $(EXPAT_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_LIBKML
 !IFDEF LIBKML_DIR
     echo LIBKML_DIR=$(BASE_DIR)\$(LIBKML_DIR) >> $(GDAL_OPT)
     echo LIBKML_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo LIBKML_LIBS=$(OUTPUT_DIR)\lib\libkmlbase.lib $(OUTPUT_DIR)\lib\libkmlconvenience.lib $(OUTPUT_DIR)\lib\libkmldom.lib $(OUTPUT_DIR)\lib\libkmlengine.lib $(OUTPUT_DIR)\lib\libkmlregionator.lib $(OUTPUT_DIR)\lib\libkmlxsd.lib $(OUTPUT_DIR)\lib\expat.lib $(OUTPUT_DIR)\lib\zdll.lib >> $(GDAL_OPT)
+    echo LIBKML_LIBS=$(OUTPUT_DIR)\lib\libkmlbase.lib $(OUTPUT_DIR)\lib\libkmlconvenience.lib $(OUTPUT_DIR)\lib\libkmldom.lib $(OUTPUT_DIR)\lib\libkmlengine.lib $(OUTPUT_DIR)\lib\libkmlregionator.lib $(OUTPUT_DIR)\lib\libkmlxsd.lib $(OUTPUT_DIR)\lib\libexpat.lib $(OUTPUT_DIR)\lib\zdll.lib >> $(GDAL_OPT)
     echo $(LIBKML_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !ENDIF
@@ -1449,24 +1647,14 @@ $(GDAL_OPT):
     echo POPPLER_0_20_OR_LATER = YES >> $(GDAL_OPT)
     echo POPPLER_0_23_OR_LATER = YES >> $(GDAL_OPT)
     echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
-    echo POPPLER_LIBS = $(OUTPUT_DIR)\lib\poppler.lib $(OUTPUT_DIR)\lib\$(FT_LIB) $(OUTPUT_DIR)\lib\harfbuzz.lib advapi32.lib gdi32.lib >> $(GDAL_OPT)
+    echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
     echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
     echo OPENJPEG_ENABLED = YES >> $(GDAL_OPT)
-!IFDEF USE_OPENJP2_NEW_METHOD
-    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include\openjpeg-2.1 >> $(GDAL_OPT)
-    echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(GDAL_OPT)
+    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include\openjpeg-2.3 >> $(GDAL_OPT)
+    echo OPENJPEG_LIB = $(OPENJPEG_LIB) >> $(GDAL_OPT)
     echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-!ELSEIFDEF USE_OPENJP2
-    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib >> $(GDAL_OPT)
-    echo OPENJPEG_VERSION = 20100 >> $(GDAL_OPT)
-    echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-!ELSE
-    echo OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjpeg.lib >> $(GDAL_OPT)
-    echo $(OPENJPEG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-!ENDIF
 !ENDIF
 !IFDEF GDAL_TIFF
     echo TIFF_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
@@ -1511,7 +1699,11 @@ $(GDAL_OPT):
 !ENDIF
 !IFDEF USE_PROJ6
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(GDAL_OPT)
-    echo PROJ_LIBRARY = $(OUTPUT_DIR)\lib\proj_6_1.lib >> $(GDAL_OPT)
+    echo PROJ_LIBRARY = $(PROJ6_LIB) >> $(GDAL_OPT)
+!ELSE
+    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(GDAL_OPT)
+    echo PROJ_LIBRARY = $(PROJ4_LIB) >> $(GDAL_OPT)
+    echo PROJ_FLAGS = -DPROJ_STATIC -DPROJ_VERSION=4 >> $(GDAL_OPT)
 !ENDIF
 !ENDIF
 
@@ -1554,6 +1746,10 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins del $(OUTPUT_DIR)\bin\gdal\plugins\*.dll
     if exist $(OUTPUT_DIR)\bin\gdal\plugins-optional del $(OUTPUT_DIR)\bin\gdal\plugins-optional\*.dll
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins-external del $(OUTPUT_DIR)\bin\gdal\plugins-external\*.dll
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y *.pdb $(OUTPUT_DIR)\bin
+    xcopy /Y apps\*.pdb $(OUTPUT_DIR)\bin\gdal\apps
+!ENDIF
 	cd $(BASE_DIR)
 !ELSE
     @echo $(GDAL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1580,6 +1776,9 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\csharp
 	xcopy /Y *.exe $(OUTPUT_DIR)\bin\gdal\csharp
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y *.pdb $(OUTPUT_DIR)\bin\gdal\csharp
+!ENDIF
 	cd $(BASE_DIR)
 !ELSE
     @echo $(GDAL_CSHARP_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1605,9 +1804,15 @@ $(GDAL_ECW_DLL): $(GDAL_LIB) $(GDAL_ECW_OPT)
 !IFNDEF GDAL_ECW3
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
     xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y gdal_ECW_JP2ECW.pdb $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
 !ELSE
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
     xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y gdal_ECW_JP2ECW.pdb $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
 !ENDIF
 !ENDIF    
     cd $(BASE_DIR)
@@ -1638,6 +1843,9 @@ $(GDAL_FILEGDB_DLL): $(GDAL_LIB) $(GDAL_FILEGDB_OPT)
 !ENDIF
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-external mkdir $(OUTPUT_DIR)\bin\gdal\plugins-external
 	xcopy /Y ogr_FileGDB.dll $(OUTPUT_DIR)\bin\gdal\plugins-external
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y ogr_FileGDB.pdb $(OUTPUT_DIR)\bin\gdal\plugins-external
+!ENDIF
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -1664,6 +1872,9 @@ $(GDAL_MSSQL_DLL): $(GDAL_MSSQL_OPT)
 !IFNDEF NO_COPY
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
 	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y ogr_MSSQLSpatial.pdb $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ELSE
@@ -1672,6 +1883,7 @@ $(GDAL_MSSQL_DLL): $(GDAL_MSSQL_OPT)
 
 $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL) 
 !IFDEF MAPSERVER_ENABLED
+    set PATH=$(OUTPUT_DIR)\bin;$(PATH)
     if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
 	cd $(MAPSERVER_DIR) 
 !IFNDEF NO_CLEAN
@@ -1744,6 +1956,33 @@ $(PGSQL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL)
     @echo $(PGSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.    
 !ENDIF
 
+$(FITS_LIB): $(MSVCRT_DLL)
+!IFDEF FITS_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(FITS_DIR) mkdir $(FITS_DIR)
+    cd $(FITS_DIR)
+    if not exist $(FITS_VER).tar.gz $(CURL_EXE) -L -k -o "$(FITS_VER).tar.gz" "$(FITS_SRC)"
+    if not exist $(FITS_VER) 7z e -y $(FITS_VER).tar.gz && 7z x -y $(FITS_VER).tar
+    cd $(FITS_VER)
+!IFNDEF NO_CLEAN
+    if exist cmake rd /Q /S cmake
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist cmake mkdir cmake
+	cd cmake
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install\bin\cfitsio.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install\lib\cfitsio.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install\include\fitsio.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install\include\longnam.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(FITS_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(SZIP_LIB): $(MSVCRT_DLL)
 !IFDEF SZIP_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
@@ -1782,9 +2021,9 @@ $(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
-!IFNDEF NO_BUILD
-	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
 !IFDEF HDF4_SZIP
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
 !ELSE
@@ -1803,6 +2042,209 @@ $(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 !ELSE
     @echo $(HDF4_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
+
+$(HDF5_LIB): $(MSVCRT_DLL) $(SZIP_LIB) $(ZLIB_LIB)
+!IFDEF HDF5_ENABLED
+    if not exist $(HDF5_DIR) git clone -b $(HDF5_BRANCH) $(HDF5_SRC) $(HDF5_DIR)
+    cd $(BASE_DIR)\$(HDF5_DIR)
+    git reset --hard HEAD
+    git checkout $(HDF5_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON" "-DHDF5_BUILD_EXAMPLES=OFF" "-DHDF5_BUILD_TOOLS=OFF"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
+    xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y install\bin\hdf5*.dll $(OUTPUT_DIR)\bin
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(HDF5_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(KEA_LIB): $(MSVCRT_DLL) $(HDF5_LIB)
+!IFDEF KEA_ENABLED
+    if not exist $(KEA_DIR) git clone -b $(KEA_BRANCH) $(KEA_SRC) $(KEA_DIR)
+    cd $(BASE_DIR)\$(KEA_DIR)
+    git reset --hard HEAD
+    git checkout $(KEA_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(KEA_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y /S install\*.h $(OUTPUT_DIR)
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(KEA_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
+!IFDEF KEA_ENABLED
+    if not exist $(NETCDF_DIR) git clone -b $(NETCDF_BRANCH) $(NETCDF_SRC) $(NETCDF_DIR)
+    cd $(BASE_DIR)\$(NETCDF_DIR)
+    git reset --hard HEAD
+    git checkout $(NETCDF_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(OUTPUT_DIR)\cmake\hdf5" "-DBUILD_SHARED_LIBS=ON" "-DENABLE_HDF4=ON" "-DHDF4_DF_LIB=$(OUTPUT_DIR)\lib\hdf.lib" "-DHDF4_MFHDF_LIB=$(OUTPUT_DIR)\lib\mfhdf.lib" "-DMFHDF_H_INCLUDE_DIR=$(OUTPUT_DIR)\include\hdf4"
+	xcopy /Y $(OUTPUT_DIR)\lib\szip.lib $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\liblib
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\lib\netcdf.lib $(OUTPUT_DIR)\lib
+	xcopy /Y install\bin\netcdf.dll $(OUTPUT_DIR)\bin
+	xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(NETCDF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(FCGI_LIB):
+!IFDEF FCGI_ENABLED
+    if not exist $(FCGI_DIR) git clone -b $(FCGI_BRANCH) $(FCGI_SRC) $(FCGI_DIR)
+    cd $(FCGI_DIR)
+    git reset --hard HEAD
+    git checkout $(FCGI_BRANCH)
+!IFNDEF NO_CLEAN
+    nmake /f Makefile.nt clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f Makefile.nt
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(FCGI_DIR)\libfcgi\Release\libfcgi.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(FCGI_DIR)\libfcgi\Release\libfcgi.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(FCGI_DIR)\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(FCGI_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(GIF_LIB):
+!IFDEF GIF_ENABLED
+    if not exist $(GIFLIB_DIR) git clone -b $(GIFLIB_BRANCH) $(GIFLIB_SRC) $(GIFLIB_DIR)
+    cd $(GIFLIB_DIR)
+    git reset --hard HEAD
+    git checkout $(GIFLIB_BRANCH)
+    xcopy /Y $(BASE_DIR)\support\fontconfig\unistd.h $(BASE_DIR)\$(GIFLIB_DIR)\lib
+    cd lib
+    powershell -Command "(gc makefile.ms) -replace 'dev2gif.obj \\', '\' | Out-File -encoding ASCII makefile.ms"
+    powershell -Command "(gc makefile.ms) -replace 'getarg.obj \\', '\' | Out-File -encoding ASCII makefile.ms"
+    powershell -Command "(gc makefile.ms) -replace 'qprintf.obj \\', '\' | Out-File -encoding ASCII makefile.ms"
+!IFNDEF NO_CLEAN
+    nmake /f makefile.ms clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.ms
+!ENDIF
+!IFNDEF NO_COPY
+    xcopy /Y giflib.lib $(OUTPUT_DIR)\lib
+    xcopy /Y gif_lib.h $(OUTPUT_DIR)\include
+!ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(GIF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(BOOST_LIB):
+!IFDEF BOOST_ENABLED
+    if not exist $(BOOST_DIR) git clone -b $(BOOST_BRANCH) $(BOOST_SRC) $(BOOST_DIR)
+    cd $(BOOST_DIR)
+    git reset --hard HEAD
+    git checkout $(BOOST_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(BOOST_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
+!ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y /S install\include\*.hpp $(OUTPUT_DIR)\include
+    xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(BOOST_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+
+$(LIBKML_LIB): $(URIPARSER_LIB) $(EXPAT_LIB) $(ZLIB_LIB) $(BOOST_LIB)
+!IFDEF LIBKML_ENABLED
+    if not exist $(LIBKML_DIR) git clone -b $(LIBKML_BRANCH) $(LIBKML_SRC) $(LIBKML_DIR)
+    cd $(LIBKML_DIR)
+    git reset --hard HEAD
+    git checkout $(LIBKML_BRANCH)
+    cd src\kml\base
+    powershell -Command "(gc file_win32.cc) -replace 'L''''', 'L''\0''' | Out-File -encoding ASCII file_win32.cc"
+    cd ..\..\..
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBKML_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
+!ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y /S install\include\*.hpp $(OUTPUT_DIR)\include
+    xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBKML_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(MYSQL_LIB): $(OPENSSL_LIB)
+!IFDEF LIBKML_ENABLED
+    if not exist $(MYSQL_DIR) git clone -b $(MYSQL_BRANCH) $(MYSQL_SRC) $(MYSQL_DIR)
+    cd $(MYSQL_DIR)
+    git reset --hard HEAD
+    git checkout $(MYSQL_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\install" "-DDOWNLOAD_BOOST=1" "-DWITH_BOOST=$(BASE_DIR)\src\boost" "-DWITHOUT_SERVER=1"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target libmysql  
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\Release\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\Release\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\libbinlogevents\export\*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\include\my*.h $(OUTPUT_DIR)\include
+	if not exist $(OUTPUT_DIR)\include\mysql mkdir $(OUTPUT_DIR)\include\mysql
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\mysql\*.h $(OUTPUT_DIR)\include\mysql
+	if not exist $(OUTPUT_DIR)\include\mysql\psi mkdir $(OUTPUT_DIR)\include\mysql\psi
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\mysql\psi\*.h $(OUTPUT_DIR)\include\mysql\psi
+    if not exist $(OUTPUT_DIR)\include\atomic mkdir $(OUTPUT_DIR)\include\atomic
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\atomic\*.h $(OUTPUT_DIR)\include\atomic
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(MYSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
     
 $(LIBICONV_LIB):
 !IFDEF LIBICONV_ENABLED
@@ -1811,6 +2253,9 @@ $(LIBICONV_LIB):
     if not exist $(LIBICONV_DIR) mkdir $(LIBICONV_DIR)
     cd $(LIBICONV_DIR)
     if not exist $(LIBICONV_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBICONV_VER).tar.gz" "$(LIBICONV_SRC)"
+!IFNDEF NO_CLEAN
+    if exist $(LIBICONV_VER) rd /Q /S $(LIBICONV_VER)
+!ENDIF
     if not exist $(LIBICONV_VER) 7z e -y $(LIBICONV_VER).tar.gz && 7z x -y $(LIBICONV_VER).tar
     cd $(LIBICONV_VER)
     cd libcharset
@@ -1825,10 +2270,7 @@ $(LIBICONV_LIB):
     cd lib
     powershell -Command "(gc Makefile.in) -replace '--output-format=coff', '$$(RCFLAGS)' | Out-File -encoding ASCII Makefile.in"
     cd ..
-!IFNDEF NO_CLEAN
-    if exist install rd /Q /S install
-    del /S *.obj
-!ENDIF
+
     echo INCLUDE='$(INCLUDE)' >build-aux\vcvars.sh
     echo LIB='$(LIB)' >>build-aux\vcvars.sh
     echo LIBPATH='$(LIBPATH)' >>build-aux\vcvars.sh
@@ -1854,12 +2296,119 @@ $(LIBICONV_LIB):
     echo make >>build-aux\vcvars.sh
     echo make install-lib >>build-aux\vcvars.sh
 !ENDIF
+    echo cp -f $$SRCDIR/install/bin/*.dll $$OUTPUTDIR/bin >>build-aux\vcvars.sh
+    echo cp -f $$SRCDIR/install/lib/iconv.dll.lib $$OUTPUTDIR/lib/iconv.lib >>build-aux\vcvars.sh
+    echo cp -f $$SRCDIR/install/include/*.h $$OUTPUTDIR/include >>build-aux\vcvars.sh
+
     $(CYGWIN_DIR)\bin\dos2unix.exe build-aux\vcvars.sh
-    if not exist $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\build-aux\vcvars.sh" & exit 1
-    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\bin\*.dll $(OUTPUT_DIR)\bin
-    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\lib\iconv.dll.lib $(OUTPUT_DIR)\lib\iconv.lib
-    copy /Y $(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\install\include\*.h $(OUTPUT_DIR)\include
+    $(CYGWIN_DIR)\bin\chmod.exe +rwxrwxrwx ./build-aux/vcvars.sh
+    echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\build-aux\vcvars.sh" & exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(LIBICONV_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
-!ENDIF    
+!ENDIF  
+
+$(PIXMAN_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
+!IFDEF PIXMAN_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(PIXMAN_DIR) mkdir $(PIXMAN_DIR)
+    cd $(PIXMAN_DIR)
+    if not exist $(PIXMAN_VER).tar.gz $(CURL_EXE) -L -k -o "$(PIXMAN_VER).tar.gz" "$(PIXMAN_SRC)"
+    if not exist $(PIXMAN_VER) 7z e -y $(PIXMAN_VER).tar.gz && 7z x -y $(PIXMAN_VER).tar
+    xcopy /Y $(BASE_DIR)\support\make.exe $(PIXMAN_VER)\pixman
+    cd $(PIXMAN_VER)\pixman
+!IFNDEF NO_CLEAN
+	if exist release del /Q /S release
+!ENDIF
+!IFNDEF NO_BUILD
+!IFDEF WIN64
+    make -f Makefile.win32 CFG=release MMX=off SSE2=on SSSE3=off
+!ELSE
+    make -f Makefile.win32 CFG=release MMX=on SSE2=on SSSE3=off
+!ENDIF   
+!ENDIF
+    xcopy /Y release\pixman-1.lib $(OUTPUT_DIR)\lib
+    xcopy /Y pixman.h $(OUTPUT_DIR)\include
+    xcopy /Y pixman-version.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(PIXMAN_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(FONTCONFIG_LIB): $(LIBICONV_LIB) $(FREETYPE_LIB) $(LIBXML2_LIB)
+!IFDEF FONTCONFIG_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(FONTCONFIG_DIR) mkdir $(FONTCONFIG_DIR)
+    cd $(FONTCONFIG_DIR)
+    if not exist $(FONTCONFIG_VER).tar.gz $(CURL_EXE) -L -k -o "$(FONTCONFIG_VER).tar.gz" "$(FONTCONFIG_SRC)"
+    if not exist $(FONTCONFIG_VER) 7z e -y $(FONTCONFIG_VER).tar.gz && 7z x -y $(FONTCONFIG_VER).tar
+    xcopy /Y $(BASE_DIR)\support\fontconfig\* $(FONTCONFIG_VER)\src
+    cd $(FONTCONFIG_VER)\src
+    powershell -Command "(gc fccache.c) -replace '#include <sys/time.h>', '' | Out-File -encoding ASCII fccache.c"
+!IFNDEF NO_CLEAN
+	nmake -f Makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake -f Makefile.vc OUTPUT_DIR=$(OUTPUT_DIR)
+!ENDIF
+    xcopy /Y fontconfig.lib $(OUTPUT_DIR)\lib
+    if not exist $(OUTPUT_DIR)\include\fontconfig mkdir $(OUTPUT_DIR)\include\fontconfig
+    xcopy /Y /S $(BASE_DIR)\$(FONTCONFIG_DIR)\$(FONTCONFIG_VER)\fontconfig\*.h $(OUTPUT_DIR)\include\fontconfig
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(FONTCONFIG_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(CAIRO_LIB): $(PIXMAN_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(FREETYPE_LIB) $(LIBXML2_LIB) $(FONTCONFIG_LIB)  $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
+!IFDEF CAIRO_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(CAIRO_DIR) mkdir $(CAIRO_DIR)
+    cd $(CAIRO_DIR)
+    if not exist $(CAIRO_VER).tar.xz $(CURL_EXE) -L -k -o "$(CAIRO_VER).tar.xz" "$(CAIRO_SRC)"
+    if not exist $(CAIRO_VER) 7z e -y $(CAIRO_VER).tar.xz && 7z x -y $(CAIRO_VER).tar
+    xcopy /Y $(BASE_DIR)\support\make.exe $(CAIRO_VER)
+    xcopy /Y $(BASE_DIR)\support\make.exe $(CAIRO_VER)\src
+    cd $(CAIRO_VER)\build
+    powershell -Command "(gc Makefile.win32.features) -replace 'CAIRO_HAS_FT_FONT=0', 'CAIRO_HAS_FT_FONT=1' | Out-File -encoding ASCII Makefile.win32.features"
+    powershell -Command "(gc Makefile.win32.features) -replace 'CAIRO_HAS_FC_FONT=0', 'CAIRO_HAS_FC_FONT=1' | Out-File -encoding ASCII Makefile.win32.features"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('-I$$(PIXMAN_PATH)/pixman/'), '-I$$(OUTPUT_DIR)\include' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('$$(PIXMAN_PATH)/pixman/$$(CFG)/pixman-1.lib'), '$$(OUTPUT_DIR)\lib\pixman-1.lib' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('-I$$(LIBPNG_PATH)/'), '-I$$(OUTPUT_DIR)\include -I$$(OUTPUT_DIR)\include\freetype2' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('$$(LIBPNG_PATH)/libpng.lib'), '$$(OUTPUT_DIR)\lib\libpng16.lib' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('-I$$(ZLIB_PATH)/'), '-I$$(OUTPUT_DIR)\include' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('$$(ZLIB_PATH)/zdll.lib'), '$$(OUTPUT_DIR)\lib\zlib.lib $$(OUTPUT_DIR)\lib\harfbuzz.lib $$(OUTPUT_DIR)\lib\freetype.lib $$(OUTPUT_DIR)\lib\fontconfig.lib $$(OUTPUT_DIR)\lib\libxml2.lib $$(OUTPUT_DIR)\lib\iconv.lib' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('@mkdir -p $$(CFG)/`dirname $$<`'), 'if not exist $$(CFG) @mkdir $$(CFG)' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.features-h) -replace '""', '' | Out-File -encoding ASCII Makefile.win32.features-h"
+    cd ..
+    cd src  
+    powershell -Command "(gc Makefile.win32) -replace [regex]::escape('@for'), '@rem' | Out-File -encoding ASCII Makefile.win32"
+!IFNDEF NO_CLEAN
+	if exist release del /Q /S release
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist release mkdir release
+    if not exist release\win32 mkdir release\win32
+    -del $(OUTPUT_DIR)\include\cairo*.h
+    make -f Makefile.win32 CFG=release OUTPUT_DIR=$(OUTPUT_DIR)
+    cd release
+	if exist cairo.dll.manifest mt -manifest cairo.dll.manifest -outputresource:cairo.dll;2
+	cd .. 
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\release\cairo.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\release\cairo.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-version.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-features.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-deprecated.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-pdf.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-svg.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-ft.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-ps.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(CAIRO_DIR)\$(CAIRO_VER)\src\cairo-win32.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(CAIRO_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF

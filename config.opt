@@ -6,24 +6,30 @@ GDAL_GEOS = YES
 GDAL_POSTGIS = YES
 GDAL_ECW = YES
 GDAL_CURL = YES
-#GDAL_SPATIALITE = YES
+GDAL_SPATIALITE = YES
 GDAL_CSHARP = YES
-#GDAL_PYTHON = YES
-#GDAL_JAVA = YES
-#GDAL_XERCES = YES
-#GDAL_EXPAT = YES
-#GDAL_MYSQL = YES
+GDAL_PYTHON = YES
+GDAL_JAVA = YES
+GDAL_XERCES = YES
+GDAL_EXPAT = YES
+GDAL_MYSQL = YES
 GDAL_MSSQL = YES
-#GDAL_OPENJPEG = YES
-#GDAL_AMIGOCLOUD = YES
-#GDAL_GNM = YES
-#GDAL_KMLSUPEROVERLAY = YES
-#GDAL_PDF = YES
-#GDAL_LIBKML = YES
+GDAL_OPENJPEG = YES
+#GDAL_RELEASE_PDB = YES
+GDAL_AMIGOCLOUD = YES
+GDAL_GNM = YES
+GDAL_KMLSUPEROVERLAY = YES
+GDAL_PDF = YES
+GDAL_LIBKML = YES
+GDAL_HDF4 = YES
+GDAL_HDF5 = YES
+GDAL_KEA = YES
+GDAL_NETCDF = YES
+GDAL_FITS = YES
 
 # MapServer feature selection flags
 MS_PROJ = YES
-#MS_FREETYPE = YES
+MS_FREETYPE = YES
 MS_GEOS = YES
 MS_GDAL = YES
 MS_POSTGIS = YES
@@ -35,38 +41,60 @@ MS_MSSQL = YES
 #MS_PYTHON = YES
 #MS_FCGI = YES
 #MS_PDF = YES
-#MS_FRIBIDI = YES
-#MS_CAIRO = YES
-#MS_GIFLIB = YES
-#MS_PROTOBUFC = YES
+MS_FRIBIDI = YES
+MS_HARFBUZZ = YES
+MS_CAIRO = YES
+MS_GIFLIB = YES
+MS_PROTOBUFC = YES
 MS_LIBXML2 = YES
-MS_RELEASE_PDB = YES
+MS_CAIRO = YES
+MS_SVG_CAIRO = YES
+#MS_RELEASE_PDB = YES
 
 HDF4_SZIP = YES
 
 # Dependency versions
 ZLIB_BRANCH = v1.2.11
-OPENSSL_BRANCH = OpenSSL_1_1_1d
-CURL_BRANCH = curl-7_65_3
+OPENSSL_BRANCH = OpenSSL_1_1_1g
+CURL_BRANCH = curl-7_70_0
 LIBPNG_VER = lpng1637
-JPEG_VER = jpeg-9c
-FREETYPE_BRANCH = VER-2-10-1
-HARFBUZZ_BRANCH = 2.6.1
-GEOS_BRANCH = 3.7.2
-FRIBIDI_BRANCH = v1.0.5
+JPEG_VER = jpeg-9d
+FREETYPE_BRANCH = VER-2-10-2
+HARFBUZZ_BRANCH = 2.6.7
+GEOS_BRANCH = 3.8.1
+FRIBIDI_BRANCH = v1.0.9
 LIBICONV_VER = libiconv-1.16
-PGSQL_BRANCH = REL_11_5
+PGSQL_BRANCH = REL_12_3
 PROJ4_BRANCH = 4.9.3
-PROJ6_BRANCH = 6.2.0
-GDAL_BRANCH = v2.4.2
-LIBXML2_BRANCH = v2.9.9
-MAPSERVER_BRANCH = rel-7-4-2
+PROJ6_BRANCH = 6.3.2
+PROJ7_BRANCH = 7.0.1
+GDAL_BRANCH = v2.4.4
+LIBXML2_BRANCH = v2.9.10
+MAPSERVER_BRANCH = rel-7-6-0
 XERCES_BRANCH = Xerces-C_3_2_2
-LIBEXPAT_BRANCH = R_2_2_8
-PROTOBUF_BRANCH = v3.9.1
-PROTOBUF_C_BRANCH = v1.3.2
+LIBEXPAT_BRANCH = R_2_2_9
+PROTOBUF_BRANCH = v3.12.3
+PROTOBUF_C_BRANCH = v1.3.3
 SZIP_VER = szip-2.1.1
 HDF4_VER = hdf-4.2.13
+PIXMAN_VER = pixman-0.40.0
+CAIRO_VER = cairo-1.16.0
+FONTCONFIG_VER = fontconfig-2.13.92
+URIPARSER_BRANCH = uriparser-0.9.4
+LIBSVG_VER=libsvg-0.5.0
+LIBSVGCAIRO_VER=libsvg-cairo-0.5.0
+LIBTIFF_BRANCH = v4.1.0
+OPENJPEG_BRANCH = v2.3.1
+POPPLER_BRANCH = poppler-0.89.0
+FCGI_BRANCH = 2.4.2
+GIFLIB_BRANCH = 5.0.5
+LIBKML_BRANCH = 1.3.0
+MYSQL_BRANCH = mysql-cluster-7.6.14
+HDF5_BRANCH = hdf5-1_12_0
+KEA_BRANCH = kealib-1.4.13
+NETCDF_BRANCH = v4.7.4
+FITS_VER = cfitsio-3.48
+BOOST_BRANCH = boost-1.73.0
 
 # Source directories and locations
 SRC_DIR = src
@@ -84,7 +112,7 @@ LIBPNG_DIR = $(SRC_DIR)\libpng
 LIBPNG_SRC = https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/lpng1637.zip/download
 
 JPEG_DIR = $(SRC_DIR)\jpeg
-JPEG_SRC = https://www.ijg.org/files/jpegsr9c.zip
+JPEG_SRC = https://www.ijg.org/files/jpegsr9d.zip
 
 FREETYPE_DIR = $(SRC_DIR)\freetype2
 FREETYPE_SRC = https://git.sv.nongnu.org/r/freetype/freetype2.git
@@ -106,6 +134,7 @@ PGSQL_SRC = https://github.com/postgres/postgres.git
 
 PROJ4_DIR = $(SRC_DIR)\proj4
 PROJ6_DIR = $(SRC_DIR)\proj6
+PROJ7_DIR = $(SRC_DIR)\proj7
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
@@ -151,6 +180,60 @@ ECWSDK_DIR = E:\buildsystem\support\ECWSDK\ERDAS ECW JPEG 2000 SDK 5.4.0
 ECWSDK_VERSION=54
 
 FILEGDB_API_DIR = E:\buildsystem\support\FileGDB_API_1_5_1-VS2017
+
+PIXMAN_DIR = $(SRC_DIR)\pixman
+PIXMAN_SRC = https://www.cairographics.org/releases/pixman-0.40.0.tar.gz
+
+CAIRO_DIR = $(SRC_DIR)\cairo
+CAIRO_SRC = https://www.cairographics.org/releases/cairo-1.16.0.tar.xz
+
+FONTCONFIG_DIR = $(SRC_DIR)\fontconfig
+FONTCONFIG_SRC = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.92.tar.gz
+
+URIPARSER_DIR = $(SRC_DIR)\uriparser
+URIPARSER_SRC = https://github.com/uriparser/uriparser.git
+
+LIBSVG_DIR = $(SRC_DIR)\libsvg
+LIBSVG_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg/0.5/libsvg-0.5.0.src.tar.gz/download
+
+LIBSVGCAIRO_DIR = $(SRC_DIR)\libsvg-cairo
+LIBSVGCAIRO_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg-cairo/0.5/libsvg-cairo-0.5.0.src.tar.gz/download
+
+LIBTIFF_DIR = $(SRC_DIR)\libtiff
+LIBTIFF_SRC = https://gitlab.com/libtiff/libtiff.git
+
+OPENJPEG_DIR = $(SRC_DIR)\openjpeg
+OPENJPEG_SRC =https://github.com/uclouvain/openjpeg.git
+
+POPPLER_DIR = $(SRC_DIR)\poppler
+POPPLER_SRC =https://anongit.freedesktop.org/git/poppler/poppler.git
+
+FCGI_DIR = $(SRC_DIR)\fcgi
+FCGI_SRC =https://github.com/FastCGI-Archives/fcgi2.git
+
+GIFLIB_DIR = $(SRC_DIR)\giflib
+GIFLIB_SRC =https://git.code.sf.net/p/giflib/code
+
+LIBKML_DIR = $(SRC_DIR)\libkml
+LIBKML_SRC =https://github.com/libkml/libkml.git
+
+MYSQL_DIR = $(SRC_DIR)\mysql
+MYSQL_SRC =https://github.com/mysql/mysql-server.git
+
+HDF5_DIR = $(SRC_DIR)\hdf5
+HDF5_SRC =https://bitbucket.hdfgroup.org/scm/hdffv/hdf5.git
+
+KEA_DIR = $(SRC_DIR)\kealib
+KEA_SRC =https://github.com/ubarsc/kealib.git
+
+NETCDF_DIR = $(SRC_DIR)\netcdf
+NETCDF_SRC =https://github.com/Unidata/netcdf-c.git
+
+FITS_DIR = $(SRC_DIR)\fits
+FITS_SRC =http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.48.tar.gz
+
+BOOST_DIR = $(SRC_DIR)\boost
+BOOST_SRC =https://github.com/boostorg/boost.git
 
 # common feature configuration flags
 #DEBUG = YES
