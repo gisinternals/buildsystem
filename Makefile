@@ -242,7 +242,7 @@ OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
 CURL_EXE = $(OUTPUT_DIR)\bin\curl.exe
 CURL_CA_BUNDLE = $(OUTPUT_DIR)\bin\curl-ca-bundle.crt
-LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16_static.lib
+LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16.lib
 JPEG_LIB = $(OUTPUT_DIR)\lib\libjpeg.lib
 FREETYPE_LIB = $(OUTPUT_DIR)\lib\freetype.lib
 HARFBUZZ_LIB = $(OUTPUT_DIR)\lib\harfbuzz.lib
@@ -290,14 +290,15 @@ OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib
 POPPLER_LIB = $(OUTPUT_DIR)\lib\poppler.lib
 FCGI_LIB = $(OUTPUT_DIR)\lib\libfcgi.lib
 GIF_LIB = $(OUTPUT_DIR)\lib\giflib.lib
-LIBKML_LIB = $(OUTPUT_DIR)\lib\kmlbase.lib
+LIBKML_LIBS = $(OUTPUT_DIR)\lib\kmlbase.lib $(OUTPUT_DIR)\lib\kmlconvenience.lib $(OUTPUT_DIR)\lib\kmldom.lib $(OUTPUT_DIR)\lib\kmlengine.lib $(OUTPUT_DIR)\lib\kmlregionator.lib $(OUTPUT_DIR)\lib\kmlxsd.lib
 MINIZIP_LIB = $(OUTPUT_DIR)\lib\minizip.lib
 MYSQL_LIB = $(OUTPUT_DIR)\lib\libmysql.lib
 HDF5_LIB = $(OUTPUT_DIR)\lib\hdf5.lib
 KEA_LIB = $(OUTPUT_DIR)\lib\libkea.lib
 NETCDF_LIB = $(OUTPUT_DIR)\lib\netcdf.lib
 FITS_LIB = $(OUTPUT_DIR)\lib\cfitsio.lib
-BOOST_LIB = $(OUTPUT_DIR)\lib\boost.lib
+BOOST_HEADERS = $(OUTPUT_DIR)\include\boost\version.hpp
+OGDI_LIB = $(OUTPUT_DIR)\lib\ogdi.lib
 
 # set default targets (mapserver and the gdal plugins)
 DEFAULT_TARGETS = 
@@ -355,7 +356,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(POPPLER_LIB)
 !ENDIF
 
 !IFDEF GDAL_LIBKML
-GDAL_DEPS = $(GDAL_DEPS) $(LIBKML_LIB)
+GDAL_DEPS = $(GDAL_DEPS) $(LIBKML_LIBS)
 !ENDIF
 
 !IFDEF GDAL_HDF4
@@ -376,6 +377,10 @@ GDAL_DEPS = $(GDAL_DEPS) $(KEA_LIB)
 
 !IFDEF GDAL_NETCDF
 GDAL_DEPS = $(GDAL_DEPS) $(NETCDF_LIB)
+!ENDIF
+
+!IFDEF GDAL_OGDI
+GDAL_DEPS = $(GDAL_DEPS) $(OGDI_LIB)
 !ENDIF
 
 !IFDEF GDAL_ECW
@@ -549,6 +554,7 @@ HDF5_ENABLED = 1
 KEA_ENABLED = 1
 FITS_ENABLED = 1
 BOOST_ENABLED = 1
+OGDI_ENABLED = 1
 !ENDIF
 
 # ECW SDK locations
@@ -737,7 +743,7 @@ EXTRAFLAGS =
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(OPENJPEG_LIB)
+test: $(OGDI_LIB)
 
 show-dependencies:
     @echo $(GDAL_DEPS) $(MAPSERVER_DEPS)
@@ -916,7 +922,11 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 !ENDIF
     if not exist $(OUTPUT_DIR)\include\openssl mkdir $(OUTPUT_DIR)\include\openssl
 	xcopy /Y include\openssl\*.h $(OUTPUT_DIR)\include\openssl
-    xcopy /Y *.dll $(OUTPUT_DIR)\bin
+!IFDEF WIN64
+    xcopy /Y lib*1_1-x64.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y lib*1_1.dll $(OUTPUT_DIR)\bin
+!ENDIF
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
     xcopy /Y apps\openssl.exe $(OUTPUT_DIR)\bin
     cd $(BASE_DIR)
@@ -1068,7 +1078,7 @@ $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DHB_HAVE_FREETYPE=ON" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(OUTPUT_DIR)\lib\libpng16.lib $(ZLIB_LIB)"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DHB_HAVE_FREETYPE=ON" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(LIBPNG_LIB) $(ZLIB_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)
@@ -1078,7 +1088,7 @@ $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
 
 $(FREETYPE_LIB): $(FREETYPE_2)
 
-$(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB)
+$(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB) $(LIBPNG_LIB)
 !IFDEF POPPLER_ENABLED
     if not exist $(POPPLER_DIR) git clone -b $(POPPLER_BRANCH) $(POPPLER_SRC) $(POPPLER_DIR)
     cd $(BASE_DIR)\$(POPPLER_DIR)
@@ -1101,7 +1111,15 @@ $(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\poppler.lib $(OUTPUT_DIR)\lib
+    if not exist $(OUTPUT_DIR)\include\poppler mkdir $(OUTPUT_DIR)\include\poppler
+	xcopy /Y poppler\poppler-config.h $(OUTPUT_DIR)\include\poppler
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)\$(POPPLER_DIR)
+    xcopy /Y /S poppler\*.h $(OUTPUT_DIR)\include\poppler
+    if not exist $(OUTPUT_DIR)\include\poppler\goo mkdir $(OUTPUT_DIR)\include\poppler\goo
+    xcopy /Y /S goo\*.h $(OUTPUT_DIR)\include\poppler\goo
+    if not exist $(OUTPUT_DIR)\include\poppler\splash mkdir $(OUTPUT_DIR)\include\poppler\splash
+    xcopy /Y /S splash\*.h $(OUTPUT_DIR)\include\poppler\splash
     cd $(BASE_DIR)
 !ELSE
     @echo $(POPPLER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1598,71 +1616,75 @@ $(GDAL_OPT):
     echo SQLITE_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo SQLITE_LIB=$(SQLITE_LIB) >> $(GDAL_OPT)
     echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)
-    echo $(SQLITE_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo sqlite - $(SQLITE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_SPATIALITE
     echo SQLITE_INC=-I$(OUTPUT_DIR)\include -DHAVE_SPATIALITE -DSPATIALITE_AMALGAMATION >> $(GDAL_OPT)
     echo SQLITE_LIB=$(SQLITE_LIB) $(SPATIALITE_LIB) >> $(GDAL_OPT)
-    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)
-	echo sqlite - $(SQLITE_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-    echo spatialite - $(SPATIALITE_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)	
+    echo spatialite - $(SPATIALITE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_KMLSUPEROVERLAY
 !IF EXIST ($(GDAL_DIR)\frmts\kmlsuperoverlay)
     echo KMLSUPEROVERLAY_SUPPORTED = YES >> $(GDAL_OPT)
     echo MINIZIP_INCLUDE = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo MINIZIP_LIBRARY = $(OUTPUT_DIR)\lib\minizip.lib >> $(GDAL_OPT)
+    echo MINIZIP_LIBRARY = $(MINIZIP_LIB) >> $(GDAL_OPT)
 !ENDIF
 !ENDIF
 !IFDEF GDAL_MYSQL
     echo MYSQL_INC_DIR=$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo MYSQL_LIB=$(OUTPUT_DIR)\lib\libmysql.lib advapi32.lib >> $(GDAL_OPT)
-    echo $(MYSQL_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo MYSQL_LIB=$(MYSQL_LIB) advapi32.lib >> $(GDAL_OPT)
+    echo mysql - $(MYSQL_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_XERCES
     echo XERCES_DIR=$(BASE_DIR)\$(XERCES_DIR) >> $(GDAL_OPT)
     echo XERCES_INCLUDE=-I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\xercesc >> $(GDAL_OPT)
     echo XERCES_LIB=$(XERCES_LIB) >> $(GDAL_OPT)
-    echo $(XERCES_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo xerces - $(XERCES_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo ILI_ENABLED = YES >> $(GDAL_OPT)
 !ENDIF
 !IFDEF GDAL_EXPAT
     echo EXPAT_DIR=$(BASE_DIR)\$(EXPAT_DIR) >> $(GDAL_OPT)
     echo EXPAT_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo EXPAT_LIB=$(LIBEXPAT_LIB) >> $(GDAL_OPT)
-    echo $(EXPAT_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo expat - $(LIBEXPAT_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF GDAL_OGDI
+    echo OGDI_DIR=$(BASE_DIR)\$(OGDI_DIR) >> $(GDAL_OPT)
+    echo OGDI_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo OGDILIB=$(OGDI_LIB) >> $(GDAL_OPT)
+    echo ogdi - $(OGDI_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_LIBKML
 !IFDEF LIBKML_DIR
     echo LIBKML_DIR=$(BASE_DIR)\$(LIBKML_DIR) >> $(GDAL_OPT)
     echo LIBKML_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo LIBKML_LIBS=$(OUTPUT_DIR)\lib\libkmlbase.lib $(OUTPUT_DIR)\lib\libkmlconvenience.lib $(OUTPUT_DIR)\lib\libkmldom.lib $(OUTPUT_DIR)\lib\libkmlengine.lib $(OUTPUT_DIR)\lib\libkmlregionator.lib $(OUTPUT_DIR)\lib\libkmlxsd.lib $(OUTPUT_DIR)\lib\libexpat.lib $(OUTPUT_DIR)\lib\zdll.lib >> $(GDAL_OPT)
-    echo $(LIBKML_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo LIBKML_LIBS=$(LIBKML_LIBS) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) >> $(GDAL_OPT)
+    echo boost - $(BOOST_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo kml - $(LIBKML_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !ENDIF
 !IFDEF GDAL_PDF
     echo POPPLER_ENABLED = YES >> $(GDAL_OPT)
     echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
     echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
-    echo POPPLER_0_20_OR_LATER = YES >> $(GDAL_OPT)
-    echo POPPLER_0_23_OR_LATER = YES >> $(GDAL_OPT)
+    echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
+    echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
     echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
-    echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
-    echo $(POPPLER_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
+    echo poppler - $(POPPLER_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
     echo OPENJPEG_ENABLED = YES >> $(GDAL_OPT)
     echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include\openjpeg-2.3 >> $(GDAL_OPT)
     echo OPENJPEG_LIB = $(OPENJPEG_LIB) >> $(GDAL_OPT)
-    echo $(OPENJPEG2_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo openjpeg - $(OPENJPEG_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_TIFF
     echo TIFF_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo TIFF_LIB=$(OUTPUT_DIR)\lib\libtiff_i.lib >> $(GDAL_OPT)
     echo TIFF_OPTS=-DBIGTIFF_SUPPORT
-    echo $(JBIG_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-    echo $(LIBTIFF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-	echo $(LIBGEOTIFF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo libtiff - $(LIBTIFF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_AMIGOCLOUD
     echo AMIGOCLOUD_PLUGIN=YES >> $(GDAL_OPT)
@@ -1671,31 +1693,31 @@ $(GDAL_OPT):
     echo INCLUDE_GNM_FRMTS=YES >> $(GDAL_OPT)
 !ENDIF
 !IFDEF SZIP_DIR
-    echo $(SZIP_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo szip - $(SZIP_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF FITS_DIR
-    echo $(FITS_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo cfitsio - $(FITS_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF HDF5_DIR
-    echo $(HDF5_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo hdf5 - $(HDF5_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF HDF5_DIR
-    echo $(KEA_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo kealib - $(KEA_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF HDF5_DIR
-    echo $(HDF4_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo hdf4 - $(HDF4_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF ECW_DIR
-    echo $(ECW_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo ecw - $(ECW_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF MRSID_DIR
-    echo $(MRSID_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo mrsid - $(MRSID_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF OCI_DIR
-    echo $(OCI_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo oci - $(OCI_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF NETCDF_DIR
-    echo $(NETCDF_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo netcdf - $(NETCDF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF USE_PROJ6
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(GDAL_OPT)
@@ -1713,6 +1735,7 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
     cd $(GDAL_DIR)
     git reset --hard HEAD
     git checkout $(GDAL_BRANCH)
+    git pull origin $(GDAL_BRANCH)
     cd gdal
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_OPT)
@@ -2161,33 +2184,32 @@ $(GIF_LIB):
     @echo $(GIF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(BOOST_LIB):
+$(BOOST_HEADERS):
 !IFDEF BOOST_ENABLED
     if not exist $(BOOST_DIR) git clone -b $(BOOST_BRANCH) $(BOOST_SRC) $(BOOST_DIR)
     cd $(BOOST_DIR)
     git reset --hard HEAD
     git checkout $(BOOST_BRANCH)
+    git submodule update --init --recursive
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(BOOST_DIR)\$(CMAKE_BUILDDIR)\install"
-    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
+    rem $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(BOOST_DIR)\$(CMAKE_BUILDDIR)\install"
+    rem $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
-    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
-    xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
-    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
-    xcopy /Y /S install\include\*.hpp $(OUTPUT_DIR)\include
-    xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
+    cd $(BASE_DIR)\$(BOOST_DIR)\libs
+    if not exist $(OUTPUT_DIR)\include\boost mkdir $(OUTPUT_DIR)\include\boost
+    -for /R %%a IN (.) DO xcopy /Y /S %%a\include\boost\*.hpp $(OUTPUT_DIR)\include\boost
     cd $(BASE_DIR)
 !ELSE
-    @echo $(BOOST_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+    @echo $(BOOST_HEADERS) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 
-$(LIBKML_LIB): $(URIPARSER_LIB) $(EXPAT_LIB) $(ZLIB_LIB) $(BOOST_LIB)
+$(LIBKML_LIBS): $(URIPARSER_LIB) $(EXPAT_LIB) $(ZLIB_LIB) $(BOOST_HEADERS)
 !IFDEF LIBKML_ENABLED
     if not exist $(LIBKML_DIR) git clone -b $(LIBKML_BRANCH) $(LIBKML_SRC) $(LIBKML_DIR)
     cd $(LIBKML_DIR)
@@ -2212,7 +2234,7 @@ $(LIBKML_LIB): $(URIPARSER_LIB) $(EXPAT_LIB) $(ZLIB_LIB) $(BOOST_LIB)
     xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
     cd $(BASE_DIR)
 !ELSE
-    @echo $(LIBKML_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+    @echo $(LIBKML_LIBS) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(MYSQL_LIB): $(OPENSSL_LIB)
@@ -2244,6 +2266,77 @@ $(MYSQL_LIB): $(OPENSSL_LIB)
     cd $(BASE_DIR)
 !ELSE
     @echo $(MYSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
+!IFDEF OGDI_ENABLED
+    if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
+    cd $(OGDI_DIR)
+    git reset --hard HEAD
+    git checkout $(OGDI_BRANCH)
+    
+!IFDEF WIN64
+    powershell -Command "(gc makefile) -replace [regex]::escape('ifeq ($$(TARGET),win32)'), 'ifeq ($$(TARGET),win64)' | Out-File -encoding ASCII makefile"
+    cd config
+    powershell -Command "(gc win64.mak) -replace [regex]::escape('$$(TOPDIR)/config/mkinstalldirs'), 'mkdir -p ' | Out-File -encoding ASCII win64.mak"
+!ELSE
+    cd config
+    powershell -Command "(gc win32.mak) -replace [regex]::escape('$$(TOPDIR)/config/mkinstalldirs'), 'mkdir -p ' | Out-File -encoding ASCII win32.mak"
+!ENDIF
+    powershell -Command "(gc common.mak.in) -replace [regex]::escape('$$(TOPDIR)/external/zlib'), '$(OUTPUT_DIR:\=/)/include' | Out-File -encoding ASCII common.mak.in"
+    powershell -Command "(gc common.mak.in) -replace [regex]::escape('$$(TOPDIR)/external/expat'), '$(OUTPUT_DIR:\=/)/include' | Out-File -encoding ASCII common.mak.in"
+    powershell -Command "(gc common.mak.in) -replace [regex]::escape('$$(LINKDIR)$$(LIB_SW)zlib_ogdi$$(OGDI_VERSION)$$(LIB_SUFFIX)'), '$(ZLIB_LIB:\=/)' | Out-File -encoding ASCII common.mak.in"
+    powershell -Command "(gc common.mak.in) -replace [regex]::escape('$$(LINKDIR)$$(LIB_SW)expat_ogdi$$(OGDI_VERSION)$$(LIB_SUFFIX)'), '$(LIBEXPAT_LIB:\=/)' | Out-File -encoding ASCII common.mak.in"
+    powershell -Command "(gc common.mak.in) -replace [regex]::escape('$$(TOPDIR)/include/$$(TARGET)'), '$$(TOPDIR)/include/win32' | Out-File -encoding ASCII common.mak.in"
+    cd ..
+    cd ogdi\c-api
+!IFNDEF NO_BUILD
+    powershell -Command "(gc ogdi.def) -replace 'pj_free', '' | Out-File -encoding ASCII ogdi.def"
+    powershell -Command "(gc ogdi.def) -replace 'pj_init', '' | Out-File -encoding ASCII ogdi.def"
+    powershell -Command "(gc ogdi.def) -replace 'pj_inv', '' | Out-File -encoding ASCII ogdi.def"
+    powershell -Command "(gc ogdi.def) -replace 'pj_fwd', '' | Out-File -encoding ASCII ogdi.def"
+    powershell -Command "(gc ogdi.def) -replace 'set_rtodms', '' | Out-File -encoding ASCII ogdi.def"
+    powershell -Command "(gc ogdi.def) -replace 'rtodms', '' | Out-File -encoding ASCII ogdi.def"
+    cd ..
+    cd ..
+!ENDIF
+    echo INCLUDE='$(INCLUDE)' > build.sh
+    echo export INCLUDE >> build.sh
+    echo LIB='$(LIB)' >> build.sh
+    echo export LIB >> build.sh
+    echo LIBPATH='$(LIBPATH)' >> build.sh
+    echo export LIBPATH >> build.sh
+    for /f "usebackq tokens=*" %i in (`where cl.exe`) do echo COMPILERPATH=`cygpath -u "%~dpi."` >> build.sh
+    echo PATH="$$COMPILERPATH":"$$PATH" >> build.sh
+    echo TOPDIR=$(BASE_DIR:\=/)/$(OGDI_DIR:\=/) >> build.sh
+    echo export TOPDIR >> build.sh
+    echo OUTPUTDIR=`cygpath -u "$(OUTPUT_DIR)"` >> build.sh
+    rem if exist $(BASE_DIR)\$(OGDI_DIR)\config\common.mak del $(BASE_DIR)\$(OGDI_DIR)\config\common.mak
+!IFDEF WIN64
+    echo TARGET=win64 >> build.sh
+!ELSE
+    echo TARGET=win32 >> build.sh
+!ENDIF
+    echo export TARGET >> build.sh
+    echo cd $$TOPDIR >> build.sh
+!IFNDEF NO_CLEAN
+    echo make clean >> build.sh
+!ENDIF
+    echo make >> build.sh
+!IFDEF WIN64
+    echo cp -f $$TOPDIR/bin/win64/ogdi.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/lib/win64/ogdi.lib $$OUTPUTDIR/lib >> build.sh
+!ELSE
+    echo cp -f $$TOPDIR/bin/win32/ogdi.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/lib/win32/ogdi.lib $$OUTPUTDIR/lib >> build.sh
+!ENDIF
+    echo cp -f $$TOPDIR/ogdi/include/ecs*.h $$OUTPUTDIR/include >> build.sh
+    $(CYGWIN_DIR)\bin\dos2unix.exe build.sh
+    $(CYGWIN_DIR)\bin\chmod.exe +rwxrwxrwx ./build.sh
+    echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(OGDI_DIR)\build.sh" & exit 1
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(OGDI_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
 $(LIBICONV_LIB):

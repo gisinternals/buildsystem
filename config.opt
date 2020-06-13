@@ -26,6 +26,7 @@ GDAL_HDF5 = YES
 GDAL_KEA = YES
 GDAL_NETCDF = YES
 GDAL_FITS = YES
+GDAL_OGDI = YES
 
 # MapServer feature selection flags
 MS_PROJ = YES
@@ -68,7 +69,7 @@ PGSQL_BRANCH = REL_12_3
 PROJ4_BRANCH = 4.9.3
 PROJ6_BRANCH = 6.3.2
 PROJ7_BRANCH = 7.0.1
-GDAL_BRANCH = v2.4.4
+GDAL_BRANCH = release/2.4
 LIBXML2_BRANCH = v2.9.10
 MAPSERVER_BRANCH = rel-7-6-0
 XERCES_BRANCH = Xerces-C_3_2_2
@@ -95,6 +96,7 @@ KEA_BRANCH = kealib-1.4.13
 NETCDF_BRANCH = v4.7.4
 FITS_VER = cfitsio-3.48
 BOOST_BRANCH = boost-1.73.0
+OGDI_BRANCH = ogdi_4_1_0
 
 # Source directories and locations
 SRC_DIR = src
@@ -138,7 +140,7 @@ PROJ7_DIR = $(SRC_DIR)\proj7
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
-SQLITE_VER = jpeg-9c
+SQLITE_VER = 3.32.2
 SQLITE_SRC = https://www.sqlite.org/src/zip/sqlite.zip?r=release
 
 SPATIALITE_DIR = $(SRC_DIR)\spatialite
@@ -228,6 +230,9 @@ KEA_SRC =https://github.com/ubarsc/kealib.git
 
 NETCDF_DIR = $(SRC_DIR)\netcdf
 NETCDF_SRC =https://github.com/Unidata/netcdf-c.git
+
+OGDI_DIR = $(SRC_DIR)\ogdi
+OGDI_SRC = https://github.com/libogdi/ogdi.git
 
 FITS_DIR = $(SRC_DIR)\fits
 FITS_SRC =http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.48.tar.gz
