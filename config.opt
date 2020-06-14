@@ -5,6 +5,7 @@ PYTHON_DIR = E:\builds\Python36
 GDAL_GEOS = YES
 GDAL_POSTGIS = YES
 GDAL_ECW = YES
+GDAL_FILEGDB = YES
 GDAL_CURL = YES
 GDAL_SPATIALITE = YES
 GDAL_CSHARP = YES
@@ -14,19 +15,21 @@ GDAL_XERCES = YES
 GDAL_EXPAT = YES
 GDAL_MYSQL = YES
 GDAL_MSSQL = YES
+GDAL_MSSQL_MSODBC = YES
 GDAL_OPENJPEG = YES
 #GDAL_RELEASE_PDB = YES
-GDAL_AMIGOCLOUD = YES
 GDAL_GNM = YES
-GDAL_KMLSUPEROVERLAY = YES
 GDAL_PDF = YES
 GDAL_LIBKML = YES
 GDAL_HDF4 = YES
 GDAL_HDF5 = YES
 GDAL_KEA = YES
+GDAL_AMIGOCLOUD = YES
 GDAL_NETCDF = YES
 GDAL_FITS = YES
 GDAL_OGDI = YES
+GDAL_ORACLE = YES
+GDAL_MRSID = YES
 
 # MapServer feature selection flags
 MS_PROJ = YES
@@ -183,6 +186,9 @@ ECWSDK_VERSION=54
 
 FILEGDB_API_DIR = E:\buildsystem\support\FileGDB_API_1_5_1-VS2017
 
+OCI_DIR = E:\builds\Oracle
+MRSID_SDK = E:\builds\mrsid
+
 PIXMAN_DIR = $(SRC_DIR)\pixman
 PIXMAN_SRC = https://www.cairographics.org/releases/pixman-0.40.0.tar.gz
 
@@ -239,6 +245,8 @@ FITS_SRC =http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.48.tar.gz
 
 BOOST_DIR = $(SRC_DIR)\boost
 BOOST_SRC =https://github.com/boostorg/boost.git
+
+MAPMANAGER_SRC = https://github.com/DMS-Aus/MapManager.git
 
 # common feature configuration flags
 #DEBUG = YES

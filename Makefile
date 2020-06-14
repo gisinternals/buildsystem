@@ -199,9 +199,9 @@ CMAKE_BUILDDIR = vc16
 
 !IF $(MSVC_VER) == 1911
 !IFDEF WIN64
-SETARGV = "$(VCToolsInstallDir)lib\x64\setargv.obj"
+SETARGV = "$(VCTOOLSINSTALLDIR)lib\x64\setargv.obj"
 !ELSE
-SETARGV = "$(VCToolsInstallDir)lib\x86\setargv.obj"
+SETARGV = "$(VCTOOLSINSTALLDIR)lib\x86\setargv.obj"
 !ENDIF
 !ELSE
 !IF $(MSVC_VER) == 1310
@@ -221,6 +221,14 @@ SETARGV = "$(VCDIR)\lib\setargv.obj"
 SERVER_URL=http://www.gisinternals.com/sdk
 !ENDIF
 
+!IFDEF GDAL_MRSID
+!IFDEF MRSID_SDK
+!IF EXIST("detect_mrsid.opt")
+!INCLUDE detect_mrsid.opt
+!ENDIF
+!ENDIF
+!ENDIF
+
 !IFNDEF SWIG_DIR
 SWIG_VER = swigwin-1.3.39
 SWIG_SRC = https://sourceforge.net/projects/swig/files/swigwin/swigwin-1.3.39/$(SWIG_VER).zip/download
@@ -234,6 +242,18 @@ CYGWIN_DIR=E:\cygwin
 
 GDAL_DIR = $(GDAL_DIR)-$(CMAKE_BUILDDIR)
 
+!IFNDEF MS_REVISION
+MS_REVISION=HEAD
+!ENDIF
+
+!IFNDEF GDAL_REVISION
+GDAL_REVISION=HEAD
+!ENDIF
+
+!IFNDEF MAPMANAGER_REVISION
+MAPMANAGER_REVISION=HEAD
+!ENDIF
+
 #specify build targets
 MSVCRT_DLL = $(OUTPUT_DIR)\build\msvcr.install
 SWIG_INSTALL = $(OUTPUT_DIR)\build\$(SWIG_VER).install
@@ -242,7 +262,7 @@ OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
 CURL_EXE = $(OUTPUT_DIR)\bin\curl.exe
 CURL_CA_BUNDLE = $(OUTPUT_DIR)\bin\curl-ca-bundle.crt
-LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16.lib
+LIBPNG_LIB = $(OUTPUT_DIR)\lib\libpng16_static.lib
 JPEG_LIB = $(OUTPUT_DIR)\lib\libjpeg.lib
 FREETYPE_LIB = $(OUTPUT_DIR)\lib\freetype.lib
 HARFBUZZ_LIB = $(OUTPUT_DIR)\lib\harfbuzz.lib
@@ -263,6 +283,7 @@ LIBEXPAT_LIB = $(OUTPUT_DIR)\lib\libexpat.lib
 PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
 PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\protobuf-c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
+GDAL_VERSION = $(OUTPUT_DIR)\doc\gdal_version.txt
 GDAL_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal.opt
 GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_csharp.opt
 !IFDEF GDAL_CSHARP_DLL_NAME
@@ -272,13 +293,36 @@ GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
 !ENDIF
 GDAL_MSSQL_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_mssql.opt
 GDAL_MSSQL_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-optional\ogr_MSSQLSpatial.dll
+GDAL_MSSQL_MSODBC_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_mssql_msodbc.opt
+GDAL_MSSQL_MSODBC_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc\ogr_MSSQLSpatial.dll
 GDAL_ECW_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_ecw.opt
 GDAL_ECW_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_ECW_JP2ECW.dll
 GDAL_FILEGDB_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_filegdb.opt
 GDAL_FILEGDB_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-external\ogr_FileGDB.dll
+GDAL_HDF4_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_hdf4.opt
+GDAL_HDF4_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_HDF4.dll
+GDAL_HDF5_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_hdf5.opt
+GDAL_HDF5_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_HDF5.dll
+GDAL_KEA_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_kea.opt
+GDAL_KEA_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_KEA.dll
+GDAL_AMIGOCLOUD_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_amigocloud.opt
+GDAL_AMIGOCLOUD_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\ogr_AmigoCloud.dll
+GDAL_NETCDF_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_netcdf.opt
+GDAL_NETCDF_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_netCDF.dll
+GDAL_FITS_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_fits.opt
+GDAL_FITS_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_FITS.dll
+GDAL_PG_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-optional\ogr_PG.dll
+GDAL_OCI_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_oci.opt
+GDAL_OCI_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\ogr_OCI.dll
+GDAL_GEOR_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_GEOR.dll
+GDAL_PDF_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_pdf.opt
+GDAL_PDF_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_PDF.dll
+GDAL_MRSID_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_mrsid.opt
+GDAL_MRSID_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_MrSID.dll
+GDAL_MRSID_LIDAR_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_MG4Lidar.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
 SZIP_LIB = $(OUTPUT_DIR)\lib\szip.lib
-HDF4_LIB = $(OUTPUT_DIR)\lib\hdf.lib
+HDF4_LIB = $(OUTPUT_DIR)\lib\hdf.lib $(OUTPUT_DIR)\lib\mfhdf.lib
 CAIRO_LIB = $(OUTPUT_DIR)\lib\cairo.lib
 PIXMAN_LIB = $(OUTPUT_DIR)\lib\pixman-1.lib
 FONTCONFIG_LIB = $(OUTPUT_DIR)\lib\fontconfig.lib
@@ -293,12 +337,24 @@ GIF_LIB = $(OUTPUT_DIR)\lib\giflib.lib
 LIBKML_LIBS = $(OUTPUT_DIR)\lib\kmlbase.lib $(OUTPUT_DIR)\lib\kmlconvenience.lib $(OUTPUT_DIR)\lib\kmldom.lib $(OUTPUT_DIR)\lib\kmlengine.lib $(OUTPUT_DIR)\lib\kmlregionator.lib $(OUTPUT_DIR)\lib\kmlxsd.lib
 MINIZIP_LIB = $(OUTPUT_DIR)\lib\minizip.lib
 MYSQL_LIB = $(OUTPUT_DIR)\lib\libmysql.lib
-HDF5_LIB = $(OUTPUT_DIR)\lib\hdf5.lib
+HDF5_LIB = $(OUTPUT_DIR)\lib\libhdf5.lib $(OUTPUT_DIR)\lib\libhdf5_cpp.lib
 KEA_LIB = $(OUTPUT_DIR)\lib\libkea.lib
 NETCDF_LIB = $(OUTPUT_DIR)\lib\netcdf.lib
 FITS_LIB = $(OUTPUT_DIR)\lib\cfitsio.lib
 BOOST_HEADERS = $(OUTPUT_DIR)\include\boost\version.hpp
 OGDI_LIB = $(OUTPUT_DIR)\lib\ogdi.lib
+ECW_DLL = $(OUTPUT_DIR)\bin\NCSEcw.dll
+FILEGDBAPI_DLL = $(OUTPUT_DIR)\bin\FileGDBAPI.dll 
+
+#installers
+GDAL_INSTALLER_CORE = $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi
+GDAL_INSTALLER_ORACLE = $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-oracle.msi
+GDAL_INSTALLER_ECW = $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-ecw-$(ECWSDK_VERSION).msi
+GDAL_INSTALLER_MRSID = $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-mrsid.msi
+GDAL_INSTALLER_FILEGDB = $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi
+GDAL_INSTALLER_NETCDF = $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi
+MS_INSTALLER_CORE = $(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi
+MAPMANAGER_INSTALLER = $(BASE_DIR)\MapManager-$(MS_VERSION)\Installer\bin\Release\MapManager.msi
 
 # set default targets (mapserver and the gdal plugins)
 DEFAULT_TARGETS = 
@@ -351,9 +407,9 @@ GDAL_DEPS = $(GDAL_DEPS) $(MYSQL_LIB)
 GDAL_DEPS = $(GDAL_DEPS) $(OPENJPEG_LIB)
 !ENDIF
 
-!IFDEF GDAL_PDF
-GDAL_DEPS = $(GDAL_DEPS) $(POPPLER_LIB)
-!ENDIF
+#!IFDEF GDAL_PDF
+#GDAL_DEPS = $(GDAL_DEPS) $(POPPLER_LIB)
+#!ENDIF
 
 !IFDEF GDAL_LIBKML
 GDAL_DEPS = $(GDAL_DEPS) $(LIBKML_LIBS)
@@ -391,10 +447,53 @@ DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_ECW_DLL)
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_FILEGDB_DLL)
 !ENDIF
 
+!IFDEF GDAL_MRSID
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_MRSID_DLL) $(GDAL_MRSID_LIDAR_DLL)
+!ENDIF
+
 !IFDEF GDAL_MSSQL
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_MSSQL_DLL)
 !ENDIF
 
+!IFDEF GDAL_MSSQL_MSODBC
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_MSSQL_MSODBC_DLL)
+!ENDIF
+
+!IFDEF GDAL_HDF4
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_HDF4_DLL)
+!ENDIF
+
+!IFDEF GDAL_HDF5
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_HDF5_DLL)
+!ENDIF
+
+!IFDEF GDAL_KEA
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_KEA_DLL)
+!ENDIF
+
+!IFDEF GDAL_AMIGOCLOUD
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_AMIGOCLOUD_DLL)
+!ENDIF
+
+!IFDEF GDAL_NETCDF
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_NETCDF_DLL)
+!ENDIF
+
+!IFDEF GDAL_FITS
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_FITS_DLL)
+!ENDIF
+
+!IFDEF GDAL_PDF
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_PDF_DLL)
+!ENDIF
+
+!IFDEF GDAL_POSTGIS
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_PG_DLL)
+!ENDIF
+
+!IFDEF GDAL_ORACLE
+DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_OCI_DLL) $(GDAL_GEOR_DLL)
+!ENDIF
 
 # set up mapserver configuration
 MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=$(PLATFORMSDK_VERSION) "-DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB:\=/);$(URIPARSER_LIB:\=/)" "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)"
@@ -507,9 +606,6 @@ MS_EXTRAFLAGS_CC = -D_WIN32_WINNT=0x0601
 MSVCR_ENABLED = 1
 GDAL_ENABLED = 1
 GDAL_CSHARP_ENABLED = 1
-GDAL_MSSQL_ENABLED = 1
-GDAL_ECW_ENABLED = 1
-GDAL_FILEGDB_ENABLED = 1
 MAPSERVER_ENABLED = 1
 
 !IFDEF ENABLE_DEPENDENCIES
@@ -596,6 +692,33 @@ FILEGDB_LIB = "$(FILEGDB_API_DIR)\lib\FileGDBAPI.lib"
 FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin\FileGDBAPI.dll"
 !ENDIF
 !ENDIF
+
+!IFDEF OCI_DIR
+!IF $(MSVC_VER) == 1900
+!IFDEF WIN64
+INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_2-x64
+!ELSE
+INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_2
+!ENDIF
+OCI_VERSION = 12
+!ELSEIF $(MSVC_VER) >= 1600
+!IFDEF WIN64
+INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_1-x64
+!ELSE
+INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_1
+!ENDIF
+OCI_VERSION = 12
+!ELSE
+!IFDEF WIN64
+INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_11_1_7_0-x64
+!ELSE
+INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_11_1_7_0
+!ENDIF
+OCI_VERSION = 11
+!ENDIF
+MS_CMAKE_ORACLE=-DWITH_ORACLE_PLUGIN=1 "-DORACLE_INCLUDE_DIR=$(INSTANTCLIENT_DIR:\=/)/sdk/include"
+!ENDIF
+
 
 !IFDEF DEBUG
 BUILD_CONFIG=RelWithDebInfo
@@ -743,10 +866,11 @@ EXTRAFLAGS =
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(OGDI_LIB)
+test: $(GDAL_VERSION)
 
 show-dependencies:
     @echo $(GDAL_DEPS) $(MAPSERVER_DEPS)
+    @echo $(SETARGV)
 
 dependencies: $(GDAL_DEPS) $(MAPSERVER_DEPS)
     @echo DEPENDENCY BUILD COMPLETE !!!!
@@ -768,23 +892,27 @@ install:
 
 check:
     @cd $(BASE_DIR)\$(ZLIB_DIR)
-    @for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo zlib - current: %%F built: $(ZLIB_BRANCH)
-    if exist $(BASE_DIR)\$(OPENSSL_DIR) cd $(BASE_DIR)\$(OPENSSL_DIR)
-    if exist $(BASE_DIR)\$(OPENSSL_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo openssl - current: %%F built: $(OPENSSL_BRANCH)
-    @if exist $(BASE_DIR)\$(CURL_DIR) cd $(BASE_DIR)\$(CURL_DIR)
-    @if exist $(BASE_DIR)\$(CURL_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo curl - current: %%F built: $(CURL_BRANCH)
-    @if exist $(BASE_DIR)\$(FREETYPE_DIR) cd $(BASE_DIR)\$(FREETYPE_DIR)
-    @if exist $(BASE_DIR)\$(FREETYPE_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo freetype - current: %%F built: $(FREETYPE_BRANCH)
-    @if exist $(BASE_DIR)\$(HARFBUZZ_DIR) cd $(BASE_DIR)\$(HARFBUZZ_DIR)
-    @if exist $(BASE_DIR)\$(HARFBUZZ_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo harfbuzz - current: %%F built: $(HARFBUZZ_BRANCH)
-    @if exist $(BASE_DIR)\$(FRIBIDI_DIR) cd $(BASE_DIR)\$(FRIBIDI_DIR)
-    @if exist $(BASE_DIR)\$(FRIBIDI_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo fribidi - current: %%F built: $(FRIBIDI_BRANCH)
-    @if exist $(BASE_DIR)\$(GEOS_DIR) cd $(BASE_DIR)\$(GEOS_DIR)
-    @if exist $(BASE_DIR)\$(GEOS_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo geos - current: %%F built: $(GEOS_BRANCH)
-    @if exist $(BASE_DIR)\$(PROJ4_DIR) cd $(BASE_DIR)\$(PROJ4_DIR)
-    @if exist $(BASE_DIR)\$(PROJ4_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo proj4 - current: %%F built: $(PROJ4_BRANCH)
-    @if exist $(BASE_DIR)\$(PROJ6_DIR) cd $(BASE_DIR)\$(PROJ6_DIR)
-    @if exist $(BASE_DIR)\$(PROJ6_DIR) for /f "usebackq tokens=*" %%F in (`git describe --tags`) do @echo proj6 - current: %%F built: $(PROJ6_BRANCH)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo zlib - current: %%F built: $(ZLIB_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(OPENSSL_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo openssl - current: %%F built: $(OPENSSL_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(CURL_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo curl - current: %%F built: $(CURL_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(FREETYPE_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo freetype - current: %%F built: $(FREETYPE_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(HARFBUZZ_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo harfbuzz - current: %%F built: $(HARFBUZZ_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(FRIBIDI_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo fribidi - current: %%F built: $(FRIBIDI_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(GEOS_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo geos - current: %%F built: $(GEOS_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(PGSQL_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo pgsql - current: %%F built: $(PGSQL_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(PROJ4_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo proj4 - current: %%F built: $(PROJ4_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(LIBXML2_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libxml2 - current: %%F built: $(LIBXML2_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(LIBEXPAT_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(LIBEXPAT_BRANCH) & exit 0
 
     @cd $(BASE_DIR) 
 
@@ -1035,7 +1163,7 @@ $(FREETYPE_1): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     echo freetype phase 1 > $(FREETYPE_1)
@@ -1055,7 +1183,7 @@ $(FREETYPE_2): $(FREETYPE_1) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -1107,7 +1235,7 @@ $(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\freetype.lib;$(OUTPUT_DIR)\lib\harfbuzz.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(FREETYPE_LIB);$(HARFBUZZ_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\poppler.lib $(OUTPUT_DIR)\lib
@@ -1544,6 +1672,16 @@ $(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(F
     @echo $(SPATIALITE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(ECW_DLL):
+!IFDEF ECWSDK_DIR
+    xcopy /Y $(ECWDLL) $(OUTPUT_DIR)\bin
+!ENDIF
+
+$(FILEGDBAPI_DLL):
+!IFDEF ECWSDK_DIR
+    xcopy /Y $(FILEGDB_DLL) $(OUTPUT_DIR)\bin
+!ENDIF
+
 $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFDEF LIBXML2_ENABLED
     if not exist $(LIBXML2_DIR) git clone -b $(LIBXML2_BRANCH) $(LIBXML2_SRC) $(LIBXML2_DIR)
@@ -1650,8 +1788,8 @@ $(GDAL_OPT):
     echo expat - $(LIBEXPAT_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OGDI
-    echo OGDI_DIR=$(BASE_DIR)\$(OGDI_DIR) >> $(GDAL_OPT)
-    echo OGDI_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo OGDIDIR=$(BASE_DIR)\$(OGDI_DIR) >> $(GDAL_OPT)
+    echo OGDI_INCLUDE=$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo OGDILIB=$(OGDI_LIB) >> $(GDAL_OPT)
     echo ogdi - $(OGDI_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
@@ -1665,13 +1803,13 @@ $(GDAL_OPT):
 !ENDIF
 !ENDIF
 !IFDEF GDAL_PDF
-    echo POPPLER_ENABLED = YES >> $(GDAL_OPT)
-    echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
-    echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
-    echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
-    echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
-    echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
-    echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
+    rem echo POPPLER_ENABLED = YES >> $(GDAL_OPT)
+    rem echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
+    rem echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
+    rem echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
+    rem echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
+    rem echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
+    rem echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
     echo poppler - $(POPPLER_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
@@ -1729,6 +1867,16 @@ $(GDAL_OPT):
 !ENDIF
 !ENDIF
 
+$(GDAL_VERSION): $(GDAL_LIB) $(ECW_DLL) $(FILEGDBAPI_DLL)
+    SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(BASE_DIR)\$(SDE_DIR);$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH)
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
+    cd $(OUTPUT_DIR)\bin
+	gdal\apps\gdalinfo --version > $(GDAL_VERSION)
+	gdal\apps\gdalinfo --formats > $(OUTPUT_DIR)\doc\gdal_formats.txt
+	gdal\apps\ogrinfo --formats > $(OUTPUT_DIR)\doc\ogr_formats.txt
+	cd $(BASE_DIR)
+
 $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
 !IFDEF GDAL_ENABLED
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
@@ -1736,6 +1884,9 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
     git reset --hard HEAD
     git checkout $(GDAL_BRANCH)
     git pull origin $(GDAL_BRANCH)
+    git reset --hard $(GDAL_REVISION)
+    git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\gdal_revision.txt
+	type $(OUTPUT_DIR)\doc\gdal_revision.txt
     cd gdal
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_OPT)
@@ -1783,7 +1934,6 @@ $(GDAL_CSHARP_OPT): $(GDAL_OPT) $(SWIG_INSTALL)
     echo SWIG=$(SWIG_EXE) >>$(GDAL_CSHARP_OPT)
 
 $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
-!IFDEF GDAL_CSHARP_ENABLED
 	cd $(GDAL_DIR)\gdal\swig\csharp
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
@@ -1803,9 +1953,6 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
     xcopy /Y *.pdb $(OUTPUT_DIR)\bin\gdal\csharp
 !ENDIF
 	cd $(BASE_DIR)
-!ELSE
-    @echo $(GDAL_CSHARP_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
-!ENDIF
 
 $(GDAL_ECW_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_ECW_OPT)
@@ -1815,7 +1962,6 @@ $(GDAL_ECW_OPT): $(GDAL_OPT)
     echo ECWFLAGS= $(ECWFLAGS) >> $(GDAL_ECW_OPT)
 
 $(GDAL_ECW_DLL): $(GDAL_LIB) $(GDAL_ECW_OPT)
-!IFDEF GDAL_ECW_ENABLED
     cd $(GDAL_DIR)\gdal\frmts\ecw
 !IFNDEF NO_CLEAN
     nmake /f makefile.vc clean
@@ -1823,25 +1969,12 @@ $(GDAL_ECW_DLL): $(GDAL_LIB) $(GDAL_ECW_OPT)
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_ECW_OPT) _WIN32_WINNT=0x0500
 !ENDIF
-!IFNDEF NO_COPY
-!IFNDEF GDAL_ECW3
-    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins
     xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y gdal_ECW_JP2ECW.pdb $(OUTPUT_DIR)\bin\gdal\plugins
-!ENDIF
-!ELSE
-	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
-    xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
-!IFDEF GDAL_RELEASE_PDB
-    xcopy /Y gdal_ECW_JP2ECW.pdb $(OUTPUT_DIR)\bin\gdal\plugins-optional
-!ENDIF
-!ENDIF
-!ENDIF    
+!ENDIF   
     cd $(BASE_DIR)
-!ELSE
-    @echo $(GDAL_ECW_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
-!ENDIF
 
 $(GDAL_FILEGDB_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_FILEGDB_OPT)
@@ -1856,7 +1989,6 @@ $(GDAL_FILEGDB_OPT): $(GDAL_OPT)
 !ENDIF
 
 $(GDAL_FILEGDB_DLL): $(GDAL_LIB) $(GDAL_FILEGDB_OPT)
-!IFDEF GDAL_FILEGDB_ENABLED
     cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\filegdb
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
@@ -1870,7 +2002,6 @@ $(GDAL_FILEGDB_DLL): $(GDAL_LIB) $(GDAL_FILEGDB_OPT)
     xcopy /Y ogr_FileGDB.pdb $(OUTPUT_DIR)\bin\gdal\plugins-external
 !ENDIF
 	cd $(BASE_DIR)
-!ENDIF
 
 $(GDAL_MSSQL_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_MSSQL_OPT)
@@ -1884,7 +2015,6 @@ $(GDAL_MSSQL_OPT): $(GDAL_OPT)
     echo SQLNCLI_INCLUDE = "-I$(SQLNCLI_DIR)\Include" -DSQLNCLI_VERSION=$(SQLNCLI_VERSION) -DMSSQL_BCP_SUPPORTED=1 >> $(GDAL_MSSQL_OPT)
 
 $(GDAL_MSSQL_DLL): $(GDAL_MSSQL_OPT)
-!IFDEF GDAL_MSSQL_ENABLED
     cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\mssqlspatial
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
@@ -1892,17 +2022,305 @@ $(GDAL_MSSQL_DLL): $(GDAL_MSSQL_OPT)
 !IFNDEF NO_BUILD
 	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MSSQL_OPT)
 !ENDIF
-!IFNDEF NO_COPY
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
 	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y ogr_MSSQLSpatial.pdb $(OUTPUT_DIR)\bin\gdal\plugins-optional
 !ENDIF
+	cd $(BASE_DIR)
+
+$(GDAL_MSSQL_MSODBC_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_MSSQL_MSODBC_OPT)
+    echo MSODBCSQL_VERSION = $(MSODBCSQL_VERSION) >> $(GDAL_MSSQL_MSODBC_OPT)
+    echo MSODBCSQL_DIR = $(MSODBCSQL_DIR) >> $(GDAL_MSSQL_MSODBC_OPT)
+!IFDEF WIN64
+	echo MSODBCSQL_LIB = "$(MSODBCSQL_DIR)\Lib\x64\msodbcsql$(MSODBCSQL_VERSION).lib" >> $(GDAL_MSSQL_MSODBC_OPT)
+!ELSE
+	echo MSODBCSQL_LIB = "$(MSODBCSQL_DIR)\Lib\x86\msodbcsql$(MSODBCSQL_VERSION).lib" >> $(GDAL_MSSQL_MSODBC_OPT)
+!ENDIF
+    echo MSODBCSQL_INCLUDE = "-I$(MSODBCSQL_DIR)\Include" -DMSODBCSQL_VERSION=$(MSODBCSQL_VERSION) -DMSSQL_BCP_SUPPORTED=1 >> $(GDAL_MSSQL_MSODBC_OPT)
+
+$(GDAL_MSSQL_MSODBC_DLL): $(GDAL_MSSQL_MSODBC_OPT)
+    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\mssqlspatial
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MSSQL_OPT)
+!ENDIF
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
+	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y ogr_MSSQLSpatial.pdb $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
 !ENDIF
 	cd $(BASE_DIR)
-!ELSE
-    @echo $(GDAL_MSSQL_DLL) is outdated, but the build was suppressed! Remove this file to force rebuild.
+
+$(GDAL_HDF4_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_HDF4_OPT)
+    echo HDF4_PLUGIN=YES >> $(GDAL_HDF4_OPT)
+    echo HDF4_DIR =	$(BASE_DIR)\$(HDF4_DIR)\$(CMAKE_BUILDDIR)\install >> $(GDAL_HDF4_OPT)
+    echo HDF4_LIB =	$(HDF4_LIB)  >> $(GDAL_HDF4_OPT)
+    echo HDF4_INCLUDE = $(OUTPUT_DIR)\include\hdf4 >> $(GDAL_HDF4_OPT)
+
+$(GDAL_HDF4_DLL): $(GDAL_HDF4_OPT) $(HDF4_LIB)
+    cd $(GDAL_DIR)\gdal\frmts\hdf4
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
 !ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc EXT_NMAKE_OPT=$(GDAL_HDF4_OPT)
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_HDF4_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_HDF4.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(OUTPUT_DIR)\bin\gdal\plugins
+	copy /Y gdal_HDF4.dll gdal_HDF4Image.dll
+	cd $(BASE_DIR)
+
+$(GDAL_HDF5_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_HDF5_OPT)
+    echo HDF5_PLUGIN=YES >> $(GDAL_HDF5_OPT)
+    echo HDF5_DIR =	$(OUTPUT_DIR) >> $(GDAL_HDF5_OPT)
+    echo HDF5_LIB =	$(HDF5_LIB) $(ZLIB_LIB) $(SZIP_LIB)  >> $(GDAL_HDF5_OPT)
+
+$(GDAL_HDF5_DLL): $(GDAL_HDF5_OPT) $(HDF5_LIB) $(ZLIB_LIB) $(SZIP_LIB)
+    cd $(GDAL_DIR)\gdal\frmts\hdf5
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_HDF5_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_HDF5.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(OUTPUT_DIR)\bin\gdal\plugins
+	copy /Y gdal_HDF5.dll gdal_HDF5Image.dll
+    copy /Y gdal_HDF5.dll gdal_BAG.dll
+	cd $(BASE_DIR)
+
+$(GDAL_KEA_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_KEA_OPT)
+    echo KEA_PLUGIN=YES >> $(GDAL_KEA_OPT)
+    echo KEA_LIB =	$(KEA_LIB) $(HDF5_LIB) >> $(GDAL_KEA_OPT)
+	echo KEA_CFLAGS = -I$(OUTPUT_DIR)\include >> $(GDAL_KEA_OPT)
+
+$(GDAL_KEA_DLL): $(GDAL_KEA_OPT) $(KEA_LIB)
+    cd $(GDAL_DIR)\gdal\frmts\kea
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_KEA_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_KEA.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(BASE_DIR)
+
+$(GDAL_AMIGOCLOUD_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_AMIGOCLOUD_OPT)
+    echo AMIGOCLOUD_PLUGIN=YES >> $(GDAL_AMIGOCLOUD_OPT)
+
+$(GDAL_AMIGOCLOUD_DLL): $(GDAL_AMIGOCLOUD_OPT)
+    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\amigocloud
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_AMIGOCLOUD_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y ogr_AmigoCloud.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(BASE_DIR)
+
+$(GDAL_NETCDF_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_NETCDF_OPT)
+    echo NETCDF_PLUGIN=YES >> $(GDAL_NETCDF_OPT)
+    echo NETCDF_SETTING=yes >> $(GDAL_NETCDF_OPT)
+    echo NETCDF_LIB=$(NETCDF_LIB) >> $(GDAL_NETCDF_OPT)
+    echo NETCDF_INC_DIR=$(OUTPUT_DIR)\include >> $(GDAL_NETCDF_OPT)
+
+$(GDAL_NETCDF_DLL): $(GDAL_NETCDF_OPT) $(NETCDF_LIB)
+    cd $(GDAL_DIR)\gdal\frmts\netcdf
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_NETCDF_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_netCDF.dll $(OUTPUT_DIR)\bin\gdal\plugins
+    cd $(OUTPUT_DIR)\bin\gdal\plugins
+	copy /Y gdal_netCDF.dll gdal_GMT.dll
+	cd $(BASE_DIR)
+
+$(GDAL_FITS_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_FITS_OPT)
+    echo FITS_PLUGIN=YES >> $(GDAL_FITS_OPT)
+    echo FITS_INC_DIR=$(OUTPUT_DIR)\include >> $(GDAL_FITS_OPT)
+    echo FITS_LIB=$(OUTPUT_DIR)\lib\cfitsio.lib >> $(GDAL_FITS_OPT)
+    
+$(GDAL_FITS_DLL): $(GDAL_FITS_OPT) $(FITS_LIB)
+    cd $(GDAL_DIR)\gdal\frmts\fits
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_FITS_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_FITS.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(BASE_DIR)
+
+$(GDAL_PG_DLL): $(GDAL_OPT) $(PGSQL_LIB)
+    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\pg
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	xcopy /Y ogr_PG.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	cd $(BASE_DIR)
+    
+$(GDAL_OCI_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_OCI_OPT)
+    echo OCI_PLUGIN=YES >> $(GDAL_OCI_OPT)
+    echo OCI_LIB =	$(INSTANTCLIENT_DIR)\sdk\lib\msvc\oci.lib >> $(GDAL_OCI_OPT)
+    echo OCI_INCLUDE =	-I$(INSTANTCLIENT_DIR)\sdk\include >> $(GDAL_OCI_OPT)
+
+$(GDAL_OCI_DLL): $(GDAL_OCI_OPT)
+!IFDEF OCI_DIR
+    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\oci
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+    del *.manifest
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OCI_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y ogr_OCI.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(BASE_DIR)
+!ENDIF
+
+$(GDAL_MRSID_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_MRSID_OPT)
+!IFDEF MRSID_DIR
+    echo MRSID_DIR=$(MRSID_DIR) >> $(GDAL_MRSID_OPT)
+    echo MRSID_RDLLBUILD = YES >> $(GDAL_MRSID_OPT)
+    echo MRSID_LDLLBUILD = YES >> $(GDAL_MRSID_OPT)
+    echo MRSID_INCLUDE=$(MRSID_INCLUDE) >> $(GDAL_MRSID_OPT)
+    echo MRSID_LIB=$(MRSID_LIB) advapi32.lib user32.lib >> $(GDAL_MRSID_OPT)
+    echo MRSID_PLUGIN = YES >> $(GDAL_MRSID_OPT)
+    
+    echo MRSID_RASTER_DIR = $(MRSID_RASTER_DIR)
+    echo MRSID_RVER       = $(MRSID_RVER)
+    echo MRSID_JP2        = $(MRSID_JP2)
+    echo MRSID_ESDK       = $(MRSID_ESDK)
+    echo MRSID_RDLLBUILD  = $(MRSID_RDLLBUILD)
+    echo MRSID_LIDAR_DIR  = $(MRSID_LIDAR_DIR)
+    echo MRSID_LVER       = $(MRSID_LVER)
+    echo MRSID_LDLLBUILD  = $(MRSID_LDLLBUILD)
+    echo MRSID_CONFIG     = $(MRSID_CONFIG)
+    echo MRSID_FLAGS      = $(MRSID_FLAGS)
+    echo MRSID_INCLUDE    = $(MRSID_INCLUDE)
+    echo MRSID_LIB        = $(MRSID_LIB)
+    echo MRSID_DLL        = $(MRSID_DLL)
+    echo LIDAR_DLL        = $(LIDAR_DLL)
+!ENDIF
+
+$(GDAL_MRSID_DLL): $(GDAL_MRSID_OPT)
+!IFDEF MRSID_DIR
+    cd $(GDAL_DIR)\gdal\frmts\mrsid
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
+    del *.manifest
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	if exist $(OUTPUT_DIR)\bin\lti_dsdk_dll.dll del $(OUTPUT_DIR)\bin\lti_dsdk_dll.dll
+    if exist $(OUTPUT_DIR)\bin\lti_dsdk.dll del $(OUTPUT_DIR)\bin\lti_dsdk.dll
+    if exist $(OUTPUT_DIR)\bin\lti_lidar_dsdk.dll del $(OUTPUT_DIR)\bin\lti_lidar_dsdk.dll
+	if exist $(OUTPUT_DIR)\bin\lti_dsdk_9.0.dll del $(OUTPUT_DIR)\bin\lti_dsdk_9.0.dll
+	if exist $(OUTPUT_DIR)\bin\lti_dsdk_9.1.dll del $(OUTPUT_DIR)\bin\lti_dsdk_9.1.dll
+    if exist $(OUTPUT_DIR)\bin\lti_lidar_dsdk_1.1.dll del $(OUTPUT_DIR)\bin\lti_lidar_dsdk_1.1.dll
+	if exist $(OUTPUT_DIR)\bin\tbb.dll del $(OUTPUT_DIR)\bin\tbb.dll
+	xcopy /Y gdal_MrSID.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	if exist $(MRSID_DLL) xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
+	if exist $(MRSID_RASTER_DIR)\lib\tbb.dll xcopy /Y $(MRSID_RASTER_DIR)\lib\tbb.dll $(OUTPUT_DIR)\bin
+!IF EXIST($(MRSID_DLL))
+    xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
+!ENDIF
+!IF EXIST($(LIDAR_DLL))
+    xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+$(GDAL_MRSID_LIDAR_DLL): $(GDAL_MRSID_OPT)
+!IFDEF MRSID_DIR
+    cd $(GDAL_DIR)\gdal\frmts\mrsid_lidar
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
+    del *.manifest
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_MG4Lidar.dll $(OUTPUT_DIR)\bin\gdal\plugins
+    if exist $(LIDAR_DLL) xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
+	if exist $(MRSID_RASTER_DIR)\lib\tbb.dll xcopy /Y $(MRSID_RASTER_DIR)\lib\tbb.dll $(OUTPUT_DIR)\bin
+!IF EXIST($(MRSID_DLL))
+    xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
+!ENDIF
+!IF EXIST($(LIDAR_DLL))
+    xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+$(GDAL_GEOR_DLL): $(GDAL_OCI_OPT)
+!IFDEF OCI_DIR
+    cd $(GDAL_DIR)\gdal\frmts\georaster
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+    del *.manifest
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OCI_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_GEOR.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(BASE_DIR)
+!ENDIF
+
+$(GDAL_PDF_OPT): $(GDAL_OPT)
+    copy /Y $(GDAL_OPT) $(GDAL_PDF_OPT)
+    echo PDF_PLUGIN=YES >> $(GDAL_PDF_OPT)
+    echo POPPLER_ENABLED = YES >> $(GDAL_PDF_OPT)
+    echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_PDF_OPT)
+    echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_PDF_OPT)
+    echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_PDF_OPT)
+    echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_PDF_OPT)
+    echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_PDF_OPT)
+    echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) advapi32.lib gdi32.lib >> $(GDAL_PDF_OPT)
+    
+$(GDAL_PDF_DLL): $(GDAL_PDF_OPT) $(POPPLER_LIB)
+    cd $(GDAL_DIR)\gdal\frmts\pdf
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_PDF_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_PDF.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(BASE_DIR)
 
 $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL) 
 !IFDEF MAPSERVER_ENABLED
@@ -1913,6 +2331,9 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
     git reset --hard HEAD
     git checkout $(MAPSERVER_BRANCH)
     git pull origin $(MAPSERVER_BRANCH)
+    git reset --hard $(MS_REVISION)
+	git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\ms_revision.txt
+	type $(OUTPUT_DIR)\doc\ms_revision.txt
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
@@ -2224,7 +2645,7 @@ $(LIBKML_LIBS): $(URIPARSER_LIB) $(EXPAT_LIB) $(ZLIB_LIB) $(BOOST_HEADERS)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBKML_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBKML_DIR)\$(CMAKE_BUILDDIR)\install" "-DCMAKE_CXX_FLAGS=/DWIN32 /D_WINDOWS /W3 /GR /EHsc /DURI_STATIC_BUILD"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -2470,7 +2891,7 @@ $(CAIRO_LIB): $(PIXMAN_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(FREETYPE_LIB) $(LIBXML2_
     powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('-I$$(PIXMAN_PATH)/pixman/'), '-I$$(OUTPUT_DIR)\include' | Out-File -encoding ASCII Makefile.win32.common"
     powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('$$(PIXMAN_PATH)/pixman/$$(CFG)/pixman-1.lib'), '$$(OUTPUT_DIR)\lib\pixman-1.lib' | Out-File -encoding ASCII Makefile.win32.common"
     powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('-I$$(LIBPNG_PATH)/'), '-I$$(OUTPUT_DIR)\include -I$$(OUTPUT_DIR)\include\freetype2' | Out-File -encoding ASCII Makefile.win32.common"
-    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('$$(LIBPNG_PATH)/libpng.lib'), '$$(OUTPUT_DIR)\lib\libpng16.lib' | Out-File -encoding ASCII Makefile.win32.common"
+    powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('$$(LIBPNG_PATH)/libpng.lib'), '$$(OUTPUT_DIR)\lib\libpng16_static.lib' | Out-File -encoding ASCII Makefile.win32.common"
     powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('-I$$(ZLIB_PATH)/'), '-I$$(OUTPUT_DIR)\include' | Out-File -encoding ASCII Makefile.win32.common"
     powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('$$(ZLIB_PATH)/zdll.lib'), '$$(OUTPUT_DIR)\lib\zlib.lib $$(OUTPUT_DIR)\lib\harfbuzz.lib $$(OUTPUT_DIR)\lib\freetype.lib $$(OUTPUT_DIR)\lib\fontconfig.lib $$(OUTPUT_DIR)\lib\libxml2.lib $$(OUTPUT_DIR)\lib\iconv.lib' | Out-File -encoding ASCII Makefile.win32.common"
     powershell -Command "(gc Makefile.win32.common) -replace [regex]::escape('@mkdir -p $$(CFG)/`dirname $$<`'), 'if not exist $$(CFG) @mkdir $$(CFG)' | Out-File -encoding ASCII Makefile.win32.common"
@@ -2505,3 +2926,27 @@ $(CAIRO_LIB): $(PIXMAN_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(FREETYPE_LIB) $(LIBXML2_
 !ELSE
     @echo $(CAIRO_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
+
+$(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
+!IF $(MSVC_VER) >= 1600
+    if not exist MapManager-$(MS_VERSION) git clone -b ms-$(MS_VERSION) $(MAPMANAGER_SRC) MapManager-$(MS_VERSION)
+    cd MapManager-$(MS_VERSION)
+    git reset --hard HEAD
+    git checkout ms-$(MS_VERSION)
+    git pull origin ms-$(MS_VERSION)
+    git reset --hard ms-$(MS_VERSION)
+!IFNDEF NO_BUILD
+!IF $(MSVC_VER) >= 1900
+    devenv /rebuild Release MapManager2015.sln /Project Installer
+!ELSE
+	devenv /rebuild Release MapManager.sln /Project Installer
+!ENDIF
+	$(BASE_DIR)\cert\sign "$(MAPMANAGER_INSTALLER)"
+!ENDIF
+!IFNDEF NO_COPY
+	rem $(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+
