@@ -168,14 +168,34 @@ CMAKE_BUILDDIR = vc16x64
 CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc16
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.16.27041.0"
+MSVC_VER = 1911
+MESON_BACKEND = vs2017
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc15x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc15
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.22.27905.0"
 MSVC_VER = 1922
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
-CMAKE_BUILDDIR = vc17x64
+CMAKE_BUILDDIR = vc16x64
 !ELSE
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x86
-CMAKE_BUILDDIR = vc17
+CMAKE_BUILDDIR = vc16
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.26.28806.0"
+MSVC_VER = 1926
+MESON_BACKEND = vs2019
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
+CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
@@ -218,6 +238,7 @@ RSYNC_DIR = E:\builds\rsync
 
 !IFDEF DEBUG
 MS_PROJECT_DIR=RelWithDebInfo
+BUILD_CONFIG=RelWithDebInfo
 !IFDEF WIN64
 MS_PROJECT_CONFIG = "RelWithDebInfo|x64"
 !ELSE
@@ -225,6 +246,7 @@ MS_PROJECT_CONFIG = "RelWithDebInfo|Win32"
 !ENDIF
 !ELSE
 MS_PROJECT_DIR=Release
+BUILD_CONFIG=Release
 !IFDEF WIN64
 MS_PROJECT_CONFIG = "Release|x64"
 !ELSE
@@ -577,11 +599,15 @@ SWIG_DIR = SWIG-1.3.39
 !ENDIF
 
 !IFNDEF CURL_DIR
-CURL_DIR = curl-7.37.1
+CURL_DIR = curl-7_70_0
+CURL_BRANCH = curl-7_70_0
+CURL_SRC = https://github.com/curl/curl.git
 !ENDIF
 
 !IFNDEF OPENSSL_DIR
-OPENSSL_DIR = openssl-1.1.1c
+OPENSSL_DIR = OpenSSL_1_1_1g
+OPENSSL_BRANCH = OpenSSL_1_1_1g
+OPENSSL_SRC = https://github.com/openssl/openssl.git
 !ENDIF
 
 !IFNDEF PDF_DIR
@@ -629,7 +655,9 @@ GETTEXT_DIR = gettext-0.13
 !ENDIF
 
 !IFNDEF PGSQL_DIR
-PGSQL_DIR = postgresql-9.6.8
+PGSQL_DIR = postgres-12_3
+PGSQL_SRC = https://github.com/postgres/postgres.git
+PGSQL_BRANCH = REL_12_3
 !ENDIF
 
 !IFNDEF POPPLER_DIR
@@ -1545,12 +1573,31 @@ gdal-nuget:
     sign GDAL.Linux.$(GDAL_RELEASE_VER).nupkg
     cd $(BASE_DIR)
     
+gdal3-nuget:
+    cd nuget
+    nuget pack GDAL3.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL3.Native.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL3.Plugins.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL3.Linux.nuspec -version $(GDAL_RELEASE_VER)
+    sign GDAL3.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL3.Native.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL3.Plugins.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL3.Linux.$(GDAL_RELEASE_VER).nupkg
+    cd $(BASE_DIR)
+    
 gdal-nuget-push:
     cd nuget
     nuget setApiKey $(NUGET_GDAL_API_KEY)
     nuget push GDAL.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    
+gdal3-nuget-push:
+    cd nuget
+    nuget setApiKey $(NUGET_GDAL_API_KEY)
+    nuget push GDAL3.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    nuget push GDAL3.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    nuget push GDAL3.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
 
 mkmapserverinst:
     set PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\ms\apps;$(PATH)
@@ -1960,8 +2007,8 @@ gdal-csharp:
 !ENDIF
 !IFNDEF NO_COPY
 	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
-	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\csharp
-	xcopy /Y *.exe $(OUTPUT_DIR)\bin\gdal\csharp
+	xcopy /Y *_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    xcopy /Y *_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
@@ -2784,8 +2831,39 @@ gd:
 !ENDIF
 	cd $(BASE_DIR)
     
-    
 openssl:
+!IFDEF OPENSSL_DIR
+    if not exist $(OPENSSL_DIR) git clone -b $(OPENSSL_BRANCH) $(OPENSSL_SRC) $(OPENSSL_DIR)
+    cd $(BASE_DIR)\$(OPENSSL_DIR)
+    git reset --hard HEAD
+    git checkout $(OPENSSL_BRANCH)
+!IFDEF WIN64
+    perl Configure VC-WIN64A no-asm enable-zlib --with-zlib-lib=$(OUTPUT_DIR)\lib\zdll.lib -I$(OUTPUT_DIR)\include
+!ELSE
+    perl Configure VC-WIN32 no-asm enable-zlib --with-zlib-lib=$(OUTPUT_DIR)\lib\zdll.lib -I$(OUTPUT_DIR)\include
+!ENDIF
+!IFNDEF NO_CLEAN
+	nmake clean
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake
+!ENDIF
+    if not exist $(OUTPUT_DIR)\include\openssl mkdir $(OUTPUT_DIR)\include\openssl
+	xcopy /Y include\openssl\*.h $(OUTPUT_DIR)\include\openssl
+!IFDEF WIN64
+    xcopy /Y lib*1_1-x64.dll $(OUTPUT_DIR)\bin
+!ELSE
+    xcopy /Y lib*1_1.dll $(OUTPUT_DIR)\bin
+!ENDIF
+    xcopy /Y *.lib $(OUTPUT_DIR)\lib
+    xcopy /Y apps\openssl.exe $(OUTPUT_DIR)\bin
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(OPENSSL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+    
+    
+openssl3:
 !IFDEF OPENSSL_DIR
 !IFDEF WIN64
     cd $(OPENSSL_DIR)\x64
@@ -2850,7 +2928,7 @@ get_ca_bundle:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\curl;$(PATH)
     -if exist $(OUTPUT_DIR)\bin\curl\curl.exe $(OUTPUT_DIR)\bin\curl\curl.exe -o $(OUTPUT_DIR)\bin\curl\curl-ca-bundle.crt "https://curl.haxx.se/ca/cacert.pem"
 
-curl2:
+curl4:
 !IFDEF CURL_DIR
 !IF $(MSVC_VER) == 1600
 !IFDEF WIN64
@@ -2897,17 +2975,41 @@ curl2:
 !IFNDEF NO_COPY
     rem xcopy /Y lib\libcurl_imp.lib $(OUTPUT_DIR)\lib
     rem if exist lib\libcurl.dll xcopy /Y lib\libcurl.dll $(OUTPUT_DIR)\bin
-    rem if exist lib\Release\libcurl.dll xcopy /Y lib\Release\libcurl.dll $(OUTPUT_DIR)\bin
+    rem if exist lib\$(BUILD_CONFIG)\libcurl.dll xcopy /Y lib\$(BUILD_CONFIG)\libcurl.dll $(OUTPUT_DIR)\bin
     rem if not exist $(OUTPUT_DIR)\include\curl mkdir $(OUTPUT_DIR)\include\curl
     rem xcopy /Y /S include\*.h $(OUTPUT_DIR)\include\curl
     rem if not exist $(OUTPUT_DIR)\bin\curl mkdir $(OUTPUT_DIR)\bin\curl
     rem if exist src\curl.exe xcopy /Y src\curl.exe $(OUTPUT_DIR)\bin\curl
-    rem if exist src\Release\curl.exe xcopy /Y src\Release\curl.exe $(OUTPUT_DIR)\bin\curl
+    rem if exist src\$(BUILD_CONFIG)\curl.exe xcopy /Y src\$(BUILD_CONFIG)\curl.exe $(OUTPUT_DIR)\bin\curl
 !ENDIF
     cd $(BASE_DIR)
 !ENDIF
 
-curl:
+curl: 
+!IFDEF CURL_DIR
+    if not exist $(CURL_DIR) git clone -b $(CURL_BRANCH) $(CURL_SRC) $(CURL_DIR)
+    cd $(BASE_DIR)\$(CURL_DIR)
+    git reset --hard HEAD
+    git checkout $(CURL_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(OUTPUT_DIR)\lib\zdll.lib -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCMAKE_USE_OPENSSL=ON -DCMAKE_USE_LIBSSH2=OFF -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(CURL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+curl2:
 !IFDEF CURL_DIR
     cd $(BASE_DIR)\$(CURL_DIR)
 !IFNDEF NO_CLEAN
@@ -3901,8 +4003,34 @@ ms-sql2008: ms-optfile
 !ENDIF
 !ENDIF
 	cd $(BASE_DIR) 
-
+    
 pgsql:
+!IFDEF PGSQL_DIR
+    if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
+    cd $(BASE_DIR)\$(PGSQL_DIR)
+    rem git reset --hard HEAD
+    rem git checkout $(PGSQL_BRANCH)
+    cd src\tools\msvc
+    echo $$config-^>{openssl} = '$(OUTPUT_DIR)'; >config.pl
+!IFNDEF NO_CLEAN
+    clean dist
+!ENDIF
+!IFNDEF NO_BUILD
+    build libpq
+!ENDIF
+    cd $(BASE_DIR)\$(PGSQL_DIR)\$(BUILD_CONFIG)\libpq
+    xcopy /Y *.dll $(OUTPUT_DIR)\bin
+    xcopy /Y *.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-fe.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-events.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(PGSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.    
+!ENDIF
+
+pgsql2:
     cd $(PGSQL_DIR)\src\interfaces\libpq
 !IFNDEF NO_CLEAN
     nmake /f win32.mak clean

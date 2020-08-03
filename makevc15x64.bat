@@ -85,7 +85,7 @@ set gdal-release-ver=%gdal_version%.%gdal_rel%
 
 cmd /C makepackage.bat
 
-cmd /C makenuget.bat
+cmd /C makenuget3.bat
 
 call setversions_gdal24.bat
 

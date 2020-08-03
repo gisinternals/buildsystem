@@ -559,8 +559,12 @@
                     <Component Id="libcurl.dll" Guid="*">
                         <File Id="libcurl.dll" Name="libcurl.dll" Source="$(var.TargetDir)\libcurl.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="libeay32.dll" Guid="*">
-                        <File Id="libeay32.dll" Name="libeay32.dll" Source="$(var.TargetDir)\libeay32.dll" Vital="yes"/>
+                    <Component Id="libcrypto.dll" Guid="*">
+                        <?if $(sys.BUILDARCH) = x64?>
+                        <File Id="libcrypto.dll" Name="libcrypto-1_1-x64.dll" Source="$(var.TargetDir)\libcrypto-1_1-x64.dll" Vital="yes"/>
+                        <?else?>
+                        <File Id="libcrypto.dll" Name="libcrypto-1_1.dll" Source="$(var.TargetDir)\libcrypto-1_1.dll" Vital="yes"/>
+                        <?endif?>
                     </Component>
                     <Component Id="expat.dll" Guid="*">
                         <File Id="expat.dll" Name="expat.dll" Source="$(var.TargetDir)\expat.dll" Vital="yes"/>
@@ -606,8 +610,12 @@
 					<Component Id="freexl.dll" Guid="*">
                         <File Id="freexl.dll" Name="freexl.dll" Source="$(var.TargetDir)\freexl.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="ssleay32.dll" Guid="*">
-                        <File Id="ssleay32.dll" Name="ssleay32.dll" Source="$(var.TargetDir)\ssleay32.dll" Vital="yes"/>
+                    <Component Id="libssl.dll" Guid="*">
+                        <?if $(sys.BUILDARCH) = x64?>
+                        <File Id="libssl.dll" Name="libssl-1_1-x64.dll" Source="$(var.TargetDir)\libssl-1_1-x64.dll" Vital="yes"/>
+                        <?else?>
+                        <File Id="libssl.dll" Name="libssl-1_1.dll" Source="$(var.TargetDir)\libssl-1_1.dll" Vital="yes"/>
+                        <?endif?>                     
                     </Component>
                     <Component Id="xerces_c_3_2.dll" Guid="*">
                         <File Id="xerces_c_3_2.dll" Name="xerces-c_3_2.dll" Source="$(var.TargetDir)\xerces-c_3_2.dll" Vital="yes"/>
@@ -877,8 +885,8 @@
             <ComponentRef Id="iconv.dll" />
             <ComponentRef Id="libcurl.dll" />
             <ComponentRef Id="curl_ca_bundle.crt" />
-            <ComponentRef Id="ssleay32.dll" />
-            <ComponentRef Id="libeay32.dll" />
+            <ComponentRef Id="libssl.dll" />
+            <ComponentRef Id="libcrypto.dll" />
             <ComponentRef Id="expat.dll" />
             <ComponentRef Id="libpq.dll" />
             <ComponentRef Id="libmysql.dll" />

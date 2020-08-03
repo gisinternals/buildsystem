@@ -34,8 +34,8 @@
         <file src="..\release-1911-x64\bin\freexl.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\expat.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\geos.dll" target="build\gdal\x64" />
-        <file src="..\release-1911-x64\bin\SSLEAY32.dll" target="build\gdal\x64" />
-        <file src="..\release-1911-x64\bin\LIBEAY32.dll" target="build\gdal\x64" />
+        <file src="..\release-1911-x64\bin\libssl-1_1-x64.dll" target="build\gdal\x64" />
+        <file src="..\release-1911-x64\bin\libcrypto-1_1-x64.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\zlib1.dll" target="build\gdal\x64" />
         <file src="..\release-1911-x64\bin\gdal\csharp\*_wrap.dll" target="build\gdal\x64" />
     <!-- x86 -->
@@ -56,8 +56,8 @@
         <file src="..\release-1911\bin\freexl.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\expat.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\geos.dll" target="build\gdal\x86" />
-        <file src="..\release-1911\bin\SSLEAY32.dll" target="build\gdal\x86" />
-        <file src="..\release-1911\bin\LIBEAY32.dll" target="build\gdal\x86" />
+        <file src="..\release-1911\bin\libssl-1_1.dll" target="build\gdal\x86" />
+        <file src="..\release-1911\bin\libcrypto-1_1.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\zlib1.dll" target="build\gdal\x86" />
         <file src="..\release-1911\bin\gdal\csharp\*_wrap.dll" target="build\gdal\x86" />
     <!-- Common -->
