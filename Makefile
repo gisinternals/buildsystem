@@ -153,7 +153,7 @@ CMAKE_GENERATOR = "Visual Studio 15"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.10.25019.0"
-MSVC_VER = 1911
+MSVC_VER = 1910
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -163,7 +163,7 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.15.26726.0"
-MSVC_VER = 1911
+MSVC_VER = 1915
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -173,7 +173,17 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.16.27034.0"
-MSVC_VER = 1911
+MSVC_VER = 1916
+MESON_BACKEND = vs2017
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc15x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc15
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.16.27041.0"
+MSVC_VER = 1916
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -192,12 +202,22 @@ CMAKE_BUILDDIR = vc16x64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.26.28806.0"
+MSVC_VER = 1926
+MESON_BACKEND = vs2019
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
+CMAKE_BUILDDIR = vc16
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
 !ENDIF
 
-!IF $(MSVC_VER) == 1911
+!IF $(MSVC_VER) >= 1911
 !IFDEF WIN64
 SETARGV = "$(VCTOOLSINSTALLDIR)lib\x64\setargv.obj"
 !ELSE
@@ -217,6 +237,12 @@ SETARGV = "$(VCDIR)\lib\setargv.obj"
 !ENDIF
 !ENDIF
 
+!IF $(MSVC_VER) <= 1900
+# last version that supports VS2015
+POPPLER_BRANCH = poppler-0.76.0
+POPPLER_MINOR_VERSION = 76
+!ENDIF
+
 !IFNDEF SERVER_URL
 SERVER_URL=http://www.gisinternals.com/sdk
 !ENDIF
@@ -229,12 +255,23 @@ SERVER_URL=http://www.gisinternals.com/sdk
 !ENDIF
 !ENDIF
 
-!IFNDEF SWIG_DIR
-SWIG_VER = swigwin-1.3.39
-SWIG_SRC = https://sourceforge.net/projects/swig/files/swigwin/swigwin-1.3.39/$(SWIG_VER).zip/download
-SWIG_DIR = $(SRC_DIR)\swig
-SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\$(SWIG_VER)\swig.exe
+!IFDEF WIN64
+FILEGDB_BINPATH = $(FILEGDB_API_DIR)\bin64
+!ELSE
+FILEGDB_BINPATH = $(FILEGDB_API_DIR)\bin
 !ENDIF
+
+!IFNDEF GDALTEST_SCRIPT
+GDALTEST_SCRIPT =run_all.py
+!ENDIF
+
+!IFNDEF SWIG_VER
+SWIG_VER = 1.3.39
+!ENDIF
+
+SWIG_SRC = https://sourceforge.net/projects/swig/files/swigwin/swigwin-$(SWIG_VER)/swigwin-$(SWIG_VER).zip/download
+SWIG_DIR = $(SRC_DIR)\swig
+SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\swig.exe
 
 !IFNDEF CYGWIN_DIR
 CYGWIN_DIR=E:\cygwin
@@ -256,7 +293,7 @@ MAPMANAGER_REVISION=HEAD
 
 #specify build targets
 MSVCRT_DLL = $(OUTPUT_DIR)\build\msvcr.install
-SWIG_INSTALL = $(OUTPUT_DIR)\build\$(SWIG_VER).install
+SWIG_INSTALL = $(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
 ZLIB_LIB = $(OUTPUT_DIR)\lib\zlib.lib
 OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
@@ -274,6 +311,7 @@ LIBICONV_LIB = $(OUTPUT_DIR)\lib\iconv.lib
 PGSQL_LIB = $(OUTPUT_DIR)\lib\libpq.lib
 PROJ4_LIB = $(OUTPUT_DIR)\lib\proj_4_9.lib
 PROJ6_LIB = $(OUTPUT_DIR)\lib\proj_6_2.lib
+PROJ7_LIB = $(OUTPUT_DIR)\lib\proj.lib
 SQLITE_LIB = $(OUTPUT_DIR)\lib\sqlite3.lib
 SPATIALITE_LIB = $(OUTPUT_DIR)\lib\spatialite_i.lib
 FREEXL_LIB = $(OUTPUT_DIR)\lib\freexl.lib
@@ -284,12 +322,20 @@ PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
 PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\protobuf-c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_VERSION = $(OUTPUT_DIR)\doc\gdal_version.txt
+GDAL_VERSION_H = $(BASE_DIR)\$(GDAL_DIR)\gdal\gcore\gdal_version.h
 GDAL_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal.opt
 GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_csharp.opt
+GDAL_PYTHON_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_python.opt
 !IFDEF GDAL_CSHARP_DLL_NAME
 GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\$(GDAL_CSHARP_DLL_NAME)
 !ELSE
 GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
+!ENDIF
+GDAL_JAVA_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_java.opt
+!IFDEF GDAL_JAVA_DLL_NAME
+GDAL_JAVA_DLL = $(OUTPUT_DIR)\bin\gdal\java\$(GDAL_CSHARP_DLL_NAME)
+!ELSE
+GDAL_JAVA_DLL = $(OUTPUT_DIR)\bin\gdal\java\gdalalljni.dll
 !ENDIF
 GDAL_MSSQL_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_mssql.opt
 GDAL_MSSQL_DLL = $(OUTPUT_DIR)\bin\gdal\plugins-optional\ogr_MSSQLSpatial.dll
@@ -378,6 +424,10 @@ GDAL_DEPS = $(GDAL_DEPS) $(PROJ4_LIB)
 GDAL_DEPS = $(GDAL_DEPS) $(PROJ6_LIB)
 !ENDIF
 
+!IFDEF GDAL_PROJ7
+GDAL_DEPS = $(GDAL_DEPS) $(PROJ7_LIB)
+!ENDIF
+
 !IFDEF GDAL_CURL
 GDAL_DEPS = $(GDAL_DEPS) $(CURL_LIB)
 !ENDIF
@@ -387,7 +437,6 @@ GDAL_DEPS = $(GDAL_DEPS) $(SPATIALITE_LIB)
 !ENDIF
 
 !IFDEF GDAL_CSHARP
-GDAL_DEPS = $(GDAL_DEPS) $(SWIG_INSTALL)
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_CSHARP_DLL)
 !ENDIF
 
@@ -569,6 +618,34 @@ MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_LIBXML2=0
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(LIBXML2_LIB)
 !ENDIF
 
+!IFNDEF MS_WMS_SVR
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_WMS=0
+!ENDIF
+
+!IFNDEF MS_WFS_SVR
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_WFS=0
+!ENDIF
+
+!IFNDEF MS_SOS_SVR
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_SOS=0
+!ENDIF
+
+!IFNDEF MS_WCS_SVR
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_WCS=0
+!ENDIF
+
+!IFNDEF MS_WMS_CLIENT
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CLIENT_WMS=0
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CLIENT_WMS=1
+!ENDIF
+
+!IFNDEF MS_WFS_CLIENT
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CLIENT_WFS=0
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CLIENT_WFS=1
+!ENDIF
+
 !IFNDEF MS_HARFBUZZ
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_HARFBUZZ=0
 !ELSE
@@ -622,6 +699,7 @@ LIBICONV_ENABLED = 1
 PGSQL_ENABLED = 1
 PROJ4_ENABLED = 1
 PROJ6_ENABLED = 1
+PROJ7_ENABLED = 1
 SQLITE_ENABLED = 1
 SPATIALITE_ENABLED = 1
 FREEXL_ENABLED = 1
@@ -656,7 +734,7 @@ OGDI_ENABLED = 1
 # ECW SDK locations
 !IFDEF ECWSDK_DIR
 ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) "-I$(ECWSDK_DIR)\include" "-I$(ECWSDK_DIR)\include\NCSECW\api" "-I$(ECWSDK_DIR)\include\NCSECW\jp2" "-I$(ECWSDK_DIR)\include\NCSECW\ecw"
-!IF $(MSVC_VER) == 1911
+!IF $(MSVC_VER) >= 1911
 !IFDEF WIN64
 ECWLIB = "$(ECWSDK_DIR)\lib\vc141\x64\NCSEcw.lib"
 ECWDLL = "$(ECWSDK_DIR)\bin\vc141\x64\NCSEcw.dll"
@@ -798,6 +876,82 @@ TCLSH_EXE = tclsh.exe
 !ENDIF
 !ENDIF
 
+# python
+!IFNDEF PYTHON_BASE
+PYTHON_BASE=E:\builds
+!ENDIF
+
+!IFNDEF PYTHON_DIR
+!IFDEF WIN64
+PYTHON_DIR = Python36-AMD64
+!ELSE
+PYTHON_DIR = Python36
+!ENDIF
+!IF $(MSVC_VER) == 1310
+PYTHON_DIR = Python27
+!ENDIF
+!ENDIF
+
+!IF "$(PYTHON_DIR)" == "Python25"
+PYTHON_OUTDIR = python\build\lib.win32-2.5
+PYTHON_BDIST_OPTS = --formats=wininst
+!ELSEIF "$(PYTHON_DIR)" == "Python26"
+PYTHON_OUTDIR = python\build\lib.win32-2.6
+PYTHON_BDIST_OPTS = --formats=wininst
+!ELSEIF "$(PYTHON_DIR)" == "Python26-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-2.6
+PYTHON_BDIST_OPTS = --formats=wininst
+!ELSEIF "$(PYTHON_DIR)" == "Python27"
+PYTHON_OUTDIR = python\build\lib.win32-2.7
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python27-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-2.7
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python31"
+PYTHON_OUTDIR = python\build\lib.win32-3.1
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python31-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.1
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python32"
+PYTHON_OUTDIR = python\build\lib.win32-3.2
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python32-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.2
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python33"
+PYTHON_OUTDIR = python\build\lib.win32-3.3
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python33-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.3
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python34"
+PYTHON_OUTDIR = python\build\lib.win32-3.4
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python34-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.4
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python35"
+PYTHON_OUTDIR = python\build\lib.win32-3.5
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python35-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.5
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python36"
+PYTHON_OUTDIR = python\build\lib.win32-3.6
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python36-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.6
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python37"
+PYTHON_OUTDIR = python\build\lib.win32-3.7
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python37-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.7
+PYTHON_BDIST_OPTS = --formats=msi
+!ENDIF
+
+
 !IFNDEF JAVA_HOME
 !IFDEF WIN64
 JAVA_HOME = C:\Java\jdk1.8.0_191x64
@@ -847,7 +1001,7 @@ MS_PATH = $(BASE_DIR)\$(MS_DIR)
 !ENDIF
 
 !IFNDEF PYDIR
-PYDIR = $(BASE_DIR)\$(PYTHON_DIR)
+PYDIR = $(PYTHON_BASE)\$(PYTHON_DIR)
 !ENDIF
 
 # dependent constants
@@ -866,7 +1020,9 @@ EXTRAFLAGS =
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(GDAL_VERSION)
+test: $(FCGI_LIB)
+
+ms: $(MAPSERVER_LIB)
 
 show-dependencies:
     @echo $(GDAL_DEPS) $(MAPSERVER_DEPS)
@@ -883,6 +1039,8 @@ op-disable:
     
 gdal-clean:
     if exist $(GDAL_OPT) del $(GDAL_OPT)
+    
+libtiff: $(LIBTIFF_LIB)
     
 install:
     @if not exist $(INSTALL_SCRIPT) echo Unable to find $(INSTALL_SCRIPT). The install script doesn't exists
@@ -913,8 +1071,44 @@ check:
     @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libxml2 - current: %%F built: $(LIBXML2_BRANCH) & exit 0
     @cd $(BASE_DIR)\$(LIBEXPAT_DIR)
     @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(LIBEXPAT_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(PROTOBUF_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(PROTOBUF_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(PROTOBUF_C_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(PROTOBUF_C_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(URIPARSER_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(URIPARSER_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(LIBTIFF_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(LIBTIFF_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(OPENJPEG_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(OPENJPEG_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(POPPLER_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(POPPLER_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(FCGI_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(FCGI_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(LIBKML_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(LIBKML_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(MYSQL_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(MYSQL_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(HDF5_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(HDF5_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(KEA_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(KEA_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(NETCDF_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(NETCDF_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(OGDI_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(OGDI_BRANCH) & exit 0
+    @cd $(BASE_DIR)\$(BOOST_DIR)
+    @for /f "usebackq tokens=*" %%F in (`git ls-remote --tags --sort=-taggerdate`) do @echo libexpat - current: %%F built: $(BOOST_BRANCH) & exit 0
 
-    @cd $(BASE_DIR) 
+    @cd $(BASE_DIR)
+
+gdal-clean:
+!IFNDEF NO_CLEAN
+	-del $(GDAL_OPT)
+    -del $(GDAL_LIB)
+!ENDIF
+
+gdal: gdal-clean $(GDAL_LIB)   
 
 $(OUTPUT_DIR):
     if exist $(OUTPUT_DIR).zip 7z x -y $(OUTPUT_DIR).zip
@@ -925,6 +1119,156 @@ $(OUTPUT_DIR):
     if not exist $(OUTPUT_DIR)\doc mkdir $(OUTPUT_DIR)\doc
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
     if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    
+gdal-csharp: $(GDAL_CSHARP_DLL)
+
+gdal-csharp-test: $(GDAL_CSHARP_DLL)	
+!IFDEF GDAL_CSHARP
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\csharp
+	nmake /f makefile.vc test EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
+	cd $(BASE_DIR)
+!ENDIF
+
+gdal-java: $(GDAL_JAVA_DLL)
+
+gdal-java-test:	
+!IFDEF GDAL_JAVA
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\java;$(PATH)
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
+    SET GDAL_DATA=$(OUTPUT_DIR)\bin\gdal-data
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\java
+	nmake /f makefile.vc test EXT_NMAKE_OPT=$(GDAL_JAVA_OPT)
+	cd $(BASE_DIR)
+!ENDIF
+
+gdal-python-all:
+!IFNDEF NO_BUILD
+!IFDEF WIN64
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31-AMD64 SWIG_VER=2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32-AMD64 SWIG_VER=2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_VER=2.0.4
+	nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
+!ELSE
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_VER=2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python32 SWIG_VER=2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python33 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python34 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python35 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
+	nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
+!ENDIF
+!ENDIF
+
+gdal-python: $(GDAL_OPT) $(SWIG_INSTALL)
+!IFDEF GDAL_PYTHON
+    copy /Y $(GDAL_OPT) $(GDAL_PYTHON_OPT)
+    echo PYDIR=$(PYDIR) >>$(GDAL_PYTHON_OPT)
+    echo SWIG=$(SWIG_EXE) >>$(GDAL_PYTHON_OPT)
+    SET DISTUTILS_USE_SDK=1
+    SET MSSdk=1
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig
+	echo [build_ext] > python\setup.cfg
+    echo include_dirs = ../../port;../../gcore;../../alg;../../ogr/;../../ogr/ogrsf_frmts;../../gnm;../../apps >> python\setup.cfg
+    echo library_dirs = ../../ >> python\setup.cfg
+    echo libraries = gdal_i >> python\setup.cfg
+    cd python
+!IFNDEF NO_CLEAN    
+    if exist build\nul rmdir /S /Q build
+!ENDIF    
+    cd ..
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc python EXT_NMAKE_OPT=$(GDAL_PYTHON_OPT)
+!ENDIF
+	cd $(PYTHON_OUTDIR)
+!IFNDEF NO_COPY	
+	if not exist $(OUTPUT_DIR)\bin\gdal\python mkdir $(OUTPUT_DIR)\bin\gdal\python
+	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python
+	cd osgeo
+	if not exist $(OUTPUT_DIR)\bin\gdal\python\osgeo mkdir $(OUTPUT_DIR)\bin\gdal\python\osgeo
+	if exist _gdal.pyd.manifest mt -manifest _gdal.pyd.manifest -outputresource:_gdal.pyd;2
+	if exist _gdalconst.pyd.manifest mt -manifest _gdalconst.pyd.manifest -outputresource:_gdalconst.pyd;2
+	if exist _ogr.pyd.manifest mt -manifest _ogr.pyd.manifest -outputresource:_ogr.pyd;2
+	if exist _osr.pyd.manifest mt -manifest _osr.pyd.manifest -outputresource:_osr.pyd;2
+	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python\osgeo
+	xcopy /Y *.pyd $(OUTPUT_DIR)\bin\gdal\python\osgeo
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\python\scripts
+	if not exist $(OUTPUT_DIR)\bin\gdal\python\scripts mkdir $(OUTPUT_DIR)\bin\gdal\python\scripts
+	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python\scripts
+!ENDIF
+	cd $(BASE_DIR)  
+!ENDIF
+
+gdal-python-bdist:
+!IFDEF GDAL_PYTHON
+    SET DISTUTILS_USE_SDK=1
+    SET MSSdk=1
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig
+	echo [build_ext] > python\setup.cfg
+    echo include_dirs = ../../port;../../gcore;../../alg;../../ogr/ >> python\setup.cfg
+    echo library_dirs = ../../ >> python\setup.cfg
+    echo libraries = gdal_i >> python\setup.cfg
+    cd python
+!IFNDEF NO_CLEAN    
+    if exist dist\nul rmdir /S /Q dist
+!ENDIF    
+!IFNDEF NO_BUILD
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py bdist $(PYTHON_BDIST_OPTS)
+!ENDIF
+!IFNDEF NO_COPY	
+	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
+	xcopy /Y dist\*.exe $(OUTPUT_DIR)\install
+	xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+!ENDIF
+	cd $(BASE_DIR)  
+!ENDIF
+
+gdal-cpp-test:
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
+    SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
+    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(BASE_DIR)\$(OCI_DIR);$(FILEGDB_BINPATH);$(PATH)
+    cd $(BASE_DIR)\$(GDAL_DIR)\autotest\cpp
+    nmake /f makefile.vc clean
+    nmake /f makefile.vc
+    nmake /f makefile.vc check   
+    cd $(BASE_DIR)
+
+gdal-autotest:
+    rem SET GDAL_DOWNLOAD_TEST_DATA=YES
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
+    SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
+    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
+    SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
+    SET DO_NOT_FAIL_ON_RECODE_ERRORS="YES"
+    SET GDAL_HTTP_UNSAFESSL="YES"
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(BASE_DIR)\$(OCI_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
+    cd $(BASE_DIR)\$(GDAL_DIR)\autotest
+    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs --timeout=30 --timeout-method=thread
+    cd $(BASE_DIR)
+    
 
 $(MSVCRT_DLL): $(OUTPUT_DIR)
 !IF $(MSVC_VER) >= 1922
@@ -1453,6 +1797,7 @@ $(PROTOBUF_LIB): $(ZLIB_LIB)
     git reset --hard HEAD
     git checkout $(PROTOBUF_BRANCH)
     cd cmake
+    powershell -Command "(gc CMakeLists.txt) -replace [regex]::escape('string(REGEX REPLACE \"/MD\"'), '#string(REGEX REPLACE \"/MD\"' | Out-File -encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -1474,6 +1819,7 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
     git reset --hard HEAD
     git checkout $(PROTOBUF_C_BRANCH)
     cd build-cmake
+    powershell -Command "(gc CMakeLists.txt) -replace [regex]::escape('string(REGEX REPLACE \"/MD\"'), '#string(REGEX REPLACE \"/MD\"' | Out-File -encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -1498,7 +1844,7 @@ $(FRIBIDI_LIB):
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_BUILD
-    $(PYTHON_DIR)\Scripts\meson --prefix $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install --buildtype=release --backend=ninja $(CMAKE_BUILDDIR) -Ddocs=false
+    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\meson --prefix $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install --buildtype=release --backend=ninja $(CMAKE_BUILDDIR) -Ddocs=false
     ninja -v -C $(CMAKE_BUILDDIR)
     ninja -C $(CMAKE_BUILDDIR) install
 !ENDIF
@@ -1575,6 +1921,38 @@ $(PROJ6_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
     @echo $(PROJ6_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(PROJ7_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
+!IFDEF PROJ7_ENABLED
+    if not exist $(PROJ7_DIR) git clone -b $(PROJ7_BRANCH) $(PROJ_SRC) $(PROJ7_DIR)
+    cd $(PROJ7_DIR)
+    git reset --hard HEAD
+    git checkout $(PROJ7_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+    if exist data\proj.db del data\proj.db
+    if exist data\all.sql.in del data\all.sql.in
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ7_DIR)\$(CMAKE_BUILDDIR)\install" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_SHARED_LIBS=ON
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\proj7 mkdir $(OUTPUT_DIR)\bin\proj7
+    if not exist $(OUTPUT_DIR)\bin\proj7\apps mkdir $(OUTPUT_DIR)\bin\proj7\apps
+    xcopy /Y $(BASE_DIR)\$(PROJ7_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(PROJ7_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(PROJ7_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.exe $(OUTPUT_DIR)\bin\proj7\apps
+    if exist $(OUTPUT_DIR)\include\proj7 rmdir /s /q $(OUTPUT_DIR)\include\proj7
+	mkdir $(OUTPUT_DIR)\include\proj7
+    xcopy /Y /S $(BASE_DIR)\$(PROJ7_DIR)\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include\proj7
+    if not exist $(OUTPUT_DIR)\bin\proj7\share mkdir $(OUTPUT_DIR)\bin\proj7\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ7_DIR)\$(CMAKE_BUILDDIR)\install\share\proj\* $(OUTPUT_DIR)\bin\proj7\share
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(PROJ7_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(SQLITE_LIB): $(MSVCRT_DLL)
 !IFDEF SQLITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
@@ -1608,8 +1986,8 @@ $(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SWIG_DIR) mkdir $(SWIG_DIR)
     cd $(SWIG_DIR)
-    if not exist $(SWIG_VER) $(CURL_EXE) -L -k -o "$(SWIG_VER).zip" "$(SWIG_SRC)" & 7z x -y $(SWIG_VER).zip
-    echo >$(OUTPUT_DIR)\build\$(SWIG_VER).install
+    if not exist swigwin-$(SWIG_VER) $(CURL_EXE) -L -k -o "swigwin-$(SWIG_VER).zip" "$(SWIG_SRC)" & 7z x -y swigwin-$(SWIG_VER).zip
+    echo >$(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
     cd $(BASE_DIR)
 
 $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
@@ -1711,7 +2089,6 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 $(GDAL_OPT):
 !IFDEF GDAL_ENABLED
 	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\gdal_deps.txt
-	echo PYDIR=$(PYDIR) >> $(GDAL_OPT)
 	echo $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR)\gdal >> $(GDAL_OPT)
 !IFDEF GDAL_GEOS
@@ -1807,7 +2184,11 @@ $(GDAL_OPT):
     rem echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
     rem echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
     rem echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
+!IFDEF POPPLER_MINOR_VERSION
+    rem echo POPPLER_MINOR_VERSION = $(POPPLER_MINOR_VERSION) >> $(GDAL_OPT)
+!ELSE
     rem echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
+!ENDIF
     rem echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
     rem echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
     echo poppler - $(POPPLER_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -1820,8 +2201,8 @@ $(GDAL_OPT):
 !ENDIF
 !IFDEF GDAL_TIFF
     echo TIFF_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo TIFF_LIB=$(OUTPUT_DIR)\lib\libtiff_i.lib >> $(GDAL_OPT)
-    echo TIFF_OPTS=-DBIGTIFF_SUPPORT
+    echo TIFF_LIB=$(OUTPUT_DIR)\lib\tiff.lib >> $(GDAL_OPT)
+    echo TIFF_OPTS=-DBIGTIFF_SUPPORT >> $(GDAL_OPT)
     echo libtiff - $(LIBTIFF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_AMIGOCLOUD
@@ -1857,15 +2238,20 @@ $(GDAL_OPT):
 !IFDEF NETCDF_DIR
     echo netcdf - $(NETCDF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF USE_PROJ6
+!IF DEFINED(GDAL_PROJ7)
+    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj7 >> $(GDAL_OPT)
+    echo PROJ_LIBRARY = $(PROJ7_LIB) >> $(GDAL_OPT)
+!ELSEIF DEFINED(GDAL_PROJ6)
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ6_LIB) >> $(GDAL_OPT)
 !ELSE
-    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(GDAL_OPT)
+    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj7 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ4_LIB) >> $(GDAL_OPT)
     echo PROJ_FLAGS = -DPROJ_STATIC -DPROJ_VERSION=4 >> $(GDAL_OPT)
 !ENDIF
 !ENDIF
+
+$(GDAL_VERSION_H): $(GDAL_LIB)
 
 $(GDAL_VERSION): $(GDAL_LIB) $(ECW_DLL) $(FILEGDBAPI_DLL)
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
@@ -1947,10 +2333,33 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 !ENDIF
 	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
-	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\csharp
-	xcopy /Y *.exe $(OUTPUT_DIR)\bin\gdal\csharp
+	xcopy /Y *_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    xcopy /Y *_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
 !IFDEF GDAL_RELEASE_PDB
-    xcopy /Y *.pdb $(OUTPUT_DIR)\bin\gdal\csharp
+    xcopy /Y *_csharp.pdb $(OUTPUT_DIR)\bin\gdal\csharp
+    xcopy /Y *_wrap.pdb $(OUTPUT_DIR)\bin\gdal\csharp
+!ENDIF
+	cd $(BASE_DIR)
+    
+$(GDAL_JAVA_OPT): $(GDAL_OPT) $(SWIG_INSTALL)
+    copy /Y $(GDAL_OPT) $(GDAL_JAVA_OPT)
+    echo SWIG=$(SWIG_EXE) >>$(GDAL_JAVA_OPT)
+
+$(GDAL_JAVA_DLL): $(GDAL_LIB) $(GDAL_JAVA_OPT) $(GDAL_VERSION_H)
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\java
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_JAVA_OPT)
+!ENDIF
+    cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc java EXT_NMAKE_OPT=$(GDAL_JAVA_OPT)
+!ENDIF
+	if not exist $(OUTPUT_DIR)\bin\gdal\java mkdir $(OUTPUT_DIR)\bin\gdal\java
+    cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\java
+	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\java
+	xcopy /Y *.jar $(OUTPUT_DIR)\bin\gdal\java
+!IFDEF GDAL_RELEASE_PDB
+    xcopy /Y *.pdb $(OUTPUT_DIR)\bin\gdal\java
 !ENDIF
 	cd $(BASE_DIR)
 
@@ -2187,7 +2596,7 @@ $(GDAL_PG_DLL): $(GDAL_OPT) $(PGSQL_LIB)
 $(GDAL_OCI_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_OCI_OPT)
     echo OCI_PLUGIN=YES >> $(GDAL_OCI_OPT)
-    echo OCI_LIB =	$(INSTANTCLIENT_DIR)\sdk\lib\msvc\oci.lib >> $(GDAL_OCI_OPT)
+    echo OCI_LIB =	$(INSTANTCLIENT_DIR)\sdk\lib\msvc\oci.lib $(ZLIB_LIB) >> $(GDAL_OCI_OPT)
     echo OCI_INCLUDE =	-I$(INSTANTCLIENT_DIR)\sdk\include >> $(GDAL_OCI_OPT)
 
 $(GDAL_OCI_DLL): $(GDAL_OCI_OPT)
@@ -2202,6 +2611,21 @@ $(GDAL_OCI_DLL): $(GDAL_OCI_OPT)
 !ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y ogr_OCI.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	cd $(BASE_DIR)
+!ENDIF
+
+$(GDAL_GEOR_DLL): $(GDAL_OCI_OPT)
+!IFDEF OCI_DIR
+    cd $(GDAL_DIR)\gdal\frmts\georaster
+!IFNDEF NO_CLEAN
+	nmake /f makefile.vc clean
+    del *.manifest
+!ENDIF
+!IFNDEF NO_BUILD
+    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OCI_OPT)
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y gdal_GEOR.dll $(OUTPUT_DIR)\bin\gdal\plugins
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -2284,21 +2708,6 @@ $(GDAL_MRSID_LIDAR_DLL): $(GDAL_MRSID_OPT)
 	cd $(BASE_DIR)
 !ENDIF
 
-$(GDAL_GEOR_DLL): $(GDAL_OCI_OPT)
-!IFDEF OCI_DIR
-    cd $(GDAL_DIR)\gdal\frmts\georaster
-!IFNDEF NO_CLEAN
-	nmake /f makefile.vc clean
-    del *.manifest
-!ENDIF
-!IFNDEF NO_BUILD
-    nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OCI_OPT)
-!ENDIF
-    if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
-	xcopy /Y gdal_GEOR.dll $(OUTPUT_DIR)\bin\gdal\plugins
-	cd $(BASE_DIR)
-!ENDIF
-
 $(GDAL_PDF_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_PDF_OPT)
     echo PDF_PLUGIN=YES >> $(GDAL_PDF_OPT)
@@ -2306,7 +2715,11 @@ $(GDAL_PDF_OPT): $(GDAL_OPT)
     echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_PDF_OPT)
     echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_PDF_OPT)
     echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_PDF_OPT)
+!IFDEF POPPLER_MINOR_VERSION
+    echo POPPLER_MINOR_VERSION = $(POPPLER_MINOR_VERSION) >> $(GDAL_PDF_OPT)
+!ELSE
     echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_PDF_OPT)
+!ENDIF
     echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_PDF_OPT)
     echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) advapi32.lib gdi32.lib >> $(GDAL_PDF_OPT)
     
@@ -2565,11 +2978,14 @@ $(FCGI_LIB):
     cd $(FCGI_DIR)
     git reset --hard HEAD
     git checkout $(FCGI_BRANCH)
+    xcopy /Y $(BASE_DIR)\support\fcgi\libfcgi.mak libfcgi
+    cd libfcgi
 !IFNDEF NO_CLEAN
-    nmake /f Makefile.nt clean
+    if exist Release rd /Q /S Release
+    nmake /f libfcgi.mak clean
 !ENDIF
 !IFNDEF NO_BUILD
-    nmake /f Makefile.nt
+    nmake /f libfcgi.mak
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(FCGI_DIR)\libfcgi\Release\libfcgi.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(FCGI_DIR)\libfcgi\Release\libfcgi.dll $(OUTPUT_DIR)\bin
@@ -2670,7 +3086,7 @@ $(MYSQL_LIB): $(OPENSSL_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\install" "-DDOWNLOAD_BOOST=1" "-DWITH_BOOST=$(BASE_DIR)\src\boost" "-DWITHOUT_SERVER=1"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\install" "-DDOWNLOAD_BOOST=1" "-DWITH_BOOST=$(BASE_DIR)\src\mysql-boost" "-DWITHOUT_SERVER=1"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target libmysql  
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\Release\*.lib $(OUTPUT_DIR)\lib
