@@ -826,7 +826,7 @@ NETCDF_DIR=netcdf-4.3.2
 !ENDIF
 
 !IFNDEF FITS_DIR
-FITS_DIR=fits-3.14
+FITS_DIR=cfitsio-3.49
 !ENDIF
 
 !IF $(MSVC_VER) == 1911
@@ -4281,6 +4281,25 @@ mysql2:
 !ENDIF
 
 fits:
+!IFDEF FITS_DIR
+    cd $(FITS_DIR)
+!IFNDEF NO_CLEAN
+    if exist cmake rd /Q /S cmake
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist cmake mkdir cmake
+    cd cmake
+    $(CMAKE_DIR)\bin\cmake ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FITS_DIR)\cmake\install"
+    $(CMAKE_DIR)\bin\cmake --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\cmake\install\bin\cfitsio.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\cmake\install\lib\cfitsio.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\cmake\install\include\fitsio.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(FITS_DIR)\cmake\install\include\longnam.h $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ENDIF
+
+fits-old:
 !IFDEF FITS_DIR
     cd $(FITS_DIR)
 !IFNDEF NO_CLEAN
