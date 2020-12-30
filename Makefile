@@ -153,7 +153,7 @@ CMAKE_GENERATOR = "Visual Studio 15"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.10.25019.0"
-MSVC_VER = 1910
+MSVC_VER = 1911
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -163,7 +163,7 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.15.26726.0"
-MSVC_VER = 1915
+MSVC_VER = 1911
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -173,7 +173,7 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.16.27034.0"
-MSVC_VER = 1916
+MSVC_VER = 1911
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -183,7 +183,17 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.16.27041.0"
-MSVC_VER = 1916
+MSVC_VER = 1911
+MESON_BACKEND = vs2017
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc15x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc15
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.16.27043.0"
+MSVC_VER = 1911
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -203,7 +213,17 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.26.28806.0"
-MSVC_VER = 1926
+MSVC_VER = 1922
+MESON_BACKEND = vs2019
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
+CMAKE_BUILDDIR = vc16
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.27.29112.0"
+MSVC_VER = 1922
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -315,6 +335,7 @@ PROJ7_LIB = $(OUTPUT_DIR)\lib\proj.lib
 SQLITE_LIB = $(OUTPUT_DIR)\lib\sqlite3.lib
 SPATIALITE_LIB = $(OUTPUT_DIR)\lib\spatialite_i.lib
 FREEXL_LIB = $(OUTPUT_DIR)\lib\freexl.lib
+LIBRTTOPO_LIB = $(OUTPUT_DIR)\lib\librttopo.lib
 LIBXML2_LIB = $(OUTPUT_DIR)\lib\libxml2.lib
 XERCES_LIB = $(OUTPUT_DIR)\lib\xerces-c_3.lib
 LIBEXPAT_LIB = $(OUTPUT_DIR)\lib\libexpat.lib
@@ -703,6 +724,7 @@ PROJ7_ENABLED = 1
 SQLITE_ENABLED = 1
 SPATIALITE_ENABLED = 1
 FREEXL_ENABLED = 1
+LIBRTTOPO_ENABLED = 1
 LIBXML2_ENABLED = 1
 XERCES_ENABLED = 1
 LIBEXPAT_ENABLED = 1
@@ -1639,8 +1661,7 @@ $(OPENJPEG_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB)
     xcopy /Y install\bin\opj*.exe $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\openjp2.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
-    if not exist $(OUTPUT_DIR)\include\openjpeg-2.3 mkdir $(OUTPUT_DIR)\include\openjpeg-2.3
-    xcopy /Y /S install\include\openjpeg-2.3\*.h $(OUTPUT_DIR)\include\openjpeg-2.3
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
 !ELSE
     @echo $(OPENJPEG_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1921,7 +1942,7 @@ $(PROJ6_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
     @echo $(PROJ6_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(PROJ7_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
+$(PROJ7_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(CURL_LIB) $(SQLITE_LIB)
 !IFDEF PROJ7_ENABLED
     if not exist $(PROJ7_DIR) git clone -b $(PROJ7_BRANCH) $(PROJ_SRC) $(PROJ7_DIR)
     cd $(PROJ7_DIR)
@@ -1953,7 +1974,7 @@ $(PROJ7_LIB): $(MSVCRT_DLL) $(SQLITE_LIB)
     @echo $(PROJ7_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(SQLITE_LIB): $(MSVCRT_DLL)
+$(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
 !IFDEF SQLITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -1965,8 +1986,7 @@ $(SQLITE_LIB): $(MSVCRT_DLL)
     nmake /f Makefile.msc clean
 !ENDIF
 !IFNDEF NO_BUILD
-    nmake /f Makefile.msc sqlite3.c
-    cl sqlite3.c -DSQLITE_API=__declspec(dllexport) -DSQLITE_ENABLE_COLUMN_METADATA=1 -link -dll -out:sqlite3.dll
+    nmake /f Makefile.msc sqlite3.dll
     nmake /f Makefile.msc sqlite3.exe
 !ENDIF
 !IFNDEF NO_COPY
@@ -2003,7 +2023,7 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
 !ENDIF
 !IFNDEF NO_BUILD
 	echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
-    echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
+    echo OPTFLAGS= /nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
     powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
     cd src
     powershell -Command "(gc freexl.c) -replace 'round \(double num\)', 'round_unused (double num)' | Out-File -encoding ASCII freexl.c"
@@ -2015,7 +2035,29 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
     @echo $(FREEXL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
+$(LIBRTTOPO_LIB): $(GEOS_LIB) $(MSVCRT_DLL)
+!IFDEF LIBRTTOPO_ENABLED
+    if not exist $(LIBRTTOPO_DIR) git clone -b $(LIBRTTOPO_BRANCH) $(LIBRTTOPO_SRC) $(LIBRTTOPO_DIR)
+    cd $(LIBRTTOPO_DIR)
+!IFNDEF NO_CLEAN
+    nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+    xcopy /Y $(BASE_DIR)\support\librttopo\rttopo_config.h src
+    xcopy /Y $(BASE_DIR)\support\librttopo\librttopo_geom.h headers
+    echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
+    echo OPTFLAGS=	/nologo /Ox /fp:precise /W4 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /I$(OUTPUT_DIR)\include >>nmake.opt
+    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
+    powershell -Command "(gc makefile.vc) -replace 'src\\stringbuffer.obj src\\varint.obj', 'src\stringbuffer.obj src\rtt_tpsnap.obj src\varint.obj' | Out-File -encoding ASCII makefile.vc
+    nmake /f makefile.vc install "LIBDIR=$(OUTPUT_DIR)\lib"
+!ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBRTTOPO_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+
+$(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(GEOS_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
 !IFDEF SPATIALITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -2029,15 +2071,16 @@ $(SPATIALITE_LIB): $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(F
     if not exist $(SPATIALITE_VER) 7z x -y spatialite.zip
     cd $(SPATIALITE_VER)
 !IFNDEF NO_BUILD
-    powershell -Command "(gc config-msvc.h) -replace '#define HAVE_UNISTD_H 1', '/* #undef HAVE_UNISTD_H */' | Out-File -encoding ASCII config-msvc.h"
+    rem powershell -Command "(gc config-msvc.h) -replace '#define HAVE_UNISTD_H 1', '/* #undef HAVE_UNISTD_H */' | Out-File -encoding ASCII config-msvc.h"
     powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
+    powershell -Command "(gc makefile.vc) -replace 'proj_i.lib', 'proj.lib' | Out-File -encoding ASCII makefile.vc
     cd src
     cd gaiageo
-    powershell -Command "(gc gg_extras.c) -replace 'rint \(double x\)', 'rint_unused (double x)' | Out-File -encoding ASCII gg_extras.c"
+    rem powershell -Command "(gc gg_extras.c) -replace 'rint \(double x\)', 'rint_unused (double x)' | Out-File -encoding ASCII gg_extras.c"
     cd ..
     cd ..
     echo INSTDIR=$(BASE_DIR)\$(SPATIALITE_DIR)\install >nmake.opt
-    echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
+    echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include\proj7 /I$(OUTPUT_DIR)\include >>nmake.opt
     if exist $(BASE_DIR)\$(SPATIALITE_DIR)\install rd /Q /S $(BASE_DIR)\$(SPATIALITE_DIR)\install
     nmake /f makefile.vc install LIBDIR=$(OUTPUT_DIR)\lib
 !ENDIF
@@ -2362,6 +2405,17 @@ $(GDAL_JAVA_DLL): $(GDAL_LIB) $(GDAL_JAVA_OPT) $(GDAL_VERSION_H)
     xcopy /Y *.pdb $(OUTPUT_DIR)\bin\gdal\java
 !ENDIF
 	cd $(BASE_DIR)
+
+gdal-csharp: $(GDAL_CSHARP_DLL)
+
+gdal-csharp-test: $(GDAL_CSHARP_DLL)	
+!IFDEF GDAL_CSHARP
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\csharp
+	nmake /f makefile.vc test EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
+	cd $(BASE_DIR)
+!ENDIF
 
 $(GDAL_ECW_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_ECW_OPT)

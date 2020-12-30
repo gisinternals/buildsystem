@@ -66,128 +66,111 @@ MS_SVG_CAIRO = YES
 
 HDF4_SZIP = YES
 
-# Dependency versions
-ZLIB_BRANCH = v1.2.11
-OPENSSL_BRANCH = OpenSSL_1_1_1g
-CURL_BRANCH = curl-7_70_0
-LIBPNG_VER = lpng1637
-JPEG_VER = jpeg-9d
-FREETYPE_BRANCH = VER-2-10-2
-HARFBUZZ_BRANCH = 2.6.7
-GEOS_BRANCH = 3.8.1
-FRIBIDI_BRANCH = v1.0.9
-LIBICONV_VER = libiconv-1.16
-PGSQL_BRANCH = REL_12_3
-PROJ4_BRANCH = 4.9.3
-PROJ6_BRANCH = 6.3.2
-PROJ7_BRANCH = 7.1.0
-GDAL_BRANCH = master
-LIBXML2_BRANCH = v2.9.10
-MAPSERVER_BRANCH = rel-7-6-0
-XERCES_BRANCH = Xerces-C_3_2_2
-LIBEXPAT_BRANCH = R_2_2_9
-PROTOBUF_BRANCH = v3.12.3
-PROTOBUF_C_BRANCH = v1.3.3
-SZIP_VER = szip-2.1.1
-HDF4_VER = hdf-4.2.13
-PIXMAN_VER = pixman-0.40.0
-CAIRO_VER = cairo-1.16.0
-FONTCONFIG_VER = fontconfig-2.13.92
-URIPARSER_BRANCH = uriparser-0.9.4
-LIBSVG_VER=libsvg-0.5.0
-LIBSVGCAIRO_VER=libsvg-cairo-0.5.0
-LIBTIFF_BRANCH = v4.1.0
-OPENJPEG_BRANCH = v2.3.1
-POPPLER_BRANCH = poppler-0.89.0
-FCGI_BRANCH = 2.4.1
-GIFLIB_BRANCH = 5.0.5
-LIBKML_BRANCH = 1.3.0
-MYSQL_BRANCH = mysql-cluster-7.6.14
-HDF5_BRANCH = hdf5-1_12_0
-KEA_BRANCH = kealib-1.4.13
-NETCDF_BRANCH = v4.7.4
-FITS_VER = cfitsio-3.48
-BOOST_BRANCH = boost-1.73.0
-OGDI_BRANCH = ogdi_4_1_0
-
-# Source directories and locations
+# Source directories, versions and locations
 SRC_DIR = src
 
 ZLIB_DIR = $(SRC_DIR)\zlib
+ZLIB_BRANCH = v1.2.11
 ZLIB_SRC = https://github.com/madler/zlib.git
 
 OPENSSL_DIR = $(SRC_DIR)\openssl
+OPENSSL_BRANCH = OpenSSL_1_1_1i
 OPENSSL_SRC = https://github.com/openssl/openssl.git
 
 CURL_DIR = $(SRC_DIR)\curl
+CURL_BRANCH = curl-7_74_0
 CURL_SRC = https://github.com/curl/curl.git
 
 LIBPNG_DIR = $(SRC_DIR)\libpng
+LIBPNG_VER = lpng1637
 LIBPNG_SRC = https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/lpng1637.zip/download
 
 JPEG_DIR = $(SRC_DIR)\jpeg
+JPEG_VER = jpeg-9d
 JPEG_SRC = https://www.ijg.org/files/jpegsr9d.zip
 
 FREETYPE_DIR = $(SRC_DIR)\freetype2
+FREETYPE_BRANCH = VER-2-10-4
 FREETYPE_SRC = https://git.sv.nongnu.org/r/freetype/freetype2.git
 
 HARFBUZZ_DIR = $(SRC_DIR)\harfbuzz
+HARFBUZZ_BRANCH = 2.7.4
 HARFBUZZ_SRC = https://github.com/harfbuzz/harfbuzz.git
 
 GEOS_DIR = $(SRC_DIR)\geos
+GEOS_BRANCH = 3.9.0
 GEOS_SRC = https://git.osgeo.org/gitea/geos/geos.git
 
 FRIBIDI_DIR = $(SRC_DIR)\fribidi
+FRIBIDI_BRANCH = v1.0.10
 FRIBIDI_SRC = https://github.com/fribidi/fribidi.git
 
 LIBICONV_DIR = $(SRC_DIR)\libiconv
+LIBICONV_VER = libiconv-1.16
 LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz
 
 PGSQL_DIR = $(SRC_DIR)\postgres
+PGSQL_BRANCH = REL_13_1
 PGSQL_SRC = https://github.com/postgres/postgres.git
 
 PROJ4_DIR = $(SRC_DIR)\proj4
+PROJ4_BRANCH = 4.9.3
 PROJ6_DIR = $(SRC_DIR)\proj6
+PROJ6_BRANCH = 6.3.2
 PROJ7_DIR = $(SRC_DIR)\proj7
+PROJ7_BRANCH = 7.2.0
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
-SQLITE_VER = 3.32.2
+SQLITE_VER = 3.34.0
 SQLITE_SRC = https://www.sqlite.org/src/zip/sqlite.zip?r=release
 
 SPATIALITE_DIR = $(SRC_DIR)\spatialite
-SPATIALITE_VER = libspatialite-4.3.0a
-SPATIALITE_SRC = http://www.gaia-gis.it/gaia-sins/libspatialite-4.3.0a.zip
+SPATIALITE_VER = libspatialite-5.0.0
+SPATIALITE_SRC = http://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-5.0.0.zip
 
 FREEXL_DIR = $(SRC_DIR)\freexl
-FREEXL_VER = freexl-1.0.5
-FREEXL_SRC = http://www.gaia-gis.it/gaia-sins/freexl-1.0.5.zip
+FREEXL_VER = freexl-1.0.6
+FREEXL_SRC = https://www.gaia-gis.it/gaia-sins/freexl-sources/freexl-1.0.6.zip
+
+LIBRTTOPO_DIR = $(SRC_DIR)\librttopo
+LIBRTTOPO_BRANCH = librttopo-1.1.0
+LIBRTTOPO_SRC = https://git.osgeo.org/gitea/rttopo/librttopo.git
 
 GDAL_DIR = $(SRC_DIR)\gdal
+GDAL_BRANCH = master
 GDAL_SRC = https://github.com/OSGeo/gdal.git
 
 MAPSERVER_DIR = $(SRC_DIR)\mapserver
+MAPSERVER_BRANCH = rel-7-6-2
 MAPSERVER_SRC = https://github.com/mapserver/mapserver.git
 
 LIBXML2_DIR = $(SRC_DIR)\libxml2
+LIBXML2_BRANCH = v2.9.10
 LIBXML2_SRC = https://gitlab.gnome.org/GNOME/libxml2.git
 
 XERCES_DIR = $(SRC_DIR)\xerces
+XERCES_BRANCH = Xerces-C_3_2_2
 XERCES_SRC = https://svn.apache.org/repos/asf/xerces/c/tags
 
 LIBEXPAT_DIR = $(SRC_DIR)\libexpat
+LIBEXPAT_BRANCH = R_2_2_10
 LIBEXPAT_SRC = https://github.com/libexpat/libexpat.git
 
 PROTOBUF_DIR = $(SRC_DIR)\protobuf
+PROTOBUF_BRANCH = v3.14.0
 PROTOBUF_SRC = https://github.com/protocolbuffers/protobuf.git
 
 PROTOBUF_C_DIR = $(SRC_DIR)\protobuf_c
+PROTOBUF_C_BRANCH = v1.3.3
 PROTOBUF_C_SRC = https://github.com/protobuf-c/protobuf-c.git
 
 SZIP_DIR = $(SRC_DIR)\szip
+SZIP_VER = szip-2.1.1
 SZIP_SRC = https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz
 
 HDF4_DIR = $(SRC_DIR)\hdf4
+HDF4_VER = hdf-4.2.13
 HDF4_SRC = https://support.hdfgroup.org/ftp/HDF/HDF_Current/src/hdf-4.2.13.zip
 
 ECWSDK_DIR = E:\buildsystem\support\ECWSDK\ERDAS ECW JPEG 2000 SDK 5.4.0
@@ -199,60 +182,79 @@ OCI_DIR = E:\builds\Oracle
 MRSID_SDK = E:\builds\mrsid
 
 PIXMAN_DIR = $(SRC_DIR)\pixman
+PIXMAN_VER = pixman-0.40.0
 PIXMAN_SRC = https://www.cairographics.org/releases/pixman-0.40.0.tar.gz
 
 CAIRO_DIR = $(SRC_DIR)\cairo
+CAIRO_VER = cairo-1.16.0
 CAIRO_SRC = https://www.cairographics.org/releases/cairo-1.16.0.tar.xz
 
 FONTCONFIG_DIR = $(SRC_DIR)\fontconfig
-FONTCONFIG_SRC = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.92.tar.gz
+FONTCONFIG_VER = fontconfig-2.13.93
+FONTCONFIG_SRC = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.93.tar.gz
 
 URIPARSER_DIR = $(SRC_DIR)\uriparser
+URIPARSER_BRANCH = uriparser-0.9.4
 URIPARSER_SRC = https://github.com/uriparser/uriparser.git
 
 LIBSVG_DIR = $(SRC_DIR)\libsvg
+LIBSVG_VER=libsvg-0.5.0
 LIBSVG_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg/0.5/libsvg-0.5.0.src.tar.gz/download
 
 LIBSVGCAIRO_DIR = $(SRC_DIR)\libsvg-cairo
+LIBSVGCAIRO_VER=libsvg-cairo-0.5.0
 LIBSVGCAIRO_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg-cairo/0.5/libsvg-cairo-0.5.0.src.tar.gz/download
 
 LIBTIFF_DIR = $(SRC_DIR)\libtiff
+LIBTIFF_BRANCH = v4.2.0
 LIBTIFF_SRC = https://gitlab.com/libtiff/libtiff.git
 
 OPENJPEG_DIR = $(SRC_DIR)\openjpeg
+OPENJPEG_BRANCH = v2.4.0
 OPENJPEG_SRC =https://github.com/uclouvain/openjpeg.git
 
 POPPLER_DIR = $(SRC_DIR)\poppler
+POPPLER_BRANCH = poppler-0.90.1
 POPPLER_SRC =https://anongit.freedesktop.org/git/poppler/poppler.git
 
 FCGI_DIR = $(SRC_DIR)\fcgi
+FCGI_BRANCH = 2.4.2
 FCGI_SRC =https://github.com/FastCGI-Archives/fcgi2.git
 
 GIFLIB_DIR = $(SRC_DIR)\giflib
+GIFLIB_BRANCH = 5.0.5
 GIFLIB_SRC =https://git.code.sf.net/p/giflib/code
 
 LIBKML_DIR = $(SRC_DIR)\libkml
+LIBKML_BRANCH = 1.3.0
 LIBKML_SRC =https://github.com/libkml/libkml.git
 
 MYSQL_DIR = $(SRC_DIR)\mysql
+MYSQL_BRANCH = mysql-cluster-7.6.14
 MYSQL_SRC =https://github.com/mysql/mysql-server.git
 
 HDF5_DIR = $(SRC_DIR)\hdf5
+HDF5_BRANCH = hdf5-1_12_0
 HDF5_SRC =https://bitbucket.hdfgroup.org/scm/hdffv/hdf5.git
 
 KEA_DIR = $(SRC_DIR)\kealib
+KEA_BRANCH = kealib-1.4.14
 KEA_SRC =https://github.com/ubarsc/kealib.git
 
 NETCDF_DIR = $(SRC_DIR)\netcdf
+NETCDF_BRANCH = v4.7.4
 NETCDF_SRC =https://github.com/Unidata/netcdf-c.git
 
 OGDI_DIR = $(SRC_DIR)\ogdi
+OGDI_BRANCH = ogdi_4_1_0
 OGDI_SRC = https://github.com/libogdi/ogdi.git
 
 FITS_DIR = $(SRC_DIR)\fits
+FITS_VER = cfitsio-3.49
 FITS_SRC =http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.48.tar.gz
 
 BOOST_DIR = $(SRC_DIR)\boost
+BOOST_BRANCH = boost-1.75.0
 BOOST_SRC =https://github.com/boostorg/boost.git
 
 MAPMANAGER_SRC = https://github.com/DMS-Aus/MapManager.git
@@ -263,4 +265,7 @@ MAPMANAGER_SRC = https://github.com/DMS-Aus/MapManager.git
 #NO_BUILD = YES
 BUILD_OUTDATED_TARGETS = YES
 
+
+# Customizations
+PLATFORMSDK_VERSION = 10.0.17763.0
 
