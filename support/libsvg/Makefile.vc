@@ -1,0 +1,30 @@
+COMPILER=cl
+
+#If the ar command fails on your system, consult the ar manpage
+#for your system. 
+AR=LIB
+
+SLIBNAME = libsvg_i.lib
+DLLNAME = libsvg.dll
+
+EXTERNAL_LIBS = $(SDK_DIR)\lib\zlib.lib $(SDK_DIR)\lib\libpng16_static.lib $(SDK_DIR)\lib\libjpeg.lib $(SDK_DIR)\lib\libcurl_imp.lib $(SDK_DIR)\lib\libexpat.lib $(SDK_DIR)\lib\uriparser.lib
+
+INCLUDEDIRS=/I$(SDK_DIR)\include /I.
+
+
+CC=$(COMPILER)  /nologo /MD /EHsc /Zi /DEBUG /W3 $(INCLUDEDIRS) $(EXTRAFLAGS) /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DURI_STATIC_BUILD
+CPP=$(COMPILER) /nologo /MD /EHsc /Zi /DEBUG /W3 $(INCLUDEDIRS) $(EXTRAFLAGS) /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DURI_STATIC_BUILD
+LINK=$(CC)
+
+OBJS= svg.obj svg_ascii.obj svg_attribute.obj svg_clip_path.obj svg_color.obj svg_container.obj svg_css_style.obj svg_dom.obj svg_element.obj svg_element_ref.obj svg_gradient.obj svg_group.obj svg_hash.obj svg_image.obj svg_length.obj svg_marker.obj svg_mask.obj svg_paint.obj svg_parser.obj svg_parser_expat.obj svg_path.obj svg_pattern.obj svg_render_engine.obj svg_resource.obj svg_shapes.obj svg_str.obj svg_style.obj svg_svg_group.obj svg_symbol.obj svg_text.obj svg_trace.obj svg_transform.obj svg_uri.obj svg_uri_reference.obj svg_use.obj svg_view_box.obj 
+
+all: libsvg.lib
+
+libsvg.lib:  $(OBJS)
+        $(AR) /OUT:libsvg.lib $(OBJS) $(EXTERNAL_LIBS)
+
+$(DLLNAME):     $(OBJS)
+        link /dll  $(OBJS) $(EXTERNAL_LIBS) /out:$(DLLNAME) 
+
+clean:
+        del *.obj *.lib *.dll *.manifest *.pdb

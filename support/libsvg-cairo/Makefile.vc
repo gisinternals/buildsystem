@@ -1,0 +1,30 @@
+COMPILER=cl
+
+#If the ar command fails on your system, consult the ar manpage
+#for your system. 
+AR=LIB
+
+SLIBNAME = libsvg-cairo_i.lib
+DLLNAME = libsvg-cairo.dll
+
+INCLUDEDIRS=-I$(SDK_DIR)\include
+
+EXTERNAL_LIBS= 
+
+
+CC=$(COMPILER)  /nologo /MD /EHsc /Zi /DEBUG /W3 $(INCLUDEDIRS) $(EXTRAFLAGS) /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE
+CPP=$(COMPILER) /nologo /MD /EHsc /Zi /DEBUG /W3 $(INCLUDEDIRS) $(EXTRAFLAGS) /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE
+LINK=$(CC)
+
+OBJS= svg_cairo.obj svg_cairo_sprintf_alloc.obj  svg_cairo_state.obj
+
+all: libsvg-cairo.lib
+
+libsvg-cairo.lib:  $(OBJS)
+        $(AR) /OUT:libsvg-cairo.lib $(OBJS) 
+
+$(DLLNAME):     $(OBJS)
+        link /dll  $(OBJS) $(EXTERNAL_LIBS) /out:$(DLLNAME) /implib:$(SLIBNAME) 
+
+clean:
+        del *.obj *.lib *.dll *.pdb *.manifest

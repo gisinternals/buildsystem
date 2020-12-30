@@ -1,0 +1,35 @@
+COMPILER=cl
+
+#If the ar command fails on your system, consult the ar manpage
+#for your system. 
+AR=LIB
+
+SLIBNAME = fontconfig_i.lib
+DLLNAME = fontconfig.dll
+
+INCLUDEDIRS=-I. -I..  -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\freetype2
+
+LIBS =  $(OUTPUT_DIR)\lib\freetype.lib  $(OUTPUT_DIR)\lib\libxml2.lib $(OUTPUT_DIR)\lib\iconv.lib
+
+EXTRAFLAGS= -DHAVE_CONFIG_H
+
+CC=$(COMPILER)  /nologo /MD /Ox -D_WIN32 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE /DEBUG /W3 $(INCLUDEDIRS) $(EXTRAFLAGS)
+
+LINK=$(CC)
+
+
+all: fontconfig.lib
+
+OBJS= fcarch.obj fcatomic.obj fccache.obj fccfg.obj fccharset.obj fccompat.obj fcdbg.obj fcdefault.obj fcdir.obj fcformat.obj fcfreetype.obj fcfs.obj fchash.obj fcinit.obj fclang.obj fclist.obj fcweight.obj fcrange.obj \
+fcmatch.obj fcmatrix.obj fcname.obj fcobjs.obj fcpat.obj fcptrlist.obj fcxml.obj fcserialize.obj fcstat.obj fcstr.obj ftglue.obj
+
+fontconfig.lib:  $(OBJS)
+        $(AR) $(LIBS) /OUT:fontconfig.lib $(OBJS) 
+
+$(DLLNAME):     $(OBJS)
+        link /dll $(LIBS) $(OBJS) /out:$(DLLNAME) /implib:$(SLIBNAME)
+
+
+clean:
+        del *.obj *.lib *.dll
+
