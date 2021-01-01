@@ -25,6 +25,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "00A196BA-AAA6-4D03-AA8F-25CBD80F13D4" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2017 Win64)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "62AEC1B5-E987-4BC8-91D7-D275EED9A5DB" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2019 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -49,6 +52,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "A952BE15-20FB-4E49-999A-143B2AA7DF7F" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2017 Win64)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "C92CA093-2D91-4A80-BABB-D1E04A9188A4" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2019 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -73,6 +79,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "A726E66E-D874-4584-9B29-9292558A63B5" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2017 Win64)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "{76CFF848-9A89-464C-BD0B-E1444982FAF1}" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2019 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -97,6 +106,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "3E108C70-BC6B-4B36-90A2-6F20498AE1D4" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2017 Win64)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "D05BB2A9-3B1D-41FA-8D03-D82ED74108C4" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2019 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -121,6 +133,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "AC1961D0-651C-42A8-93C6-264EF797A8FE" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2017 Win64)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "50EF4E34-7DDE-4A42-A320-C4413AEEF09C" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2019 Win64)" ?>
     <?endif?>
     <?endif?>
     <?else?>
@@ -150,6 +165,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "CE3ADE9F-EC4B-4655-81A4-A2A03A81B4FB" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2017)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "0021C3EE-0AFD-4603-9560-7F9C2816A3EE" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2019)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -177,6 +195,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "01DFE0A1-3A33-4EEA-8E77-AC3CAF1F25FD" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2017)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "CC224322-B167-4288-BEDE-834A9E66DDF6" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2019)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -204,6 +225,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "9087FCCF-A4CA-471C-A70C-4B6FEC5E0887" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2017)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "A319323D-5C8C-45C2-B80A-4A3F1C0C24F8" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2019)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -231,6 +255,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "0C61784B-A506-4B80-9288-7901E54EC359" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2017)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "9D09BB7F-A031-4BED-A8EA-A6FF1654CAB3" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2019)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -258,6 +285,9 @@
 	<?elseif $(var.Compiler) = 1911?>
     <?define UpgradeCode = "89C9320C-3C0E-4841-8D3D-5CEB0D60CA46" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2017)" ?>
+    <?elseif $(var.Compiler) = 1928?>
+    <?define UpgradeCode = "E8774E8A-635D-4372-A673-FA85D13D7FDE" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2019)" ?>
     <?endif?>
     <?endif?>
     <?endif?>
@@ -416,79 +446,52 @@
                             <File Id="epsg" Name="epsg" Source="$(var.TargetDir)\proj\SHARE\epsg" />
                         </Component>
                         <Component Id="world" Guid="*">
-                            <File Id="world" Name="world" Source="$(var.TargetDir)\proj6\SHARE\world" Vital="yes"/>
-                        </Component>
-                        <Component Id="WO" Guid="*">
-                            <File Id="WO" Name="WO" Source="$(var.TargetDir)\proj6\SHARE\WO" Vital="yes"/>
-                        </Component>
-                        <Component Id="WI" Guid="*">
-                            <File Id="WI" Name="WI" Source="$(var.TargetDir)\proj6\SHARE\WI" Vital="yes"/>
-                        </Component>
-                        <Component Id="TN" Guid="*">
-                            <File Id="TN" Name="TN" Source="$(var.TargetDir)\proj6\SHARE\TN" Vital="yes"/>
-                        </Component>
-                        <Component Id="stpaul" Guid="*">
-                            <File Id="stpaul" Name="stpaul" Source="$(var.TargetDir)\proj6\SHARE\stpaul" Vital="yes"/>
-                        </Component>
-                        <Component Id="stlrnc" Guid="*">
-                            <File Id="stlrnc" Name="stlrnc" Source="$(var.TargetDir)\proj6\SHARE\stlrnc" Vital="yes"/>
-                        </Component>
-                        <Component Id="stgeorge" Guid="*">
-                            <File Id="stgeorge" Name="stgeorge" Source="$(var.TargetDir)\proj6\SHARE\stgeorge" Vital="yes"/>
-                        </Component>
-                        <Component Id="prvi" Guid="*">
-                            <File Id="prvi" Name="prvi" Source="$(var.TargetDir)\proj6\SHARE\prvi" Vital="yes"/>
+                            <File Id="world" Name="world" Source="$(var.TargetDir)\proj7\SHARE\world" Vital="yes"/>
                         </Component>
                         <Component Id="proj.db" Guid="*">
-                            <File Id="proj.db" Name="proj.db" Source="$(var.TargetDir)\proj6\SHARE\proj.db" Vital="yes"/>
+                            <File Id="proj.db" Name="proj.db" Source="$(var.TargetDir)\proj7\SHARE\proj.db" Vital="yes"/>
                         </Component>
                         <Component Id="proj_def.dat" Guid="*">
                             <File Id="proj_def.dat" Name="proj_def.dat" Source="$(var.TargetDir)\proj\SHARE\proj_def.dat" Vital="yes"/>
                         </Component>
                         <Component Id="other.extra" Guid="*">
-                            <File Id="other.extra" Name="other.extra" Source="$(var.TargetDir)\proj6\SHARE\other.extra" Vital="yes"/>
+                            <File Id="other.extra" Name="other.extra" Source="$(var.TargetDir)\proj7\SHARE\other.extra" Vital="yes"/>
                         </Component>
                         <Component Id="nzgd2kgrid0005.gsb" Guid="*">
-                            <File Id="nzgd2kgrid0005.gsb" Name="nzgd2kgrid0005.gsb" Source="$(var.TargetDir)\proj6\SHARE\nzgd2kgrid0005.gsb" Vital="yes"/>
+                            <File Id="nzgd2kgrid0005.gsb" Name="nzgd2kgrid0005.gsb" Source="$(var.TargetDir)\proj\SHARE\nzgd2kgrid0005.gsb" Vital="yes"/>
                         </Component>
                         <Component Id="null" Guid="*">
-                            <File Id="null" Name="null" Source="$(var.TargetDir)\proj6\SHARE\null" Vital="yes"/>
+                            <File Id="null" Name="null" Source="$(var.TargetDir)\proj\SHARE\null" Vital="yes"/>
                         </Component>
                         <Component Id="ntv1_can.dat" Guid="*">
-                            <File Id="ntv1_can.dat" Name="ntv1_can.dat" Source="$(var.TargetDir)\proj6\SHARE\ntv1_can.dat" Vital="yes"/>
+                            <File Id="ntv1_can.dat" Name="ntv1_can.dat" Source="$(var.TargetDir)\proj\SHARE\ntv1_can.dat" Vital="yes"/>
                         </Component>
                         <Component Id="ntf_r93.gsb" Guid="*">
-                            <File Id="ntf_r93.gsb" Name="ntf_r93.gsb" Source="$(var.TargetDir)\proj6\SHARE\ntf_r93.gsb" Vital="yes"/>
+                            <File Id="ntf_r93.gsb" Name="ntf_r93.gsb" Source="$(var.TargetDir)\proj\SHARE\ntf_r93.gsb" Vital="yes"/>
                         </Component>
                         <Component Id="nad83" Guid="*">
-                            <File Id="nad83" Name="nad83" Source="$(var.TargetDir)\proj6\SHARE\nad83" Vital="yes"/>
+                            <File Id="nad83" Name="nad83" Source="$(var.TargetDir)\proj7\SHARE\nad83" Vital="yes"/>
                         </Component>
                         <Component Id="nad27" Guid="*">
-                            <File Id="nad27" Name="nad27" Source="$(var.TargetDir)\proj6\SHARE\nad27" Vital="yes"/>
+                            <File Id="nad27" Name="nad27" Source="$(var.TargetDir)\proj7\SHARE\nad27" Vital="yes"/>
                         </Component>
                         <Component Id="nad.lst" Guid="*">
-                            <File Id="nad.lst" Name="nad.lst" Source="$(var.TargetDir)\proj6\SHARE\nad.lst" Vital="yes"/>
-                        </Component>
-                        <Component Id="MD" Guid="*">
-                            <File Id="MD" Name="MD" Source="$(var.TargetDir)\proj6\SHARE\MD" Vital="yes"/>
+                            <File Id="nad.lst" Name="nad.lst" Source="$(var.TargetDir)\proj7\SHARE\nad.lst" Vital="yes"/>
                         </Component>
                         <Component Id="IGNF" Guid="*">
                             <File Id="IGNF" Name="IGNF" Source="$(var.TargetDir)\proj\SHARE\IGNF" Vital="yes"/>
                         </Component>
                         <Component Id="ITRF2014" Guid="*">
-                            <File Id="ITRF2014" Name="ITRF2014" Source="$(var.TargetDir)\proj6\SHARE\ITRF2014" Vital="yes"/>
+                            <File Id="ITRF2014" Name="ITRF2014" Source="$(var.TargetDir)\proj7\SHARE\ITRF2014" Vital="yes"/>
                         </Component>
                         <Component Id="ITRF2008" Guid="*">
-                            <File Id="ITRF2008" Name="ITRF2008" Source="$(var.TargetDir)\proj6\SHARE\ITRF2008" Vital="yes"/>
+                            <File Id="ITRF2008" Name="ITRF2008" Source="$(var.TargetDir)\proj7\SHARE\ITRF2008" Vital="yes"/>
                         </Component>
                         <Component Id="ITRF2000" Guid="*">
-                            <File Id="ITRF2000" Name="ITRF2000" Source="$(var.TargetDir)\proj6\SHARE\ITRF2000" Vital="yes"/>
-                        </Component>
-                        <Component Id="hawaii" Guid="*">
-                            <File Id="hawaii" Name="hawaii" Source="$(var.TargetDir)\proj6\SHARE\hawaii" Vital="yes"/>
+                            <File Id="ITRF2000" Name="ITRF2000" Source="$(var.TargetDir)\proj7\SHARE\ITRF2000" Vital="yes"/>
                         </Component>
                         <Component Id="GL27" Guid="*">
-                            <File Id="GL27" Name="GL27" Source="$(var.TargetDir)\proj6\SHARE\GL27" Vital="yes"/>
+                            <File Id="GL27" Name="GL27" Source="$(var.TargetDir)\proj7\SHARE\GL27" Vital="yes"/>
                         </Component>
                         <Component Id="esri.extra" Guid="*">
                             <File Id="esri.extra" Name="esri.extra" Source="$(var.TargetDir)\proj\SHARE\esri.extra" Vital="yes"/>
@@ -496,20 +499,8 @@
                         <Component Id="esri" Guid="*">
                             <File Id="esri" Name="esri" Source="$(var.TargetDir)\proj\SHARE\esri" Vital="yes"/>
                         </Component>
-                        <Component Id="egm96_15.gtx" Guid="*">
-                            <File Id="egm96_15.gtx" Name="egm96_15.gtx" Source="$(var.TargetDir)\proj6\SHARE\egm96_15.gtx" Vital="yes"/>
-                        </Component>
-                        <Component Id="conus" Guid="*">
-                            <File Id="conus" Name="conus" Source="$(var.TargetDir)\proj6\SHARE\conus" Vital="yes"/>
-                        </Component>
                         <Component Id="CH" Guid="*">
-                            <File Id="CH" Name="CH" Source="$(var.TargetDir)\proj6\SHARE\CH" Vital="yes"/>
-                        </Component>
-                        <Component Id="BETA2007.gsb" Guid="*">
-                            <File Id="BETA2007.gsb" Name="BETA2007.gsb" Source="$(var.TargetDir)\proj6\SHARE\BETA2007.gsb" Vital="yes"/>
-                        </Component>
-                        <Component Id="alaska" Guid="*">
-                            <File Id="alaska" Name="alaska" Source="$(var.TargetDir)\proj6\SHARE\alaska" Vital="yes"/>
+                            <File Id="CH" Name="CH" Source="$(var.TargetDir)\proj7\SHARE\CH" Vital="yes"/>
                         </Component>
                     </Directory>
                     <Component Id="cfitsio.dll" Guid="*">
@@ -541,29 +532,29 @@
 					<Component Id="hdf5_hl_cpp.dll" Guid="*">
                         <File Id="hdf5_hl_cpp.dll" Name="hdf5_hl_cpp.dll" Source="$(var.TargetDir)\hdf5_hl_cpp.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="hdfdll.dll" Guid="*">
-                        <File Id="hdfdll.dll" Name="hdfdll.dll" Source="$(var.TargetDir)\hdfdll.dll" Vital="yes"/>
+                    <Component Id="hdf.dll" Guid="*">
+                        <File Id="hdf.dll" Name="hdf.dll" Source="$(var.TargetDir)\hdf.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="mfhdfdll.dll" Guid="*">
-                        <File Id="mfhdfdll.dll" Name="mfhdfdll.dll" Source="$(var.TargetDir)\mfhdfdll.dll" Vital="yes"/>
+                    <Component Id="mfhdf.dll" Guid="*">
+                        <File Id="mfhdf.dll" Name="mfhdf.dll" Source="$(var.TargetDir)\mfhdf.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="xdrdll.dll" Guid="*">
-                        <File Id="xdrdll.dll" Name="xdrdll.dll" Source="$(var.TargetDir)\xdrdll.dll" Vital="yes"/>
+                    <Component Id="xdr.dll" Guid="*">
+                        <File Id="xdr.dll" Name="xdr.dll" Source="$(var.TargetDir)\xdr.dll" Vital="yes"/>
                     </Component>
                     <Component Id="szip.dll" Guid="*">
                         <File Id="szip.dll" Name="szip.dll" Source="$(var.TargetDir)\szip.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="iconv.dll" Guid="*">
-                        <File Id="iconv.dll" Name="iconv.dll" Source="$(var.TargetDir)\iconv.dll" Vital="yes"/>
+                    <Component Id="iconv_2.dll" Guid="*">
+                        <File Id="iconv_2.dll" Name="iconv-2.dll" Source="$(var.TargetDir)\iconv-2.dll" Vital="yes"/>
                     </Component>
                     <Component Id="libcurl.dll" Guid="*">
                         <File Id="libcurl.dll" Name="libcurl.dll" Source="$(var.TargetDir)\libcurl.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="libeay32.dll" Guid="*">
-                        <File Id="libeay32.dll" Name="libeay32.dll" Source="$(var.TargetDir)\libeay32.dll" Vital="yes"/>
+                    <Component Id="libcrypto_1_1.dll" Guid="*">
+                        <File Id="libcrypto_1_1.dll" Name="libcrypto-1_1.dll" Source="$(var.TargetDir)\libcrypto-1_1.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="expat.dll" Guid="*">
-                        <File Id="expat.dll" Name="expat.dll" Source="$(var.TargetDir)\expat.dll" Vital="yes"/>
+                    <Component Id="libexpat.dll" Guid="*">
+                        <File Id="libexpat.dll" Name="libexpat.dll" Source="$(var.TargetDir)\libexpat.dll" Vital="yes"/>
                     </Component>
                     <Component Id="libmysql.dll" Guid="*">
                         <File Id="libmysql.dll" Name="libmysql.dll" Source="$(var.TargetDir)\libmysql.dll" Vital="yes"/>
@@ -588,11 +579,11 @@
                     <Component Id="openjp2.dll" Guid="*">
                         <File Id="openjp2.dll" Name="openjp2.dll" Source="$(var.TargetDir)\openjp2.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="proj.dll" Guid="*">
-                        <File Id="proj.dll" Name="proj.dll" Source="$(var.TargetDir)\proj.dll" Vital="yes"/>
+                    <Component Id="proj_4_9.dll" Guid="*">
+                        <File Id="proj_4_9.dll" Name="proj_4_9.dll" Source="$(var.TargetDir)\proj_4_9.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="proj_6_0.dll" Guid="*">
-                        <File Id="proj_6_0.dll" Name="proj_6_0.dll" Source="$(var.TargetDir)\proj_6_0.dll" Vital="yes"/>
+                    <Component Id="proj_7_2.dll" Guid="*">
+                        <File Id="proj_7_2.dll" Name="proj_7_2.dll" Source="$(var.TargetDir)\proj_7_2.dll" Vital="yes"/>
                     </Component>
                     <Component Id="spatialite.dll" Guid="*">
                         <File Id="spatialite.dll" Name="spatialite.dll" Source="$(var.TargetDir)\spatialite.dll" Vital="yes"/>
@@ -606,17 +597,23 @@
 					<Component Id="freexl.dll" Guid="*">
                         <File Id="freexl.dll" Name="freexl.dll" Source="$(var.TargetDir)\freexl.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="ssleay32.dll" Guid="*">
-                        <File Id="ssleay32.dll" Name="ssleay32.dll" Source="$(var.TargetDir)\ssleay32.dll" Vital="yes"/>
+                    <Component Id="libssl_1_1.dll" Guid="*">
+                        <File Id="libssl_1_1.dll" Name="libssl-1_1.dll" Source="$(var.TargetDir)\libssl-1_1.dll" Vital="yes"/>
                     </Component>
                     <Component Id="xerces_c_3_2.dll" Guid="*">
                         <File Id="xerces_c_3_2.dll" Name="xerces-c_3_2.dll" Source="$(var.TargetDir)\xerces-c_3_2.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="zlib1.dll" Guid="*">
-                        <File Id="zlib1.dll" Name="zlib1.dll" Source="$(var.TargetDir)\zlib1.dll" Vital="yes"/>
+                    <Component Id="zlib.dll" Guid="*">
+                        <File Id="zlib.dll" Name="zlib.dll" Source="$(var.TargetDir)\zlib.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="ogdi.dll" Guid="*">
+                        <File Id="ogdi.dll" Name="ogdi.dll" Source="$(var.TargetDir)\ogdi.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="tiff.dll" Guid="*">
+                        <File Id="tiff.dll" Name="tiff.dll" Source="$(var.TargetDir)\tiff.dll" Vital="yes"/>
                     </Component>
                     <Component Id="curl_ca_bundle.crt" Guid="*">
-                        <File Id="curl_ca_bundle.crt" Name="curl-ca-bundle.crt" Source="$(var.TargetDir)\curl\curl-ca-bundle.crt" Vital="yes"/>
+                        <File Id="curl_ca_bundle.crt" Name="curl-ca-bundle.crt" Source="$(var.TargetDir)\curl-ca-bundle.crt" Vital="yes"/>
                     </Component>
                     <Component Id="gdal_contour.exe" Guid="*">
                         <File Id="gdal_contour.exe" Name="gdal_contour.exe" Source="$(var.TargetDir)\gdal\apps\gdal_contour.exe" />
@@ -650,9 +647,6 @@
                     </Component>
                     <Component Id="gdalmanage.exe" Guid="*">
                         <File Id="gdalmanage.exe" Name="gdalmanage.exe" Source="$(var.TargetDir)\gdal\apps\gdalmanage.exe" />
-                    </Component>
-                    <Component Id="gdalserver.exe" Guid="*">
-                        <File Id="gdalserver.exe" Name="gdalserver.exe" Source="$(var.TargetDir)\gdal\apps\gdalserver.exe" />
                     </Component>
                     <Component Id="gdalsrsinfo.exe" Guid="*">
                         <File Id="gdalsrsinfo.exe" Name="gdalsrsinfo.exe" Source="$(var.TargetDir)\gdal\apps\gdalsrsinfo.exe" />
@@ -691,34 +685,31 @@
                         <File Id="testepsg.exe" Name="testepsg.exe" Source="$(var.TargetDir)\gdal\apps\testepsg.exe" />
                     </Component>
                     <Component Id="curl.exe" Guid="*">
-                        <File Id="curl.exe" Name="curl.exe" Source="$(var.TargetDir)\curl\curl.exe" />
+                        <File Id="curl.exe" Name="curl.exe" Source="$(var.TargetDir)\curl.exe" />
                     </Component>
                     <Component Id="openssl.exe" Guid="*">
-                        <File Id="openssl.exe" Name="openssl.exe" Source="$(var.TargetDir)\curl\openssl.exe" />
+                        <File Id="openssl.exe" Name="openssl.exe" Source="$(var.TargetDir)\openssl.exe" />
                     </Component>
                     <Component Id="cct.exe" Guid="*">
-                        <File Id="cct.exe" Name="cct.exe" Source="$(var.TargetDir)\proj6\apps\cct.exe" />
+                        <File Id="cct.exe" Name="cct.exe" Source="$(var.TargetDir)\proj7\apps\cct.exe" />
                     </Component>
                     <Component Id="cs2cs.exe" Guid="*">
-                        <File Id="cs2cs.exe" Name="cs2cs.exe" Source="$(var.TargetDir)\proj6\apps\cs2cs.exe" />
+                        <File Id="cs2cs.exe" Name="cs2cs.exe" Source="$(var.TargetDir)\proj7\apps\cs2cs.exe" />
                     </Component>
                     <Component Id="geod.exe" Guid="*">
-                        <File Id="geod.exe" Name="geod.exe" Source="$(var.TargetDir)\proj6\apps\geod.exe" />
-                    </Component>
-                    <Component Id="geodtest.exe" Guid="*">
-                        <File Id="geodtest.exe" Name="geodtest.exe" Source="$(var.TargetDir)\proj6\apps\geodtest.exe" />
+                        <File Id="geod.exe" Name="geod.exe" Source="$(var.TargetDir)\proj7\apps\geod.exe" />
                     </Component>
                     <Component Id="gie.exe" Guid="*">
-                        <File Id="gie.exe" Name="gie.exe" Source="$(var.TargetDir)\proj6\apps\gie.exe" />
+                        <File Id="gie.exe" Name="gie.exe" Source="$(var.TargetDir)\proj7\apps\gie.exe" />
                     </Component>
-                    <Component Id="nad2bin.exe" Guid="*">
-                        <File Id="nad2bin.exe" Name="nad2bin.exe" Source="$(var.TargetDir)\proj6\apps\nad2bin.exe" />
+                    <Component Id="projsync.exe" Guid="*">
+                        <File Id="projsync.exe" Name="projsync.exe" Source="$(var.TargetDir)\proj7\apps\projsync.exe" />
                     </Component>
                     <Component Id="proj.exe" Guid="*">
-                        <File Id="proj.exe" Name="proj.exe" Source="$(var.TargetDir)\proj6\apps\proj.exe" />
+                        <File Id="proj.exe" Name="proj.exe" Source="$(var.TargetDir)\proj7\apps\proj.exe" />
                     </Component>
                     <Component Id="projinfo.exe" Guid="*">
-                        <File Id="projinfo.exe" Name="projinfo.exe" Source="$(var.TargetDir)\proj6\apps\projinfo.exe" />
+                        <File Id="projinfo.exe" Name="projinfo.exe" Source="$(var.TargetDir)\proj7\apps\projinfo.exe" />
                     </Component>
                     <Component Id="gdalalljni.dll" Guid="*">
                         <File Id="gdalalljni.dll" Name="gdalalljni.dll" Source="$(var.TargetDir)\gdal\java\gdalalljni.dll" Vital="yes"/>
@@ -874,35 +865,30 @@
             <?endif?>
             <ComponentRef Id="geos_c.dll" />
             <ComponentRef Id="geos.dll" />
-            <ComponentRef Id="iconv.dll" />
+            <ComponentRef Id="iconv_2.dll" />
             <ComponentRef Id="libcurl.dll" />
             <ComponentRef Id="curl_ca_bundle.crt" />
-            <ComponentRef Id="ssleay32.dll" />
-            <ComponentRef Id="libeay32.dll" />
-            <ComponentRef Id="expat.dll" />
+            <ComponentRef Id="libssl_1_1.dll" />
+            <ComponentRef Id="libcrypto_1_1.dll" />
+            <ComponentRef Id="libexpat.dll" />
             <ComponentRef Id="libpq.dll" />
             <ComponentRef Id="libmysql.dll" />
             <ComponentRef Id="libxml2.dll" />
-            <ComponentRef Id="proj.dll" />
-            <ComponentRef Id="proj_6_0.dll" />
+            <ComponentRef Id="proj_4_9.dll" />
+            <ComponentRef Id="proj_7_2.dll" />
             <ComponentRef Id="spatialite.dll" />
 			<ComponentRef Id="sqlite3.dll" />
             <ComponentRef Id="sqlite3.exe" />
 			<ComponentRef Id="freexl.dll" />
             <ComponentRef Id="xerces_c_3_2.dll" />
             <ComponentRef Id="openjp2.dll" />
-            <ComponentRef Id="zlib1.dll" />
+            <ComponentRef Id="zlib.dll" />
+            <ComponentRef Id="ogdi.dll" />
+            <ComponentRef Id="tiff.dll" />
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="GDALLicense.rtf" />
             <ComponentRef Id="epsg" />
             <ComponentRef Id="world" />
-            <ComponentRef Id="WO" />
-            <ComponentRef Id="WI" />
-            <ComponentRef Id="TN" />
-            <ComponentRef Id="stpaul" />
-            <ComponentRef Id="stlrnc" />
-            <ComponentRef Id="stgeorge" />
-            <ComponentRef Id="prvi" />
             <ComponentRef Id="proj.db" />
             <ComponentRef Id="proj_def.dat" />                
             <ComponentRef Id="other.extra" />
@@ -913,20 +899,14 @@
             <ComponentRef Id="nad83" />
             <ComponentRef Id="nad27" />
             <ComponentRef Id="nad.lst" />
-            <ComponentRef Id="MD" />
             <ComponentRef Id="IGNF" />
             <ComponentRef Id="ITRF2014" />
             <ComponentRef Id="ITRF2008" />
             <ComponentRef Id="ITRF2000" />
-            <ComponentRef Id="hawaii" />
             <ComponentRef Id="GL27" />
             <ComponentRef Id="esri.extra" />
             <ComponentRef Id="esri" />
-            <ComponentRef Id="egm96_15.gtx" />
-            <ComponentRef Id="conus" />
             <ComponentRef Id="CH" />
-            <ComponentRef Id="BETA2007.gsb" />
-            <ComponentRef Id="alaska" />
             <ComponentRef Id="GDALShell.bat" />
             <ComponentGroupRef Id="GdalData" />
         </Feature>
@@ -944,7 +924,6 @@
                 <ComponentRef Id="gdalinfo.exe" />
                 <ComponentRef Id="gdallocationinfo.exe" />
                 <ComponentRef Id="gdalmanage.exe" />
-                <ComponentRef Id="gdalserver.exe" />
                 <ComponentRef Id="gdalsrsinfo.exe" />
                 <ComponentRef Id="gdaltindex.exe" />
                 <ComponentRef Id="gdaltransform.exe" />
@@ -962,9 +941,8 @@
                 <ComponentRef Id="cct.exe" />
                 <ComponentRef Id="cs2cs.exe" />
                 <ComponentRef Id="geod.exe" />
-                <ComponentRef Id="geodtest.exe" />
                 <ComponentRef Id="gie.exe" />
-                <ComponentRef Id="nad2bin.exe" />
+                <ComponentRef Id="projsync.exe" />
                 <ComponentRef Id="proj.exe" />
                 <ComponentRef Id="projinfo.exe" />
             </Feature>
@@ -1008,9 +986,9 @@
             <Feature Id="HDF4" Level="1" Title="HDF4" Description="Hierarchical Data Format Release 4 (HDF4) rasters (for the custom licensing terms please review HDF4License.rtf and SZIPLicense.rtf installed in the /license folder)">
                 <ComponentRef Id="gdal_HDF4.dll" />
                 <ComponentRef Id="gdal_HDF4Image.dll" />
-                <ComponentRef Id="hdfdll.dll" />
-                <ComponentRef Id="mfhdfdll.dll" />
-                <ComponentRef Id="xdrdll.dll" />
+                <ComponentRef Id="hdf.dll" />
+                <ComponentRef Id="mfhdf.dll" />
+                <ComponentRef Id="xdr.dll" />
                 <ComponentRef Id="HDF4License.rtf" />
                 <ComponentRef Id="SZIPLicense.rtf" />
                 <ComponentRef Id="szip.dll" />
@@ -1230,6 +1208,22 @@
             <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC141_CRT_x86.msm" DiskId="1" Language="0"/>
         </DirectoryRef>
         <Feature Id="VCRedist" Title="Visual C++ 15.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+        <?elseif $(var.Compiler) = 1928?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC142_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 16.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC142_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 16.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
             <MergeRef Id="VCRedist"/>
         </Feature>
 		<?endif?>

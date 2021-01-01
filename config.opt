@@ -138,11 +138,15 @@ LIBRTTOPO_BRANCH = librttopo-1.1.0
 LIBRTTOPO_SRC = https://git.osgeo.org/gitea/rttopo/librttopo.git
 
 GDAL_DIR = $(SRC_DIR)\gdal
+!IFNDEF GDAL_BRANCH
 GDAL_BRANCH = master
+!ENDIF
 GDAL_SRC = https://github.com/OSGeo/gdal.git
 
 MAPSERVER_DIR = $(SRC_DIR)\mapserver
+!IFNDEF MAPSERVER_BRANCH
 MAPSERVER_BRANCH = rel-7-6-2
+!ENDIF
 MAPSERVER_SRC = https://github.com/mapserver/mapserver.git
 
 LIBXML2_DIR = $(SRC_DIR)\libxml2
@@ -173,8 +177,8 @@ HDF4_DIR = $(SRC_DIR)\hdf4
 HDF4_VER = hdf-4.2.13
 HDF4_SRC = https://support.hdfgroup.org/ftp/HDF/HDF_Current/src/hdf-4.2.13.zip
 
-ECWSDK_DIR = E:\buildsystem\support\ECWSDK\ERDAS ECW JPEG 2000 SDK 5.4.0
-ECWSDK_VERSION=54
+ECWSDK_DIR = E:\buildsystem\support\ECWSDK\ERDAS ECW JPEG 2000 SDK 5.5.0
+ECWSDK_VERSION=55
 
 FILEGDB_API_DIR = E:\buildsystem\support\FileGDB_API_1_5_1-VS2017
 
@@ -214,7 +218,7 @@ OPENJPEG_BRANCH = v2.4.0
 OPENJPEG_SRC =https://github.com/uclouvain/openjpeg.git
 
 POPPLER_DIR = $(SRC_DIR)\poppler
-POPPLER_BRANCH = poppler-0.90.1
+POPPLER_BRANCH = poppler-0.89.0
 POPPLER_SRC =https://anongit.freedesktop.org/git/poppler/poppler.git
 
 FCGI_DIR = $(SRC_DIR)\fcgi
@@ -251,7 +255,7 @@ OGDI_SRC = https://github.com/libogdi/ogdi.git
 
 FITS_DIR = $(SRC_DIR)\fits
 FITS_VER = cfitsio-3.49
-FITS_SRC =http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.48.tar.gz
+FITS_SRC =http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.49.tar.gz
 
 BOOST_DIR = $(SRC_DIR)\boost
 BOOST_BRANCH = boost-1.75.0

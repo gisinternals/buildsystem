@@ -270,7 +270,7 @@ SOURCE=..\libfcgi\fcgio.cpp
 
 !IF  "$(CFG)" == "release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /Ob2 /I "..\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"$(INTDIR)\libfcgi.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /Ob2 /I "..\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"$(INTDIR)\libfcgi.pch" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 "$(INTDIR)\fcgio.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) @<<
@@ -280,7 +280,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /Ob2 /I "..\include" /D "WIN32" /D "NDEBUG"
 
 !ELSEIF  "$(CFG)" == "debug"
 
-CPP_SWITCHES=/nologo /MDd /W3 /Gm /Gi /GX /ZI /Od /I "..\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR"$(INTDIR)\\" /Fp"$(INTDIR)\libfcgi.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_SWITCHES=/nologo /MDd /W3 /Gm /Gi /GX /ZI /Od /I "..\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR"$(INTDIR)\\" /Fp"$(INTDIR)\libfcgi.pch" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 "$(INTDIR)\fcgio.obj"	"$(INTDIR)\fcgio.sbr" : $(SOURCE) "$(INTDIR)"
 	$(CPP) @<<
@@ -316,4 +316,7 @@ SOURCE=..\libfcgi\strerror.c
 
 ..\include\fcgi_config.h:
 
+
+staticlib: "$(OUTDIR)" $(LINK32_OBJS)
+	lib Ws2_32.lib /OUT:"$(OUTDIR)\libfcgi.lib" $(LINK32_OBJS)
 
