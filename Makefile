@@ -21,6 +21,10 @@ WIN64=YES
 BASE_DIR = $(MAKEDIR)
 !ENDIF
 
+!IFNDEF INSTALL_DIR
+INSTALL_DIR = C:\Inetpub\wwwroot\sdk
+!ENDIF
+
 !IFNDEF CMAKE_DIR
 CMAKE_DIR = $(BASE_DIR)\cmake
 !ENDIF
@@ -329,9 +333,17 @@ SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\swig.exe
 CYGWIN_DIR=E:\cygwin
 !ENDIF
 
+!IF "$(GDAL_BRANCH)" == "master"
+GDAL_DIR = $(GDAL_DIR)-$(CMAKE_BUILDDIR)
+!ELSE
 GDAL_DIR = $(GDAL_DIR)-$(GDAL_VERSION)-$(CMAKE_BUILDDIR)
+!ENDIF
 
-MAPSERVER_DIR = $(MAPSERVER_DIR)-$(MS_VERSION)-$(CMAKE_BUILDDIR)
+!IF "$(MAPSERVER_BRANCH)" == "master"
+MAPSERVER_DIR = $(MAPSERVER_DIR)
+!ELSE
+MAPSERVER_DIR = $(MAPSERVER_DIR)-$(MS_VERSION)
+!ENDIF
 
 !IFNDEF MS_REVISION
 MS_REVISION=HEAD
@@ -492,6 +504,7 @@ GDAL_MRSID_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_mrsid.opt
 GDAL_MRSID_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_MrSID.dll
 GDAL_MRSID_LIDAR_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_MG4Lidar.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
+MAPSERVER_CSHARP_DLL = $(OUTPUT_DIR)\bin\ms\csharp\mapscript_csharp.dll
 SZIP_LIB = $(OUTPUT_DIR)\lib\szip.lib
 HDF4_LIB = $(OUTPUT_DIR)\lib\hdf.lib $(OUTPUT_DIR)\lib\mfhdf.lib
 CAIRO_LIB = $(OUTPUT_DIR)\lib\cairo.lib
@@ -672,7 +685,7 @@ DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_OCI_DLL) $(GDAL_GEOR_DLL)
 !ENDIF
 
 # set up mapserver configuration
-MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=$(PLATFORMSDK_VERSION) "-DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB:\=/);$(URIPARSER_LIB:\=/)" "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)"
+MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=$(PLATFORMSDK_VERSION) "-DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB:\=/);$(URIPARSER_LIB:\=/)" "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)" -DWITH_ORACLESPATIAL=0
 MAPSERVER_DEPS = $(MSVCRT_DLL) $(JPEG_LIB) $(LIBPNG_LIB) $(FREETYPE_2)
 
 !IFNDEF MS_POSTGIS
@@ -791,6 +804,22 @@ MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CSHARP=1 "-DSWIG_EXECUTABLE=$(SWIG_EXE)"
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(SWIG_INSTALL)
 !ENDIF
 
+!IFDEF MS_JAVA
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_JAVA=1 "-DSWIG_EXECUTABLE=$(SWIG_EXE)"
+MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(SWIG_INSTALL)
+!ENDIF
+
+!IFDEF MS_PYTHON
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PYTHON=1 "-DPYTHON_LIBRARY=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/libs/python37.lib" "-DPYTHON_INCLUDE_DIR=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/include" "-DPYTHON_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe"
+MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(SWIG_INSTALL)
+!ENDIF
+
+!IFDEF MS_PHP
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PHP=1
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PHP=0
+!ENDIF
+
 !IFNDEF MS_GDAL
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_GDAL=0
 MAPSERVER_DEPS_ALL = $(MAPSERVER_DEPS)
@@ -800,6 +829,10 @@ MAPSERVER_DEPS_ALL = $(MAPSERVER_DEPS) $(GDAL_LIB)
 
 !IFDEF MS_MSSQL
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_MSSQL2008=1
+!ENDIF
+
+!IFDEF MS_ORACLE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_ORACLE_PLUGIN=1 "-DORACLE_INCLUDE_DIR=$(INSTANTCLIENT_DIR:\=/)/sdk/include"
 !ENDIF
 
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(MAPSERVER_LIB)
@@ -900,7 +933,7 @@ FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin\FileGDBAPI.dll"
 !ENDIF
 
 !IFDEF OCI_DIR
-!IF $(MSVC_VER) == 1900
+!IF $(MSVC_VER) >= 1900
 !IFDEF WIN64
 INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_2-x64
 !ELSE
@@ -922,7 +955,6 @@ INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_11_1_7_0
 !ENDIF
 OCI_VERSION = 11
 !ENDIF
-MS_CMAKE_ORACLE=-DWITH_ORACLE_PLUGIN=1 "-DORACLE_INCLUDE_DIR=$(INSTANTCLIENT_DIR:\=/)/sdk/include"
 !ENDIF
 
 
@@ -1002,9 +1034,9 @@ PYTHON_BASE=E:\builds
 
 !IFNDEF PYTHON_DIR
 !IFDEF WIN64
-PYTHON_DIR = Python36-AMD64
+PYTHON_DIR = Python37-AMD64
 !ELSE
-PYTHON_DIR = Python36
+PYTHON_DIR = Python37
 !ENDIF
 !IF $(MSVC_VER) == 1310
 PYTHON_DIR = Python27
@@ -1113,10 +1145,6 @@ REGEX_DIR = support\regex-0.12
 
 !IFNDEF REGEX_PATH
 REGEX_PATH=$(BASE_DIR)\$(REGEX_DIR)
-!ENDIF
-
-!IFNDEF MS_PATH
-MS_PATH = $(BASE_DIR)\$(MS_DIR)
 !ENDIF
 
 !IFNDEF PYDIR
@@ -2149,7 +2177,6 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
 !ENDIF
 !IFNDEF NO_BUILD
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(GDAL_OPT)
-!ENDIF
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin
 	xcopy /Y port\*.h $(OUTPUT_DIR)\include
 	xcopy /Y gcore\*.h $(OUTPUT_DIR)\include
@@ -2175,6 +2202,7 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y *.pdb $(OUTPUT_DIR)\bin
     xcopy /Y apps\*.pdb $(OUTPUT_DIR)\bin\gdal\apps
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ELSE
@@ -2243,12 +2271,12 @@ $(GDAL_ECW_DLL): $(GDAL_LIB) $(GDAL_ECW_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_ECW_OPT) _WIN32_WINNT=0x0500
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
     xcopy /Y gdal_ECW_JP2ECW.dll $(OUTPUT_DIR)\bin\gdal\plugins
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y gdal_ECW_JP2ECW.pdb $(OUTPUT_DIR)\bin\gdal\plugins
-!ENDIF   
+!ENDIF
+!ENDIF
     cd $(BASE_DIR)
 
 $(GDAL_FILEGDB_OPT): $(GDAL_OPT)
@@ -2270,11 +2298,11 @@ $(GDAL_FILEGDB_DLL): $(GDAL_LIB) $(GDAL_FILEGDB_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
 	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_FILEGDB_OPT)
-!ENDIF
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-external mkdir $(OUTPUT_DIR)\bin\gdal\plugins-external
 	xcopy /Y ogr_FileGDB.dll $(OUTPUT_DIR)\bin\gdal\plugins-external
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y ogr_FileGDB.pdb $(OUTPUT_DIR)\bin\gdal\plugins-external
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 
@@ -2296,11 +2324,11 @@ $(GDAL_MSSQL_DLL): $(GDAL_MSSQL_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
 	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MSSQL_OPT)
-!ENDIF
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
 	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y ogr_MSSQLSpatial.pdb $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 
@@ -2322,12 +2350,12 @@ $(GDAL_MSSQL_MSODBC_DLL): $(GDAL_MSSQL_MSODBC_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
 	nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MSSQL_OPT)
-!ENDIF
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
 	xcopy /Y ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y ogr_MSSQLSpatial.pdb $(OUTPUT_DIR)\bin\gdal\plugins-optional\msodbc
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 
@@ -2346,11 +2374,11 @@ $(GDAL_HDF4_DLL): $(GDAL_HDF4_OPT) $(HDF4_LIB)
 !IFNDEF NO_BUILD
     nmake /f makefile.vc EXT_NMAKE_OPT=$(GDAL_HDF4_OPT)
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_HDF4_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_HDF4.dll $(OUTPUT_DIR)\bin\gdal\plugins
 	cd $(OUTPUT_DIR)\bin\gdal\plugins
 	copy /Y gdal_HDF4.dll gdal_HDF4Image.dll
+!ENDIF
 	cd $(BASE_DIR)
 
 $(GDAL_HDF5_OPT): $(GDAL_OPT)
@@ -2366,12 +2394,12 @@ $(GDAL_HDF5_DLL): $(GDAL_HDF5_OPT) $(HDF5_LIB) $(ZLIB_LIB) $(SZIP_LIB)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_HDF5_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_HDF5.dll $(OUTPUT_DIR)\bin\gdal\plugins
 	cd $(OUTPUT_DIR)\bin\gdal\plugins
 	copy /Y gdal_HDF5.dll gdal_HDF5Image.dll
     copy /Y gdal_HDF5.dll gdal_BAG.dll
+!ENDIF
 	cd $(BASE_DIR)
 
 $(GDAL_KEA_OPT): $(GDAL_OPT)
@@ -2387,9 +2415,9 @@ $(GDAL_KEA_DLL): $(GDAL_KEA_OPT) $(KEA_LIB)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_KEA_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_KEA.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
 	cd $(BASE_DIR)
 
 $(GDAL_AMIGOCLOUD_OPT): $(GDAL_OPT)
@@ -2403,9 +2431,9 @@ $(GDAL_AMIGOCLOUD_DLL): $(GDAL_AMIGOCLOUD_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_AMIGOCLOUD_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y ogr_AmigoCloud.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
 	cd $(BASE_DIR)
 
 $(GDAL_NETCDF_OPT): $(GDAL_OPT)
@@ -2422,11 +2450,11 @@ $(GDAL_NETCDF_DLL): $(GDAL_NETCDF_OPT) $(NETCDF_LIB)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_NETCDF_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_netCDF.dll $(OUTPUT_DIR)\bin\gdal\plugins
     cd $(OUTPUT_DIR)\bin\gdal\plugins
 	copy /Y gdal_netCDF.dll gdal_GMT.dll
+!ENDIF
 	cd $(BASE_DIR)
 
 $(GDAL_FITS_OPT): $(GDAL_OPT)
@@ -2442,9 +2470,9 @@ $(GDAL_FITS_DLL): $(GDAL_FITS_OPT) $(FITS_LIB)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_FITS_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_FITS.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
 	cd $(BASE_DIR)
 
 $(GDAL_PG_DLL): $(GDAL_OPT) $(PGSQL_LIB)
@@ -2454,9 +2482,9 @@ $(GDAL_PG_DLL): $(GDAL_OPT) $(PGSQL_LIB)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
 	xcopy /Y ogr_PG.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+!ENDIF
 	cd $(BASE_DIR)
     
 $(GDAL_OCI_OPT): $(GDAL_OPT)
@@ -2474,9 +2502,9 @@ $(GDAL_OCI_DLL): $(GDAL_OCI_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OCI_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y ogr_OCI.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -2489,9 +2517,9 @@ $(GDAL_GEOR_DLL): $(GDAL_OCI_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_OCI_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_GEOR.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -2530,7 +2558,6 @@ $(GDAL_MRSID_DLL): $(GDAL_MRSID_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	if exist $(OUTPUT_DIR)\bin\lti_dsdk_dll.dll del $(OUTPUT_DIR)\bin\lti_dsdk_dll.dll
     if exist $(OUTPUT_DIR)\bin\lti_dsdk.dll del $(OUTPUT_DIR)\bin\lti_dsdk.dll
@@ -2548,6 +2575,7 @@ $(GDAL_MRSID_DLL): $(GDAL_MRSID_OPT)
 !IF EXIST($(LIDAR_DLL))
     xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
 !ENDIF
+!ENDIF
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -2560,7 +2588,6 @@ $(GDAL_MRSID_LIDAR_DLL): $(GDAL_MRSID_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_MG4Lidar.dll $(OUTPUT_DIR)\bin\gdal\plugins
     if exist $(LIDAR_DLL) xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
@@ -2570,6 +2597,7 @@ $(GDAL_MRSID_LIDAR_DLL): $(GDAL_MRSID_OPT)
 !ENDIF
 !IF EXIST($(LIDAR_DLL))
     xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
+!ENDIF
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
@@ -2596,9 +2624,9 @@ $(GDAL_PDF_DLL): $(GDAL_PDF_OPT) $(POPPLER_LIB)
 !ENDIF
 !IFNDEF NO_BUILD
     nmake /f makefile.vc plugin EXT_NMAKE_OPT=$(GDAL_PDF_OPT)
-!ENDIF
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_PDF.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!ENDIF
 	cd $(BASE_DIR)
     
 $(GDAL_INSTALLER_CORE): $(GDAL_LIB)
@@ -2714,7 +2742,10 @@ $(GDAL_INSTALLER_NETCDF): $(GDAL_INSTALLER_CORE) $(GDAL_NETCDF_DLL)
 $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL) 
 !IFDEF MAPSERVER_ENABLED
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    cd $(MAPSERVER_DIR) 
+    set JAVA_HOME=$(JAVA_HOME)
+    set ORACLE_HOME=$(OCI_DIR)
+    set PYTHONPATH=$(PYTHON_BASE)\$(PYTHON_DIR)
+    cd $(MAPSERVER_DIR)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -2722,14 +2753,16 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) $(MAPSERVER_OPT)
-    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
-!ENDIF
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG)
     if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
 	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
 	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\*.exe $(OUTPUT_DIR)\bin\ms\apps
-    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
-    xcopy /Y /S $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\mapserver.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapserver*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\map*.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\cgiutil.h $(OUTPUT_DIR)\include
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\hittest.h $(OUTPUT_DIR)\include
 !IFDEF MS_RELEASE_PDB
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\mapserver.pdb $(OUTPUT_DIR)\bin
 !ENDIF
@@ -2749,13 +2782,26 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\$(BUILD_CONFIG)\*.pdb $(OUTPUT_DIR)\bin\ms\csharp
 !ENDIF
 !ENDIF
+!IFDEF MS_JAVA
+    if not exist $(OUTPUT_DIR)\bin\ms\java mkdir $(OUTPUT_DIR)\bin\ms\java
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\java\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\java
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\java\*.jar $(OUTPUT_DIR)\bin\ms\java
+!ENDIF
+!IFDEF MS_PYTHON
+    if not exist $(OUTPUT_DIR)\bin\ms\python mkdir $(OUTPUT_DIR)\bin\ms\python
+	if not exist $(OUTPUT_DIR)\lib\ms-python mkdir $(OUTPUT_DIR)\lib\ms-python
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\mapscript.py $(OUTPUT_DIR)\bin\ms\python
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)\*.pyd $(OUTPUT_DIR)\bin\ms\python
+	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)\*.lib $(OUTPUT_DIR)\lib\ms-python
+!ENDIF
 	cd $(OUTPUT_DIR)\bin
 	ms\apps\mapserv -v > $(OUTPUT_DIR)\doc\ms_version.txt
+!ENDIF
 	cd $(BASE_DIR)
 !ELSE
     @echo $(MAPSERVER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
-    
+
 $(PGSQL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL)
 !IFDEF PGSQL_ENABLED
     if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
@@ -3352,7 +3398,6 @@ update-ms:
     if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
 	cd $(MAPSERVER_DIR) 
     git reset --hard HEAD
-    git pull origin
     git checkout $(MAPSERVER_BRANCH)
     git pull origin $(MAPSERVER_BRANCH)
     git reset --hard $(MS_REVISION)
@@ -3364,7 +3409,6 @@ update-gdal:
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
     cd $(GDAL_DIR)
     git reset --hard HEAD
-    git pull origin
     git checkout $(GDAL_BRANCH)
     git pull origin $(GDAL_BRANCH)
     git reset --hard $(GDAL_REVISION)
@@ -3375,6 +3419,19 @@ update-gdal:
 update: $(CURL_CA_BUNDLE) update-ms update-gdal
 
 ms: $(MAPSERVER_LIB)
+
+ms-csharp-test: $(MAPSERVER_LIB)
+!IFDEF MS_CSHARP
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\csharp;$(PATH)
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
+	cd $(BASE_DIR)\$(MAPSERVER_DIR)\mapscript\csharp
+	nmake /f makefile.vc test MSVC_VER=$(MSVC_VER)
+	cd $(BASE_DIR)
+!ENDIF
+
+ms-java-test:
+
+ms-php-test:
 
 show-dependencies:
     @echo $(GDAL_DEPS) $(MAPSERVER_DEPS)
@@ -3592,7 +3649,7 @@ gdal-python: $(GDAL_OPT) $(SWIG_INSTALL)
 	cd $(BASE_DIR)  
 !ENDIF
 
-gdal-python-bdist:
+gdal-python-bdist: $(GDAL_LIB)
 !IFDEF GDAL_PYTHON
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
@@ -3641,5 +3698,88 @@ gdal-autotest:
     cd $(BASE_DIR)
     
 
+    
+ms-python-bdist: $(MAPSERVER_LIB)
+!IFNDEF MS_CMAKE_BUILD
+!IFDEF MS_PYTHON
+    SET DISTUTILS_USE_SDK=1
+    SET MSSdk=1
+    SET LIB=%LIB%;$(OUTPUT_DIR)\lib
+	cd $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)
+!IFNDEF NO_CLEAN
+	-rmdir /s /q dist
+!ENDIF
+!IFNDEF NO_BUILD
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py bdist $(PYTHON_BDIST_OPTS)
+!ENDIF
+!IFNDEF NO_COPY
+	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
+	xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+!ENDIF
 
+package:
+    if exist $(OUTPUT_DIR)\install $(BASE_DIR)\cert\signdir $(OUTPUT_DIR)\install
+    xcopy /Y $(BASE_DIR)\SDKShell.bat $(OUTPUT_DIR)
+    xcopy /Y $(BASE_DIR)\read-me.txt $(OUTPUT_DIR)
+    if exist $(OUTPUT_DIR)-$(PKG_VERSION).zip del $(OUTPUT_DIR)-$(PKG_VERSION).zip
+    7z a -tzip $(OUTPUT_DIR)-$(PKG_VERSION).zip $(OUTPUT_DIR)\bin $(OUTPUT_DIR)\doc changelog.txt SDKShell.bat read-me.txt license.txt *.rtf
+    xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION).zip $(INSTALL_DIR)
+    if not exist $(INSTALL_DIR)\doc mkdir $(INSTALL_DIR)\doc
+    if not exist $(INSTALL_DIR)\doc\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\doc\release-$(COMPILER_VER)-$(PKG_VERSION)
+    xcopy /Y $(OUTPUT_DIR)\doc $(INSTALL_DIR)\doc\release-$(COMPILER_VER)-$(PKG_VERSION)
+    if not exist $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+    if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+    if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.exe $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION).zip" downloads
+    if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.exe downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+	uploadftpdir $(OUTPUT_DIR)\doc\*.txt downloads/doc/release-$(COMPILER_VER)-$(PKG_VERSION)	
+
+package-libs:
+    if exist $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip
+    7z a -tzip $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(OUTPUT_DIR)\lib $(OUTPUT_DIR)\include
+    xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip" downloads
+	
+package-src:
+    if exist $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip
+    rem cd $(MS_DIR)
+    rem nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+    rem cd $(BASE_DIR)
+    rem cd $(GDAL_DIR)
+    rem nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+	nmake gdal NO_BUILD=YES
+	nmake gdalpluginlibs NO_BUILD=YES
+	nmake ms NO_BUILD=YES
+	cd $(BASE_DIR)
+    7z a -tzip -xr!?git\ -xr!?svn\ $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(MAPSERVER_DIR) $(GDAL_DIR)
+    xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-src.zip" downloads
+    
+package-dev:
+    if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
+    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.bz2
+    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) $(SWIG_EXE) $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\Lib Makefile readme.txt changelog.txt license.txt *.rtf
+    xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
+    
+package-dev-x64:
+    if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
+    cd $(MAPSERVER_DIR)
+    nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\mapserver.opt
+    cd $(BASE_DIR)
+    cd $(GDAL_DIR)
+    nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
+    cd $(BASE_DIR)
+    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(OUTPUT_DIR)-x64 $(MAPSERVER_DIR) $(GDAL_DIR) $(REGEX_DIR) $(SWIG_EXE) $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\Lib Makefile readme.txt changelog.txt license.txt *.rtf
+    
+install: package package-dev
+    xcopy /Y $(OUTPUT_DIR).zip $(INSTALL_DIR)
+    xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+	uploadftp "$(OUTPUT_DIR).zip" downloads
+	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
+    
 
