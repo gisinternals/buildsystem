@@ -832,7 +832,7 @@ MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_MSSQL2008=1
 !ENDIF
 
 !IFDEF MS_ORACLE
-MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_ORACLE_PLUGIN=1 "-DORACLE_INCLUDE_DIR=$(INSTANTCLIENT_DIR:\=/)/sdk/include"
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_ORACLE_PLUGIN=1 "-DORACLE_INCLUDE_DIR=$(OCI_DIR:\=/)/$(INSTANTCLIENT_DIR)/sdk/include"
 !ENDIF
 
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(MAPSERVER_LIB)
@@ -935,23 +935,23 @@ FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin\FileGDBAPI.dll"
 !IFDEF OCI_DIR
 !IF $(MSVC_VER) >= 1900
 !IFDEF WIN64
-INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_2-x64
+INSTANTCLIENT_DIR = instantclient_12_2-x64
 !ELSE
-INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_2
+INSTANTCLIENT_DIR = instantclient_12_2
 !ENDIF
 OCI_VERSION = 12
 !ELSEIF $(MSVC_VER) >= 1600
 !IFDEF WIN64
-INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_1-x64
+INSTANTCLIENT_DIR = instantclient_12_1-x64
 !ELSE
-INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_12_1
+INSTANTCLIENT_DIR = instantclient_12_1
 !ENDIF
 OCI_VERSION = 12
 !ELSE
 !IFDEF WIN64
-INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_11_1_7_0-x64
+INSTANTCLIENT_DIR = instantclient_11_1_7_0-x64
 !ELSE
-INSTANTCLIENT_DIR = $(OCI_DIR)\instantclient_11_1_7_0
+INSTANTCLIENT_DIR = instantclient_11_1_7_0
 !ENDIF
 OCI_VERSION = 11
 !ENDIF
@@ -1990,8 +1990,9 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 
 $(GDAL_OPT):
 !IFDEF GDAL_ENABLED
+    echo zlib - $(ZLIB_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\gdal_deps.txt
-	echo $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+	echo python - $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR)\gdal >> $(GDAL_OPT)
 !IFDEF GDAL_GEOS
     echo GEOS_DIR=$(BASE_DIR)\$(GEOS_DIR) >> $(GDAL_OPT)
@@ -2038,8 +2039,12 @@ $(GDAL_OPT):
 !IFDEF GDAL_SPATIALITE
     echo SQLITE_INC=-I$(OUTPUT_DIR)\include -DHAVE_SPATIALITE -DSPATIALITE_AMALGAMATION >> $(GDAL_OPT)
     echo SQLITE_LIB=$(SQLITE_LIB) $(SPATIALITE_LIB) >> $(GDAL_OPT)
-    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)	
+    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)
+    echo sqlite - $(SQLITE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo spatialite - $(SPATIALITE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo iconv - $(LIBICONV_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo librttopo - $(LIBRTTOPO_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo freexl - $(FREEXL_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_KMLSUPEROVERLAY
 !IF EXIST ($(GDAL_DIR)\frmts\kmlsuperoverlay)
@@ -2101,7 +2106,7 @@ $(GDAL_OPT):
     echo OPENJPEG_LIB = $(OPENJPEG_LIB) >> $(GDAL_OPT)
     echo openjpeg - $(OPENJPEG_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF GDAL_TIFF
+!IFDEF LIBTIFF_BRANCH
     echo TIFF_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo TIFF_LIB=$(OUTPUT_DIR)\lib\tiff.lib >> $(GDAL_OPT)
     echo TIFF_OPTS=-DBIGTIFF_SUPPORT >> $(GDAL_OPT)
@@ -2113,43 +2118,47 @@ $(GDAL_OPT):
 !IFDEF GDAL_GNM
     echo INCLUDE_GNM_FRMTS=YES >> $(GDAL_OPT)
 !ENDIF
-!IFDEF SZIP_DIR
-    echo szip - $(SZIP_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-!ENDIF
-!IFDEF FITS_DIR
+!IFDEF GDAL_FITS
     echo cfitsio - $(FITS_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF HDF5_DIR
+!IFDEF GDAL_HDF5
     echo hdf5 - $(HDF5_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo szip - $(SZIP_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF HDF5_DIR
+!IFDEF GDAL_KEA
     echo kealib - $(KEA_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF HDF5_DIR
+!IFDEF GDAL_HDF4
     echo hdf4 - $(HDF4_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF ECW_DIR
-    echo ecw - $(ECW_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!IFDEF GDAL_ECW
+    echo ecw - $(ECWSDK_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF MRSID_DIR
-    echo mrsid - $(MRSID_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!IFDEF GDAL_FILEGDB
+    echo filegdb - $(FILEGDB_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF OCI_DIR
-    echo oci - $(OCI_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!IFDEF GDAL_MRSID
+    echo mrsid - $(MRSID_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF NETCDF_DIR
+!IFDEF GDAL_ORACLE
+    echo oracle - $(INSTANTCLIENT_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF GDAL_NETCDF
     echo netcdf - $(NETCDF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IF DEFINED(GDAL_PROJ7)
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj7 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ7_LIB) >> $(GDAL_OPT)
+    echo proj - $(PROJ7_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSEIF DEFINED(GDAL_PROJ6)
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ6_LIB) >> $(GDAL_OPT)
+    echo proj - $(PROJ6_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSE
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj7 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ4_LIB) >> $(GDAL_OPT)
     echo PROJ_FLAGS = -DPROJ_STATIC -DPROJ_VERSION=4 >> $(GDAL_OPT)
+    echo proj - $(PROJ4_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !ENDIF
 
@@ -2157,13 +2166,13 @@ $(GDAL_VERSION_H): $(GDAL_LIB)
 
 $(GDAL_VERSION_TXT): $(GDAL_LIB) $(ECW_DLL) $(FILEGDBAPI_DLL)
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(BASE_DIR)\$(SDE_DIR);$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
     cd $(OUTPUT_DIR)\bin
 	gdal\apps\gdalinfo --version > $(GDAL_VERSION_TXT)
 	gdal\apps\gdalinfo --formats > $(OUTPUT_DIR)\doc\gdal_formats.txt
 	gdal\apps\ogrinfo --formats > $(OUTPUT_DIR)\doc\ogr_formats.txt
-	cd $(BASE_DIR)
+    cd $(BASE_DIR)
 
 $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
 !IFDEF GDAL_ENABLED
@@ -2490,8 +2499,8 @@ $(GDAL_PG_DLL): $(GDAL_OPT) $(PGSQL_LIB)
 $(GDAL_OCI_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_OCI_OPT)
     echo OCI_PLUGIN=YES >> $(GDAL_OCI_OPT)
-    echo OCI_LIB =	$(INSTANTCLIENT_DIR)\sdk\lib\msvc\oci.lib $(ZLIB_LIB) >> $(GDAL_OCI_OPT)
-    echo OCI_INCLUDE =	-I$(INSTANTCLIENT_DIR)\sdk\include >> $(GDAL_OCI_OPT)
+    echo OCI_LIB =	$(OCI_DIR)\$(INSTANTCLIENT_DIR)\sdk\lib\msvc\oci.lib $(ZLIB_LIB) >> $(GDAL_OCI_OPT)
+    echo OCI_INCLUDE =	-I$(OCI_DIR)\$(INSTANTCLIENT_DIR)\sdk\include >> $(GDAL_OCI_OPT)
 
 $(GDAL_OCI_DLL): $(GDAL_OCI_OPT)
 !IFDEF OCI_DIR
@@ -2743,7 +2752,7 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
 !IFDEF MAPSERVER_ENABLED
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
     set JAVA_HOME=$(JAVA_HOME)
-    set ORACLE_HOME=$(OCI_DIR)
+    set ORACLE_HOME=$(OCI_DIR)\$(INSTANTCLIENT_DIR)
     set PYTHONPATH=$(PYTHON_BASE)\$(PYTHON_DIR)
     cd $(MAPSERVER_DIR)
 !IFNDEF NO_CLEAN
@@ -2772,6 +2781,10 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
 !IFDEF MS_RELEASE_PDB
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\msplugin_mssql2008.pdb $(OUTPUT_DIR)\bin\ms\plugins\mssql2008
 !ENDIF
+!ENDIF
+!IFDEF MS_ORACLE
+    if not exist $(OUTPUT_DIR)\bin\ms\plugins\oci mkdir $(OUTPUT_DIR)\bin\ms\plugins\oci
+    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\msplugin_oracle.dll $(OUTPUT_DIR)\bin\ms\plugins\oci
 !ENDIF
 !IFDEF MS_CSHARP
     if not exist $(OUTPUT_DIR)\bin\ms\csharp mkdir $(OUTPUT_DIR)\bin\ms\csharp
@@ -3367,12 +3380,6 @@ $(CAIRO_LIB): $(PIXMAN_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(FREETYPE_LIB) $(LIBXML2_
 
 $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 !IF $(MSVC_VER) >= 1600
-    if not exist MapManager-$(MS_VERSION) git clone -b ms-$(MS_VERSION) $(MAPMANAGER_SRC) MapManager-$(MS_VERSION)
-    cd MapManager-$(MS_VERSION)
-    git reset --hard HEAD
-    git checkout ms-$(MS_VERSION)
-    git pull origin ms-$(MS_VERSION)
-    git reset --hard ms-$(MS_VERSION)
 !IFNDEF NO_BUILD
 !IF $(MSVC_VER) >= 1900
     devenv /rebuild Release MapManager2015.sln /Project Installer
@@ -3418,7 +3425,69 @@ update-gdal:
     
 update: $(CURL_CA_BUNDLE) update-ms update-gdal
 
-ms: $(MAPSERVER_LIB)
+ms-deps:
+	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo zlib - $(ZLIB_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo jpeg - $(JPEG_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!IFDEF MS_PROJ
+	echo proj - $(PROJ4_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_FREETYPE
+	echo freetype - $(FREETYPE_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_FREETYPE
+	echo harfbuzz - $(HARFBUZZ_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_GEOS
+	echo geos - $(GEOS_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_PHP
+	echo php - $(PHP_VERSION) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_PNG
+	echo libpng - $(LIBPNG_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_GDAL
+	echo gdal - $(GDAL_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_FCGI
+	echo fcgi - $(FCGI_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_PDF
+    echo pdf - $(PDF_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_FRIBIDI
+    echo fribidi - $(FRIBIDI_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_GIFLIB
+    echo giflib - $(GIFLIB_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_CAIRO
+	echo cairo - $(CAIRO_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo libsvg - $(LIBSVG_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo libsvg-cairo - $(LIBSVGCAIRO_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo pixman - $(PIXMAN_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo fontconfig - $(FONTCONFIG_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_POSTGIS
+	echo pgsql - $(PGSQL_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_ICONV
+    echo iconv - $(LIBICONV_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_SOS_SVR
+    echo libxml2 - $(LIBXML2_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_ORACLE
+    echo oracle - $(INSTANTCLIENT_DIR) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_PROTOBUFC
+    echo protobuf - $(PROTOBUF_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+    echo protobuf-c - $(PROTOBUF_C_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+
+
+ms: $(MAPSERVER_LIB) ms-deps
 
 ms-csharp-test: $(MAPSERVER_LIB)
 !IFDEF MS_CSHARP
@@ -3434,7 +3503,12 @@ ms-java-test:
 ms-php-test:
 
 show-dependencies:
-    @echo $(GDAL_DEPS) $(MAPSERVER_DEPS)
+    @echo -----------------
+    @echo GDAL dependencies
+    @echo $(GDAL_DEPS)
+    @echo ----------------------
+    @echo MapServer dependencies
+    @echo $(MAPSERVER_DEPS)
     @echo $(SETARGV)
 
 dependencies: $(GDAL_DEPS) $(MAPSERVER_DEPS)
@@ -3677,7 +3751,7 @@ gdal-cpp-test:
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(BASE_DIR)\$(OCI_DIR);$(FILEGDB_BINPATH);$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR);$(FILEGDB_BINPATH);$(PATH)
     cd $(BASE_DIR)\$(GDAL_DIR)\autotest\cpp
     nmake /f makefile.vc clean
     nmake /f makefile.vc
@@ -3692,7 +3766,7 @@ gdal-autotest:
     SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
     SET DO_NOT_FAIL_ON_RECODE_ERRORS="YES"
     SET GDAL_HTTP_UNSAFESSL="YES"
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(BASE_DIR)\$(OCI_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
     cd $(BASE_DIR)\$(GDAL_DIR)\autotest
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs --timeout=30 --timeout-method=thread
     cd $(BASE_DIR)
@@ -3782,4 +3856,49 @@ install: package package-dev
 	uploadftp "$(OUTPUT_DIR).zip" downloads
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
     
+
+mapmanager-build:
+!IF $(MSVC_VER) >= 1600
+    set SdkDir=$(OUTPUT_DIR)
+	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
+!IFNDEF NO_BUILD
+!IF $(MSVC_VER) >= 1900
+    devenv /rebuild Release MapManager2015.sln /Project MapManager
+!ELSE
+	devenv /rebuild Release MapManager.sln /Project MapManager
+!ENDIF
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
+
+mapmanager-update:
+!IF $(MSVC_VER) >= 1600
+    set PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    if not exist $(MAPMANAGER_DIR) git clone -b $(MAPMANAGER_BRANCH) $(MAPMANAGER_SRC) $(MAPMANAGER_DIR)
+	cd $(MAPMANAGER_DIR) 
+    git reset --hard HEAD
+    git checkout $(MAPMANAGER_BRANCH)
+    git pull origin $(MAPMANAGER_BRANCH)
+    git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\mapmanager_revision.txt
+	type $(OUTPUT_DIR)\doc\mapmanager_revision.txt
+    cd $(BASE_DIR)
+!ENDIF
+
+mapmanager-installer:
+!IF $(MSVC_VER) >= 1600
+	set SdkDir=$(OUTPUT_DIR)
+    cd $(BASE_DIR)\$(MAPMANAGER_DIR)
+!IFNDEF NO_BUILD
+!IF $(MSVC_VER) >= 1900
+    devenv /rebuild Release MapManager2015.sln /Project Installer
+!ELSE
+	devenv /rebuild Release MapManager.sln /Project Installer
+!ENDIF
+	$(BASE_DIR)\cert\sign "$(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi"
+!ENDIF
+!IFNDEF NO_COPY
+	$(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+!ENDIF
+	cd $(BASE_DIR)
+!ENDIF
 

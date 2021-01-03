@@ -44,7 +44,7 @@ MS_ICONV = YES
 #MS_SOS = YES
 MS_CSHARP = YES
 MS_MSSQL = YES
-#MS_ORACLE = YES
+MS_ORACLE = YES
 MS_JAVA = YES
 MS_PYTHON = YES
 #MS_PHP = YES
@@ -179,13 +179,17 @@ HDF4_DIR = $(SRC_DIR)\hdf4
 HDF4_VER = hdf-4.2.13
 HDF4_SRC = https://support.hdfgroup.org/ftp/HDF/HDF_Current/src/hdf-4.2.13.zip
 
-ECWSDK_DIR = E:\buildsystem\support\ECWSDK\ERDAS ECW JPEG 2000 SDK 5.5.0
+ECWSDK_VER = ERDAS ECW JPEG 2000 SDK 5.5.0
+ECWSDK_DIR = E:\buildsystem\support\ECWSDK\$(ECWSDK_VER)
 ECWSDK_VERSION=55
 
-FILEGDB_API_DIR = E:\buildsystem\support\FileGDB_API_1_5_1-VS2017
+FILEGDB_DIR = FileGDB_API_1_5_1-VS2017
+FILEGDB_API_DIR = E:\buildsystem\support\$(FILEGDB_DIR)
 
 OCI_DIR = E:\builds\Oracle
-MRSID_SDK = E:\builds\mrsid
+
+MRSID_SDK = support\mrsid
+MRSID_SRC = https://bin.extensis.com/download/developer/
 
 PIXMAN_DIR = $(SRC_DIR)\pixman
 PIXMAN_VER = pixman-0.40.0
@@ -263,6 +267,10 @@ BOOST_DIR = $(SRC_DIR)\boost
 BOOST_BRANCH = boost-1.75.0
 BOOST_SRC =https://github.com/boostorg/boost.git
 
+!IFNDEF MAPMANAGER_BRANCH
+MAPMANAGER_BRANCH = mapserver-7-6
+!ENDIF
+MAPMANAGER_DIR = $(SRC_DIR)\MapManager-$(MAPMANAGER_BRANCH)
 MAPMANAGER_SRC = https://github.com/DMS-Aus/MapManager.git
 
 # common feature configuration flags
