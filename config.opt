@@ -135,6 +135,22 @@ FREEXL_DIR = $(SRC_DIR)\freexl
 FREEXL_VER = freexl-1.0.6
 FREEXL_SRC = https://www.gaia-gis.it/gaia-sins/freexl-sources/freexl-1.0.6.zip
 
+APR_DIR = $(SRC_DIR)\apr
+APR_VER = apr-1.7.0
+APR_SRC = https://downloads.apache.org/apr/$(APR_VER)-win32-src.zip
+
+APRUTIL_DIR = $(SRC_DIR)\apr-util
+APRUTIL_VER = apr-util-1.6.1
+APRUTIL_SRC = https://downloads.apache.org/apr/$(APRUTIL_VER)-win32-src.zip
+
+PCRE_DIR = $(SRC_DIR)\pcre
+PCRE_VER = pcre-8.44
+PCRE_SRC = https://ftp.pcre.org/pub/pcre/$(PCRE_VER).zip
+
+HTTPD_DIR = $(SRC_DIR)\httpd
+HTTPD_VER = httpd-2.4.46
+HTTPD_SRC = https://downloads.apache.org//httpd/$(HTTPD_VER).tar.gz
+
 LIBRTTOPO_DIR = $(SRC_DIR)\librttopo
 LIBRTTOPO_BRANCH = librttopo-1.1.0
 LIBRTTOPO_SRC = https://git.osgeo.org/gitea/rttopo/librttopo.git
@@ -150,6 +166,12 @@ MAPSERVER_DIR = $(SRC_DIR)\mapserver
 MAPSERVER_BRANCH = rel-7-6-2
 !ENDIF
 MAPSERVER_SRC = https://github.com/mapserver/mapserver.git
+
+MAPCACHE_DIR = $(SRC_DIR)\mapcache
+!IFNDEF MAPCACHE_BRANCH
+MAPCACHE_BRANCH = rel-1-10-0
+!ENDIF
+MAPCACHE_SRC = https://github.com/MapServer/mapcache.git
 
 LIBXML2_DIR = $(SRC_DIR)\libxml2
 LIBXML2_BRANCH = v2.9.10

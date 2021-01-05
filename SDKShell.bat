@@ -35,7 +35,7 @@ SET "PATH=%SDK_ROOT%bin;%SDK_ROOT%bin\gdal\python\osgeo;%SDK_ROOT%bin\proj6\apps
 SET "GDAL_DATA=%SDK_ROOT%bin\gdal-data"
 SET "GDAL_DRIVER_PATH=%SDK_ROOT%bin\gdal\plugins"
 SET "PYTHONPATH=%SDK_ROOT%bin\gdal\python;%SDK_ROOT%bin\ms\python"
-SET "PROJ_LIB=%SDK_ROOT%bin\proj6\SHARE"
+SET "PROJ_LIB=%SDK_ROOT%bin\proj7\SHARE"
 
 
 :exit

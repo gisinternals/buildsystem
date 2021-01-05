@@ -339,10 +339,12 @@ GDAL_DIR = $(GDAL_DIR)-$(CMAKE_BUILDDIR)
 GDAL_DIR = $(GDAL_DIR)-$(GDAL_VERSION)-$(CMAKE_BUILDDIR)
 !ENDIF
 
-!IF "$(MAPSERVER_BRANCH)" == "master"
-MAPSERVER_DIR = $(MAPSERVER_DIR)
-!ELSE
+!IF "$(MAPSERVER_BRANCH)" != "master"
 MAPSERVER_DIR = $(MAPSERVER_DIR)-$(MS_VERSION)
+!ENDIF
+
+!IF "$(MAPCACHE_BRANCH)" != "master"
+MAPCACHE_DIR = $(MAPCACHE_DIR)-$(MAPCACHE_BRANCH)
 !ENDIF
 
 !IFNDEF MS_REVISION
@@ -351,6 +353,10 @@ MS_REVISION=HEAD
 
 !IFNDEF GDAL_REVISION
 GDAL_REVISION=HEAD
+!ENDIF
+
+!IFNDEF MAPCACHE_REVISION
+MAPCACHE_REVISION=HEAD
 !ENDIF
 
 !IFNDEF MAPMANAGER_REVISION
@@ -504,6 +510,11 @@ GDAL_MRSID_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_mrsid.opt
 GDAL_MRSID_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_MrSID.dll
 GDAL_MRSID_LIDAR_DLL = $(OUTPUT_DIR)\bin\gdal\plugins\gdal_MG4Lidar.dll
 MAPSERVER_LIB = $(OUTPUT_DIR)\lib\mapserver.lib
+APR_LIB = $(OUTPUT_DIR)\lib\apr-1.lib
+APRUTIL_LIB = $(OUTPUT_DIR)\lib\aprutil-1.lib
+PCRE_LIB = $(OUTPUT_DIR)\lib\pcre.lib
+HTTPD_LIB = $(OUTPUT_DIR)\lib\libhttpd.lib
+MAPCACHE_LIB = $(OUTPUT_DIR)\lib\mapcache.lib
 MAPSERVER_CSHARP_DLL = $(OUTPUT_DIR)\bin\ms\csharp\mapscript_csharp.dll
 SZIP_LIB = $(OUTPUT_DIR)\lib\szip.lib
 HDF4_LIB = $(OUTPUT_DIR)\lib\hdf.lib $(OUTPUT_DIR)\lib\mfhdf.lib
@@ -844,9 +855,14 @@ MSVCR_ENABLED = 1
 GDAL_ENABLED = 1
 GDAL_CSHARP_ENABLED = 1
 MAPSERVER_ENABLED = 1
+MAPCACHE_ENABLED = 1
 
 !IFDEF ENABLE_DEPENDENCIES
 ZLIB_ENABLED = 1
+APR_ENABLED = 1
+APRUTIL_ENABLED = 1
+PCRE_ENABLED = 1
+HTTPD_ENABLED = 1
 OPENSSL_ENABLED = 1
 CURL_ENABLED = 1
 LIBPNG_ENABLED = 1
@@ -1275,6 +1291,7 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 !ENDIF
     if not exist $(OUTPUT_DIR)\include\openssl mkdir $(OUTPUT_DIR)\include\openssl
 	xcopy /Y include\openssl\*.h $(OUTPUT_DIR)\include\openssl
+    xcopy /Y ms\applink.c $(OUTPUT_DIR)\include\openssl
 !IFDEF WIN64
     xcopy /Y lib*1_1-x64.dll $(OUTPUT_DIR)\bin
 !ELSE
@@ -2815,6 +2832,137 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
     @echo $(MAPSERVER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(APR_LIB): $(MSVCRT_DLL) $(CURL_EXE)
+!IFDEF APR_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(APR_DIR) mkdir $(APR_DIR)
+    cd $(APR_DIR)
+    if not exist $(APR_VER) $(CURL_EXE) -L -k -o "$(APR_VER).zip" "$(APR_SRC)" & 7z x -y $(APR_VER).zip
+    cd $(APR_VER)
+!IFNDEF NO_CLEAN
+    if exist cmake rd /Q /S cmake
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist cmake mkdir cmake
+	cd cmake
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install
+    xcopy /Y include\*.h $(OUTPUT_DIR)\include
+    if not exist $(OUTPUT_DIR)\include\arch mkdir $(OUTPUT_DIR)\include\arch
+    xcopy /Y $(BASE_DIR)\$(APR_DIR)\$(APR_VER)\include\arch\*.h $(OUTPUT_DIR)\include\arch
+    if not exist $(OUTPUT_DIR)\include\arch\win32 mkdir $(OUTPUT_DIR)\include\arch\win32
+    xcopy /Y $(BASE_DIR)\$(APR_DIR)\$(APR_VER)\include\arch\win32\*.h $(OUTPUT_DIR)\include\arch\win32
+    xcopy /Y bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(APR_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(APRUTIL_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB)
+!IFDEF APRUTIL_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(APRUTIL_DIR) mkdir $(APRUTIL_DIR)
+    cd $(APRUTIL_DIR)
+    if not exist $(APRUTIL_VER) $(CURL_EXE) -L -k -o "$(APRUTIL_VER).zip" "$(APRUTIL_SRC)" & 7z x -y $(APRUTIL_VER).zip
+    cd $(APRUTIL_VER)
+!IFNDEF NO_CLEAN
+    if exist cmake rd /Q /S cmake
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist cmake mkdir cmake
+	cd cmake
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(APRUTIL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(PCRE_LIB): $(MSVCRT_DLL) $(CURL_EXE)
+!IFDEF PCRE_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(PCRE_DIR) mkdir $(PCRE_DIR)
+    cd $(PCRE_DIR)
+    if not exist $(PCRE_VER) $(CURL_EXE) -L -k -o "$(PCRE_VER).zip" "$(PCRE_SRC)" & 7z x -y $(PCRE_VER).zip
+    cd $(PCRE_VER)
+!IFNDEF NO_CLEAN
+    if exist cmake rd /Q /S cmake
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist cmake mkdir cmake
+	cd cmake
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(PCRE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
+!IFDEF HTTPD_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(HTTPD_DIR) mkdir $(HTTPD_DIR)
+    cd $(HTTPD_DIR)
+    if not exist $(HTTPD_VER).tar.gz $(CURL_EXE) -L -k -o "$(HTTPD_VER).tar.gz" "$(HTTPD_SRC)"
+    if not exist $(HTTPD_VER) 7z e -y $(HTTPD_VER).tar.gz && 7z x -y $(HTTPD_VER).tar
+    cd $(HTTPD_VER)
+!IFNDEF NO_CLEAN
+    if exist cmake rd /Q /S cmake
+!ENDIF
+!IFNDEF NO_BUILD
+    if not exist cmake mkdir cmake
+	cd cmake
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib;$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DPCRE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPCRE_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/pcre.lib
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y $(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install\bin\libhttpd.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install\lib\libhttpd.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(HTTPD_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(MAPCACHE_LIB): $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
+!IFDEF MAPCACHE_ENABLED
+    cd $(MAPCACHE_DIR)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DFCGI_LIBRARY=$(FCGI_LIB) -DAPR_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib -DAPU_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DAPACHE_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libhttpd.lib -DWITH_POSTGRESQL=1 -DWITH_TIFF=1 -DWITH_TIFF_WRITE_SUPPORT=1 -DWITH_PCRE=1
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+    if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
+	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
+    cd $(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\install
+	xcopy /Y lib\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y bin\*.exe $(OUTPUT_DIR)\bin\ms\apps
+    xcopy /Y lib\*.lib $(OUTPUT_DIR)\lib
+    cd $(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\apache\$(BUILD_CONFIG)
+    xcopy /Y *.dll $(OUTPUT_DIR)\bin
+!ENDIF
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(MAPCACHE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(PGSQL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL)
 !IFDEF PGSQL_ENABLED
     if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
@@ -3405,17 +3553,31 @@ update-ms:
     if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
 	cd $(MAPSERVER_DIR) 
     git reset --hard HEAD
+    git fetch
     git checkout $(MAPSERVER_BRANCH)
     git pull origin $(MAPSERVER_BRANCH)
     git reset --hard $(MS_REVISION)
 	git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\ms_revision.txt
 	type $(OUTPUT_DIR)\doc\ms_revision.txt
     cd $(BASE_DIR)
+    
+update-mapcache:
+    set PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    if not exist $(MAPCACHE_DIR) git clone -b $(MAPCACHE_BRANCH) $(MAPCACHE_SRC) $(MAPCACHE_DIR)
+	cd $(MAPCACHE_DIR) 
+    git reset --hard HEAD
+    git fetch
+    git checkout $(MAPCACHE_BRANCH)
+    git pull origin $(MAPCACHE_BRANCH)
+    git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\mapcache_revision.txt
+	type $(OUTPUT_DIR)\doc\mapcache_revision.txt
+    cd $(BASE_DIR)
 
 update-gdal:
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
     cd $(GDAL_DIR)
     git reset --hard HEAD
+    git fetch
     git checkout $(GDAL_BRANCH)
     git pull origin $(GDAL_BRANCH)
     git reset --hard $(GDAL_REVISION)
@@ -3423,7 +3585,7 @@ update-gdal:
 	type $(OUTPUT_DIR)\doc\gdal_revision.txt
     cd $(BASE_DIR)
     
-update: $(CURL_CA_BUNDLE) update-ms update-gdal
+update: $(CURL_CA_BUNDLE) update-ms update-gdal update-mapcache
 
 ms-deps:
 	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\ms_deps.txt
@@ -3486,6 +3648,7 @@ ms-deps:
     echo protobuf-c - $(PROTOBUF_C_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !ENDIF
 
+mapcache: $(MAPCACHE_LIB)
 
 ms: $(MAPSERVER_LIB) ms-deps
 
