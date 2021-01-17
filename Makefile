@@ -199,7 +199,7 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.16.27034.0"
-MSVC_VER = 1911
+MSVC_VER = 1916
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -209,7 +209,7 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.16.27041.0"
-MSVC_VER = 1911
+MSVC_VER = 1916
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -219,7 +219,17 @@ CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.16.27043.0"
-MSVC_VER = 1911
+MSVC_VER = 1916
+MESON_BACKEND = vs2017
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc15x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc15
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.16.27045.0"
+MSVC_VER = 1916
 MESON_BACKEND = vs2017
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
@@ -259,6 +269,16 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.28.29335.0"
+MSVC_VER = 1928
+MESON_BACKEND = vs2019
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
+CMAKE_BUILDDIR = vc16
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.28.29336.0"
 MSVC_VER = 1928
 MESON_BACKEND = vs2019
 !IFDEF WIN64
@@ -1023,7 +1043,11 @@ CMAKE_EXE = cmake.exe
 !IF [echo off && for /f "usebackq tokens=*" %i IN (`where ninja.exe`) DO echo found ninja in %i] == 0
 NINJA_EXE = ninja.exe
 !ELSE
+!IF EXIST ($(BASE_DIR)\ninja\ninja.exe)
+NINJA_EXE = $(BASE_DIR)\ninja\ninja.exe
+!ELSE
 !ERROR ninja.exe not found. Please install ninja and make it available in the PATH environment variable!
+!ENDIF
 !ENDIF
 !ENDIF
 
@@ -2104,17 +2128,17 @@ $(GDAL_OPT):
 !ENDIF
 !ENDIF
 !IFDEF GDAL_PDF
-    echo POPPLER_ENABLED = YES >> $(GDAL_OPT)
-    echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
-    echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
-    echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
+    rem echo POPPLER_ENABLED = YES >> $(GDAL_OPT)
+    rem echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
+    rem echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
+    rem echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
 !IFDEF POPPLER_MINOR_VERSION
-    echo POPPLER_MINOR_VERSION = $(POPPLER_MINOR_VERSION) >> $(GDAL_OPT)
+    rem echo POPPLER_MINOR_VERSION = $(POPPLER_MINOR_VERSION) >> $(GDAL_OPT)
 !ELSE
-    echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
+    rem echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
 !ENDIF
-    echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
-    echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
+    rem echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
+    rem echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
     echo poppler - $(POPPLER_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
@@ -3683,9 +3707,6 @@ package-dependencies: dependencies
 op-disable:
     @echo This operation is disabled!
     
-gdal-clean:
-    if exist $(GDAL_OPT) del $(GDAL_OPT)
-	
 gdalversion: $(GDAL_VERSION_TXT)
 
 mkgdalinst: $(GDAL_INSTALLER_CORE) $(GDAL_INSTALLER_ORACLE) $(GDAL_INSTALLER_ECW) $(GDAL_INSTALLER_MRSID) $(GDAL_INSTALLER_FILEGDB) $(GDAL_INSTALLER_NETCDF)
@@ -4040,6 +4061,7 @@ mapmanager-update:
     if not exist $(MAPMANAGER_DIR) git clone -b $(MAPMANAGER_BRANCH) $(MAPMANAGER_SRC) $(MAPMANAGER_DIR)
 	cd $(MAPMANAGER_DIR) 
     git reset --hard HEAD
+    git fetch
     git checkout $(MAPMANAGER_BRANCH)
     git pull origin $(MAPMANAGER_BRANCH)
     git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\mapmanager_revision.txt

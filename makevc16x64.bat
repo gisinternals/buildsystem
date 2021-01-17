@@ -16,8 +16,8 @@ set gdal-dir=gdal
 set ms-dir=mapserver
 set msautotest-dir=msautotest
 set pkg-version=gdal-mapserver
-set MAPSERVER_BRANCH=master
-set MAPCACHE_BRANCH=master
+set MAPSERVER_BRANCH=main
+set MAPCACHE_BRANCH=main
 set GDAL_BRANCH=master
 set gdal-tag=%gdal_dev_tag%
 

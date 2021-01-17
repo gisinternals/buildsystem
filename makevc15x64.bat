@@ -1,8 +1,7 @@
 @echo Setting environment for using Microsoft Visual Studio 2017 x64 tools.
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64 10.0.17763.0
 E:
-
 
 set compiler=vc15x64
 
@@ -17,6 +16,9 @@ set gdal-dir=gdal
 set ms-dir=mapserver
 set msautotest-dir=msautotest
 set pkg-version=gdal-mapserver
+set MAPSERVER_BRANCH=main
+set MAPCACHE_BRANCH=main
+set GDAL_BRANCH=master
 set gdal-tag=%gdal_dev_tag%
 
 cmd /C makepackage.bat
@@ -28,6 +30,9 @@ set gdal-dir=gdal-%gdal_version%
 set ms-dir=mapserver-%ms_version%
 set msautotest-dir=msautotest-%ms_version%
 set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
+set MAPSERVER_BRANCH=branch-%ms_version%
+set MAPCACHE_BRANCH=branch-%mapcache_major%-%mapcache_minor%
+set GDAL_BRANCH=release/%gdal_major%.%gdal_minor%
 set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat
@@ -56,7 +61,6 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished
 echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 
 
-
 @goto exit
 
 :rel
@@ -66,14 +70,14 @@ set gdal-dir=gdal-%gdal_version%
 set ms-dir=mapserver-%ms_version%
 set msautotest-dir=msautotest-%ms_version%
 set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%-%ms_rel%%variant%
-set MS_REVISION=%ms_rev%
-set GDAL_REVISION=%gdal_rev%
+set MAPSERVER_BRANCH=rel-%ms_version%-%ms_rel%
+set MAPCACHE_BRANCH=rel-%mapcache_major%-%mapcache_minor%-%mapcache_rel%
+set GDAL_BRANCH=v%gdal_major%.%gdal_minor%.%gdal_rel%
 set gdal-tag=%gdal_stable_tag%
-set gdal-release-ver=%gdal_version%.%gdal_rel%
+
+echo %pkg-version%
 
 cmd /C makepackage.bat
-
-cmd /C makenuget.bat
 
 
 :exit
