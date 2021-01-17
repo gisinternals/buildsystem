@@ -188,6 +188,16 @@ CMAKE_BUILDDIR = vc15x64
 CMAKE_GENERATOR = "Visual Studio 15 2017"
 CMAKE_BUILDDIR = vc15
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.16.27045.0"
+MSVC_VER = 1911
+MESON_BACKEND = vs2017
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 15 2017 Win64"
+CMAKE_BUILDDIR = vc15x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 15 2017"
+CMAKE_BUILDDIR = vc15
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.22.27905.0"
 MSVC_VER = 1922
 !IFDEF WIN64
@@ -284,6 +294,18 @@ GDAL_REVISION=HEAD
 
 !IFNDEF MAPMANAGER_REVISION
 MAPMANAGER_REVISION=HEAD
+!ENDIF
+
+!IFNDEF MAPSERVER_BRANCH
+MAPSERVER_BRANCH=master
+!ENDIF
+
+!IFNDEF GDAL_BRANCH
+GDAL_BRANCH=master
+!ENDIF
+
+!IFNDEF MAPMANAGER_BRANCH
+MAPMANAGER_BRANCH=ms-7-6
 !ENDIF
 
 !IFNDEF SPECIFY_FEATURES
@@ -1366,14 +1388,18 @@ update: get_ca_bundle
 	set "PATH=E:\Git\bin;%PATH%"
 	cd $(MS_DIR)
 	git reset --hard HEAD
-	git pull origin
+    git fetch
+	git checkout $(MAPSERVER_BRANCH)
+    git pull origin $(MAPSERVER_BRANCH)
 	git reset --hard $(MS_REVISION)
 	git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\ms_revision.txt
 	type $(OUTPUT_DIR)\doc\ms_revision.txt
 	cd $(BASE_DIR)
 	cd $(GDAL_DIR)
 	git reset --hard HEAD
-	git pull origin
+    git fetch
+    git checkout $(GDAL_BRANCH)
+    git pull origin $(GDAL_BRANCH)
 	git reset --hard $(GDAL_REVISION)
 	git log --pretty=format:%H -n 1 > $(OUTPUT_DIR)\doc\gdal_revision.txt
 	type $(OUTPUT_DIR)\doc\gdal_revision.txt
@@ -5429,8 +5455,10 @@ mapmanager-update:
 	set TERM=msys
 	set "PATH=E:\Git\bin;%PATH%"
 	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
-	git pull origin ms-$(MS_VERSION)
-	rem git reset --hard $(MAPMANAGER_REVISION)
+	git reset --hard HEAD
+    git fetch
+    git checkout $(MAPMANAGER_BRANCH)
+    git pull origin $(MAPMANAGER_BRANCH)
 	cd $(BASE_DIR)
 !ENDIF
 

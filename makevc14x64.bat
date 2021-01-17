@@ -17,6 +17,9 @@ set gdal-dir=gdal
 set ms-dir=mapserver
 set msautotest-dir=msautotest
 set pkg-version=gdal-mapserver
+set MAPSERVER_BRANCH=main
+set MAPCACHE_BRANCH=master
+set GDAL_BRANCH=master
 set gdal-tag=%gdal_dev_tag%
 
 cmd /C makepackage.bat
@@ -28,6 +31,9 @@ set gdal-dir=gdal-%gdal_version%
 set ms-dir=mapserver-%ms_version%
 set msautotest-dir=msautotest-%ms_version%
 set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
+set MAPSERVER_BRANCH=branch-%ms_version%
+set MAPCACHE_BRANCH=branch-%mapcache_major%-%mapcache_minor%
+set GDAL_BRANCH=release/%gdal_major%.%gdal_minor%
 set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat
@@ -77,8 +83,10 @@ set gdal-dir=gdal-%gdal_version%
 set ms-dir=mapserver-%ms_version%
 set msautotest-dir=msautotest-%ms_version%
 set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%-%ms_rel%%variant%
-set MS_REVISION=%ms_rev%
-set GDAL_REVISION=%gdal_rev%
+set MAPSERVER_BRANCH=rel-%ms_version%-%ms_rel%
+set MAPCACHE_BRANCH=rel-%mapcache_major%-%mapcache_minor%-%mapcache_rel%
+set GDAL_BRANCH=v%gdal_major%.%gdal_minor%.%gdal_rel%
+set MAPMANAGER_BRANCH=mapserver-%ms_version%
 set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat
@@ -92,8 +100,10 @@ set gdal-dir=gdal-%gdal_version%
 set ms-dir=mapserver-%ms_version%
 set msautotest-dir=msautotest-%ms_version%
 set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%-%ms_rel%%variant%
-set MS_REVISION=%ms_rev%
-set GDAL_REVISION=%gdal_rev%
+set MAPSERVER_BRANCH=rel-%ms_version%-%ms_rel%
+set MAPCACHE_BRANCH=rel-%mapcache_major%-%mapcache_minor%-%mapcache_rel%
+set GDAL_BRANCH=v%gdal_major%.%gdal_minor%.%gdal_rel%
+set MAPMANAGER_BRANCH=mapserver-%ms_version%
 set gdal-tag=%gdal_stable_tag%
 
 cmd /C makepackage.bat

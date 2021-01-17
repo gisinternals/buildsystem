@@ -629,6 +629,9 @@
                     <Component Id="gdal_contour.exe" Guid="*">
                         <File Id="gdal_contour.exe" Name="gdal_contour.exe" Source="$(var.TargetDir)\gdal\apps\gdal_contour.exe" />
                     </Component>
+                    <Component Id="gdal_create.exe" Guid="*">
+                        <File Id="gdal_create.exe" Name="gdal_create.exe" Source="$(var.TargetDir)\gdal\apps\gdal_create.exe" />
+                    </Component>
                     <Component Id="gdal_grid.exe" Guid="*">
                         <File Id="gdal_grid.exe" Name="gdal_grid.exe" Source="$(var.TargetDir)\gdal\apps\gdal_grid.exe" />
                     </Component>
@@ -637,6 +640,9 @@
                     </Component>
                     <Component Id="gdal_translate.exe" Guid="*">
                         <File Id="gdal_translate.exe" Name="gdal_translate.exe" Source="$(var.TargetDir)\gdal\apps\gdal_translate.exe" />
+                    </Component>
+                    <Component Id="gdal_viewshed.exe" Guid="*">
+                        <File Id="gdal_viewshed.exe" Name="gdal_viewshed.exe" Source="$(var.TargetDir)\gdal\apps\gdal_viewshed.exe" />
                     </Component>
                     <Component Id="gdaladdo.exe" Guid="*">
                         <File Id="gdaladdo.exe" Name="gdaladdo.exe" Source="$(var.TargetDir)\gdal\apps\gdaladdo.exe" />
@@ -659,8 +665,11 @@
                     <Component Id="gdalmanage.exe" Guid="*">
                         <File Id="gdalmanage.exe" Name="gdalmanage.exe" Source="$(var.TargetDir)\gdal\apps\gdalmanage.exe" />
                     </Component>
-                    <Component Id="gdalserver.exe" Guid="*">
-                        <File Id="gdalserver.exe" Name="gdalserver.exe" Source="$(var.TargetDir)\gdal\apps\gdalserver.exe" />
+                    <Component Id="gdalmdiminfo.exe" Guid="*">
+                        <File Id="gdalmdiminfo.exe" Name="gdalmdiminfo.exe" Source="$(var.TargetDir)\gdal\apps\gdalmdiminfo.exe" />
+                    </Component>
+                    <Component Id="gdalmdimtranslate.exe" Guid="*">
+                        <File Id="gdalmdimtranslate.exe" Name="gdalmdimtranslate.exe" Source="$(var.TargetDir)\gdal\apps\gdalmdimtranslate.exe" />
                     </Component>
                     <Component Id="gdalsrsinfo.exe" Guid="*">
                         <File Id="gdalsrsinfo.exe" Name="gdalsrsinfo.exe" Source="$(var.TargetDir)\gdal\apps\gdalsrsinfo.exe" />
@@ -942,9 +951,11 @@
         <Feature Id="Utilities" Level="1" Title="Utilities" Display="expand" Description="Utility Programs">
             <Feature Id="GDALUtilities" Level="1" Title="GDAL Utilities" Display="expand" Description="GDAL Utilities">
                 <ComponentRef Id="gdal_contour.exe" />
+                <ComponentRef Id="gdal_create.exe" />
                 <ComponentRef Id="gdal_grid.exe" />
                 <ComponentRef Id="gdal_rasterize.exe" />
                 <ComponentRef Id="gdal_translate.exe" />
+                <ComponentRef Id="gdal_viewshed.exe" />
                 <ComponentRef Id="gdaladdo.exe" />
                 <ComponentRef Id="gdalbuildvrt.exe" />
                 <ComponentRef Id="gdaldem.exe" />
@@ -952,7 +963,8 @@
                 <ComponentRef Id="gdalinfo.exe" />
                 <ComponentRef Id="gdallocationinfo.exe" />
                 <ComponentRef Id="gdalmanage.exe" />
-                <ComponentRef Id="gdalserver.exe" />
+                <ComponentRef Id="gdalmdiminfo.exe" />
+                <ComponentRef Id="gdalmdimtranslate.exe" />
                 <ComponentRef Id="gdalsrsinfo.exe" />
                 <ComponentRef Id="gdaltindex.exe" />
                 <ComponentRef Id="gdaltransform.exe" />

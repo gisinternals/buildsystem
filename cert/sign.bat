@@ -1,1 +1,1 @@
-signtool sign /sha1 746ff869e511eb5238d7525a256af201ef646e9b /fd SHA256 /n "Open Source Developer, Tamas Szekeres" /t http://time.certum.pl/ /v "%1"
+signtool sign /sha1 915fb187da1e2bd2078fb2d8ad309156a26783b7 /fd SHA256 /n "Open Source Developer, Tamas Szekeres" /t http://time.certum.pl/ /v "%1"
