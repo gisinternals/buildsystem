@@ -580,9 +580,23 @@
                     <Component Id="libcurl.dll" Guid="*">
                         <File Id="libcurl.dll" Name="libcurl.dll" Source="$(var.TargetDir)\libcurl.dll" Vital="yes"/>
                     </Component>
+                    <?if $(sys.BUILDARCH) = x64?>
+                    <Component Id="libcrypto_1_1.dll" Guid="*">
+                        <File Id="libcrypto_1_1.dll" Name="libcrypto-1_1-x64.dll" Source="$(var.TargetDir)\libcrypto-1_1-x64.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="libssl_1_1.dll" Guid="*">
+                        <File Id="libssl_1_1.dll" Name="libssl-1_1-x64.dll" Source="$(var.TargetDir)\libssl-1_1-x64.dll" Vital="yes"/>
+                    </Component>
+                    
+                    <?else?>
                     <Component Id="libcrypto_1_1.dll" Guid="*">
                         <File Id="libcrypto_1_1.dll" Name="libcrypto-1_1.dll" Source="$(var.TargetDir)\libcrypto-1_1.dll" Vital="yes"/>
                     </Component>
+                    <Component Id="libssl_1_1.dll" Guid="*">
+                        <File Id="libssl_1_1.dll" Name="libssl-1_1.dll" Source="$(var.TargetDir)\libssl-1_1.dll" Vital="yes"/>
+                    </Component>
+                    
+                    <?endif?>
                     <Component Id="libexpat.dll" Guid="*">
                         <File Id="libexpat.dll" Name="libexpat.dll" Source="$(var.TargetDir)\libexpat.dll" Vital="yes"/>
                     </Component>
@@ -626,9 +640,6 @@
                     </Component>
 					<Component Id="freexl.dll" Guid="*">
                         <File Id="freexl.dll" Name="freexl.dll" Source="$(var.TargetDir)\freexl.dll" Vital="yes"/>
-                    </Component>
-                    <Component Id="libssl_1_1.dll" Guid="*">
-                        <File Id="libssl_1_1.dll" Name="libssl-1_1.dll" Source="$(var.TargetDir)\libssl-1_1.dll" Vital="yes"/>
                     </Component>
                     <Component Id="xerces_c_3_2.dll" Guid="*">
                         <File Id="xerces_c_3_2.dll" Name="xerces-c_3_2.dll" Source="$(var.TargetDir)\xerces-c_3_2.dll" Vital="yes"/>
