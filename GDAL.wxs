@@ -650,6 +650,21 @@
                     <Component Id="ogdi.dll" Guid="*">
                         <File Id="ogdi.dll" Name="ogdi.dll" Source="$(var.TargetDir)\ogdi.dll" Vital="yes"/>
                     </Component>
+                    <Component Id="adrg.dll" Guid="*">
+                        <File Id="adrg.dll" Name="adrg.dll" Source="$(var.TargetDir)\adrg.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="remote.dll" Guid="*">
+                        <File Id="remote.dll" Name="remote.dll" Source="$(var.TargetDir)\remote.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="rpf.dll" Guid="*">
+                        <File Id="rpf.dll" Name="rpf.dll" Source="$(var.TargetDir)\rpf.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="skeleton.dll" Guid="*">
+                        <File Id="skeleton.dll" Name="skeleton.dll" Source="$(var.TargetDir)\skeleton.dll" Vital="yes"/>
+                    </Component>
+                    <Component Id="vrf.dll" Guid="*">
+                        <File Id="vrf.dll" Name="vrf.dll" Source="$(var.TargetDir)\vrf.dll" Vital="yes"/>
+                    </Component>
                     <Component Id="tiff.dll" Guid="*">
                         <File Id="tiff.dll" Name="tiff.dll" Source="$(var.TargetDir)\tiff.dll" Vital="yes"/>
                     </Component>
@@ -937,6 +952,11 @@
             <ComponentRef Id="openjp2.dll" />
             <ComponentRef Id="zlib.dll" />
             <ComponentRef Id="ogdi.dll" />
+            <ComponentRef Id="adrg.dll" />
+            <ComponentRef Id="remote.dll" />
+            <ComponentRef Id="rpf.dll" />
+            <ComponentRef Id="skeleton.dll" />
+            <ComponentRef Id="vrf.dll" />
             <ComponentRef Id="tiff.dll" />
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="GDALLicense.rtf" />
