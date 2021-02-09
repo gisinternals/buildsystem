@@ -3368,9 +3368,19 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     echo make >> build.sh
 !IFDEF WIN64
     echo cp -f $$TOPDIR/bin/win64/ogdi.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win64/adrg.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win64/remote.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win64/rpf.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win64/skeleton.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win64/vrf.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/lib/win64/ogdi.lib $$OUTPUTDIR/lib >> build.sh
 !ELSE
     echo cp -f $$TOPDIR/bin/win32/ogdi.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win32/adrg.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win32/remote.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win32/rpf.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win32/skeleton.dll $$OUTPUTDIR/bin >> build.sh
+    echo cp -f $$TOPDIR/bin/win32/vrf.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/lib/win32/ogdi.lib $$OUTPUTDIR/lib >> build.sh
 !ENDIF
     echo cp -f $$TOPDIR/ogdi/include/ecs*.h $$OUTPUTDIR/include >> build.sh
@@ -3570,7 +3580,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(FCGI_LIB)
+test: $(OGDI_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
