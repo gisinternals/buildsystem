@@ -1194,13 +1194,13 @@ PYDIR = $(PYTHON_BASE)\$(PYTHON_DIR)
 $(MSVCRT_DLL): $(OUTPUT_DIR)
 !IF $(MSVC_VER) >= 1922
 !IFDEF WIN64
-    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
     if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
 !ELSE
-    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
-    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
     if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
 !ENDIF
