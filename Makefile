@@ -359,12 +359,16 @@ GDAL_DIR = $(GDAL_DIR)-$(CMAKE_BUILDDIR)
 GDAL_DIR = $(GDAL_DIR)-$(GDAL_VERSION)-$(CMAKE_BUILDDIR)
 !ENDIF
 
-!IF "$(MAPSERVER_BRANCH)" != "master"
-MAPSERVER_DIR = $(MAPSERVER_DIR)-$(MS_VERSION)
+!IF "$(MAPSERVER_BRANCH)" == "main"
+MAPSERVER_DIR = $(MAPSERVER_DIR)-$(CMAKE_BUILDDIR)
+!ELSE
+MAPSERVER_DIR = $(MAPSERVER_DIR)-$(MS_VERSION)-$(CMAKE_BUILDDIR)
 !ENDIF
 
-!IF "$(MAPCACHE_BRANCH)" != "master"
-MAPCACHE_DIR = $(MAPCACHE_DIR)-$(MAPCACHE_BRANCH)
+!IF "$(MAPCACHE_BRANCH)" == "main"
+MAPCACHE_DIR = $(MAPCACHE_DIR)-$(CMAKE_BUILDDIR)
+!ELSE
+MAPCACHE_DIR = $(MAPCACHE_DIR)-$(MAPCACHE_BRANCH)-$(CMAKE_BUILDDIR)
 !ENDIF
 
 !IFNDEF MS_REVISION
@@ -722,6 +726,7 @@ MAPSERVER_DEPS = $(MSVCRT_DLL) $(JPEG_LIB) $(LIBPNG_LIB) $(FREETYPE_2)
 !IFNDEF MS_POSTGIS
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_POSTGIS=0
 !ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_POSTGIS=1 -DPOSTGRESQL_LIBRARY=$(PGSQL_LIB:\=/)
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PGSQL_LIB)
 !ENDIF
 
@@ -1085,60 +1090,78 @@ PYTHON_DIR = Python27
 
 !IF "$(PYTHON_DIR)" == "Python25"
 PYTHON_OUTDIR = python\build\lib.win32-2.5
+PYTHON_SCRIPTSDIR = python\build\scripts-2.5
 PYTHON_BDIST_OPTS = --formats=wininst
 !ELSEIF "$(PYTHON_DIR)" == "Python26"
 PYTHON_OUTDIR = python\build\lib.win32-2.6
+PYTHON_SCRIPTSDIR = python\build\scripts-2.6
 PYTHON_BDIST_OPTS = --formats=wininst
 !ELSEIF "$(PYTHON_DIR)" == "Python26-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-2.6
+PYTHON_SCRIPTSDIR = python\build\scripts-2.6
 PYTHON_BDIST_OPTS = --formats=wininst
 !ELSEIF "$(PYTHON_DIR)" == "Python27"
 PYTHON_OUTDIR = python\build\lib.win32-2.7
+PYTHON_SCRIPTSDIR = python\build\scripts-2.7
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python27-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-2.7
+PYTHON_SCRIPTSDIR = python\build\scripts-2.7
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python31"
 PYTHON_OUTDIR = python\build\lib.win32-3.1
+PYTHON_SCRIPTSDIR = python\build\scripts-3.1
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python31-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.1
+PYTHON_SCRIPTSDIR = python\build\scripts-3.1
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python32"
 PYTHON_OUTDIR = python\build\lib.win32-3.2
+PYTHON_SCRIPTSDIR = python\build\scripts-3.2
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python32-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.2
+PYTHON_SCRIPTSDIR = python\build\scripts-3.2
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python33"
 PYTHON_OUTDIR = python\build\lib.win32-3.3
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python33-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.3
+PYTHON_SCRIPTSDIR = python\build\scripts-3.3
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python34"
 PYTHON_OUTDIR = python\build\lib.win32-3.4
+PYTHON_SCRIPTSDIR = python\build\scripts-3.4
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python34-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.4
+PYTHON_SCRIPTSDIR = python\build\scripts-3.4
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python35"
 PYTHON_OUTDIR = python\build\lib.win32-3.5
+PYTHON_SCRIPTSDIR = python\build\scripts-3.5
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python35-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.5
+PYTHON_SCRIPTSDIR = python\build\scripts-3.5
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python36"
 PYTHON_OUTDIR = python\build\lib.win32-3.6
+PYTHON_SCRIPTSDIR = python\build\scripts-3.6
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python36-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.6
+PYTHON_SCRIPTSDIR = python\build\scripts-3.6
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python37"
 PYTHON_OUTDIR = python\build\lib.win32-3.7
+PYTHON_SCRIPTSDIR = python\build\scripts-3.7
 PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python37-AMD64"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.7
+PYTHON_SCRIPTSDIR = python\build\scripts-3.7
 PYTHON_BDIST_OPTS = --formats=msi
 !ENDIF
 
@@ -3856,8 +3879,8 @@ gdal-python-all:
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36-AMD64 SWIG_VER=2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_VER=2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_VER=2.0.4
-	nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
 !ELSE
     rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_VER=2.0.4
     rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python31 SWIG_VER=2.0.4
@@ -3873,8 +3896,8 @@ gdal-python-all:
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36 SWIG_VER=2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
-	nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
 !ENDIF
 !ENDIF
 
@@ -3910,7 +3933,7 @@ gdal-python: $(GDAL_OPT) $(SWIG_INSTALL)
 	if exist _osr.pyd.manifest mt -manifest _osr.pyd.manifest -outputresource:_osr.pyd;2
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python\osgeo
 	xcopy /Y *.pyd $(OUTPUT_DIR)\bin\gdal\python\osgeo
-	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\python\scripts
+	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\$(PYTHON_SCRIPTSDIR)
 	if not exist $(OUTPUT_DIR)\bin\gdal\python\scripts mkdir $(OUTPUT_DIR)\bin\gdal\python\scripts
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python\scripts
 !ENDIF
