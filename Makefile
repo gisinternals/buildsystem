@@ -1381,7 +1381,7 @@ $(CURL_CA_BUNDLE): $(CURL_EXE)
 !IFDEF CURL_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    $(CURL_EXE) -L -k -o "$(CURL_CA_BUNDLE)" "http://curl.haxx.se/ca/cacert.pem"
+    $(CURL_EXE) -L -k -o "$(CURL_CA_BUNDLE)" "https://curl.se/ca/cacert.pem"
 !ENDIF
     
 $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
@@ -3603,7 +3603,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(OGDI_LIB)
+test: $(ECW_DLL)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
