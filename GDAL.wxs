@@ -794,7 +794,7 @@
                     <Component Id="GDALShell.bat" Guid="*">
                         <File Id="GDALShell.bat" Name="GDALShell.bat" Source="$(var.BaseDir)\GDALShell.bat" Vital="yes"/>
                     </Component>
-                    <Component Id="epsg_tr.py" Guid="*">
+                    <!-- <Component Id="epsg_tr.py" Guid="*">
                         <File Id="epsg_tr.py" Name="epsg_tr.py" Source="$(var.TargetDir)\gdal\python\scripts\epsg_tr.py" Vital="yes"/>
                     </Component>
                     <Component Id="esri2wkt.py" Guid="*">
@@ -805,16 +805,16 @@
                     </Component>
                     <Component Id="gcps2wld.py" Guid="*">
                         <File Id="gcps2wld.py" Name="gcps2wld.py" Source="$(var.TargetDir)\gdal\python\scripts\gcps2wld.py" Vital="yes"/>
-                    </Component>
+                    </Component> -->
                     <Component Id="gdal2tiles.py" Guid="*">
                         <File Id="gdal2tiles.py" Name="gdal2tiles.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal2tiles.py" Vital="yes"/>
                     </Component>
                     <Component Id="gdal2xyz.py" Guid="*">
                         <File Id="gdal2xyz.py" Name="gdal2xyz.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal2xyz.py" Vital="yes"/>
                     </Component>
-                    <Component Id="gdal_auth.py" Guid="*">
+                    <!-- <Component Id="gdal_auth.py" Guid="*">
                         <File Id="gdal_auth.py" Name="gdal_auth.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_auth.py" Vital="yes"/>
-                    </Component>
+                    </Component> -->
                     <Component Id="gdal_calc.py" Guid="*">
                         <File Id="gdal_calc.py" Name="gdal_calc.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_calc.py" Vital="yes"/>
                     </Component>
@@ -826,6 +826,9 @@
                     </Component>
                     <Component Id="gdal_merge.py" Guid="*">
                         <File Id="gdal_merge.py" Name="gdal_merge.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_merge.py" Vital="yes"/>
+                    </Component>
+					<Component Id="gdal_pansharpen.py" Guid="*">
+                        <File Id="gdal_pansharpen.py" Name="gdal_pansharpen.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_pansharpen.py" Vital="yes"/>
                     </Component>
                     <Component Id="gdal_polygonize.py" Guid="*">
                         <File Id="gdal_polygonize.py" Name="gdal_polygonize.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_polygonize.py" Vital="yes"/>
@@ -839,7 +842,7 @@
                     <Component Id="gdal_sieve.py" Guid="*">
                         <File Id="gdal_sieve.py" Name="gdal_sieve.py" Source="$(var.TargetDir)\gdal\python\scripts\gdal_sieve.py" Vital="yes"/>
                     </Component>
-                    <Component Id="gdalchksum.py" Guid="*">
+                    <!-- <Component Id="gdalchksum.py" Guid="*">
                         <File Id="gdalchksum.py" Name="gdalchksum.py" Source="$(var.TargetDir)\gdal\python\scripts\gdalchksum.py" Vital="yes"/>
                     </Component>
                     <Component Id="gdalident.py" Guid="*">
@@ -847,13 +850,22 @@
                     </Component>
                     <Component Id="gdalimport.py" Guid="*">
                         <File Id="gdalimport.py" Name="gdalimport.py" Source="$(var.TargetDir)\gdal\python\scripts\gdalimport.py" Vital="yes"/>
+                    </Component> -->
+					<Component Id="gdalattachpct.py" Guid="*">
+                        <File Id="gdalattachpct.py" Name="gdalattachpct.py" Source="$(var.TargetDir)\gdal\python\scripts\gdalattachpct.py" Vital="yes"/>
+                    </Component>
+					<Component Id="gdalcompare.py" Guid="*">
+                        <File Id="gdalcompare.py" Name="gdalcompare.py" Source="$(var.TargetDir)\gdal\python\scripts\gdalcompare.py" Vital="yes"/>
                     </Component>
                     <Component Id="gdalmove.py" Guid="*">
                         <File Id="gdalmove.py" Name="gdalmove.py" Source="$(var.TargetDir)\gdal\python\scripts\gdalmove.py" Vital="yes"/>
                     </Component>
-                    <Component Id="mkgraticule.py" Guid="*">
-                        <File Id="mkgraticule.py" Name="mkgraticule.py" Source="$(var.TargetDir)\gdal\python\scripts\mkgraticule.py" Vital="yes"/>
+					<Component Id="ogrmerge.py" Guid="*">
+                        <File Id="ogrmerge.py" Name="ogrmerge.py" Source="$(var.TargetDir)\gdal\python\scripts\ogrmerge.py" Vital="yes"/>
                     </Component>
+                    <!-- <Component Id="mkgraticule.py" Guid="*">
+                        <File Id="mkgraticule.py" Name="mkgraticule.py" Source="$(var.TargetDir)\gdal\python\scripts\mkgraticule.py" Vital="yes"/>
+                    </Component> -->
                     <Component Id="pct2rgb.py" Guid="*">
                         <File Id="pct2rgb.py" Name="pct2rgb.py" Source="$(var.TargetDir)\gdal\python\scripts\pct2rgb.py" Vital="yes"/>
                     </Component>
@@ -1102,26 +1114,30 @@
             <ComponentRef Id="gdalalljni.dll" />
         </Feature>
         <Feature Id="PythonBindings" Level="1" Title="Python Applications" Display="expand" Description="GDAL Python Applications (The bindings are installed separately)">
-            <ComponentRef Id="epsg_tr.py" />
+            <!-- <ComponentRef Id="epsg_tr.py" />
             <ComponentRef Id="esri2wkt.py" />
             <ComponentRef Id="gcps2vec.py" />
-            <ComponentRef Id="gcps2wld.py" />
+            <ComponentRef Id="gcps2wld.py" /> -->
             <ComponentRef Id="gdal2tiles.py" />
             <ComponentRef Id="gdal2xyz.py" />
-            <ComponentRef Id="gdal_auth.py" />
+            <!-- <ComponentRef Id="gdal_auth.py" /> -->
             <ComponentRef Id="gdal_calc.py" />
             <ComponentRef Id="gdal_edit.py" />
             <ComponentRef Id="gdal_fillnodata.py" />
             <ComponentRef Id="gdal_merge.py" />
+			<ComponentRef Id="gdal_pansharpen.py" />
             <ComponentRef Id="gdal_polygonize.py" />
             <ComponentRef Id="gdal_proximity.py" />
             <ComponentRef Id="gdal_retile.py" />
             <ComponentRef Id="gdal_sieve.py" />
-            <ComponentRef Id="gdalchksum.py" />
+            <!-- <ComponentRef Id="gdalchksum.py" />
             <ComponentRef Id="gdalident.py" />
-            <ComponentRef Id="gdalimport.py" />
+            <ComponentRef Id="gdalimport.py" /> -->
+			<ComponentRef Id="gdalattachpct.py" />
+			<ComponentRef Id="gdalcompare.py" />
             <ComponentRef Id="gdalmove.py" />
-            <ComponentRef Id="mkgraticule.py" />
+			<ComponentRef Id="ogrmerge.py" />
+            <!-- <ComponentRef Id="mkgraticule.py" /> -->
             <ComponentRef Id="pct2rgb.py" />
             <ComponentRef Id="rgb2pct.py" />
         </Feature>
