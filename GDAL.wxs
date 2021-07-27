@@ -749,9 +749,6 @@
                     <Component Id="ogrtindex.exe" Guid="*">
                         <File Id="ogrtindex.exe" Name="ogrtindex.exe" Source="$(var.TargetDir)\gdal\apps\ogrtindex.exe" />
                     </Component>
-                    <Component Id="testepsg.exe" Guid="*">
-                        <File Id="testepsg.exe" Name="testepsg.exe" Source="$(var.TargetDir)\gdal\apps\testepsg.exe" />
-                    </Component>
                     <Component Id="curl.exe" Guid="*">
                         <File Id="curl.exe" Name="curl.exe" Source="$(var.TargetDir)\curl.exe" />
                     </Component>
@@ -1024,7 +1021,6 @@
                 <ComponentRef Id="ogrinfo.exe" />
                 <ComponentRef Id="ogrlineref.exe" />
                 <ComponentRef Id="ogrtindex.exe" />
-                <ComponentRef Id="testepsg.exe" />
             </Feature>
             <Feature Id="PROJ4Utilities" Level="1" Title="Proj.4 Utilities" Display="expand" Description="Proj.4 Utilities">
                 <ComponentRef Id="cct.exe" />
