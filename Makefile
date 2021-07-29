@@ -1167,6 +1167,22 @@ PYTHON_BDIST_OPTS = --formats=msi
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.7
 PYTHON_SCRIPTSDIR = python\build\scripts-3.7
 PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python38"
+PYTHON_OUTDIR = python\build\lib.win32-3.8
+PYTHON_SCRIPTSDIR = python\build\scripts-3.8
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python38-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.8
+PYTHON_SCRIPTSDIR = python\build\scripts-3.8
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python39"
+PYTHON_OUTDIR = python\build\lib.win32-3.9
+PYTHON_SCRIPTSDIR = python\build\scripts-3.9
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python39-AMD64"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.9
+PYTHON_SCRIPTSDIR = python\build\scripts-3.9
+PYTHON_BDIST_OPTS = --formats=msi
 !ENDIF
 
 
@@ -3883,6 +3899,10 @@ gdal-python-all:
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36-AMD64 SWIG_VER=2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_VER=2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-AMD64 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-AMD64 SWIG_VER=2.0.4
     rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
     rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27-AMD64 SWIG_VER=2.0.4
 !ELSE
@@ -3900,6 +3920,10 @@ gdal-python-all:
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python36 SWIG_VER=2.0.4
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=2.0.4
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=2.0.4
     rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
     rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python27 SWIG_VER=2.0.4
 !ENDIF
