@@ -567,7 +567,9 @@ FITS_LIB = $(OUTPUT_DIR)\lib\cfitsio.lib
 BOOST_HEADERS = $(OUTPUT_DIR)\include\boost\version.hpp
 OGDI_LIB = $(OUTPUT_DIR)\lib\ogdi.lib
 ECW_DLL = $(OUTPUT_DIR)\bin\NCSEcw.dll
-FILEGDBAPI_DLL = $(OUTPUT_DIR)\bin\FileGDBAPI.dll 
+FILEGDBAPI_DLL = $(OUTPUT_DIR)\bin\FileGDBAPI.dll
+LIBWEBP_LIB = $(OUTPUT_DIR)\lib\webp.lib
+ZSTD_LIB = $(OUTPUT_DIR)\lib\zstd_static.lib
 
 #installers (with separate licenses)
 GDAL_INSTALLER_CORE = $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-core.msi
@@ -661,6 +663,10 @@ GDAL_DEPS = $(GDAL_DEPS) $(KEA_LIB)
 
 !IFDEF GDAL_NETCDF
 GDAL_DEPS = $(GDAL_DEPS) $(NETCDF_LIB)
+!ENDIF
+
+!IFDEF GDAL_LIBWEBP
+GDAL_DEPS = $(GDAL_DEPS) $(LIBWEBP_LIB)
 !ENDIF
 
 !IFDEF GDAL_OGDI
@@ -932,9 +938,11 @@ LIBKML_ENABLED = 1
 MYSQL_ENABLED = 1
 HDF5_ENABLED = 1
 KEA_ENABLED = 1
+NETCDF_ENABLED = 1
 FITS_ENABLED = 1
 BOOST_ENABLED = 1
 OGDI_ENABLED = 1
+LIBWEBP_ENABLED = 1
 !ENDIF
 
 # ECW SDK locations
@@ -1562,7 +1570,7 @@ $(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE
     @echo $(POPPLER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(LIBTIFF_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB)
+$(LIBTIFF_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(ZSTD_LIB) $(LIBWEBP_LIB)
 !IFDEF LIBTIFF_ENABLED
     if not exist $(LIBTIFF_DIR) git clone -b $(LIBTIFF_BRANCH) $(LIBTIFF_SRC) $(LIBTIFF_DIR)
     cd $(BASE_DIR)\$(LIBTIFF_DIR)
@@ -1574,7 +1582,7 @@ $(LIBTIFF_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBTIFF_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBTIFF_DIR)\$(CMAKE_BUILDDIR)\install" "-DZSTD_LIBRARY=$(ZSTD_LIB:\=/)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -2160,6 +2168,12 @@ $(GDAL_OPT):
     echo OGDI_INCLUDE=$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo OGDILIB=$(OGDI_LIB) >> $(GDAL_OPT)
     echo ogdi - $(OGDI_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF GDAL_LIBWEBP
+    echo WEBP_ENABLED = YES >> $(GDAL_OPT)
+    echo WEBP_CFLAGS=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo WEBP_LIBS = $(LIBWEBP_LIB) >> $(GDAL_OPT)
+    echo libwebp - $(LIBWEBP_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_LIBKML
 !IFDEF LIBKML_DIR
@@ -3192,7 +3206,7 @@ $(KEA_LIB): $(MSVCRT_DLL) $(HDF5_LIB)
 !ENDIF
 
 $(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
-!IFDEF KEA_ENABLED
+!IFDEF NETCDF_ENABLED
     if not exist $(NETCDF_DIR) git clone -b $(NETCDF_BRANCH) $(NETCDF_SRC) $(NETCDF_DIR)
     cd $(BASE_DIR)\$(NETCDF_DIR)
     git reset --hard HEAD
@@ -3213,6 +3227,51 @@ $(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
     cd $(BASE_DIR)
 !ELSE
     @echo $(NETCDF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(LIBWEBP_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(GIF_LIB)
+!IFDEF LIBWEBP_ENABLED
+    if not exist $(LIBWEBP_DIR) git clone -b $(LIBWEBP_BRANCH) $(LIBWEBP_SRC) $(LIBWEBP_DIR)
+    cd $(BASE_DIR)\$(LIBWEBP_DIR)
+    git reset --hard HEAD
+    git checkout $(LIBWEBP_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+    cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBWEBP_DIR)\$(CMAKE_BUILDDIR)\install" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBWEBP_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(ZSTD_LIB): $(MSVCRT_DLL)
+!IFDEF LIBWEBP_ENABLED
+    if not exist $(ZSTD_DIR) git clone -b $(ZSTD_BRANCH) $(ZSTD_SRC) $(ZSTD_DIR)
+    cd $(BASE_DIR)\$(ZSTD_DIR)
+    git reset --hard HEAD
+    git checkout $(ZSTD_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+    cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\build\cmake -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(ZSTD_DIR)\$(CMAKE_BUILDDIR)\install" 
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(ZSTD_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(FCGI_LIB):
@@ -3623,7 +3682,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(ECW_DLL)
+test: $(LIBTIFF_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)

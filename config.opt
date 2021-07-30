@@ -33,6 +33,8 @@ GDAL_ORACLE = YES
 GDAL_MRSID = YES
 GDAL_PROJ4 = YES
 GDAL_PROJ7 = YES
+GDAL_LIBWEBP = YES
+GDAL_ZSTD = YES
 
 # MapServer feature selection flags
 MS_PROJ = YES
@@ -177,6 +179,14 @@ LIBXML2_DIR = $(SRC_DIR)\libxml2
 LIBXML2_BRANCH = v2.9.10
 LIBXML2_SRC = https://gitlab.gnome.org/GNOME/libxml2.git
 
+LIBWEBP_DIR = $(SRC_DIR)\libwebp
+LIBWEBP_BRANCH = v1.2.0
+LIBWEBP_SRC = https://chromium.googlesource.com/webm/libwebp
+
+ZSTD_DIR = $(SRC_DIR)\zstd
+ZSTD_BRANCH = v1.5.0
+ZSTD_SRC = https://github.com/facebook/zstd.git
+
 XERCES_DIR = $(SRC_DIR)\xerces
 XERCES_BRANCH = Xerces-C_3_2_2
 XERCES_SRC = https://svn.apache.org/repos/asf/xerces/c/tags
@@ -238,7 +248,7 @@ LIBSVGCAIRO_VER=libsvg-cairo-0.5.0
 LIBSVGCAIRO_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg-cairo/0.5/libsvg-cairo-0.5.0.src.tar.gz/download
 
 LIBTIFF_DIR = $(SRC_DIR)\libtiff
-LIBTIFF_BRANCH = v4.2.0
+LIBTIFF_BRANCH = v4.3.0
 LIBTIFF_SRC = https://gitlab.com/libtiff/libtiff.git
 
 OPENJPEG_DIR = $(SRC_DIR)\openjpeg
