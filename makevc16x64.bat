@@ -10,6 +10,7 @@ call setversions.bat
 if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
 if "%1" == "osgeo4w" @goto osgeo4w
+if "%1" == "mapmanager" @goto mapmanager
 
 set logid=%compiler%-dev
 set gdal-dir=gdal
@@ -60,6 +61,17 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished
 
 echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 
+:mapmanager
+set gdal-dir=gdal-%gdal_version%
+set ms-dir=mapserver-%ms_version%
+set msautotest-dir=msautotest-%ms_version%
+set pkg-version=gdal-%gdal_major%-%gdal_minor%-%ms-dir%
+set gdal-tag=%gdal_stable_tag%
+set logid=%compiler%-mapmanager-stable-dev
+set MAPSERVER_BRANCH=branch-%ms_version%
+set GDAL_BRANCH=release/%gdal_major%.%gdal_minor%
+set MAPMANAGER_BRANCH=mapserver-%ms_version%
+cmd /C makemapmanager.bat
 
 @goto exit
 
@@ -78,6 +90,9 @@ set gdal-tag=%gdal_stable_tag%
 echo %pkg-version%
 
 cmd /C makepackage.bat
+
+set logid=%compiler%-mapmanager-ms-%ms_version%
+cmd /C makemapmanager.bat
 
 
 :exit

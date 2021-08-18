@@ -10,6 +10,7 @@ call setversions.bat
 if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
 if "%1" == "osgeo4w" @goto osgeo4w
+if "%1" == "mapmanager" @goto mapmanager
 
 set logid=%compiler%-dev
 set gdal-dir=gdal

@@ -387,6 +387,10 @@ MAPCACHE_REVISION=HEAD
 MAPMANAGER_REVISION=HEAD
 !ENDIF
 
+!IFDEF WIN64
+MAPMANAGER_DIR = $(MAPMANAGER_DIR)-x64
+!ENDIF
+
 # GDAL installer variables
 !IFNDEF GDAL_VERSIONTAG
 !IF EXIST ($(OUTPUT_DIR)\bin\gdal17.dll)
@@ -4167,7 +4171,11 @@ mapmanager-build:
 	cd $(BASE_DIR)\$(MAPMANAGER_DIR)
 !IFNDEF NO_BUILD
 !IF $(MSVC_VER) >= 1900
-    devenv /rebuild Release MapManager2015.sln /Project MapManager
+!IFDEF WIN64
+    devenv /rebuild "Release|x64" MapManager2015.sln /Project MapManager
+!ELSE
+    devenv /rebuild "Release|x86" MapManager2015.sln /Project MapManager
+!ENDIF
 !ELSE
 	devenv /rebuild Release MapManager.sln /Project MapManager
 !ENDIF
@@ -4195,7 +4203,11 @@ mapmanager-installer:
     cd $(BASE_DIR)\$(MAPMANAGER_DIR)
 !IFNDEF NO_BUILD
 !IF $(MSVC_VER) >= 1900
-    devenv /rebuild Release MapManager2015.sln /Project Installer
+!IFDEF WIN64
+    devenv /rebuild "Release|x64" MapManager2015.sln /Project Installer
+!ELSE
+    devenv /rebuild "Release|x86" MapManager2015.sln /Project Installer
+!ENDIF
 !ELSE
 	devenv /rebuild Release MapManager.sln /Project Installer
 !ENDIF
