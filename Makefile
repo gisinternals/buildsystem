@@ -2278,6 +2278,9 @@ $(GDAL_VERSION_TXT): $(GDAL_LIB) $(ECW_DLL) $(FILEGDBAPI_DLL)
 
 $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
 !IFDEF GDAL_ENABLED
+!IFDEF GDAL_OGDI
+    if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
+!ENDIF
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
     cd $(GDAL_DIR)\gdal
 !IFNDEF NO_CLEAN
