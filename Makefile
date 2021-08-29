@@ -288,6 +288,16 @@ CMAKE_BUILDDIR = vc16x64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.28.29910.0"
+MSVC_VER = 1928
+MESON_BACKEND = vs2019
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
+CMAKE_BUILDDIR = vc16
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
