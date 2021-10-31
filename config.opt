@@ -165,7 +165,7 @@ GDAL_SRC = https://github.com/OSGeo/gdal.git
 
 MAPSERVER_DIR = $(SRC_DIR)\mapserver
 !IFNDEF MAPSERVER_BRANCH
-MAPSERVER_BRANCH = rel-7-6-2
+MAPSERVER_BRANCH = rel-7-6-4
 !ENDIF
 MAPSERVER_SRC = https://github.com/mapserver/mapserver.git
 

@@ -507,7 +507,11 @@ PROTOBUF_LIB = $(OUTPUT_DIR)\lib\libprotobuf.lib
 PROTOBUF_C_LIB = $(OUTPUT_DIR)\lib\protobuf-c.lib
 GDAL_LIB = $(OUTPUT_DIR)\lib\gdal_i.lib
 GDAL_VERSION_TXT = $(OUTPUT_DIR)\doc\gdal_version.txt
+!IF EXIST ($(BASE_DIR)\$(GDAL_DIR)\gdal)
 GDAL_VERSION_H = $(BASE_DIR)\$(GDAL_DIR)\gdal\gcore\gdal_version.h
+!ELSE
+GDAL_VERSION_H = $(BASE_DIR)\$(GDAL_DIR)\gcore\gdal_version.h
+!ENDIF
 GDAL_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal.opt
 GDAL_CSHARP_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_csharp.opt
 GDAL_PYTHON_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_python.opt
@@ -1786,6 +1790,7 @@ $(PROTOBUF_LIB): $(ZLIB_LIB)
     powershell -Command "(gc CMakeLists.txt) -replace [regex]::escape('string(REGEX REPLACE \"/MD\"'), '#string(REGEX REPLACE \"/MD\"' | Out-File -encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+	if exist $(OUTPUT_DIR)\include\google\protobuf rd /Q /S $(OUTPUT_DIR)\include\google\protobuf
 !ENDIF
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
@@ -1808,6 +1813,7 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
     powershell -Command "(gc CMakeLists.txt) -replace [regex]::escape('string(REGEX REPLACE \"/MD\"'), '#string(REGEX REPLACE \"/MD\"' | Out-File -encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+    if exist $(OUTPUT_DIR)\include\protobuf-c rd /Q /S $(OUTPUT_DIR)\include\protobuf-c
 !ENDIF
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
@@ -2099,7 +2105,11 @@ $(GDAL_OPT):
     echo zlib - $(ZLIB_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo python - $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!IF EXIST ($(BASE_DIR)\$(GDAL_DIR)\gdal)
 	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR)\gdal >> $(GDAL_OPT)
+!ELSE
+	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR) >> $(GDAL_OPT)
+!ENDIF
 !IFDEF GDAL_GEOS
     echo GEOS_DIR=$(BASE_DIR)\$(GEOS_DIR) >> $(GDAL_OPT)
     echo GEOS_CFLAGS=-I$(OUTPUT_DIR)\include -DHAVE_GEOS >> $(GDAL_OPT)
@@ -2293,7 +2303,8 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
     if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
 !ENDIF
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
-    cd $(GDAL_DIR)\gdal
+    cd $(GDAL_DIR)
+    -cd gdal
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_OPT)
 	-del gdal*.dll
@@ -2340,7 +2351,9 @@ $(GDAL_CSHARP_OPT): $(GDAL_OPT) $(SWIG_INSTALL)
     echo SWIG=$(SWIG_EXE) >>$(GDAL_CSHARP_OPT)
 
 $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
-	cd $(GDAL_DIR)\gdal\swig\csharp
+	cd $(GDAL_DIR)
+	-cd gdal
+	cd swig\csharp
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 !ENDIF
@@ -2366,16 +2379,18 @@ $(GDAL_JAVA_OPT): $(GDAL_OPT) $(SWIG_INSTALL)
     echo SWIG=$(SWIG_EXE) >>$(GDAL_JAVA_OPT)
 
 $(GDAL_JAVA_DLL): $(GDAL_LIB) $(GDAL_JAVA_OPT) $(GDAL_VERSION_H)
-	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\java
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	-cd gdal
+	cd swig\java
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_JAVA_OPT)
 !ENDIF
-    cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig
+    cd ..
 !IFNDEF NO_BUILD
 	nmake /f makefile.vc java EXT_NMAKE_OPT=$(GDAL_JAVA_OPT)
 !ENDIF
 	if not exist $(OUTPUT_DIR)\bin\gdal\java mkdir $(OUTPUT_DIR)\bin\gdal\java
-    cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\java
+    cd java
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin\gdal\java
 	xcopy /Y *.jar $(OUTPUT_DIR)\bin\gdal\java
 !IFDEF GDAL_RELEASE_PDB
@@ -2391,7 +2406,9 @@ $(GDAL_ECW_OPT): $(GDAL_OPT)
     echo ECWFLAGS= $(ECWFLAGS) >> $(GDAL_ECW_OPT)
 
 $(GDAL_ECW_DLL): $(GDAL_LIB) $(GDAL_ECW_OPT)
-    cd $(GDAL_DIR)\gdal\frmts\ecw
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\ecw
 !IFNDEF NO_CLEAN
     nmake /f makefile.vc clean
 !ENDIF
@@ -2418,7 +2435,9 @@ $(GDAL_FILEGDB_OPT): $(GDAL_OPT)
 !ENDIF
 
 $(GDAL_FILEGDB_DLL): $(GDAL_LIB) $(GDAL_FILEGDB_OPT)
-    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\filegdb
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd ogr\ogrsf_frmts\filegdb
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2444,7 +2463,9 @@ $(GDAL_MSSQL_OPT): $(GDAL_OPT)
     echo SQLNCLI_INCLUDE = "-I$(SQLNCLI_DIR)\Include" -DSQLNCLI_VERSION=$(SQLNCLI_VERSION) -DMSSQL_BCP_SUPPORTED=1 >> $(GDAL_MSSQL_OPT)
 
 $(GDAL_MSSQL_DLL): $(GDAL_MSSQL_OPT)
-    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\mssqlspatial
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd ogr\ogrsf_frmts\mssqlspatial
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2470,7 +2491,9 @@ $(GDAL_MSSQL_MSODBC_OPT): $(GDAL_OPT)
     echo MSODBCSQL_INCLUDE = "-I$(MSODBCSQL_DIR)\Include" -DMSODBCSQL_VERSION=$(MSODBCSQL_VERSION) -DMSSQL_BCP_SUPPORTED=1 >> $(GDAL_MSSQL_MSODBC_OPT)
 
 $(GDAL_MSSQL_MSODBC_DLL): $(GDAL_MSSQL_MSODBC_OPT)
-    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\mssqlspatial
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd ogr\ogrsf_frmts\mssqlspatial
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2493,7 +2516,9 @@ $(GDAL_HDF4_OPT): $(GDAL_OPT)
     echo HDF4_INCLUDE = $(OUTPUT_DIR)\include\hdf4 >> $(GDAL_HDF4_OPT)
 
 $(GDAL_HDF4_DLL): $(GDAL_HDF4_OPT) $(HDF4_LIB)
-    cd $(GDAL_DIR)\gdal\frmts\hdf4
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\hdf4
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2514,7 +2539,9 @@ $(GDAL_HDF5_OPT): $(GDAL_OPT)
     echo HDF5_LIB =	$(HDF5_LIB) $(ZLIB_LIB) $(SZIP_LIB)  >> $(GDAL_HDF5_OPT)
 
 $(GDAL_HDF5_DLL): $(GDAL_HDF5_OPT) $(HDF5_LIB) $(ZLIB_LIB) $(SZIP_LIB)
-    cd $(GDAL_DIR)\gdal\frmts\hdf5
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\hdf5
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2535,7 +2562,9 @@ $(GDAL_KEA_OPT): $(GDAL_OPT)
 	echo KEA_CFLAGS = -I$(OUTPUT_DIR)\include >> $(GDAL_KEA_OPT)
 
 $(GDAL_KEA_DLL): $(GDAL_KEA_OPT) $(KEA_LIB)
-    cd $(GDAL_DIR)\gdal\frmts\kea
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\kea
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2551,7 +2580,9 @@ $(GDAL_AMIGOCLOUD_OPT): $(GDAL_OPT)
     echo AMIGOCLOUD_PLUGIN=YES >> $(GDAL_AMIGOCLOUD_OPT)
 
 $(GDAL_AMIGOCLOUD_DLL): $(GDAL_AMIGOCLOUD_OPT)
-    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\amigocloud
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd ogr\ogrsf_frmts\amigocloud
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2570,7 +2601,9 @@ $(GDAL_NETCDF_OPT): $(GDAL_OPT)
     echo NETCDF_INC_DIR=$(OUTPUT_DIR)\include >> $(GDAL_NETCDF_OPT)
 
 $(GDAL_NETCDF_DLL): $(GDAL_NETCDF_OPT) $(NETCDF_LIB)
-    cd $(GDAL_DIR)\gdal\frmts\netcdf
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\netcdf
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2590,7 +2623,9 @@ $(GDAL_FITS_OPT): $(GDAL_OPT)
     echo FITS_LIB=$(OUTPUT_DIR)\lib\cfitsio.lib >> $(GDAL_FITS_OPT)
     
 $(GDAL_FITS_DLL): $(GDAL_FITS_OPT) $(FITS_LIB)
-    cd $(GDAL_DIR)\gdal\frmts\fits
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\fits
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2602,7 +2637,9 @@ $(GDAL_FITS_DLL): $(GDAL_FITS_OPT) $(FITS_LIB)
 	cd $(BASE_DIR)
 
 $(GDAL_PG_DLL): $(GDAL_OPT) $(PGSQL_LIB)
-    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\pg
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd ogr\ogrsf_frmts\pg
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -2621,7 +2658,9 @@ $(GDAL_OCI_OPT): $(GDAL_OPT)
 
 $(GDAL_OCI_DLL): $(GDAL_OCI_OPT)
 !IFDEF OCI_DIR
-    cd $(GDAL_DIR)\gdal\ogr\ogrsf_frmts\oci
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd ogr\ogrsf_frmts\oci
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
     del *.manifest
@@ -2636,7 +2675,9 @@ $(GDAL_OCI_DLL): $(GDAL_OCI_OPT)
 
 $(GDAL_GEOR_DLL): $(GDAL_OCI_OPT)
 !IFDEF OCI_DIR
-    cd $(GDAL_DIR)\gdal\frmts\georaster
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\georaster
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
     del *.manifest
@@ -2677,7 +2718,9 @@ $(GDAL_MRSID_OPT): $(GDAL_OPT)
 
 $(GDAL_MRSID_DLL): $(GDAL_MRSID_OPT)
 !IFDEF MRSID_DIR
-    cd $(GDAL_DIR)\gdal\frmts\mrsid
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\mrsid
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
     del *.manifest
@@ -2707,7 +2750,9 @@ $(GDAL_MRSID_DLL): $(GDAL_MRSID_OPT)
 
 $(GDAL_MRSID_LIDAR_DLL): $(GDAL_MRSID_OPT)
 !IFDEF MRSID_DIR
-    cd $(GDAL_DIR)\gdal\frmts\mrsid_lidar
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\mrsid_lidar
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_MRSID_OPT)
     del *.manifest
@@ -2744,7 +2789,9 @@ $(GDAL_PDF_OPT): $(GDAL_OPT)
     echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) advapi32.lib gdi32.lib >> $(GDAL_PDF_OPT)
     
 $(GDAL_PDF_DLL): $(GDAL_PDF_OPT) $(POPPLER_LIB)
-    cd $(GDAL_DIR)\gdal\frmts\pdf
+    cd $(GDAL_DIR)
+	-cd gdal
+	cd frmts\pdf
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 !ENDIF
@@ -3943,7 +3990,9 @@ gdal-csharp-test: $(GDAL_CSHARP_DLL)
 !IFDEF GDAL_CSHARP
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
-	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\csharp
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	-cd gdal
+	cd swig\csharp
 	nmake /f makefile.vc test EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 	cd $(BASE_DIR)
 !ENDIF
@@ -3955,7 +4004,9 @@ gdal-java-test:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\java;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
     SET GDAL_DATA=$(OUTPUT_DIR)\bin\gdal-data
-	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\java
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	-cd gdal
+	cd swig\java
 	nmake /f makefile.vc test EXT_NMAKE_OPT=$(GDAL_JAVA_OPT)
 	cd $(BASE_DIR)
 !ENDIF
@@ -4014,7 +4065,9 @@ gdal-python: $(GDAL_OPT) $(SWIG_INSTALL)
     echo SWIG=$(SWIG_EXE) >>$(GDAL_PYTHON_OPT)
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
-	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	-cd gdal
+	cd swig
 	echo [build_ext] > python\setup.cfg
     echo include_dirs = ../../port;../../gcore;../../alg;../../ogr/;../../ogr/ogrsf_frmts;../../gnm;../../apps >> python\setup.cfg
     echo library_dirs = ../../ >> python\setup.cfg
@@ -4039,7 +4092,9 @@ gdal-python: $(GDAL_OPT) $(SWIG_INSTALL)
 	if exist _osr.pyd.manifest mt -manifest _osr.pyd.manifest -outputresource:_osr.pyd;2
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python\osgeo
 	xcopy /Y *.pyd $(OUTPUT_DIR)\bin\gdal\python\osgeo
-	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig\$(PYTHON_SCRIPTSDIR)
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	-cd gdal
+	cd swig\$(PYTHON_SCRIPTSDIR)
 	if not exist $(OUTPUT_DIR)\bin\gdal\python\scripts mkdir $(OUTPUT_DIR)\bin\gdal\python\scripts
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python\scripts
 !ENDIF
@@ -4050,7 +4105,9 @@ gdal-python-bdist: $(GDAL_LIB)
 !IFDEF GDAL_PYTHON
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
-	cd $(BASE_DIR)\$(GDAL_DIR)\gdal\swig
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	-cd gdal
+	cd swig
 	echo [build_ext] > python\setup.cfg
     echo include_dirs = ../../port;../../gcore;../../alg;../../ogr/ >> python\setup.cfg
     echo library_dirs = ../../ >> python\setup.cfg
@@ -4073,7 +4130,7 @@ gdal-python-bdist: $(GDAL_LIB)
 gdal-cpp-test:
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
-    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
+    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\data
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR);$(FILEGDB_BINPATH);$(PATH)
     cd $(BASE_DIR)\$(GDAL_DIR)\autotest\cpp
     nmake /f makefile.vc clean
