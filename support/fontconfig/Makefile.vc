@@ -20,7 +20,7 @@ LINK=$(CC)
 
 all: fontconfig.lib
 
-OBJS= fcarch.obj fcatomic.obj fccache.obj fccfg.obj fccharset.obj fccompat.obj fcdbg.obj fcdefault.obj fcdir.obj fcformat.obj fcfreetype.obj fcfs.obj fchash.obj fcinit.obj fclang.obj fclist.obj fcweight.obj fcrange.obj fcopentype.obj \
+OBJS= fcarch.obj fcatomic.obj fccache.obj fccfg.obj fccharset.obj fccompat.obj fcdbg.obj fcdefault.obj fcdir.obj fcformat.obj fcfreetype.obj fcfs.obj fchash.obj fcinit.obj fclang.obj fclist.obj fcweight.obj fcrange.obj \
 fcmatch.obj fcmatrix.obj fcname.obj fcobjs.obj fcpat.obj fcptrlist.obj fcxml.obj fcserialize.obj fcstat.obj fcstr.obj ftglue.obj
 
 fontconfig.lib:  $(OBJS)

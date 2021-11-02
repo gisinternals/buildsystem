@@ -78,11 +78,11 @@ ZLIB_BRANCH = v1.2.11
 ZLIB_SRC = https://github.com/madler/zlib.git
 
 OPENSSL_DIR = $(SRC_DIR)\openssl
-OPENSSL_BRANCH = OpenSSL_1_1_1i
+OPENSSL_BRANCH = OpenSSL_1_1_1l
 OPENSSL_SRC = https://github.com/openssl/openssl.git
 
 CURL_DIR = $(SRC_DIR)\curl
-CURL_BRANCH = curl-7_74_0
+CURL_BRANCH = curl-7_79_1
 CURL_SRC = https://github.com/curl/curl.git
 
 LIBPNG_DIR = $(SRC_DIR)\libpng
@@ -94,15 +94,15 @@ JPEG_VER = jpeg-9d
 JPEG_SRC = https://www.ijg.org/files/jpegsr9d.zip
 
 FREETYPE_DIR = $(SRC_DIR)\freetype2
-FREETYPE_BRANCH = VER-2-10-4
+FREETYPE_BRANCH = VER-2-11-0
 FREETYPE_SRC = https://git.sv.nongnu.org/r/freetype/freetype2.git
 
 HARFBUZZ_DIR = $(SRC_DIR)\harfbuzz
-HARFBUZZ_BRANCH = 2.7.4
+HARFBUZZ_BRANCH = 3.0.0
 HARFBUZZ_SRC = https://github.com/harfbuzz/harfbuzz.git
 
 GEOS_DIR = $(SRC_DIR)\geos
-GEOS_BRANCH = 3.9.0
+GEOS_BRANCH = 3.9.2
 GEOS_SRC = https://git.osgeo.org/gitea/geos/geos.git
 
 FRIBIDI_DIR = $(SRC_DIR)\fribidi
@@ -114,7 +114,7 @@ LIBICONV_VER = libiconv-1.16
 LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz
 
 PGSQL_DIR = $(SRC_DIR)\postgres
-PGSQL_BRANCH = REL_13_1
+PGSQL_BRANCH = REL_14_0
 PGSQL_SRC = https://github.com/postgres/postgres.git
 
 PROJ4_DIR = $(SRC_DIR)\proj4
@@ -122,16 +122,16 @@ PROJ4_BRANCH = 4.9.3
 PROJ6_DIR = $(SRC_DIR)\proj6
 PROJ6_BRANCH = 6.3.2
 PROJ7_DIR = $(SRC_DIR)\proj7
-PROJ7_BRANCH = 7.2.0
+PROJ7_BRANCH = 7.2.1
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
-SQLITE_VER = 3.34.0
+SQLITE_VER = 3.36.0
 SQLITE_SRC = https://www.sqlite.org/src/zip/sqlite.zip?r=release
 
 SPATIALITE_DIR = $(SRC_DIR)\spatialite
-SPATIALITE_VER = libspatialite-5.0.0
-SPATIALITE_SRC = http://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-5.0.0.zip
+SPATIALITE_VER = libspatialite-5.0.1
+SPATIALITE_SRC = http://www.gaia-gis.it/gaia-sins/libspatialite-sources/libspatialite-5.0.1.zip
 
 FREEXL_DIR = $(SRC_DIR)\freexl
 FREEXL_VER = freexl-1.0.6
@@ -176,11 +176,11 @@ MAPCACHE_BRANCH = rel-1-10-0
 MAPCACHE_SRC = https://github.com/MapServer/mapcache.git
 
 LIBXML2_DIR = $(SRC_DIR)\libxml2
-LIBXML2_BRANCH = v2.9.10
+LIBXML2_BRANCH = v2.9.12
 LIBXML2_SRC = https://gitlab.gnome.org/GNOME/libxml2.git
 
 LIBWEBP_DIR = $(SRC_DIR)\libwebp
-LIBWEBP_BRANCH = v1.2.0
+LIBWEBP_BRANCH = v1.2.1
 LIBWEBP_SRC = https://chromium.googlesource.com/webm/libwebp
 
 ZSTD_DIR = $(SRC_DIR)\zstd
@@ -192,7 +192,7 @@ XERCES_BRANCH = Xerces-C_3_2_2
 XERCES_SRC = https://svn.apache.org/repos/asf/xerces/c/tags
 
 LIBEXPAT_DIR = $(SRC_DIR)\libexpat
-LIBEXPAT_BRANCH = R_2_2_10
+LIBEXPAT_BRANCH = R_2_4_1
 LIBEXPAT_SRC = https://github.com/libexpat/libexpat.git
 
 PROTOBUF_DIR = $(SRC_DIR)\protobuf
@@ -232,11 +232,11 @@ CAIRO_VER = cairo-1.16.0
 CAIRO_SRC = https://www.cairographics.org/releases/cairo-1.16.0.tar.xz
 
 FONTCONFIG_DIR = $(SRC_DIR)\fontconfig
-FONTCONFIG_VER = fontconfig-2.13.93
-FONTCONFIG_SRC = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.93.tar.gz
+FONTCONFIG_VER = fontconfig-2.13.94
+FONTCONFIG_SRC = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.94.tar.gz
 
 URIPARSER_DIR = $(SRC_DIR)\uriparser
-URIPARSER_BRANCH = uriparser-0.9.4
+URIPARSER_BRANCH = uriparser-0.9.5
 URIPARSER_SRC = https://github.com/uriparser/uriparser.git
 
 LIBSVG_DIR = $(SRC_DIR)\libsvg

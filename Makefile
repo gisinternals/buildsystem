@@ -3163,7 +3163,7 @@ $(FITS_LIB): $(MSVCRT_DLL)
     @echo $(FITS_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(SZIP_LIB): $(MSVCRT_DLL)
+$(SZIP_LIB): $(ZLIB_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 !IFDEF SZIP_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -3748,7 +3748,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(LIBTIFF_LIB)
+test: $(PROJ7_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
