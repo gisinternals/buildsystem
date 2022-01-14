@@ -909,7 +909,12 @@
         <UI>
             <UIRef Id="WixUI_Mondo" />
             <UIRef Id="WixUI_ErrorProgressText" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
         </UI>
+        <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="I want to donate!" />
+        <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="Thank you for installing this product. If you find it useful, please help to maintain my support packages. Any amount of donation is a great help in maintaining and improving the services. For more information please visit https://www.gisinternals.com/myprofile.html" />
+        <Property Id="WixShellExecTarget" Value="https://www.paypal.com/donate/?business=8Q8KHSSNAWUBU&amp;no_recurring=0&amp;item_name=GISInternals+Support+Site&amp;currency_code=USD" />
+        <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
         <?ifdef gdal_dll?>
         <!--<WixVariable Id="WixUILicenseRtf" Value="$(var.BaseDir)\GDALLicense.rtf" />-->

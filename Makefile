@@ -2365,9 +2365,13 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 !ENDIF	
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 !ENDIF
-	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
-	xcopy /Y *_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
+    xcopy /Y *_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y *_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist const\gdalconst_csharp.dll xcopy /Y const\gdalconst_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist gdal\gdal_csharp.dll xcopy /Y gdal\gdal_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist ogr\ogr_csharp.dll xcopy /Y ogr\ogr_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist osr\osr_csharp.dll xcopy /Y osr\osr_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y *_csharp.pdb $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y *_wrap.pdb $(OUTPUT_DIR)\bin\gdal\csharp
@@ -2901,7 +2905,7 @@ $(GDAL_INSTALLER_NETCDF): $(GDAL_INSTALLER_CORE) $(GDAL_NETCDF_DLL)
     -del $(OUTPUT_DIR)\install\GDAL.wixobj
     -del $(OUTPUT_DIR)\install\GDAL.wixpdb
     -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-netcdf.msi
-!IF EXIST ($(OUTPUT_DIR)\bin\gdal\plugins-external\ogr_FileGDB.dll)    
+!IF EXIST ($(OUTPUT_DIR)\bin\gdal\plugins\gdal_netCDF.dll)    
 !IFDEF WIN64
     -candle.exe "-dVersionTag=$(GDAL_VERSIONTAG)" "-dogr_FileGDB=ogr_FileGDB.dll" "-dFileGDBBINDIR=$(FILEGDB_BINPATH)" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VERSIONTAG)-$(COMPILER_VER)-filegdb.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ELSE
@@ -3887,7 +3891,7 @@ op-disable:
     
 gdalversion: $(GDAL_VERSION_TXT)
 
-mkgdalinst: $(GDAL_INSTALLER_CORE) $(GDAL_INSTALLER_ORACLE) $(GDAL_INSTALLER_ECW) $(GDAL_INSTALLER_MRSID) $(GDAL_INSTALLER_FILEGDB) $(GDAL_INSTALLER_NETCDF)
+mkgdalinst: $(GDAL_INSTALLER_CORE) $(GDAL_INSTALLER_ORACLE) $(GDAL_INSTALLER_ECW) $(GDAL_INSTALLER_MRSID) $(GDAL_INSTALLER_FILEGDB)
     
 libtiff: $(LIBTIFF_LIB)
     
@@ -4290,4 +4294,25 @@ mapmanager-installer:
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
+
+
+gdal-nuget:
+    cd nuget
+    nuget pack GDAL.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.Native.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.Plugins.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.Linux.nuspec -version $(GDAL_RELEASE_VER)
+    sign GDAL.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL.Native.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL.Linux.$(GDAL_RELEASE_VER).nupkg
+    cd $(BASE_DIR)
+
+
+gdal-nuget-push:
+    cd nuget
+    nuget setApiKey $(NUGET_GDAL_API_KEY)
+    nuget push GDAL.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    nuget push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    nuget push GDAL.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
 

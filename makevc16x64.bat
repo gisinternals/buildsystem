@@ -86,10 +86,12 @@ set MAPSERVER_BRANCH=rel-%ms_version%-%ms_rel%
 set MAPCACHE_BRANCH=rel-%mapcache_major%-%mapcache_minor%-%mapcache_rel%
 set GDAL_BRANCH=v%gdal_major%.%gdal_minor%.%gdal_rel%
 set gdal-tag=%gdal_stable_tag%
+set gdal-release-ver=%gdal_major%.%gdal_minor%.%gdal_rel%
 
 echo %pkg-version%
 
 cmd /C makepackage.bat
+rem cmd /C makenuget.bat
 
 set logid=%compiler%-mapmanager-ms-%ms_version%
 cmd /C makemapmanager.bat
