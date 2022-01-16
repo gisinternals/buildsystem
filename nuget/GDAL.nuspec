@@ -12,14 +12,21 @@
     <description>GDAL is a translator library for raster geospatial data formats that is released under an X/MIT style Open Source license by the Open Source Geospatial Foundation. As a library, it presents a single abstract data model to the calling application for all supported formats.</description>
     <tags>GDAL OGR Geospatial</tags>
     <contentFiles>
-      <files include="**/any/*.pp" buildAction="Compile" />
+       <files include="**/**/*.*" buildAction="Compile" />
     </contentFiles>
   </metadata>
   <files>
-    <file src="..\release-1911-x64\bin\gdal\csharp\*_csharp.dll" target="lib\net40" />
+    <file src="..\release-1928-x64\bin\gdal\csharp\*_csharp.dll" target="lib\netstandard2.0" />
+<!--     <file src="..\release-1928-x64\bin\gdal\csharp\*_csharp.dll" target="build\netstandard2.0\x64" />
+    <file src="..\release-1928\bin\gdal\csharp\*_csharp.dll" target="build\netstandard2.0\x86" /> -->
+    <!-- PackageReference projects use contentFiles -->
     <file src="GdalConfiguration.cs.pp" target="contentFiles\cs\any" />
     <file src="GdalConfiguration.vb.pp" target="contentFiles\vb\any" />
+    <!-- packages.config projects use content -->
     <file src="GdalConfiguration.cs.pp" target="content" />
     <file src="GdalConfiguration.vb.pp" target="content" />
+    <file src="install.ps1" target="tools" />
+<!--     <file src="GDAL.props" target="build\netstandard2.0\"/>
+    <file src="GDAL.targets" target="build\netstandard2.0\"/> -->
   </files>
 </package>

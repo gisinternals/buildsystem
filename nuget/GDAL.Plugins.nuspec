@@ -16,41 +16,47 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\release-1911\bin\hdf5.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\hdf5_hl.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\hdf5_cpp.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\hdfdll.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\mfhdfdll.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\xdrdll.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\szip.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\cfitsio.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\libecwj2.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\netcdf.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\libkea.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\tbb.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\libpq.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\lti_lidar_dsdk_1.1.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\lti_dsdk_9.5.dll" target="build\gdal\x86\plugins" />
-    <file src="..\release-1911\bin\gdal\plugins\*.*" target="build\gdal\x86\plugins" exclude="..\release-1911\bin\gdal\plugins\gdal_GEOR.dll;..\release-1911\bin\gdal\plugins\ogr_OCI.dll"/>
-    <file src="..\release-1911\bin\gdal\plugins-optional\*.*" target="build\gdal\x86\plugins"/>
+    <file src="..\release-1928\bin\hdf.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\hdf5.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\hdf5_cpp.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\hdf5_hl.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\hdf5_hl_cpp.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\mfhdf.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\xdr.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\szip.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\cfitsio.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\NCSEcw.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\netcdf.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\libkea.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\tbb.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\libpq.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\lti_lidar_dsdk_1.1.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\lti_dsdk_9.5.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\FileGDBAPI.dll" target="build\gdal\x86\plugins" />
+    <file src="..\release-1928\bin\gdal\plugins\*.*" target="build\gdal\x86\plugins" exclude="..\release-1928\bin\gdal\plugins\gdal_GEOR.dll;..\release-1928\bin\gdal\plugins\ogr_OCI.dll"/>
+    <file src="..\release-1928\bin\gdal\plugins-optional\*.*" target="build\gdal\x86\plugins"/>
+    <file src="..\release-1928\bin\gdal\plugins-external\*.*" target="build\gdal\x86\plugins"/>
 
-    <file src="..\release-1911-x64\bin\hdf5.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\hdf5_hl.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\hdf5_cpp.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\hdfdll.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\mfhdfdll.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\xdrdll.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\szip.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\cfitsio.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\libecwj2.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\netcdf.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\libkea.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\tbb.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\libpq.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\lti_lidar_dsdk_1.1.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\lti_dsdk_9.5.dll" target="build\gdal\x64\plugins" />
-    <file src="..\release-1911-x64\bin\gdal\plugins\*.*" target="build\gdal\x64\plugins" exclude="..\release-1911-x64\bin\gdal\plugins\gdal_GEOR.dll;..\release-1911-x64\bin\gdal\plugins\ogr_OCI.dll"/>
-    <file src="..\release-1911-x64\bin\gdal\plugins-optional\*.*" target="build\gdal\x64\plugins"/>
+    <file src="..\release-1928-x64\bin\hdf.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\hdf5.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\hdf5_cpp.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\hdf5_hl.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\hdf5_hl_cpp.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\mfhdf.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\xdr.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\szip.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\cfitsio.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\NCSEcw.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\netcdf.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\libkea.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\tbb.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\libpq.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\lti_lidar_dsdk_1.1.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\lti_dsdk_9.5.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\FileGDBAPI.dll" target="build\gdal\x64\plugins" />
+    <file src="..\release-1928-x64\bin\gdal\plugins\*.*" target="build\gdal\x64\plugins" exclude="..\release-1928-x64\bin\gdal\plugins\gdal_GEOR.dll;..\release-1928-x64\bin\gdal\plugins\ogr_OCI.dll"/>
+    <file src="..\release-1928-x64\bin\gdal\plugins-optional\*.*" target="build\gdal\x64\plugins"/>
+    <file src="..\release-1928-x64\bin\gdal\plugins-external\*.*" target="build\gdal\x64\plugins"/>
 
     <file src="..\ECWLicense.rtf" target="gdal" />
     <file src="..\ECW5License.rtf" target="gdal" />
@@ -59,6 +65,7 @@
     <file src="..\HDF5License.rtf" target="gdal" />
     <file src="..\NetCDFLicense.rtf" target="gdal" />
     <file src="..\MRSIDLicense.rtf" target="gdal" />
-    <file src="Gdal.Plugins.targets" target="build/net40" />
+    <file src="..\FileGDBLicense.rtf" target="gdal" />
+    <file src="Gdal.Plugins.targets" target="build/netstandard2.0" />
   </files>
 </package>
