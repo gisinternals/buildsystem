@@ -105,6 +105,7 @@ Namespace $rootnamespace$
                 Dim projSharePath As String = Path.Combine(gdalPath, "share")
                 Environment.SetEnvironmentVariable("PROJ_LIB", projSharePath)
                 Gdal.SetConfigOption("PROJ_LIB", projSharePath)
+                OSGeo.OSR.Osr.SetPROJSearchPaths({projSharePath})
                 _usable = True
             Catch e As Exception
                 _usable = False
