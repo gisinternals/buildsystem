@@ -91,7 +91,7 @@ set gdal-release-ver=%gdal_major%.%gdal_minor%.%gdal_rel%
 echo %pkg-version%
 
 cmd /C makepackage.bat
-rem cmd /C makenuget.bat
+cmd /C makenuget.bat
 
 set logid=%compiler%-mapmanager-ms-%ms_version%
 cmd /C makemapmanager.bat

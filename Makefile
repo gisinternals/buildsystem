@@ -298,6 +298,26 @@ CMAKE_BUILDDIR = vc16x64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.29.30139.0"
+MSVC_VER = 1928
+MESON_BACKEND = vs2019
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
+CMAKE_BUILDDIR = vc16
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.30.30709.0"
+MSVC_VER = 1930
+MESON_BACKEND = vs2022
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
+CMAKE_BUILDDIR = vc17
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
@@ -473,6 +493,18 @@ GDAL_VERSIONTAG = 304
 GDAL_KEA_DEF = -dgdal_KEA=gdal_KEA.dll
 GDAL_MSSQL_DEF = -dogr_MSSQLSpatial=ogr_MSSQLSpatial
 !ENDIF
+!ENDIF
+
+!IFDEF MRSID_DLL
+MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_dsdk=$(MRSID_DLL)" "-dlti_dsdk_name=$(MRSID_DLL_NAME)"
+!ENDIF
+
+!IF EXIST ($(MRSID_RASTER_DIR)\lib\tbb.dll)
+MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dmrsid_tbb=$(MRSID_RASTER_DIR)\lib\tbb.dll"
+!ENDIF
+
+!IFDEF LIDAR_DLL
+MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_lidar_dsdk=$(LIDAR_DLL)" "-dlti_lidar_dsdk_name=$(LIDAR_DLL_NAME)"
 !ENDIF
 
 #specify build targets
@@ -1261,7 +1293,19 @@ PYDIR = $(PYTHON_BASE)\$(PYTHON_DIR)
 !ENDIF
 
 $(MSVCRT_DLL): $(OUTPUT_DIR)
-!IF $(MSVC_VER) >= 1922
+!IF $(MSVC_VER) >= 1930
+!IFDEF WIN64
+    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
+    if exist "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+    if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
+!ELSE
+    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC143.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
+    xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC143.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
+    if exist "%VCToolsRedistDir%x86\Microsoft.VC143.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+    if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
+!ENDIF
+!ELSEIF $(MSVC_VER) >= 1922
 !IFDEF WIN64
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
@@ -2346,6 +2390,28 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
     @echo $(GDAL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL)
+!IFDEF GDAL_ENABLED
+!IFDEF GDAL_OGDI
+    if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
+!ENDIF
+    if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
+    cd $(GDAL_DIR)
+    -cd gdal
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+    cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7" "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DMYSQL_LIBRARY=$(MYSQL_LIB)" "-DKEA_LIBRARY=$(KEA_LIB)" "-DOGDI_INCLUDE_DIRS=$(OUTPUT_DIR)\include;$(BASE_DIR)\$(OGDI_DIR)\include\win32" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB)" "-DGDAL_ENABLE_FRMT_FITS_PLUGIN=ON" "-DGDAL_ENABLE_FRMT_HDF4_PLUGIN=ON" "-DGDAL_ENABLE_FRMT_HDF5_PLUGIN=ON" "-DGDAL_ENABLE_FRMT_KEA_PLUGIN=ON" "-DGDAL_ENABLE_FRMT_NETCDF_PLUGIN=ON" "-DGDAL_ENABLE_FRMT_PDF_PLUGIN=ON" "-DHDF5_hdf5_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\libhdf5.lib" "-DHDF5_hdf5_cpp_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\libhdf5_cpp.lib"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(GDAL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(GDAL_CSHARP_OPT): $(GDAL_OPT) $(SWIG_INSTALL)
     copy /Y $(GDAL_OPT) $(GDAL_CSHARP_OPT)
     echo SWIG=$(SWIG_EXE) >>$(GDAL_CSHARP_OPT)
@@ -2358,6 +2424,7 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 	nmake /f makefile.vc clean EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
+    if exist $(BASE_DIR)\support\gdal\csharp\makefile.vc xcopy /Y $(BASE_DIR)\support\gdal\csharp\makefile.vc
 !IFDEF DEBUG
 	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT) DEBUG=1
 !ELSE
@@ -2368,10 +2435,10 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
     if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y *_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y *_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
-    if exist const\gdalconst_csharp.dll xcopy /Y const\gdalconst_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
-    if exist gdal\gdal_csharp.dll xcopy /Y gdal\gdal_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
-    if exist ogr\ogr_csharp.dll xcopy /Y ogr\ogr_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
-    if exist osr\osr_csharp.dll xcopy /Y osr\osr_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist const\build\gdalconst_csharp.dll xcopy /Y const\build\gdalconst_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist gdal\build\gdal_csharp.dll xcopy /Y gdal\build\gdal_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist ogr\build\ogr_csharp.dll xcopy /Y ogr\build\ogr_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    if exist osr\build\osr_csharp.dll xcopy /Y osr\build\osr_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
 !IFDEF GDAL_RELEASE_PDB
     xcopy /Y *_csharp.pdb $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y *_wrap.pdb $(OUTPUT_DIR)\bin\gdal\csharp
@@ -3752,7 +3819,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(PROJ7_LIB)
+test: $(GDAL_INSTALLER_MRSID)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
