@@ -31,6 +31,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "62AEC1B5-E987-4BC8-91D7-D275EED9A5DB" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2019 Win64)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "48EF8428-541E-4CD4-BC38-1938671DF89E" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2022 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -61,6 +64,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "C92CA093-2D91-4A80-BABB-D1E04A9188A4" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2019 Win64)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "354B2D82-4CA4-4E53-BA53-F71306C40B75" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2022 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -89,8 +95,11 @@
     <?define UpgradeCode = "FCD34BD1-1491-4011-B59C-9207B07AB3BC" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2017 Win64)" ?>
     <?elseif $(var.Compiler) = 1928?>
-    <?define UpgradeCode = "{76CFF848-9A89-464C-BD0B-E1444982FAF1}" ?>
+    <?define UpgradeCode = "76CFF848-9A89-464C-BD0B-E1444982FAF1" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2019 Win64)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "F9256765-8600-47D2-8A22-8B7320A1ABAB" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2022 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -121,6 +130,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "D05BB2A9-3B1D-41FA-8D03-D82ED74108C4" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2019 Win64)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "BD880767-C1DE-49BC-9BC1-75B2AFA13B0E" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2022 Win64)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -151,6 +163,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "50EF4E34-7DDE-4A42-A320-C4413AEEF09C" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2019 Win64)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "D1F26FA4-30B7-459D-A0A5-656AAF3F388A" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2022 Win64)" ?>
     <?endif?>
     <?endif?>
     <?else?>
@@ -186,6 +201,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "0021C3EE-0AFD-4603-9560-7F9C2816A3EE" ?>
     <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2019)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "CD137073-E7C2-4B07-8733-2EDF7729A352" ?>
+    <?define ProductName = "GDAL $(var.VersionTag) (MSVC 2022)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_OCI?>
@@ -219,6 +237,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "CC224322-B167-4288-BEDE-834A9E66DDF6" ?>
     <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2019)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "10D630D5-0DAE-4C45-891D-2991805F4C40" ?>
+    <?define ProductName = "GDAL Oracle Extension $(var.VersionTag) (MSVC 2022)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_MrSID?>
@@ -252,6 +273,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "A319323D-5C8C-45C2-B80A-4A3F1C0C24F8" ?>
     <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2019)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "7245BD1D-0E79-47C1-AC04-C0E747A3433A" ?>
+    <?define ProductName = "GDAL MrSID Extension $(var.VersionTag) (MSVC 2022)" ?>
     <?endif?>
     <?endif?>
     <?ifdef ogr_FileGDB?>
@@ -285,6 +309,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "9D09BB7F-A031-4BED-A8EA-A6FF1654CAB3" ?>
     <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2019)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "2C9C5739-B31D-4B31-A487-D4045DC3B694" ?>
+    <?define ProductName = "GDAL FileGDB Extension $(var.VersionTag) (MSVC 2022)" ?>
     <?endif?>
     <?endif?>
     <?ifdef gdal_ECW_JP2ECW?>
@@ -318,6 +345,9 @@
     <?elseif $(var.Compiler) = 1928?>
     <?define UpgradeCode = "E8774E8A-635D-4372-A673-FA85D13D7FDE" ?>
     <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2019)" ?>
+    <?elseif $(var.Compiler) = 1930?>
+    <?define UpgradeCode = "B63B1EB1-4C77-4BBD-BC59-BE5A1C879A77" ?>
+    <?define ProductName = "GDAL ECW Extension $(var.VersionTag) ECWSDK$(var.ECWSDKVersion) (MSVC 2022)" ?>
     <?endif?>
     <?endif?>
     <?endif?>
@@ -1334,6 +1364,22 @@
             <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC142_CRT_x86.msm" DiskId="1" Language="0"/>
         </DirectoryRef>
         <Feature Id="VCRedist" Title="Visual C++ 16.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+		<?endif?>
+        <?elseif $(var.Compiler) = 1930?>
+		<?if $(sys.BUILDARCH) = x64?>
+		<DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC143_CRT_x64.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 17.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+            <MergeRef Id="VCRedist"/>
+        </Feature>
+        <?else?>
+        <DirectoryRef Id="TARGETDIR">
+            <Merge Id="VCRedist" SourceFile="$(var.BaseDir)\Microsoft_VC143_CRT_x86.msm" DiskId="1" Language="0"/>
+        </DirectoryRef>
+        <Feature Id="VCRedist" Title="Visual C++ 17.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
             <MergeRef Id="VCRedist"/>
         </Feature>
 		<?endif?>
