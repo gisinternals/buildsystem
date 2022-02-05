@@ -125,7 +125,7 @@
   <!--
   ******************************************************************************
   **                 GDAL Interop Library Publish Properties                  **
-  **                       for Visual Studio 201x                             **
+  **                       for Visual Studio 20xx                             **
   ******************************************************************************
   -->
 
@@ -135,7 +135,8 @@
                             '$(VisualStudioVersion)' == '12.0' Or
                             '$(VisualStudioVersion)' == '14.0' Or
                             '$(VisualStudioVersion)' == '15.0' Or
-                            '$(VisualStudioVersion)' == '16.0'">
+                            '$(VisualStudioVersion)' == '16.0' Or
+                            '$(VisualStudioVersion)' == '17.0'">
     <PipelineCollectFilesPhaseDependsOn>
       CollectGDALInteropFiles;
       $(PipelineCollectFilesPhaseDependsOn);
