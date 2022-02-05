@@ -668,6 +668,9 @@
                     <Component Id="sqlite3.exe" Guid="*">
                         <File Id="sqlite3.exe" Name="sqlite3.exe" Source="$(var.TargetDir)\sqlite3.exe" Vital="yes"/>
                     </Component>
+                    <Component Id="fts5.dll" Guid="*">
+                        <File Id="fts5.dll" Name="fts5.dll" Source="$(var.TargetDir)\fts5.dll" Vital="yes"/>
+                    </Component>
 					<Component Id="freexl.dll" Guid="*">
                         <File Id="freexl.dll" Name="freexl.dll" Source="$(var.TargetDir)\freexl.dll" Vital="yes"/>
                     </Component>
@@ -991,6 +994,7 @@
             <ComponentRef Id="spatialite.dll" />
 			<ComponentRef Id="sqlite3.dll" />
             <ComponentRef Id="sqlite3.exe" />
+            <ComponentRef Id="fts5.dll" />
 			<ComponentRef Id="freexl.dll" />
             <ComponentRef Id="xerces_c_3_2.dll" />
             <ComponentRef Id="openjp2.dll" />

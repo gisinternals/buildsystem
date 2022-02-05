@@ -2002,19 +2002,22 @@ $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
     if not exist $(SQLITE_DIR) mkdir $(SQLITE_DIR)
     cd $(SQLITE_DIR)
     if not exist sqlite $(CURL_EXE) -L -k -o "sqlite.zip" "$(SQLITE_SRC)" & 7z x -y sqlite.zip  
-    cd sqlite
 !IFNDEF NO_CLEAN
-    nmake /f Makefile.msc clean
+    if exist build rmdir /S /Q build
 !ENDIF
 !IFNDEF NO_BUILD
-    nmake /f Makefile.msc sqlite3.dll
-    nmake /f Makefile.msc sqlite3.exe
+    if not exist build mkdir build
+    cd build
+    nmake /f ..\sqlite\Makefile.msc sqlite3.dll  TOP=..\sqlite
+    nmake /f ..\sqlite\Makefile.msc sqlite3.exe  TOP=..\sqlite
+    nmake /f ..\sqlite\Makefile.msc fts5.dll  TOP=..\sqlite
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
     xcopy /Y *.exe $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
     xcopy /Y sqlite3.h $(OUTPUT_DIR)\include
+    copy /Y fts5*.h $(OUTPUT_DIR)\include
     copy /Y $(SQLITE_LIB) $(OUTPUT_DIR)\lib\sqlite3_i.lib
 !ENDIF
     cd $(BASE_DIR)
@@ -3847,7 +3850,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(PGSQL_LIB)
+test: $(SQLITE_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
