@@ -192,7 +192,7 @@ XERCES_BRANCH = Xerces-C_3_2_2
 XERCES_SRC = https://svn.apache.org/repos/asf/xerces/c/tags
 
 LIBEXPAT_DIR = $(SRC_DIR)\libexpat
-LIBEXPAT_BRANCH = R_2_4_1
+LIBEXPAT_BRANCH = R_2_4_4
 LIBEXPAT_SRC = https://github.com/libexpat/libexpat.git
 
 PROTOBUF_DIR = $(SRC_DIR)\protobuf
