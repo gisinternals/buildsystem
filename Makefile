@@ -3187,14 +3187,36 @@ $(MAPCACHE_LIB): $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
     @echo $(MAPCACHE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(PGSQL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL)
+$(PGSQL_LIB): $(OPENSSL_LIB) $(ZLIB_LIB) $(LIBXML2_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFDEF PGSQL_ENABLED
     if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
     cd $(BASE_DIR)\$(PGSQL_DIR)
     rem git reset --hard HEAD
     rem git checkout $(PGSQL_BRANCH)
     cd src\tools\msvc
-    echo $$config-^>{openssl} = '$(OUTPUT_DIR)'; >config.pl
+    echo use strict; >config.pl
+    echo use warnings; >>config.pl
+    echo our $$config = { >>config.pl
+    echo asserts =^> 0, >>config.pl
+    echo ldap =^> 1, >>config.pl
+    echo extraver  =^> undef, >>config.pl
+    echo gss       =^> undef, >>config.pl
+    echo icu       =^> undef, >>config.pl
+    echo lz4       =^> undef, >>config.pl
+    echo nls       =^> undef, >>config.pl
+    echo tap_tests =^> undef, >>config.pl
+    echo tcl       =^> undef, >>config.pl
+    echo perl      =^> undef, >>config.pl
+    echo python    =^> undef, >>config.pl
+    echo openssl   =^> '$(OUTPUT_DIR)', >>config.pl
+    echo uuid      =^> undef, >>config.pl
+    echo xml       =^> '$(OUTPUT_DIR)', >>config.pl
+    echo xslt      =^> undef, >>config.pl
+    echo iconv     =^> '$(OUTPUT_DIR)', >>config.pl
+    echo zlib      =^> '$(OUTPUT_DIR)' >>config.pl
+    echo }; >>config.pl
+    echo 1; >>config.pl
+    powershell -Command "(gc Solution.pm) -replace '\\lib\\zdll.lib', '\lib\zlib.lib' | Out-File -encoding ASCII Solution.pm"
 !IFNDEF NO_CLEAN
     clean dist
 !ENDIF
@@ -3825,7 +3847,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(GDAL_INSTALLER_MRSID)
+test: $(PGSQL_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
