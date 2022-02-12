@@ -1715,6 +1715,7 @@ $(LIBSVG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(URIPARSER_LIB) $(JP
     if not exist $(LIBSVG_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBSVG_VER).tar.gz" "$(LIBSVG_SRC)"
     if not exist $(LIBSVG_VER) 7z e -y $(LIBSVG_VER).tar.gz && 7z x -y $(LIBSVG_VER).tar
     xcopy /Y $(BASE_DIR)\support\libsvg\Makefile.vc $(LIBSVG_VER)\src
+    xcopy /Y $(BASE_DIR)\support\libsvg\svg_uri.c $(LIBSVG_VER)\src
     cd $(LIBSVG_VER)\src
     powershell -Command "(gc svg_image.c) -replace 'png_set_gray_1_2_4_to_8', 'png_set_expand_gray_1_2_4_to_8' | Out-File -encoding ASCII svg_image.c
 !IFNDEF NO_CLEAN
