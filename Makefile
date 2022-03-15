@@ -1774,6 +1774,7 @@ $(GEOS_LIB): $(MSVCRT_DLL)
     cd $(BASE_DIR)\$(GEOS_DIR)\$(CMAKE_BUILDDIR)
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	cd $(BASE_DIR)
@@ -2678,6 +2679,9 @@ $(GDAL_NETCDF_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_NETCDF_OPT)
     echo NETCDF_PLUGIN=YES >> $(GDAL_NETCDF_OPT)
     echo NETCDF_SETTING=yes >> $(GDAL_NETCDF_OPT)
+    echo NETCDF_HAS_NC4=yes >> $(GDAL_NETCDF_OPT)
+    echo NETCDF_HAS_HDF4=yes >> $(GDAL_NETCDF_OPT)
+    echo NETCDF_HAS_NETCDF_MEM=yes >> $(GDAL_NETCDF_OPT)
     echo NETCDF_LIB=$(NETCDF_LIB) >> $(GDAL_NETCDF_OPT)
     echo NETCDF_INC_DIR=$(OUTPUT_DIR)\include >> $(GDAL_NETCDF_OPT)
 
@@ -3391,6 +3395,8 @@ $(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\netcdf.lib $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
 	xcopy /Y install\bin\netcdf.dll $(OUTPUT_DIR)\bin
 	xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
@@ -3851,7 +3857,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(OUTPUT_DIR) $(DEFAULT_TARGETS)
 
-test: $(SQLITE_LIB)
+test: $(NETCDF_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)

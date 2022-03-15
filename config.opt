@@ -102,7 +102,7 @@ HARFBUZZ_BRANCH = 3.0.0
 HARFBUZZ_SRC = https://github.com/harfbuzz/harfbuzz.git
 
 GEOS_DIR = $(SRC_DIR)\geos
-GEOS_BRANCH = 3.9.2
+GEOS_BRANCH = 3.10.2
 GEOS_SRC = https://git.osgeo.org/gitea/geos/geos.git
 
 FRIBIDI_DIR = $(SRC_DIR)\fribidi
@@ -171,7 +171,7 @@ MAPSERVER_SRC = https://github.com/mapserver/mapserver.git
 
 MAPCACHE_DIR = $(SRC_DIR)\mapcache
 !IFNDEF MAPCACHE_BRANCH
-MAPCACHE_BRANCH = rel-1-10-0
+MAPCACHE_BRANCH = rel-1-12-0
 !ENDIF
 MAPCACHE_SRC = https://github.com/MapServer/mapcache.git
 
@@ -284,7 +284,7 @@ KEA_BRANCH = kealib-1.4.14
 KEA_SRC =https://github.com/ubarsc/kealib.git
 
 NETCDF_DIR = $(SRC_DIR)\netcdf
-NETCDF_BRANCH = v4.7.4
+NETCDF_BRANCH = v4.8.1
 NETCDF_SRC =https://github.com/Unidata/netcdf-c.git
 
 OGDI_DIR = $(SRC_DIR)\ogdi
