@@ -3457,6 +3457,7 @@ $(FCGI_LIB):
     git checkout $(FCGI_BRANCH)
     xcopy /Y $(BASE_DIR)\support\fcgi\libfcgi.mak libfcgi
     xcopy /Y $(BASE_DIR)\support\fcgi\fcgi_config.h include
+    xcopy /Y $(BASE_DIR)\support\fcgi\fcgi_stdio.c libfcgi
     cd include
     powershell -Command "(gc fcgio.h) -replace 'class DLLAPI fcgi_istream', 'class fcgi_istream' | Out-File -encoding ASCII fcgio.h"
     powershell -Command "(gc fcgio.h) -replace 'class DLLAPI fcgi_ostream', 'class fcgi_ostream' | Out-File -encoding ASCII fcgio.h"
