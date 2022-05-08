@@ -51,8 +51,8 @@ Namespace $rootnamespace$
 
         End Function
 
-        '    LOAD_LIBRARY_SEARCH_USER_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32
-        Private Const DllSearchFlags As UInteger = &H400 Or &H800
+        '    LOAD_LIBRARY_SEARCH_DEFAULT_DIRS
+        Private Const DllSearchFlags As UInteger = &H1000
 
         <DllImport("kernel32.dll", CharSet:=CharSet.Unicode, SetLastError:=True)>
         Public Shared Function AddDllDirectory(ByVal lpPathName As String) As <MarshalAs(UnmanagedType.Bool)> Boolean
