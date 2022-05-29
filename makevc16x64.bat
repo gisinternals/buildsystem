@@ -11,6 +11,7 @@ if "%1" == "stable" @goto stable
 if "%1" == "rel" @goto rel
 if "%1" == "osgeo4w" @goto osgeo4w
 if "%1" == "mapmanager" @goto mapmanager
+if "%1" == "nuget" @goto rel
 
 set logid=%compiler%-dev
 set gdal-dir=gdal
@@ -23,6 +24,8 @@ set GDAL_BRANCH=master
 set gdal-tag=%gdal_dev_tag%
 
 cmd /C makepackage.bat
+
+if "%1" == "dev" @goto exit
 
 :stable
 
@@ -90,8 +93,15 @@ set gdal-release-ver=%gdal_major%.%gdal_minor%.%gdal_rel%
 
 echo %pkg-version%
 
+if "%1" == "nuget" @goto nuget
+
 cmd /C makepackage.bat
+
+:nuget
+
 cmd /C makenuget.bat
+
+if "%1" == "nuget" @goto exit
 
 set logid=%compiler%-mapmanager-ms-%ms_version%
 cmd /C makemapmanager.bat

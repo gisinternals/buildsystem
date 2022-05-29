@@ -24,6 +24,8 @@ set gdal-tag=%gdal_dev_tag%
 
 cmd /C makepackage.bat
 
+if "%1" == "dev" @goto exit
+
 :stable
 
 set logid=%compiler%-stable-%gdal_version%-%ms_version%
