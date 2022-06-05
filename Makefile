@@ -2701,7 +2701,6 @@ $(GDAL_NETCDF_DLL): $(GDAL_NETCDF_OPT) $(NETCDF_LIB)
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_netCDF.dll $(OUTPUT_DIR)\bin\gdal\plugins
     cd $(OUTPUT_DIR)\bin\gdal\plugins
-	copy /Y gdal_netCDF.dll gdal_GMT.dll
 !ENDIF
 	cd $(BASE_DIR)
 
