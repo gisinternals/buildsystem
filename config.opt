@@ -300,7 +300,7 @@ BOOST_BRANCH = boost-1.75.0
 BOOST_SRC =https://github.com/boostorg/boost.git
 
 !IFNDEF MAPMANAGER_BRANCH
-MAPMANAGER_BRANCH = mapserver-7-6
+MAPMANAGER_BRANCH = mapserver-8-0
 !ENDIF
 MAPMANAGER_DIR = $(SRC_DIR)\MapManager-$(MAPMANAGER_BRANCH)
 MAPMANAGER_SRC = https://github.com/DMS-Aus/MapManager.git
