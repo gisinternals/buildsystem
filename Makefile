@@ -1083,6 +1083,7 @@ FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin64\FileGDBAPI.dll"
 FILEGDB_LIB = "$(FILEGDB_API_DIR)\lib\FileGDBAPI.lib"
 FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin\FileGDBAPI.dll"
 !ENDIF
+FILEGDB_INCLUDE = "$(FILEGDB_API_DIR)\include
 !ENDIF
 
 !IFDEF OCI_DIR
@@ -2467,8 +2468,27 @@ gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
     cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7" "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DMYSQL_LIBRARY=$(MYSQL_LIB)" "-DKEA_LIBRARY=$(KEA_LIB)" "-DOGDI_INCLUDE_DIRS=$(OUTPUT_DIR)\include;$(BASE_DIR)\$(OGDI_DIR)\include\win32" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB)" "-DGDAL_ENABLE_PLUGINS=ON" "-DHDF5_hdf5_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\libhdf5.lib" "-DHDF5_hdf5_cpp_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\libhdf5_cpp.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7" "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DMYSQL_LIBRARY=$(MYSQL_LIB)" "-DKEA_LIBRARY=$(KEA_LIB)" "-DOGDI_INCLUDE_DIRS=$(OUTPUT_DIR)\include;$(BASE_DIR)\$(OGDI_DIR)\include\win32" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) advapi32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DHDF5_hdf5_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\hdf5.lib" "-DHDF5_hdf5_cpp_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\hdf5_cpp.lib" "-DHDF5_BUILD_SHARED_LIBS=ON" "-DGDAL_USE_NETCDF=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)" "-DFileGDB_LIBRARY=$(FILEGDB_LIB)" "-DFileGDB_INCLUDE_DIR=$(FILEGDB_INCLUDE)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
+	copy /Y install\lib\gdal.lib $(GDAL_LIB)
+	if not exist $(OUTPUT_DIR)\bin\gdal mkdir $(OUTPUT_DIR)\bin\gdal
+	if not exist $(OUTPUT_DIR)\bin\gdal\apps mkdir $(OUTPUT_DIR)\bin\gdal\apps
+	xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin\gdal\apps
+	if not exist $(OUTPUT_DIR)\bin\gdal-data mkdir $(OUTPUT_DIR)\bin\gdal-data
+	xcopy /Y install\share\*.* $(OUTPUT_DIR)\bin\gdal-data
+	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
+    xcopy /Y install\share\csharp\*_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    xcopy /Y install\share\csharp\*_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
+	if exist $(OUTPUT_DIR)\bin\gdal\plugins del $(OUTPUT_DIR)\bin\gdal\plugins\*.dll
+    if exist $(OUTPUT_DIR)\bin\gdal\plugins-optional del $(OUTPUT_DIR)\bin\gdal\plugins-optional\*.dll
+	if exist $(OUTPUT_DIR)\bin\gdal\plugins-external del $(OUTPUT_DIR)\bin\gdal\plugins-external\*.dll
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
+	xcopy /Y install\lib\gdalplugins\*.dll $(OUTPUT_DIR)\bin\gdal\plugins
+!IFDEF GDAL_RELEASE_PDB
+
 !ENDIF
     cd $(BASE_DIR)
 !ELSE
@@ -4114,6 +4134,8 @@ check:
 
     
 rebuild-gdal: remove-output gdal
+
+rebuild-gdal-cmake: remove-output gdal-cmake
 
 remove-output:
     del $(OUTPUT_DIR)\bin\gdal*.dll

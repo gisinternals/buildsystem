@@ -22,7 +22,7 @@ set MAPCACHE_BRANCH=main
 set GDAL_BRANCH=master
 set gdal-tag=%gdal_dev_tag%
 
-cmd /C makepackage.bat
+cmd /C makepackage-cmake.bat
 
 if "%1" == "dev" @goto exit
 
@@ -59,7 +59,7 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>%cmdname
 echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^</span^>^<br/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 )
 
-echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished at %date% %time%^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
+echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished on %date% %time%^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
 
 echo ^<hr/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 
