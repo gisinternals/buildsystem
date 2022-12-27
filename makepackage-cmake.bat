@@ -15,7 +15,7 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>%cmdname
 echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^</span^>^<br/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 )
 
-set nmakecmd=rebuild-gdal-cmake SWIG_VER=2.0.4
+set nmakecmd=rebuild-gdal-cmake SWIG_VER=4.0.2
 set cmdname=GDAL build
 for /f "tokens=1-7 delims=:.,- " %%a in ("%date% %time%") do set id=%%a%%b%%c-%%d-%%e-%%f-%%g-%logid%
 echo %date% %time%: %cmdname% started ^&nbsp^<a href="%baseurl%%compiler%-%id%.txt"^>stdout^</a^>^&nbsp^<a href="%baseurl%%compiler%-%id%-err.txt"^>stderr^</a^>^&nbsp >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html

@@ -18,7 +18,8 @@ GDAL_MSSQL = YES
 GDAL_MSSQL_MSODBC = YES
 GDAL_OPENJPEG = YES
 #GDAL_RELEASE_PDB = YES
-#GDAL_TIFF = YES
+GDAL_TIFF = YES
+GDAL_GEOTIFF = YES
 GDAL_GNM = YES
 GDAL_PDF = YES
 GDAL_LIBKML = YES
@@ -250,6 +251,10 @@ LIBSVGCAIRO_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg-cairo/0.
 LIBTIFF_DIR = $(SRC_DIR)\libtiff
 LIBTIFF_BRANCH = v4.3.0
 LIBTIFF_SRC = https://gitlab.com/libtiff/libtiff.git
+
+LIBGEOTIFF_DIR = $(SRC_DIR)\libgeotiff
+LIBGEOTIFF_BRANCH = 1.7.1
+LIBGEOTIFF_SRC = https://github.com/OSGeo/libgeotiff.git
 
 OPENJPEG_DIR = $(SRC_DIR)\openjpeg
 OPENJPEG_BRANCH = v2.4.0

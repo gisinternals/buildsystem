@@ -647,6 +647,7 @@ URIPARSER_LIB = $(OUTPUT_DIR)\lib\uriparser.lib
 LIBSVG_LIB = $(OUTPUT_DIR)\lib\libsvg.lib
 LIBSVGCAIRO_LIB = $(OUTPUT_DIR)\lib\libsvg-cairo.lib
 LIBTIFF_LIB = $(OUTPUT_DIR)\lib\tiff.lib
+LIBGEOTIFF_LIB = $(OUTPUT_DIR)\lib\geotiff.lib
 OPENJPEG_LIB = $(OUTPUT_DIR)\lib\openjp2.lib
 POPPLER_LIB = $(OUTPUT_DIR)\lib\poppler.lib
 FCGI_LIB = $(OUTPUT_DIR)\lib\libfcgi.lib
@@ -681,6 +682,7 @@ DEFAULT_TARGETS =
 
 # set up gdal configuration
 GDAL_DEPS = $(OUTPUT_DIR) $(MSVCRT_DLL)
+GDAL_CMAKE_OPT = "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) advapi32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DGDAL_ENABLE_DRIVER_PCIDSK_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PCRASTER_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PNG_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WEBP_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WMS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_CAD_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_VFK_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_XLS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_OGDI_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_JP2OPENJPEG_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_LIBKML_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_MYSQL_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_PG_PLUGIN=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)"
 
 !IFDEF GDAL_GEOS
 GDAL_DEPS = $(GDAL_DEPS) $(GEOS_LIB)
@@ -700,6 +702,11 @@ GDAL_DEPS = $(GDAL_DEPS) $(PROJ6_LIB)
 
 !IFDEF GDAL_PROJ7
 GDAL_DEPS = $(GDAL_DEPS) $(PROJ7_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7"
+!ENDIF
+
+!IFDEF GDAL_JAVA
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DANT=$(ANT_HOME)\bin\ant" "-DGDAL_JAVA_GENERATE_JAVADOC=OFF"
 !ENDIF
 
 !IFDEF GDAL_CURL
@@ -712,6 +719,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(SPATIALITE_LIB)
 
 !IFDEF GDAL_CSHARP
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_CSHARP_DLL)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DCSHARP_LIBRARY_VERSION=netstandard2.0" "-DCSHARP_APPLICATION_VERSION=net5.0"
 !ENDIF
 
 !IFDEF GDAL_XERCES
@@ -724,6 +732,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(LIBEXPAT_LIB)
 
 !IFDEF GDAL_MYSQL
 GDAL_DEPS = $(GDAL_DEPS) $(MYSQL_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DMYSQL_LIBRARY=$(MYSQL_LIB)"
 !ENDIF
 
 !IFDEF GDAL_OPENJPEG
@@ -745,6 +754,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(HDF4_LIB)
 
 !IFDEF GDAL_HDF5
 GDAL_DEPS = $(GDAL_DEPS) $(HDF5_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DHDF5_hdf5_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\hdf5.lib" "-DHDF5_hdf5_cpp_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\hdf5_cpp.lib" "-DHDF5_BUILD_SHARED_LIBS=ON" 
 !ENDIF
 
 !IFDEF GDAL_FITS
@@ -753,6 +763,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(FITS_LIB)
 
 !IFDEF GDAL_KEA
 GDAL_DEPS = $(GDAL_DEPS) $(KEA_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DKEA_LIBRARY=$(KEA_LIB)"
 !ENDIF
 
 !IFDEF GDAL_NETCDF
@@ -765,18 +776,31 @@ GDAL_DEPS = $(GDAL_DEPS) $(LIBWEBP_LIB)
 
 !IFDEF GDAL_OGDI
 GDAL_DEPS = $(GDAL_DEPS) $(OGDI_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DOGDI_INCLUDE_DIRS=$(OUTPUT_DIR)\include;$(BASE_DIR)\$(OGDI_DIR)\include\win32"
 !ENDIF
 
 !IFDEF GDAL_ECW
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_ECW_DLL)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DECW_LIBRARY=$(ECWLIB)" "-DECW_INCLUDE_DIR=$(ECWSDK_DIR)\include"
 !ENDIF
 
 !IFDEF GDAL_FILEGDB
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_FILEGDB_DLL)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DFileGDB_LIBRARY=$(FILEGDB_LIB)" "-DFileGDB_INCLUDE_DIR=$(FILEGDB_INCLUDE)"
 !ENDIF
 
 !IFDEF GDAL_MRSID
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_MRSID_DLL)
+!IFDEF MRSID_RASTER_DIR
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DMRSID_LIBRARY=$(MRSID_RASTER_DIR)\lib\lti_dsdk.lib" "-DMRSID_INCLUDE_DIR=$(MRSID_RASTER_DIR)\include" "-DGDAL_ENABLE_DRIVER_MRSID_PLUGIN=ON"
+!IFDEF GDAL_TIFF
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_GEOTIFF=ON" "-DGDAL_USE_GEOTIFF_INTERNAL=OFF"
+!ENDIF
+!ENDIF
+!ENDIF
+
+!IFDEF GDAL_TIFF
+
 !ENDIF
 
 !IFDEF GDAL_MSSQL
@@ -800,6 +824,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(HDF5_LIB)
 !IFDEF GDAL_KEA
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_KEA_DLL)
 GDAL_DEPS = $(GDAL_DEPS) $(KEA_LIB)
+DAL_CMAKE_OPT = $(GDAL_CMAKE_OPT)
 !ENDIF
 
 !IFDEF GDAL_AMIGOCLOUD
@@ -827,6 +852,7 @@ DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_PG_DLL)
 
 !IFDEF GDAL_ORACLE
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_OCI_DLL) $(GDAL_GEOR_DLL)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DOracle_LIBRARY=$(OCI_DIR)\$(INSTANTCLIENT_DIR)\sdk\lib\msvc\oci.lib" "-DOracle_INCLUDE_DIR=$(OCI_DIR)\$(INSTANTCLIENT_DIR)\sdk\include"
 !ENDIF
 
 # set up mapserver configuration
@@ -1029,6 +1055,7 @@ URIPARSER_ENABLED = 1
 LIBSVG_ENABLED = 1
 LIBSVGCAIRO_ENABLED = 1
 LIBTIFF_ENABLED = 1
+LIBGEOTIFF_ENABLED = 1
 OPENJPEG_ENABLED = 1
 POPPLER_ENABLED = 1
 FCGI_ENABLED = 1
@@ -1050,27 +1077,27 @@ LIBWEBP_ENABLED = 1
 ECWFLAGS= /DECWSDK_VERSION=$(ECWSDK_VERSION) "-I$(ECWSDK_DIR)\include" "-I$(ECWSDK_DIR)\include\NCSECW\api" "-I$(ECWSDK_DIR)\include\NCSECW\jp2" "-I$(ECWSDK_DIR)\include\NCSECW\ecw"
 !IF $(MSVC_VER) >= 1911
 !IFDEF WIN64
-ECWLIB = "$(ECWSDK_DIR)\lib\vc141\x64\NCSEcw.lib"
-ECWDLL = "$(ECWSDK_DIR)\bin\vc141\x64\NCSEcw.dll"
+ECWLIB = $(ECWSDK_DIR)\lib\vc141\x64\NCSEcw.lib
+ECWDLL = $(ECWSDK_DIR)\bin\vc141\x64\NCSEcw.dll
 !ELSE
-ECWLIB = "$(ECWSDK_DIR)\lib\vc141\win32\NCSEcw.lib"
-ECWDLL = "$(ECWSDK_DIR)\bin\vc141\win32\NCSEcw.dll"
+ECWLIB = $(ECWSDK_DIR)\lib\vc141\win32\NCSEcw.lib
+ECWDLL = $(ECWSDK_DIR)\bin\vc141\win32\NCSEcw.dll
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1900
 !IFDEF WIN64
-ECWLIB = "$(ECWSDK_DIR)\lib\vc140\x64\NCSEcw.lib"
-ECWDLL = "$(ECWSDK_DIR)\bin\vc140\x64\NCSEcw.dll"
+ECWLIB = $(ECWSDK_DIR)\lib\vc140\x64\NCSEcw.lib
+ECWDLL = $(ECWSDK_DIR)\bin\vc140\x64\NCSEcw.dll
 !ELSE
-ECWLIB = "$(ECWSDK_DIR)\lib\vc140\win32\NCSEcw.lib"
-ECWDLL = "$(ECWSDK_DIR)\bin\vc140\win32\NCSEcw.dll"
+ECWLIB = $(ECWSDK_DIR)\lib\vc140\win32\NCSEcw.lib
+ECWDLL = $(ECWSDK_DIR)\bin\vc140\win32\NCSEcw.dll
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1900
 !IFDEF WIN64
-ECWLIB = "$(ECWSDK_DIR)\lib\vc120\x64\NCSEcw.lib"
-ECWDLL = "$(ECWSDK_DIR)\bin\vc120\x64\NCSEcw.dll"
+ECWLIB = $(ECWSDK_DIR)\lib\vc120\x64\NCSEcw.lib
+ECWDLL = $(ECWSDK_DIR)\bin\vc120\x64\NCSEcw.dll
 !ELSE
-ECWLIB = "$(ECWSDK_DIR)\lib\vc120\win32\NCSEcw.lib"
-ECWDLL = "$(ECWSDK_DIR)\bin\vc120\win32\NCSEcw.dll"
+ECWLIB = $(ECWSDK_DIR)\lib\vc120\win32\NCSEcw.lib
+ECWDLL = $(ECWSDK_DIR)\bin\vc120\win32\NCSEcw.dll
 !ENDIF
 !ENDIF
 !ENDIF
@@ -1083,7 +1110,7 @@ FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin64\FileGDBAPI.dll"
 FILEGDB_LIB = "$(FILEGDB_API_DIR)\lib\FileGDBAPI.lib"
 FILEGDB_DLL = "$(FILEGDB_API_DIR)\bin\FileGDBAPI.dll"
 !ENDIF
-FILEGDB_INCLUDE = "$(FILEGDB_API_DIR)\include
+FILEGDB_INCLUDE = $(FILEGDB_API_DIR)\include
 !ENDIF
 
 !IFDEF OCI_DIR
@@ -1151,7 +1178,7 @@ CMAKE_EXE = cmake.exe
 
 #finding ECW SDK
 !IFDEF GDAL_ECW
-!IF !EXIST($(ECWLIB))
+!IF !EXIST("$(ECWLIB)")
 !ERROR Unable to find $(ECWLIB). Set ECWSDK_DIR in $(CONFIG_OPT) to the location of the ECW SDK and ECWSDK_VERSION to the current version
 !ENDIF
 !ENDIF
@@ -1714,6 +1741,30 @@ $(LIBTIFF_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(ZSTD_LIB) $(LIBWEBP_LIB)
     @echo $(LIBTIFF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ7_LIB)
+!IFDEF LIBTIFF_ENABLED
+    if not exist $(LIBGEOTIFF_DIR) git clone -b $(LIBGEOTIFF_BRANCH) $(LIBGEOTIFF_SRC) $(LIBGEOTIFF_DIR)
+    cd $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff
+    git reset --hard HEAD
+    git checkout $(LIBGEOTIFF_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y install\cmake\*.cmake $(OUTPUT_DIR)\cmake
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+	xcopy /Y /S install\include\*.inc $(OUTPUT_DIR)\include
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(LIBGEOTIFF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(OPENJPEG_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB)
 !IFDEF OPENJPEG_ENABLED
     if not exist $(OPENJPEG_DIR) git clone -b $(OPENJPEG_BRANCH) $(OPENJPEG_SRC) $(OPENJPEG_DIR)
@@ -2174,7 +2225,7 @@ $(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(
 
 $(ECW_DLL):
 !IFDEF ECWSDK_DIR
-    xcopy /Y $(ECWDLL) $(OUTPUT_DIR)\bin
+    xcopy /Y "$(ECWDLL)" $(OUTPUT_DIR)\bin
 !ENDIF
 
 $(FILEGDBAPI_DLL):
@@ -2421,6 +2472,18 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
     cd ..
 !ENDIF
 !IFNDEF NO_BUILD
+    xcopy /Y port\*.h $(OUTPUT_DIR)\include
+	xcopy /Y gcore\*.h $(OUTPUT_DIR)\include
+	xcopy /Y alg\*.h $(OUTPUT_DIR)\include
+	xcopy /Y ogr\*.h $(OUTPUT_DIR)\include
+	xcopy /Y apps\*.h $(OUTPUT_DIR)\include
+	xcopy /Y frmts\mem\memdataset.h $(OUTPUT_DIR)\include
+	if exist frmts\raw\rawdataset.h xcopy /Y frmts\raw\rawdataset.h $(OUTPUT_DIR)\include
+    if exist gcore\rawdataset.h xcopy /Y gcore\rawdataset.h $(OUTPUT_DIR)\include
+	xcopy /Y frmts\gtiff\libgeotiff\*.h $(OUTPUT_DIR)\include
+	xcopy /Y frmts\gtiff\libgeotiff\*.inc $(OUTPUT_DIR)\include
+	xcopy /Y frmts\vrt\*.h $(OUTPUT_DIR)\include
+	xcopy /Y ogr\ogrsf_frmts\*.h $(OUTPUT_DIR)\include
 	nmake /f makefile.vc EXT_NMAKE_OPT=$(GDAL_OPT)
 	xcopy /Y *.dll $(OUTPUT_DIR)\bin
 	xcopy /Y port\*.h $(OUTPUT_DIR)\include
@@ -2456,6 +2519,7 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
 
 gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL)
 !IFDEF GDAL_ENABLED
+	set JAVA_HOME=$(JAVA_HOME)
 !IFDEF GDAL_OGDI
     if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
 !ENDIF
@@ -2468,7 +2532,9 @@ gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
     cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7" "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DMYSQL_LIBRARY=$(MYSQL_LIB)" "-DKEA_LIBRARY=$(KEA_LIB)" "-DOGDI_INCLUDE_DIRS=$(OUTPUT_DIR)\include;$(BASE_DIR)\$(OGDI_DIR)\include\win32" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) advapi32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DHDF5_hdf5_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\hdf5.lib" "-DHDF5_hdf5_cpp_LIBRARY_RELEASE=$(OUTPUT_DIR)\lib\hdf5_cpp.lib" "-DHDF5_BUILD_SHARED_LIBS=ON" "-DGDAL_USE_NETCDF=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)" "-DFileGDB_LIBRARY=$(FILEGDB_LIB)" "-DFileGDB_INCLUDE_DIR=$(FILEGDB_INCLUDE)"
+    -xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
+	-xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.inc $(OUTPUT_DIR)\include
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" $(GDAL_CMAKE_OPT)
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -2478,7 +2544,7 @@ gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL)
 	if not exist $(OUTPUT_DIR)\bin\gdal\apps mkdir $(OUTPUT_DIR)\bin\gdal\apps
 	xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin\gdal\apps
 	if not exist $(OUTPUT_DIR)\bin\gdal-data mkdir $(OUTPUT_DIR)\bin\gdal-data
-	xcopy /Y install\share\*.* $(OUTPUT_DIR)\bin\gdal-data
+	xcopy /Y install\share\gdal\* $(OUTPUT_DIR)\bin\gdal-data
 	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y install\share\csharp\*_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y install\share\csharp\*_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
@@ -2487,6 +2553,11 @@ gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL)
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins-external del $(OUTPUT_DIR)\bin\gdal\plugins-external\*.dll
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y install\lib\gdalplugins\*.dll $(OUTPUT_DIR)\bin\gdal\plugins
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-external mkdir $(OUTPUT_DIR)\bin\gdal\plugins-external
+	if exist $(OUTPUT_DIR)\bin\gdal\plugins\ogr_FileGDB.dll move $(OUTPUT_DIR)\bin\gdal\plugins\ogr_FileGDB.dll $(OUTPUT_DIR)\bin\gdal\plugins-external\ogr_FileGDB.dll
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	if exist $(OUTPUT_DIR)\bin\gdal\plugins\ogr_MSSQLSpatial.dll move $(OUTPUT_DIR)\bin\gdal\plugins\ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional\ogr_MSSQLSpatial.dll
+	
 !IFDEF GDAL_RELEASE_PDB
 
 !ENDIF
@@ -2556,7 +2627,7 @@ $(GDAL_ECW_OPT): $(GDAL_OPT)
     copy /Y $(GDAL_OPT) $(GDAL_ECW_OPT)
     echo ECW_PLUGIN = YES >> $(GDAL_ECW_OPT)
     echo ECWDIR=$(ECWSDK_DIR) >> $(GDAL_ECW_OPT)
-    echo ECWLIB=$(ECWLIB) >> $(GDAL_ECW_OPT)
+    echo ECWLIB="$(ECWLIB)" >> $(GDAL_ECW_OPT)
     echo ECWFLAGS= $(ECWFLAGS) >> $(GDAL_ECW_OPT)
 
 $(GDAL_ECW_DLL): $(GDAL_LIB) $(GDAL_ECW_OPT)
@@ -2682,7 +2753,6 @@ $(GDAL_HDF4_DLL): $(GDAL_HDF4_OPT) $(HDF4_LIB)
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_HDF4.dll $(OUTPUT_DIR)\bin\gdal\plugins
 	cd $(OUTPUT_DIR)\bin\gdal\plugins
-	copy /Y gdal_HDF4.dll gdal_HDF4Image.dll
 !ENDIF
 	cd $(BASE_DIR)
 
@@ -2704,8 +2774,6 @@ $(GDAL_HDF5_DLL): $(GDAL_HDF5_OPT) $(HDF5_LIB) $(ZLIB_LIB) $(SZIP_LIB)
     if not exist $(OUTPUT_DIR)\bin\gdal\plugins mkdir $(OUTPUT_DIR)\bin\gdal\plugins
 	xcopy /Y gdal_HDF5.dll $(OUTPUT_DIR)\bin\gdal\plugins
 	cd $(OUTPUT_DIR)\bin\gdal\plugins
-	copy /Y gdal_HDF5.dll gdal_HDF5Image.dll
-    copy /Y gdal_HDF5.dll gdal_BAG.dll
 !ENDIF
 	cd $(BASE_DIR)
 
@@ -3929,7 +3997,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(NETCDF_LIB)
+test: $(LIBGEOTIFF_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
@@ -4163,7 +4231,7 @@ $(OUTPUT_DIR):
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
     if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
     
-gdalpluginlibs: $(GDAL_PDF_DLL) $(GDAL_OCI_DLL) $(GDAL_GEOR_DLL) $(GDAL_MRSID_DLL) $(GDAL_HDF4_DLL) $(GDAL_HDF5_DLL) $(GDAL_KEA_DLL) $(GDAL_NETCDF_DLL) $(GDAL_FITS_DLL) $(GDAL_ECW_DLL) $(GDAL_PG_DLL) $(GDAL_FILEGDB_DLL)  $(GDAL_AMIGOCLOUD_DLL) $(GDAL_MSSQL_DLL) $(GDAL_MSSQL_MSODBC_DLL_DLL)
+gdalpluginlibs: $(GDAL_PDF_DLL) $(GDAL_OCI_DLL) $(GDAL_GEOR_DLL) $(GDAL_MRSID_DLL) $(GDAL_HDF4_DLL) $(GDAL_HDF5_DLL) $(GDAL_KEA_DLL) $(GDAL_NETCDF_DLL) $(GDAL_FITS_DLL) $(GDAL_ECW_DLL) $(GDAL_PG_DLL) $(GDAL_FILEGDB_DLL)  $(GDAL_AMIGOCLOUD_DLL) $(GDAL_MSSQL_DLL) $(GDAL_MSSQL_MSODBC_DLL)
 
 gdal-sde:
 
@@ -4177,6 +4245,16 @@ gdal-csharp-test: $(GDAL_CSHARP_DLL)
 	-cd gdal
 	cd swig\csharp
 	nmake /f makefile.vc test EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
+	cd $(BASE_DIR)
+!ENDIF
+
+gdal-csharp-test-cmake: $(GDAL_CSHARP_DLL)	
+!IFDEF GDAL_CSHARP
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	cd $(CMAKE_BUILDDIR)
+    ctest -V -C Release -R "^csharp.*"
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -4197,23 +4275,23 @@ gdal-java-test:
 gdal-python-all:
 !IFNDEF NO_BUILD
 !IFDEF WIN64
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=2.0.4
-    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=2.0.4
-    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
 !ELSE
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=2.0.4
-    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=2.0.4
-    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=2.0.4
-    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=2.0.4
-    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=2.0.4
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
+    nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
+    rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
+    rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
 !ENDIF
 !ENDIF
 
@@ -4251,6 +4329,10 @@ gdal-python: $(GDAL_OPT) $(SWIG_INSTALL)
 	if exist _osr.pyd.manifest mt -manifest _osr.pyd.manifest -outputresource:_osr.pyd;2
 	xcopy /Y *.py $(OUTPUT_DIR)\bin\gdal\python\osgeo
 	xcopy /Y *.pyd $(OUTPUT_DIR)\bin\gdal\python\osgeo
+	cd ..
+	cd osgeo_utils
+	if not exist $(OUTPUT_DIR)\bin\gdal\python\osgeo_utils mkdir $(OUTPUT_DIR)\bin\gdal\python\osgeo_utils
+	xcopy /Y /S *.py $(OUTPUT_DIR)\bin\gdal\python\osgeo_utils
 	cd $(BASE_DIR)\$(GDAL_DIR)
 	-cd gdal
 	cd swig\$(PYTHON_SCRIPTSDIR)
