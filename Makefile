@@ -4320,6 +4320,21 @@ gdal-python-all:
 !ENDIF
 !ENDIF
 
+gdal-python-cmake-all:
+!IFNDEF NO_BUILD
+!IFDEF WIN64
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
+!ELSE
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
+!ENDIF
+!ENDIF
+
 gdal-python: $(GDAL_OPT) $(SWIG_INSTALL)
 !IFDEF GDAL_PYTHON
     copy /Y $(GDAL_OPT) $(GDAL_PYTHON_OPT)
@@ -4388,6 +4403,27 @@ gdal-python-bdist: $(GDAL_LIB)
 !IFNDEF NO_COPY	
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
 	xcopy /Y dist\*.exe $(OUTPUT_DIR)\install
+	xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+!ENDIF
+	cd $(BASE_DIR)  
+!ENDIF
+
+gdal-python-cmake-bdist: $(GDAL_LIB)
+!IFDEF GDAL_PYTHON
+    SET DISTUTILS_USE_SDK=1
+    SET MSSdk=1
+	cd $(BASE_DIR)\$(GDAL_DIR)
+	-cd gdal
+	cd $(CMAKE_BUILDDIR)\swig\python
+!IFNDEF NO_CLEAN    
+    if exist dist rmdir /S /Q dist
+	if exist build rmdir /S /Q build
+!ENDIF    
+!IFNDEF NO_BUILD
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py bdist $(PYTHON_BDIST_OPTS)
+!ENDIF
+!IFNDEF NO_COPY	
+	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
 	xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
 !ENDIF
 	cd $(BASE_DIR)  
