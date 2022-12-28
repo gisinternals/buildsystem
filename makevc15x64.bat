@@ -44,7 +44,7 @@ cmd /C makepackage.bat
 set logid=%compiler%-sdk
 set ms-dir=mapserver-%ms_version%
 
-set nmakecmd=package-dev GDAL_DIR=..\sdk\%compiler%\%gdal-dir%\gdal MS_DIR=..\sdk\%compiler%\%ms-dir% INSTALL_DIR=C:\Inetpub\wwwroot\sdk\downloads
+set nmakecmd=package-dev INSTALL_DIR=C:\Inetpub\wwwroot\sdk\downloads
 set cmdname=Packaging-dev
 for /f "tokens=1-7 delims=:.,- " %%a in ("%date% %time%") do set id=%%a%%b%%c-%%d-%%e-%%f-%%g-%logid%
 echo %date% %time%: %cmdname% started ^&nbsp^<a href="%compiler%-%id%.txt"^>stdout^</a^>^&nbsp^<a href="%compiler%-%id%-err.txt"^>stderr^</a^>^&nbsp >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
