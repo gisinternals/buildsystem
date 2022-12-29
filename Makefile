@@ -4456,8 +4456,16 @@ gdal-autotest:
     cd $(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\autotest
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs
     cd $(BASE_DIR)
-    
 
+ms-autotest:
+    SET MS_ERRORFILE=stderr
+    SET MS_DEBUGLEVEL=1
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\apps;$(OUTPUT_DIR)\bin\gdal\apps;$(OUTPUT_DIR)\bin\ms\python;$(BASE_DIR)\support\pdiff\bin;$(PATH)
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
+    set PYTHONPATH=$(PYTHON_BASE)\$(PYTHON_DIR)
+    cd $(MAPSERVER_DIR)\msautotest
+    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs
+    cd $(BASE_DIR)
     
 ms-python-bdist: $(MAPSERVER_LIB)
 !IFNDEF MS_CMAKE_BUILD
