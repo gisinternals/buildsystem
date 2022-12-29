@@ -1229,9 +1229,9 @@ PYTHON_BASE=C:\Python
 
 !IFNDEF PYTHON_DIR
 !IFDEF WIN64
-PYTHON_DIR = Python37
+PYTHON_DIR = Python310
 !ELSE
-PYTHON_DIR = Python37-32
+PYTHON_DIR = Python310-32
 !ENDIF
 !IF $(MSVC_VER) == 1310
 PYTHON_DIR = Python27
@@ -4448,9 +4448,9 @@ gdal-autotest:
     SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
     SET DO_NOT_FAIL_ON_RECODE_ERRORS="YES"
     SET GDAL_HTTP_UNSAFESSL="YES"
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
-    cd $(BASE_DIR)\$(GDAL_DIR)\autotest
-    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs --timeout=30 --timeout-method=thread
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
+    cd $(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\autotest
+    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs
     cd $(BASE_DIR)
     
 

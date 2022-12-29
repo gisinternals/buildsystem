@@ -621,6 +621,9 @@
                     <Component Id="libmysql.dll" Guid="*">
                         <File Id="libmysql.dll" Name="libmysql.dll" Source="$(var.TargetDir)\libmysql.dll" Vital="yes"/>
                     </Component>
+					<Component Id="libpng16.dll" Guid="*">
+                        <File Id="libpng16.dll" Name="libpng16.dll" Source="$(var.TargetDir)\libpng16.dll" Vital="yes"/>
+                    </Component>
                     <Component Id="libpq.dll" Guid="*">
                         <File Id="libpq.dll" Name="libpq.dll" Source="$(var.TargetDir)\libpq.dll" Vital="yes"/>
                     </Component>
@@ -665,8 +668,14 @@
                     <Component Id="xerces_c_3_2.dll" Guid="*">
                         <File Id="xerces_c_3_2.dll" Name="xerces-c_3_2.dll" Source="$(var.TargetDir)\xerces-c_3_2.dll" Vital="yes"/>
                     </Component>
+					<Component Id="pcre.dll" Guid="*">
+                        <File Id="pcre.dll" Name="pcre.dll" Source="$(var.TargetDir)\pcre.dll" Vital="yes"/>
+                    </Component>
                     <Component Id="zlib.dll" Guid="*">
                         <File Id="zlib.dll" Name="zlib.dll" Source="$(var.TargetDir)\zlib.dll" Vital="yes"/>
+                    </Component>
+					<Component Id="zstd.dll" Guid="*">
+                        <File Id="zstd.dll" Name="zstd.dll" Source="$(var.TargetDir)\zstd.dll" Vital="yes"/>
                     </Component>
                     <Component Id="ogdi.dll" Guid="*">
                         <File Id="ogdi.dll" Name="ogdi.dll" Source="$(var.TargetDir)\ogdi.dll" Vital="yes"/>
@@ -976,6 +985,7 @@
             <ComponentRef Id="libexpat.dll" />
             <ComponentRef Id="libpq.dll" />
             <ComponentRef Id="libmysql.dll" />
+			<ComponentRef Id="libpng16.dll" />
             <ComponentRef Id="libxml2.dll" />
             <ComponentRef Id="proj_4_9.dll" />
             <ComponentRef Id="proj_7_2.dll" />
@@ -986,7 +996,9 @@
 			<ComponentRef Id="freexl.dll" />
             <ComponentRef Id="xerces_c_3_2.dll" />
             <ComponentRef Id="openjp2.dll" />
+			<ComponentRef Id="pcre.dll" />
             <ComponentRef Id="zlib.dll" />
+			<ComponentRef Id="zstd.dll" />
             <ComponentRef Id="ogdi.dll" />
             <ComponentRef Id="adrg.dll" />
             <ComponentRef Id="remote.dll" />
