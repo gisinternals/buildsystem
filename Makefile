@@ -890,13 +890,14 @@ MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROTOBUF_C_LIB)
 !IFNDEF MS_PROJ
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=0
 !ELSE
-MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROJ4_LIB)
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/proj7
+MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROJ7_LIB)
 !ENDIF
 
 !IFNDEF MS_GEOS
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_GEOS=0
 !ELSE
-MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROJ4_LIB)
+MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(GEOS_LIB)
 !ENDIF
 
 !IFNDEF MS_ICONV
@@ -1340,6 +1341,14 @@ PYTHON_BDIST_OPTS = --formats=msi
 !ELSEIF "$(PYTHON_DIR)" == "Python310"
 PYTHON_OUTDIR = python\build\lib.win-amd64-3.10
 PYTHON_SCRIPTSDIR = python\build\scripts-3.10
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python311-32"
+PYTHON_OUTDIR = python\build\lib.win32-cpython-311
+PYTHON_SCRIPTSDIR = python\build\scripts-3.11
+PYTHON_BDIST_OPTS = --formats=msi
+!ELSEIF "$(PYTHON_DIR)" == "Python311"
+PYTHON_OUTDIR = python\build\lib.win-amd64-3.11
+PYTHON_SCRIPTSDIR = python\build\scripts-3.11
 PYTHON_BDIST_OPTS = --formats=msi
 !ENDIF
 
@@ -2115,6 +2124,38 @@ $(PROJ7_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(CURL_LIB) $(SQLITE_LIB)
     @echo $(PROJ7_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(PROJ9_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(CURL_LIB) $(SQLITE_LIB)
+!IFDEF PROJ9_ENABLED
+    if not exist $(PROJ9_DIR) git clone -b $(PROJ9_BRANCH) $(PROJ_SRC) $(PROJ9_DIR)
+    cd $(PROJ9_DIR)
+    git reset --hard HEAD
+    git checkout $(PROJ9_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+    if exist data\proj.db del data\proj.db
+    if exist data\all.sql.in del data\all.sql.in
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_SHARED_LIBS=ON
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    if not exist $(OUTPUT_DIR)\bin\proj9 mkdir $(OUTPUT_DIR)\bin\proj9
+    if not exist $(OUTPUT_DIR)\bin\proj9\apps mkdir $(OUTPUT_DIR)\bin\proj9\apps
+    xcopy /Y $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.exe $(OUTPUT_DIR)\bin\proj9\apps
+    if exist $(OUTPUT_DIR)\include\proj9 rmdir /s /q $(OUTPUT_DIR)\include\proj9
+	mkdir $(OUTPUT_DIR)\include\proj9
+    xcopy /Y /S $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include\proj9
+    if not exist $(OUTPUT_DIR)\bin\proj9\share mkdir $(OUTPUT_DIR)\bin\proj9\share
+    xcopy /Y /S $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\share\proj\* $(OUTPUT_DIR)\bin\proj9\share
+	cd $(BASE_DIR)
+!ELSE
+    @echo $(PROJ9_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
 !IFDEF SQLITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
@@ -2201,7 +2242,7 @@ $(LIBRTTOPO_LIB): $(GEOS_LIB) $(MSVCRT_DLL)
 !ENDIF
 
 
-$(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ4_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(GEOS_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
+$(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ7_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(GEOS_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
 !IFDEF SPATIALITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -4070,7 +4111,7 @@ ms-deps:
 	echo zlib - $(ZLIB_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 	echo jpeg - $(JPEG_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !IFDEF MS_PROJ
-	echo proj - $(PROJ4_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+	echo proj - $(PROJ7_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !ENDIF
 !IFDEF MS_FREETYPE
 	echo freetype - $(FREETYPE_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
@@ -4237,7 +4278,7 @@ rebuild-gdal-cmake: remove-output gdal-cmake
 remove-output:
     del $(OUTPUT_DIR)\bin\gdal*.dll
     del $(OUTPUT_DIR)\bin\libmap.dll
-    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.wxs $(OUTPUT_DIR)\install\*.wixobj $(OUTPUT_DIR)\install\*.wixpdb
+    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.zip $(OUTPUT_DIR)\install\*.wxs $(OUTPUT_DIR)\install\*.wixobj $(OUTPUT_DIR)\install\*.wixpdb
     if exist $(OUTPUT_DIR)\bin\gdal rd /Q /S $(OUTPUT_DIR)\bin\gdal
     if exist $(OUTPUT_DIR)\bin\gdal-data rd /Q /S $(OUTPUT_DIR)\bin\gdal-data
     if exist $(OUTPUT_DIR)\bin\ms rd /Q /S $(OUTPUT_DIR)\bin\ms
@@ -4306,19 +4347,25 @@ gdal-python-all:
 !IFDEF WIN64
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
     rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
 !ELSE
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
     nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
+    nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     rem nmake gdal-python GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
     rem nmake gdal-python-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
 !ENDIF
@@ -4330,12 +4377,22 @@ gdal-python-cmake-all:
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311 SWIG_VER=4.0.2
 !ELSE
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311-32 SWIG_VER=4.0.2
 !ENDIF
 !ENDIF
 
@@ -4406,8 +4463,8 @@ gdal-python-bdist: $(GDAL_LIB)
 !ENDIF
 !IFNDEF NO_COPY	
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
-	xcopy /Y dist\*.exe $(OUTPUT_DIR)\install
-	xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-for /R %%a IN (dist\*.zip) DO copy /Y %%a $(OUTPUT_DIR)\install\%%~na.$(PYTHON_DIR)%%~xa
 !ENDIF
 	cd $(BASE_DIR)  
 !ENDIF
@@ -4428,7 +4485,8 @@ gdal-python-cmake-bdist: $(GDAL_LIB)
 !ENDIF
 !IFNDEF NO_COPY	
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
-	xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-for /R %%a IN (dist\*.zip) DO copy /Y %%a $(OUTPUT_DIR)\install\%%~na.$(PYTHON_DIR)%%~xa
 !ENDIF
 	cd $(BASE_DIR)  
 !ENDIF
@@ -4452,6 +4510,9 @@ gdal-autotest:
     SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
     SET DO_NOT_FAIL_ON_RECODE_ERRORS="YES"
     SET GDAL_HTTP_UNSAFESSL="YES"
+    rem SET OGR_PG_CONNECTION_STRING=dbname=autotest$(CMAKE_BUILDDIR) host=127.0.0.1 port=5432 user=postgres
+    rem SET PG_USE_COPY=YES
+    rem SET PG_USE_POSTGIS=YES
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
     cd $(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\autotest
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs
@@ -4502,9 +4563,11 @@ package:
     if not exist $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.exe $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+	if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.zip $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION).zip" downloads
     if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.exe downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.zip downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	uploadftpdir $(OUTPUT_DIR)\doc\*.txt downloads/doc/release-$(COMPILER_VER)-$(PKG_VERSION)	
 
 package-libs:
@@ -4530,7 +4593,7 @@ package-src:
     
 package-dev:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
-    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.bz2
+    if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.zip $(OUTPUT_DIR)\install\*.bz2
     7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) $(SWIG_EXE) $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\Lib Makefile config.opt readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
