@@ -124,9 +124,13 @@ PROJ6_DIR = $(SRC_DIR)\proj6
 PROJ6_BRANCH = 6.3.2
 PROJ7_DIR = $(SRC_DIR)\proj7
 PROJ7_BRANCH = 7.2.1
-PROJ9_DIR = $(SRC_DIR)\proj7
+PROJ9_DIR = $(SRC_DIR)\proj9
 PROJ9_BRANCH = 9.1.1
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
+
+PROJ_DATA_DIR = $(SRC_DIR)\proj-data
+PROJ_DATA_BRANCH = 1.12.0
+PROJ_DATA_SRC = https://github.com/OSGeo/PROJ-data.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
 SQLITE_VER = 3.37.2

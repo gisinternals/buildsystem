@@ -582,7 +582,8 @@ PGSQL_LIB = $(OUTPUT_DIR)\lib\libpq.lib
 PROJ4_LIB = $(OUTPUT_DIR)\lib\proj_4_9.lib
 PROJ6_LIB = $(OUTPUT_DIR)\lib\proj_6_2.lib
 PROJ7_LIB = $(OUTPUT_DIR)\lib\proj.lib
-PROJ9_LIB = $(OUTPUT_DIR)\lib\proj.lib
+PROJ9_LIB = $(OUTPUT_DIR)\lib\proj9.lib
+PROJ_DATA = $(OUTPUT_DIR)\lib\proj_data.lib
 SQLITE_LIB = $(OUTPUT_DIR)\lib\sqlite3.lib
 SPATIALITE_LIB = $(OUTPUT_DIR)\lib\spatialite_i.lib
 FREEXL_LIB = $(OUTPUT_DIR)\lib\freexl.lib
@@ -1053,6 +1054,8 @@ PGSQL_ENABLED = 1
 PROJ4_ENABLED = 1
 PROJ6_ENABLED = 1
 PROJ7_ENABLED = 1
+PROJ9_ENABLED = 1
+PROJ_DATA_ENABLED = 1
 SQLITE_ENABLED = 1
 SPATIALITE_ENABLED = 1
 FREEXL_ENABLED = 1
@@ -2139,12 +2142,12 @@ $(PROJ9_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(CURL_LIB) $(SQLITE_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install" -DPROJ_TESTS=OFF -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_SHARED_LIBS=ON
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DBUILD_SHARED_LIBS=ON
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     if not exist $(OUTPUT_DIR)\bin\proj9 mkdir $(OUTPUT_DIR)\bin\proj9
     if not exist $(OUTPUT_DIR)\bin\proj9\apps mkdir $(OUTPUT_DIR)\bin\proj9\apps
-    xcopy /Y $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
+    copy /Y $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\lib\proj.lib $(PROJ9_LIB)
     xcopy /Y $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(PROJ9_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.exe $(OUTPUT_DIR)\bin\proj9\apps
     if exist $(OUTPUT_DIR)\include\proj9 rmdir /s /q $(OUTPUT_DIR)\include\proj9
@@ -2155,6 +2158,27 @@ $(PROJ9_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(CURL_LIB) $(SQLITE_LIB)
 	cd $(BASE_DIR)
 !ELSE
     @echo $(PROJ9_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(PROJ_DATA):
+!IFDEF PROJ_DATA_ENABLED
+    if not exist $(PROJ_DATA_DIR) git clone -b $(PROJ_DATA_BRANCH) $(PROJ_DATA_SRC) $(PROJ_DATA_DIR)
+    cd $(PROJ_DATA_DIR)
+    git reset --hard HEAD
+    git checkout $(PROJ_DATA_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+	cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCPACK_BINARY_ZIP=ON" "-DCPACK_BINARY_NSIS=OFF"
+    rem cpack -G ZIP --config CPackConfig.cmake
+	cpack -G ZIP --config CPackSourceConfig.cmake
+!ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(PROJ_DATA_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
 $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
@@ -4066,7 +4090,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(LIBGEOTIFF_LIB)
+test: $(PROJ9_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
