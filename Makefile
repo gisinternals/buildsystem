@@ -582,6 +582,7 @@ PGSQL_LIB = $(OUTPUT_DIR)\lib\libpq.lib
 PROJ4_LIB = $(OUTPUT_DIR)\lib\proj_4_9.lib
 PROJ6_LIB = $(OUTPUT_DIR)\lib\proj_6_2.lib
 PROJ7_LIB = $(OUTPUT_DIR)\lib\proj.lib
+PROJ9_LIB = $(OUTPUT_DIR)\lib\proj.lib
 SQLITE_LIB = $(OUTPUT_DIR)\lib\sqlite3.lib
 SPATIALITE_LIB = $(OUTPUT_DIR)\lib\spatialite_i.lib
 FREEXL_LIB = $(OUTPUT_DIR)\lib\freexl.lib
