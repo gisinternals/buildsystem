@@ -497,16 +497,28 @@
                             <File Id="epsg" Name="epsg" Source="$(var.TargetDir)\proj\SHARE\epsg" />
                         </Component>
                         <Component Id="world" Guid="*">
-                            <File Id="world" Name="world" Source="$(var.TargetDir)\proj7\SHARE\world" Vital="yes"/>
+                            <File Id="world" Name="world" Source="$(var.TargetDir)\proj9\SHARE\world" Vital="yes"/>
                         </Component>
                         <Component Id="proj.db" Guid="*">
-                            <File Id="proj.db" Name="proj.db" Source="$(var.TargetDir)\proj7\SHARE\proj.db" Vital="yes"/>
+                            <File Id="proj.db" Name="proj.db" Source="$(var.TargetDir)\proj9\SHARE\proj.db" Vital="yes"/>
+                        </Component>
+						<Component Id="proj.ini" Guid="*">
+                            <File Id="proj.ini" Name="proj.ini" Source="$(var.TargetDir)\proj9\SHARE\proj.ini" Vital="yes"/>
+                        </Component>
+						<Component Id="deformation_model.schema.json" Guid="*">
+                            <File Id="deformation_model.schema.json" Name="deformation_model.schema.json" Source="$(var.TargetDir)\proj9\SHARE\deformation_model.schema.json" Vital="yes"/>
+                        </Component>
+						<Component Id="projjson.schema.json" Guid="*">
+                            <File Id="projjson.schema.json" Name="projjson.schema.json" Source="$(var.TargetDir)\proj9\SHARE\projjson.schema.json" Vital="yes"/>
+                        </Component>
+						<Component Id="triangulation.schema.json" Guid="*">
+                            <File Id="triangulation.schema.json" Name="triangulation.schema.json" Source="$(var.TargetDir)\proj9\SHARE\triangulation.schema.json" Vital="yes"/>
                         </Component>
                         <Component Id="proj_def.dat" Guid="*">
                             <File Id="proj_def.dat" Name="proj_def.dat" Source="$(var.TargetDir)\proj\SHARE\proj_def.dat" Vital="yes"/>
                         </Component>
                         <Component Id="other.extra" Guid="*">
-                            <File Id="other.extra" Name="other.extra" Source="$(var.TargetDir)\proj7\SHARE\other.extra" Vital="yes"/>
+                            <File Id="other.extra" Name="other.extra" Source="$(var.TargetDir)\proj9\SHARE\other.extra" Vital="yes"/>
                         </Component>
                         <Component Id="nzgd2kgrid0005.gsb" Guid="*">
                             <File Id="nzgd2kgrid0005.gsb" Name="nzgd2kgrid0005.gsb" Source="$(var.TargetDir)\proj\SHARE\nzgd2kgrid0005.gsb" Vital="yes"/>
@@ -521,28 +533,28 @@
                             <File Id="ntf_r93.gsb" Name="ntf_r93.gsb" Source="$(var.TargetDir)\proj\SHARE\ntf_r93.gsb" Vital="yes"/>
                         </Component>
                         <Component Id="nad83" Guid="*">
-                            <File Id="nad83" Name="nad83" Source="$(var.TargetDir)\proj7\SHARE\nad83" Vital="yes"/>
+                            <File Id="nad83" Name="nad83" Source="$(var.TargetDir)\proj9\SHARE\nad83" Vital="yes"/>
                         </Component>
                         <Component Id="nad27" Guid="*">
-                            <File Id="nad27" Name="nad27" Source="$(var.TargetDir)\proj7\SHARE\nad27" Vital="yes"/>
+                            <File Id="nad27" Name="nad27" Source="$(var.TargetDir)\proj9\SHARE\nad27" Vital="yes"/>
                         </Component>
                         <Component Id="nad.lst" Guid="*">
-                            <File Id="nad.lst" Name="nad.lst" Source="$(var.TargetDir)\proj7\SHARE\nad.lst" Vital="yes"/>
+                            <File Id="nad.lst" Name="nad.lst" Source="$(var.TargetDir)\proj9\SHARE\nad.lst" Vital="yes"/>
                         </Component>
                         <Component Id="IGNF" Guid="*">
                             <File Id="IGNF" Name="IGNF" Source="$(var.TargetDir)\proj\SHARE\IGNF" Vital="yes"/>
                         </Component>
                         <Component Id="ITRF2014" Guid="*">
-                            <File Id="ITRF2014" Name="ITRF2014" Source="$(var.TargetDir)\proj7\SHARE\ITRF2014" Vital="yes"/>
+                            <File Id="ITRF2014" Name="ITRF2014" Source="$(var.TargetDir)\proj9\SHARE\ITRF2014" Vital="yes"/>
                         </Component>
                         <Component Id="ITRF2008" Guid="*">
-                            <File Id="ITRF2008" Name="ITRF2008" Source="$(var.TargetDir)\proj7\SHARE\ITRF2008" Vital="yes"/>
+                            <File Id="ITRF2008" Name="ITRF2008" Source="$(var.TargetDir)\proj9\SHARE\ITRF2008" Vital="yes"/>
                         </Component>
                         <Component Id="ITRF2000" Guid="*">
-                            <File Id="ITRF2000" Name="ITRF2000" Source="$(var.TargetDir)\proj7\SHARE\ITRF2000" Vital="yes"/>
+                            <File Id="ITRF2000" Name="ITRF2000" Source="$(var.TargetDir)\proj9\SHARE\ITRF2000" Vital="yes"/>
                         </Component>
                         <Component Id="GL27" Guid="*">
-                            <File Id="GL27" Name="GL27" Source="$(var.TargetDir)\proj7\SHARE\GL27" Vital="yes"/>
+                            <File Id="GL27" Name="GL27" Source="$(var.TargetDir)\proj9\SHARE\GL27" Vital="yes"/>
                         </Component>
                         <Component Id="esri.extra" Guid="*">
                             <File Id="esri.extra" Name="esri.extra" Source="$(var.TargetDir)\proj\SHARE\esri.extra" Vital="yes"/>
@@ -551,7 +563,7 @@
                             <File Id="esri" Name="esri" Source="$(var.TargetDir)\proj\SHARE\esri" Vital="yes"/>
                         </Component>
                         <Component Id="CH" Guid="*">
-                            <File Id="CH" Name="CH" Source="$(var.TargetDir)\proj7\SHARE\CH" Vital="yes"/>
+                            <File Id="CH" Name="CH" Source="$(var.TargetDir)\proj9\SHARE\CH" Vital="yes"/>
                         </Component>
                     </Directory>
                     <Component Id="cfitsio.dll" Guid="*">
@@ -652,6 +664,9 @@
                     </Component>
                     <Component Id="proj_7_2.dll" Guid="*">
                         <File Id="proj_7_2.dll" Name="proj_7_2.dll" Source="$(var.TargetDir)\proj_7_2.dll" Vital="yes"/>
+                    </Component>
+					<Component Id="proj_9_1.dll" Guid="*">
+                        <File Id="proj_9_1.dll" Name="proj_9_1.dll" Source="$(var.TargetDir)\proj_9_1.dll" Vital="yes"/>
                     </Component>
                     <Component Id="spatialite.dll" Guid="*">
                         <File Id="spatialite.dll" Name="spatialite.dll" Source="$(var.TargetDir)\spatialite.dll" Vital="yes"/>
@@ -789,25 +804,25 @@
                         <File Id="openssl.exe" Name="openssl.exe" Source="$(var.TargetDir)\openssl.exe" />
                     </Component>
                     <Component Id="cct.exe" Guid="*">
-                        <File Id="cct.exe" Name="cct.exe" Source="$(var.TargetDir)\proj7\apps\cct.exe" />
+                        <File Id="cct.exe" Name="cct.exe" Source="$(var.TargetDir)\proj9\apps\cct.exe" />
                     </Component>
                     <Component Id="cs2cs.exe" Guid="*">
-                        <File Id="cs2cs.exe" Name="cs2cs.exe" Source="$(var.TargetDir)\proj7\apps\cs2cs.exe" />
+                        <File Id="cs2cs.exe" Name="cs2cs.exe" Source="$(var.TargetDir)\proj9\apps\cs2cs.exe" />
                     </Component>
                     <Component Id="geod.exe" Guid="*">
-                        <File Id="geod.exe" Name="geod.exe" Source="$(var.TargetDir)\proj7\apps\geod.exe" />
+                        <File Id="geod.exe" Name="geod.exe" Source="$(var.TargetDir)\proj9\apps\geod.exe" />
                     </Component>
                     <Component Id="gie.exe" Guid="*">
-                        <File Id="gie.exe" Name="gie.exe" Source="$(var.TargetDir)\proj7\apps\gie.exe" />
+                        <File Id="gie.exe" Name="gie.exe" Source="$(var.TargetDir)\proj9\apps\gie.exe" />
                     </Component>
                     <Component Id="projsync.exe" Guid="*">
-                        <File Id="projsync.exe" Name="projsync.exe" Source="$(var.TargetDir)\proj7\apps\projsync.exe" />
+                        <File Id="projsync.exe" Name="projsync.exe" Source="$(var.TargetDir)\proj9\apps\projsync.exe" />
                     </Component>
                     <Component Id="proj.exe" Guid="*">
-                        <File Id="proj.exe" Name="proj.exe" Source="$(var.TargetDir)\proj7\apps\proj.exe" />
+                        <File Id="proj.exe" Name="proj.exe" Source="$(var.TargetDir)\proj9\apps\proj.exe" />
                     </Component>
                     <Component Id="projinfo.exe" Guid="*">
-                        <File Id="projinfo.exe" Name="projinfo.exe" Source="$(var.TargetDir)\proj7\apps\projinfo.exe" />
+                        <File Id="projinfo.exe" Name="projinfo.exe" Source="$(var.TargetDir)\proj9\apps\projinfo.exe" />
                     </Component>
                     <Component Id="gdalalljni.dll" Guid="*">
                         <File Id="gdalalljni.dll" Name="gdalalljni.dll" Source="$(var.TargetDir)\gdal\java\gdalalljni.dll" Vital="yes"/>
@@ -992,6 +1007,7 @@
             <ComponentRef Id="libxml2.dll" />
             <ComponentRef Id="proj_4_9.dll" />
             <ComponentRef Id="proj_7_2.dll" />
+			<ComponentRef Id="proj_9_1.dll" />
             <ComponentRef Id="spatialite.dll" />
 			<ComponentRef Id="sqlite3.dll" />
             <ComponentRef Id="sqlite3.exe" />
@@ -1014,6 +1030,10 @@
             <ComponentRef Id="epsg" />
             <ComponentRef Id="world" />
             <ComponentRef Id="proj.db" />
+			<ComponentRef Id="proj.ini" />
+			<ComponentRef Id="deformation_model.schema.json" />
+			<ComponentRef Id="projjson.schema.json" />
+			<ComponentRef Id="triangulation.schema.json" />
             <ComponentRef Id="proj_def.dat" />                
             <ComponentRef Id="other.extra" />
             <ComponentRef Id="nzgd2kgrid0005.gsb" />

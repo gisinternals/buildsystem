@@ -717,6 +717,11 @@ GDAL_DEPS = $(GDAL_DEPS) $(PROJ7_LIB)
 GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7"
 !ENDIF
 
+!IFDEF GDAL_PROJ9
+GDAL_DEPS = $(GDAL_DEPS) $(PROJ9_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj9.lib"
+!ENDIF
+
 !IFDEF GDAL_JAVA
 GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DANT=$(ANT_HOME)\bin\ant" "-DGDAL_JAVA_GENERATE_JAVADOC=OFF"
 !ENDIF
@@ -889,11 +894,17 @@ MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROTOBUFC=1 "-DPROTOBUFC_COMPILER=$(OUTP
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROTOBUF_C_LIB)
 !ENDIF
 
-!IFNDEF MS_PROJ
-MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=0
-!ELSE
-MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/proj7
+!IF DEFINED (MS_PROJ9)
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/proj9 -DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj9.lib
+MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROJ9_LIB)
+!ELSEIF DEFINED (MS_PROJ7)
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include/proj7 -DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj.lib
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROJ7_LIB)
+!ELSEIF DEFINED (MS_PROJ)
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPROJ_LIBRARY=$(OUTPUT_DIR:\=/)/lib/proj_i.lib
+MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PROJ_LIB)
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PROJ=0
 !ENDIF
 
 !IFNDEF MS_GEOS
@@ -1768,7 +1779,7 @@ $(LIBTIFF_LIB): $(MSVCRT_DLL) $(ZLIB_LIB) $(JPEG_LIB) $(ZSTD_LIB) $(LIBWEBP_LIB)
     @echo $(LIBTIFF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ7_LIB)
+$(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ9_LIB)
 !IFDEF LIBTIFF_ENABLED
     if not exist $(LIBGEOTIFF_DIR) git clone -b $(LIBGEOTIFF_BRANCH) $(LIBGEOTIFF_SRC) $(LIBGEOTIFF_DIR)
     cd $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff
@@ -1780,7 +1791,7 @@ $(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ7_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj7"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj9.lib"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -2267,7 +2278,7 @@ $(LIBRTTOPO_LIB): $(GEOS_LIB) $(MSVCRT_DLL)
 !ENDIF
 
 
-$(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ7_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(GEOS_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
+$(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ9_LIB) $(LIBICONV_LIB) $(FREEXL_LIB) $(GEOS_LIB) $(ZLIB_LIB) $(MSVCRT_DLL)
 !IFDEF SPATIALITE_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -2283,14 +2294,14 @@ $(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ7_LIB) $(
 !IFNDEF NO_BUILD
     rem powershell -Command "(gc config-msvc.h) -replace '#define HAVE_UNISTD_H 1', '/* #undef HAVE_UNISTD_H */' | Out-File -encoding ASCII config-msvc.h"
     powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
-    powershell -Command "(gc makefile.vc) -replace 'proj_i.lib', 'proj.lib' | Out-File -encoding ASCII makefile.vc
+    powershell -Command "(gc makefile.vc) -replace 'proj_i.lib', 'proj9.lib' | Out-File -encoding ASCII makefile.vc
     cd src
     cd gaiageo
     rem powershell -Command "(gc gg_extras.c) -replace 'rint \(double x\)', 'rint_unused (double x)' | Out-File -encoding ASCII gg_extras.c"
     cd ..
     cd ..
     echo INSTDIR=$(BASE_DIR)\$(SPATIALITE_DIR)\install >nmake.opt
-    echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include\proj7 /I$(OUTPUT_DIR)\include >>nmake.opt
+    echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include\proj9 /I$(OUTPUT_DIR)\include >>nmake.opt
     if exist $(BASE_DIR)\$(SPATIALITE_DIR)\install rd /Q /S $(BASE_DIR)\$(SPATIALITE_DIR)\install
     nmake /f makefile.vc install LIBDIR=$(OUTPUT_DIR)\lib
 !ENDIF
@@ -2508,7 +2519,11 @@ $(GDAL_OPT):
 !IFDEF GDAL_NETCDF
     echo netcdf - $(NETCDF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IF DEFINED(GDAL_PROJ7)
+!IF DEFINED(GDAL_PROJ9)
+    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj9 >> $(GDAL_OPT)
+    echo PROJ_LIBRARY = $(PROJ9_LIB) >> $(GDAL_OPT)
+    echo proj - $(PROJ9_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ELSEIF DEFINED(GDAL_PROJ7)
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj7 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ7_LIB) >> $(GDAL_OPT)
     echo proj - $(PROJ7_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -2517,7 +2532,7 @@ $(GDAL_OPT):
     echo PROJ_LIBRARY = $(PROJ6_LIB) >> $(GDAL_OPT)
     echo proj - $(PROJ6_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSE
-    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj7 >> $(GDAL_OPT)
+    echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ4_LIB) >> $(GDAL_OPT)
     echo PROJ_FLAGS = -DPROJ_STATIC -DPROJ_VERSION=4 >> $(GDAL_OPT)
     echo proj - $(PROJ4_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -2529,7 +2544,7 @@ $(GDAL_VERSION_H): $(GDAL_LIB)
 $(GDAL_VERSION_TXT): $(GDAL_LIB) $(ECW_DLL) $(FILEGDBAPI_DLL)
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH)
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\share
     cd $(OUTPUT_DIR)\bin
 	gdal\apps\gdalinfo --version > $(GDAL_VERSION_TXT)
 	gdal\apps\gdalinfo --formats > $(OUTPUT_DIR)\doc\gdal_formats.txt
@@ -4090,7 +4105,9 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(PROJ9_LIB)
+test: $(LIBGEOTIFF_LIB)
+
+test2: $(SPATIALITE_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
@@ -4136,7 +4153,13 @@ ms-deps:
 	echo zlib - $(ZLIB_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 	echo jpeg - $(JPEG_VER) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !IFDEF MS_PROJ
+	echo proj - $(PROJ4_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_PROJ7
 	echo proj - $(PROJ7_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
+!ENDIF
+!IFDEF MS_PROJ9
+	echo proj - $(PROJ9_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !ENDIF
 !IFDEF MS_FREETYPE
 	echo freetype - $(FREETYPE_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
@@ -4199,7 +4222,7 @@ ms: $(MAPSERVER_LIB) ms-deps
 ms-csharp-test: $(MAPSERVER_LIB)
 !IFDEF MS_CSHARP
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\csharp;$(PATH)
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj\SHARE
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
 	cd $(BASE_DIR)\$(MAPSERVER_DIR)\mapscript\csharp
 	nmake /f makefile.vc test MSVC_VER=$(MSVC_VER)
 	cd $(BASE_DIR)
@@ -4335,7 +4358,7 @@ gdal-csharp: $(GDAL_CSHARP_DLL)
 gdal-csharp-test: $(GDAL_CSHARP_DLL)	
 !IFDEF GDAL_CSHARP
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\share
 	cd $(BASE_DIR)\$(GDAL_DIR)
 	-cd gdal
 	cd swig\csharp
@@ -4346,7 +4369,7 @@ gdal-csharp-test: $(GDAL_CSHARP_DLL)
 gdal-csharp-test-cmake: $(GDAL_CSHARP_DLL)	
 !IFDEF GDAL_CSHARP
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\share
 	cd $(BASE_DIR)\$(GDAL_DIR)
 	cd $(CMAKE_BUILDDIR)
     ctest -V -C Release -R "^csharp.*"
@@ -4358,7 +4381,7 @@ gdal-java: $(GDAL_JAVA_DLL)
 gdal-java-test:	
 !IFDEF GDAL_JAVA
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\java;$(PATH)
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\share
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\share
     SET GDAL_DATA=$(OUTPUT_DIR)\bin\gdal-data
 	cd $(BASE_DIR)\$(GDAL_DIR)
 	-cd gdal
@@ -4517,7 +4540,7 @@ gdal-python-cmake-bdist: $(GDAL_LIB)
 !ENDIF
 
 gdal-cpp-test:
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\data
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR);$(FILEGDB_BINPATH);$(PATH)
@@ -4529,7 +4552,7 @@ gdal-cpp-test:
 
 gdal-autotest:
     rem SET GDAL_DOWNLOAD_TEST_DATA=YES
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
     SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
@@ -4547,7 +4570,7 @@ ms-autotest:
     SET MS_ERRORFILE=stderr
     SET MS_DEBUGLEVEL=1
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\apps;$(OUTPUT_DIR)\bin\gdal\apps;$(OUTPUT_DIR)\bin\ms\python;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\pdiff\bin;$(PATH)
-    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj7\SHARE
+    SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     set PYTHONPATH=$(PYTHON_BASE)\$(PYTHON_DIR)
     cd $(MAPSERVER_DIR)\msautotest
