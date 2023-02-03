@@ -20,7 +20,7 @@
         <file src="..\release-1928-x64\bin\adrg.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\concrt140.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\freexl.dll" target="build\gdal\x64" />
-        <file src="..\release-1928-x64\bin\gdal305.dll" target="build\gdal\x64" />
+        <file src="..\release-1928-x64\bin\gdal.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\geos.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\geos_c.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\iconv-2.dll" target="build\gdal\x64" />
@@ -28,6 +28,7 @@
         <file src="..\release-1928-x64\bin\libcurl.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libexpat.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libmysql.dll" target="build\gdal\x64" />
+		<file src="..\release-1928-x64\bin\libpng16.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libpq.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\librttopo.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libssl-1_1-x64.dll" target="build\gdal\x64" />
@@ -37,7 +38,8 @@
         <file src="..\release-1928-x64\bin\msvcp140_2.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\ogdi.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\openjp2.dll" target="build\gdal\x64" />
-        <file src="..\release-1928-x64\bin\proj_7_2.dll" target="build\gdal\x64" />
+		<file src="..\release-1928-x64\bin\pcre.dll" target="build\gdal\x64" />
+        <file src="..\release-1928-x64\bin\proj_9_1.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\remote.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\rpf.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\skeleton.dll" target="build\gdal\x64" />
@@ -56,7 +58,7 @@
         <file src="..\release-1928\bin\adrg.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\concrt140.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\freexl.dll" target="build\gdal\x86" />
-        <file src="..\release-1928\bin\gdal305.dll" target="build\gdal\x86" />
+        <file src="..\release-1928\bin\gdal.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\geos.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\geos_c.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\iconv-2.dll" target="build\gdal\x86" />
@@ -64,6 +66,7 @@
         <file src="..\release-1928\bin\libcurl.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libexpat.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libmysql.dll" target="build\gdal\x86" />
+		<file src="..\release-1928\bin\libpng16.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libpq.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\librttopo.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libssl-1_1.dll" target="build\gdal\x86" />
@@ -73,7 +76,8 @@
         <file src="..\release-1928\bin\msvcp140_2.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\ogdi.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\openjp2.dll" target="build\gdal\x86" />
-        <file src="..\release-1928\bin\proj_7_2.dll" target="build\gdal\x86" />
+		<file src="..\release-1928\bin\pcre.dll" target="build\gdal\x86" />
+        <file src="..\release-1928\bin\proj_9_1.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\remote.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\rpf.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\skeleton.dll" target="build\gdal\x86" />
@@ -88,7 +92,7 @@
         <file src="..\release-1928\bin\zstd.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\gdal\csharp\*_wrap.dll" target="build\gdal\x86" />
     <!-- Common -->
-        <file src="..\release-1928\bin\proj7\share\*" target="build\gdal\share" />
+        <file src="..\release-1928\bin\proj9\share\*" target="build\gdal\share" />
         <file src="..\release-1928\bin\gdal-data\*.*" target="build\gdal\data" />
         <file src="..\license.txt" target="build\gdal" />
         <file src="..\GDALLicense.rtf" target="build\gdal" />

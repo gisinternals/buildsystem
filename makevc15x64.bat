@@ -37,7 +37,7 @@ set MAPCACHE_BRANCH=branch-%mapcache_major%-%mapcache_minor%
 set GDAL_BRANCH=release/%gdal_major%.%gdal_minor%
 set gdal-tag=%gdal_stable_tag%
 
-cmd /C makepackage.bat
+cmd /C makepackage-cmake.bat
 
 :dev
 
@@ -79,7 +79,7 @@ set gdal-tag=%gdal_stable_tag%
 
 echo %pkg-version%
 
-cmd /C makepackage.bat
+cmd /C makepackage-cmake.bat
 
 
 :exit

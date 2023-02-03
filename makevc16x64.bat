@@ -39,7 +39,7 @@ set MAPCACHE_BRANCH=branch-%mapcache_major%-%mapcache_minor%
 set GDAL_BRANCH=release/%gdal_major%.%gdal_minor%
 set gdal-tag=%gdal_stable_tag%
 
-cmd /C makepackage.bat
+cmd /C makepackage-cmake.bat
 
 :dev
 
@@ -96,7 +96,7 @@ echo %pkg-version%
 
 if "%1" == "nuget" @goto nuget
 
-cmd /C makepackage.bat
+cmd /C makepackage-cmake.bat
 
 :nuget
 
