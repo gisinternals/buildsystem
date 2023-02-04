@@ -88,7 +88,7 @@ set pkg-version=gdal-%gdal_major%-%gdal_minor%-%gdal_rel%-mapserver-%ms_version%
 set MAPSERVER_BRANCH=rel-%ms_version%-%ms_rel%
 set MAPCACHE_BRANCH=rel-%mapcache_major%-%mapcache_minor%-%mapcache_rel%
 set GDAL_BRANCH=v%gdal_major%.%gdal_minor%.%gdal_rel%
-set MAPMANAGER_BRANCH=mapserver-%ms_version%
+set MAPMANAGER_BRANCH=mapserver-%ms_version%-%ms_rel%
 set gdal-tag=%gdal_stable_tag%
 set gdal-release-ver=%gdal_major%.%gdal_minor%.%gdal_rel%
 

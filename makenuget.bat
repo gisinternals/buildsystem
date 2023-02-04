@@ -15,7 +15,7 @@ echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>%cmdname
 echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>Success^</span^>^<br/^> >>C:\Inetpub\wwwroot\sdk\build-output\%logid%.html
 )
 
-echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished at %date% %time%^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
+echo ^<span style="background-color:Lime;color:Black;font-weight:bold"^>finished on %date% %time%^</span^> >C:\Inetpub\wwwroot\sdk\build-output\status-%logid%.html
 
 :exit
 
