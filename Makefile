@@ -2354,65 +2354,27 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
     @echo $(LIBXML2_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(GDAL_OPT):
-!IFDEF GDAL_ENABLED
-    echo zlib - $(ZLIB_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+gdal-deps:
+    if not exist $(OUTPUT_DIR)\doc mkdir $(OUTPUT_DIR)\doc
 	echo swig - $(SWIG_VER) > $(OUTPUT_DIR)\doc\gdal_deps.txt
-	echo python - $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-	echo libpng - $(LIBPNG_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-!IF EXIST ($(BASE_DIR)\$(GDAL_DIR)\gdal)
-	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR)\gdal >> $(GDAL_OPT)
-!ELSE
-	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR) >> $(GDAL_OPT)
-!ENDIF
+	echo zlib - $(ZLIB_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo python - $(PYTHON_DIR) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+    echo libpng - $(LIBPNG_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !IFDEF GDAL_GEOS
-    echo GEOS_DIR=$(BASE_DIR)\$(GEOS_DIR) >> $(GDAL_OPT)
-    echo GEOS_CFLAGS=-I$(OUTPUT_DIR)\include -DHAVE_GEOS >> $(GDAL_OPT)
-    echo GEOS_LIB=$(GEOS_LIB) >> $(GDAL_OPT)
     echo geos - $(GEOS_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF    
-    echo MSVC_VER=$(MSVC_VER) >> $(GDAL_OPT)
-!IFDEF WIN64
-	echo WIN64=$(WIN64) >> $(GDAL_OPT)
-!ENDIF
-!IFDEF DEBUG
-    echo DEBUG=$(DEBUG) >> $(GDAL_OPT)
-    echo POSTFIX= >> $(GDAL_OPT)
-    echo OPTFLAGS= /nologo /MP /MD /Zi /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(GDAL_OPT) 
-!ELSE
-!IFDEF GDAL_RELEASE_PDB
-    echo OPTFLAGS= /nologo /MD /Zi /EHsc /O2 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE >> $(GDAL_OPT)
-    echo WITH_PDB=1 >> $(GDAL_OPT)  
-!ENDIF    
-!ENDIF
-    echo SETARGV=$(SETARGV) >> $(GDAL_OPT)
 !IFDEF GDAL_POSTGIS
-    echo PG_INC_DIR = $(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo PG_LIB = $(PGSQL_LIB) wsock32.lib >> $(GDAL_OPT)
-    echo libpq - $(PGSQL_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-!ENDIF
-!IFDEF GDAL_JAVA
-    echo JAVA_HOME=$(JAVA_HOME) >> $(GDAL_OPT)
-    echo ANT_HOME=$(ANT_HOME) >> $(GDAL_OPT)
+    echo pgsql - $(PGSQL_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_CURL
-    echo CURL_DIR= $(BASE_DIR)\$(CURL_DIR) >> $(GDAL_OPT)
-    echo CURL_INC = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo CURL_LIB = $(CURL_LIB) wsock32.lib wldap32.lib winmm.lib >> $(GDAL_OPT)
     echo libcurl - $(CURL_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo openssl - $(OPENSSL_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_SQLITE
-    echo SQLITE_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo SQLITE_LIB=$(SQLITE_LIB) >> $(GDAL_OPT)
-    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)
     echo sqlite - $(SQLITE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo pcre - $(PCRE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_SPATIALITE
-    echo SQLITE_INC=-I$(OUTPUT_DIR)\include -DHAVE_SPATIALITE -DSPATIALITE_AMALGAMATION >> $(GDAL_OPT)
-    echo SQLITE_LIB=$(SQLITE_LIB) $(SPATIALITE_LIB) >> $(GDAL_OPT)
-    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)
     echo sqlite - $(SQLITE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo spatialite - $(SPATIALITE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo iconv - $(LIBICONV_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -2420,84 +2382,39 @@ $(GDAL_OPT):
     echo freexl - $(FREEXL_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo pcre - $(PCRE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF GDAL_KMLSUPEROVERLAY
-!IF EXIST ($(GDAL_DIR)\frmts\kmlsuperoverlay)
-    echo KMLSUPEROVERLAY_SUPPORTED = YES >> $(GDAL_OPT)
-    echo MINIZIP_INCLUDE = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo MINIZIP_LIBRARY = $(MINIZIP_LIB) >> $(GDAL_OPT)
-!ENDIF
-!ENDIF
-!IFDEF GDAL_MYSQL
-    echo MYSQL_INC_DIR=$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo MYSQL_LIB=$(MYSQL_LIB) advapi32.lib >> $(GDAL_OPT)
+!IFDEF GDAL_MYSQL)
     echo mysql - $(MYSQL_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_XERCES
-    echo XERCES_DIR=$(BASE_DIR)\$(XERCES_DIR) >> $(GDAL_OPT)
-    echo XERCES_INCLUDE=-I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\xercesc >> $(GDAL_OPT)
-    echo XERCES_LIB=$(XERCES_LIB) >> $(GDAL_OPT)
     echo xerces - $(XERCES_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
-    echo ILI_ENABLED = YES >> $(GDAL_OPT)
 !ENDIF
 !IFDEF GDAL_EXPAT
-    echo EXPAT_DIR=$(BASE_DIR)\$(EXPAT_DIR) >> $(GDAL_OPT)
-    echo EXPAT_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo EXPAT_LIB=$(LIBEXPAT_LIB) >> $(GDAL_OPT)
     echo expat - $(LIBEXPAT_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OGDI
-    echo OGDIDIR=$(BASE_DIR)\$(OGDI_DIR) >> $(GDAL_OPT)
-    echo OGDI_INCLUDE=$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo OGDILIB=$(OGDI_LIB) >> $(GDAL_OPT)
     echo ogdi - $(OGDI_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_LIBWEBP
-    echo WEBP_ENABLED = YES >> $(GDAL_OPT)
-    echo WEBP_CFLAGS=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo WEBP_LIBS = $(LIBWEBP_LIB) >> $(GDAL_OPT)
     echo libwebp - $(LIBWEBP_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_LIBKML
 !IFDEF LIBKML_DIR
-    echo LIBKML_DIR=$(BASE_DIR)\$(LIBKML_DIR) >> $(GDAL_OPT)
-    echo LIBKML_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo LIBKML_LIBS=$(LIBKML_LIBS) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) >> $(GDAL_OPT)
     echo boost - $(BOOST_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
     echo kml - $(LIBKML_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !ENDIF
 !IFDEF GDAL_PDF
-    rem echo POPPLER_ENABLED = YES >> $(GDAL_OPT)
-    rem echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
-    rem echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
-    rem echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
-!IFDEF POPPLER_MINOR_VERSION
-    rem echo POPPLER_MINOR_VERSION = $(POPPLER_MINOR_VERSION) >> $(GDAL_OPT)
-!ELSE
-    rem echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
-!ENDIF
-    rem echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
-    rem echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
     echo poppler - $(POPPLER_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_OPENJPEG
-    echo OPENJPEG_ENABLED = YES >> $(GDAL_OPT)
-    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include\openjpeg-2.4 >> $(GDAL_OPT)
-    echo OPENJPEG_LIB = $(OPENJPEG_LIB) >> $(GDAL_OPT)
     echo openjpeg - $(OPENJPEG_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF LIBTIFF_BRANCH
-    echo TIFF_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
-    echo TIFF_LIB=$(OUTPUT_DIR)\lib\tiff.lib >> $(GDAL_OPT)
-    echo TIFF_OPTS=-DBIGTIFF_SUPPORT >> $(GDAL_OPT)
     echo libtiff - $(LIBTIFF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo zstd - $(ZSTD_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF GDAL_AMIGOCLOUD
-    echo AMIGOCLOUD_PLUGIN=YES >> $(GDAL_OPT)
-!ENDIF
-!IFDEF GDAL_GNM
-    echo INCLUDE_GNM_FRMTS=YES >> $(GDAL_OPT)
+!IFDEF GDAL_GEOTIFF
+    echo libgeotiff - $(LIBGEOTIFF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_FITS
     echo cfitsio - $(FITS_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
@@ -2528,22 +2445,146 @@ $(GDAL_OPT):
     echo netcdf - $(NETCDF_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IF DEFINED(GDAL_PROJ9)
+    echo proj - $(PROJ9_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ELSEIF DEFINED(GDAL_PROJ7)
+    echo proj - $(PROJ7_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ELSEIF DEFINED(GDAL_PROJ6)
+    echo proj - $(PROJ6_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ELSE
+    echo proj - $(PROJ4_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+
+$(GDAL_OPT): gdal-deps
+!IFDEF GDAL_ENABLED
+!IF EXIST ($(BASE_DIR)\$(GDAL_DIR)\gdal)
+	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR)\gdal >> $(GDAL_OPT)
+!ELSE
+	echo GDAL_ROOT=$(BASE_DIR)\$(GDAL_DIR) >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_GEOS
+    echo GEOS_DIR=$(BASE_DIR)\$(GEOS_DIR) >> $(GDAL_OPT)
+    echo GEOS_CFLAGS=-I$(OUTPUT_DIR)\include -DHAVE_GEOS >> $(GDAL_OPT)
+    echo GEOS_LIB=$(GEOS_LIB) >> $(GDAL_OPT)
+!ENDIF    
+    echo MSVC_VER=$(MSVC_VER) >> $(GDAL_OPT)
+!IFDEF WIN64
+	echo WIN64=$(WIN64) >> $(GDAL_OPT)
+!ENDIF
+!IFDEF DEBUG
+    echo DEBUG=$(DEBUG) >> $(GDAL_OPT)
+    echo POSTFIX= >> $(GDAL_OPT)
+    echo OPTFLAGS= /nologo /MP /MD /Zi /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(GDAL_OPT) 
+!ELSE
+!IFDEF GDAL_RELEASE_PDB
+    echo OPTFLAGS= /nologo /MD /Zi /EHsc /O2 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE >> $(GDAL_OPT)
+    echo WITH_PDB=1 >> $(GDAL_OPT)  
+!ENDIF    
+!ENDIF
+    echo SETARGV=$(SETARGV) >> $(GDAL_OPT)
+!IFDEF GDAL_POSTGIS
+    echo PG_INC_DIR = $(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo PG_LIB = $(PGSQL_LIB) wsock32.lib >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_JAVA
+    echo JAVA_HOME=$(JAVA_HOME) >> $(GDAL_OPT)
+    echo ANT_HOME=$(ANT_HOME) >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_CURL
+    echo CURL_DIR= $(BASE_DIR)\$(CURL_DIR) >> $(GDAL_OPT)
+    echo CURL_INC = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo CURL_LIB = $(CURL_LIB) wsock32.lib wldap32.lib winmm.lib >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_SQLITE
+    echo SQLITE_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo SQLITE_LIB=$(SQLITE_LIB) >> $(GDAL_OPT)
+    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_SPATIALITE
+    echo SQLITE_INC=-I$(OUTPUT_DIR)\include -DHAVE_SPATIALITE -DSPATIALITE_AMALGAMATION >> $(GDAL_OPT)
+    echo SQLITE_LIB=$(SQLITE_LIB) $(SPATIALITE_LIB) >> $(GDAL_OPT)
+    echo SQLITE_HAS_COLUMN_METADATA=yes >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_KMLSUPEROVERLAY
+!IF EXIST ($(GDAL_DIR)\frmts\kmlsuperoverlay)
+    echo KMLSUPEROVERLAY_SUPPORTED = YES >> $(GDAL_OPT)
+    echo MINIZIP_INCLUDE = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo MINIZIP_LIBRARY = $(MINIZIP_LIB) >> $(GDAL_OPT)
+!ENDIF
+!ENDIF
+!IFDEF GDAL_MYSQL
+    echo MYSQL_INC_DIR=$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo MYSQL_LIB=$(MYSQL_LIB) advapi32.lib >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_XERCES
+    echo XERCES_DIR=$(BASE_DIR)\$(XERCES_DIR) >> $(GDAL_OPT)
+    echo XERCES_INCLUDE=-I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\xercesc >> $(GDAL_OPT)
+    echo XERCES_LIB=$(XERCES_LIB) >> $(GDAL_OPT)
+    echo ILI_ENABLED = YES >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_EXPAT
+    echo EXPAT_DIR=$(BASE_DIR)\$(EXPAT_DIR) >> $(GDAL_OPT)
+    echo EXPAT_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo EXPAT_LIB=$(LIBEXPAT_LIB) >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_OGDI
+    echo OGDIDIR=$(BASE_DIR)\$(OGDI_DIR) >> $(GDAL_OPT)
+    echo OGDI_INCLUDE=$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo OGDILIB=$(OGDI_LIB) >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_LIBWEBP
+    echo WEBP_ENABLED = YES >> $(GDAL_OPT)
+    echo WEBP_CFLAGS=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo WEBP_LIBS = $(LIBWEBP_LIB) >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_LIBKML
+!IFDEF LIBKML_DIR
+    echo LIBKML_DIR=$(BASE_DIR)\$(LIBKML_DIR) >> $(GDAL_OPT)
+    echo LIBKML_INCLUDE=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo LIBKML_LIBS=$(LIBKML_LIBS) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) >> $(GDAL_OPT)
+!ENDIF
+!ENDIF
+!IFDEF GDAL_PDF
+    rem echo POPPLER_ENABLED = YES >> $(GDAL_OPT)
+    rem echo POPPLER_CFLAGS = -I$(OUTPUT_DIR)\include -I$(OUTPUT_DIR)\include\poppler >> $(GDAL_OPT)
+    rem echo POPPLER_HAS_OPTCONTENT = YES >> $(GDAL_OPT)
+    rem echo POPPLER_MAJOR_VERSION = 0 >> $(GDAL_OPT)
+!IFDEF POPPLER_MINOR_VERSION
+    rem echo POPPLER_MINOR_VERSION = $(POPPLER_MINOR_VERSION) >> $(GDAL_OPT)
+!ELSE
+    rem echo POPPLER_MINOR_VERSION = 89 >> $(GDAL_OPT)
+!ENDIF
+    rem echo POPPLER_BASE_STREAM_HAS_TWO_ARGS = YES >> $(GDAL_OPT)
+    rem echo POPPLER_LIBS = $(POPPLER_LIB) $(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) advapi32.lib gdi32.lib >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_OPENJPEG
+    echo OPENJPEG_ENABLED = YES >> $(GDAL_OPT)
+    echo OPENJPEG_CFLAGS = -I$(OUTPUT_DIR)\include\openjpeg-2.4 >> $(GDAL_OPT)
+    echo OPENJPEG_LIB = $(OPENJPEG_LIB) >> $(GDAL_OPT)
+!ENDIF
+!IFDEF LIBTIFF_BRANCH
+    echo TIFF_INC=-I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
+    echo TIFF_LIB=$(OUTPUT_DIR)\lib\tiff.lib >> $(GDAL_OPT)
+    echo TIFF_OPTS=-DBIGTIFF_SUPPORT >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_AMIGOCLOUD
+    echo AMIGOCLOUD_PLUGIN=YES >> $(GDAL_OPT)
+!ENDIF
+!IFDEF GDAL_GNM
+    echo INCLUDE_GNM_FRMTS=YES >> $(GDAL_OPT)
+!ENDIF
+!IF DEFINED(GDAL_PROJ9)
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj9 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ9_LIB) >> $(GDAL_OPT)
-    echo proj - $(PROJ9_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSEIF DEFINED(GDAL_PROJ7)
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj7 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ7_LIB) >> $(GDAL_OPT)
-    echo proj - $(PROJ7_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSEIF DEFINED(GDAL_PROJ6)
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include\proj6 >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ6_LIB) >> $(GDAL_OPT)
-    echo proj - $(PROJ6_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ELSE
     echo PROJ_INCLUDE = -I$(OUTPUT_DIR)\include >> $(GDAL_OPT)
     echo PROJ_LIBRARY = $(PROJ4_LIB) >> $(GDAL_OPT)
     echo PROJ_FLAGS = -DPROJ_STATIC -DPROJ_VERSION=4 >> $(GDAL_OPT)
-    echo proj - $(PROJ4_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !ENDIF
 
@@ -2620,7 +2661,7 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
     @echo $(GDAL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL) $(GDAL_OPT)
+gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL) gdal-deps
 !IFDEF GDAL_ENABLED
 	set JAVA_HOME=$(JAVA_HOME)
 !IFDEF GDAL_OGDI
