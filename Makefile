@@ -412,7 +412,7 @@ GDALTEST_SCRIPT =run_all.py
 !ENDIF
 
 !IFNDEF SWIG_VER
-SWIG_VER = 1.3.39
+SWIG_VER = 4.0.2
 !ENDIF
 
 SWIG_SRC = https://sourceforge.net/projects/swig/files/swigwin/swigwin-$(SWIG_VER)/swigwin-$(SWIG_VER).zip/download
@@ -2590,7 +2590,7 @@ $(GDAL_OPT): gdal-deps
 
 $(GDAL_VERSION_H): $(GDAL_LIB)
 
-$(GDAL_VERSION_TXT): $(GDAL_LIB) $(ECW_DLL) $(FILEGDBAPI_DLL)
+$(GDAL_VERSION_TXT): gdal-deps $(ECW_DLL) $(FILEGDBAPI_DLL)
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\share
@@ -2600,7 +2600,7 @@ $(GDAL_VERSION_TXT): $(GDAL_LIB) $(ECW_DLL) $(FILEGDBAPI_DLL)
 	gdal\apps\ogrinfo --formats > $(OUTPUT_DIR)\doc\ogr_formats.txt
     cd $(BASE_DIR)
 
-$(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
+gdal-old: $(GDAL_OPT) $(GDAL_DEPS)
 !IFDEF GDAL_ENABLED
 !IFDEF GDAL_OGDI
     if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
@@ -2661,7 +2661,7 @@ $(GDAL_LIB): $(GDAL_OPT) $(GDAL_DEPS)
     @echo $(GDAL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-gdal-cmake: $(GDAL_DEPS) $(SWIG_INSTALL) gdal-deps
+$(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 !IFDEF GDAL_ENABLED
 	set JAVA_HOME=$(JAVA_HOME)
 !IFDEF GDAL_OGDI
@@ -4386,7 +4386,9 @@ gdal-clean:
     -del $(GDAL_LIB)
 !ENDIF
 
-gdal: gdal-clean $(GDAL_LIB)   
+gdal: gdal-clean gdal-old 
+
+gdal-cmake: gdal-clean $(GDAL_LIB)  
 
 $(OUTPUT_DIR):
     if exist $(OUTPUT_DIR).zip 7z x -y $(OUTPUT_DIR).zip
@@ -4566,7 +4568,7 @@ gdal-python-bdist: $(GDAL_LIB)
 	cd $(BASE_DIR)  
 !ENDIF
 
-gdal-python-cmake-bdist: $(GDAL_LIB)
+gdal-python-cmake-bdist:
 !IFDEF GDAL_PYTHON
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
