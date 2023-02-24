@@ -94,6 +94,7 @@
     <!-- Common -->
         <file src="..\release-1928\bin\proj9\share\*" target="build\gdal\share" />
         <file src="..\release-1928\bin\gdal-data\*.*" target="build\gdal\data" />
+		<file src="..\release-1928\bin\curl-ca-bundle.crt" target="build" />
         <file src="..\license.txt" target="build\gdal" />
         <file src="..\GDALLicense.rtf" target="build\gdal" />
         <file src="..\GISInternalsLicense.rtf" target="build\gdal" />

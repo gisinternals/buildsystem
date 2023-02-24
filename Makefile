@@ -2661,9 +2661,36 @@ gdal-old: $(GDAL_OPT) $(GDAL_DEPS)
     @echo $(GDAL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+gdal-mssql-odbc: $(GDAL_LIB)
+!IFDEF GDAL_MSSQL_MSODBC
+    cd $(GDAL_DIR)
+	cd $(CMAKE_BUILDDIR)
+	$(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" $(GDAL_CMAKE_OPT) "-DOGR_ENABLE_DRIVER_MSSQLSPATIAL_PLUGIN=ON" "-DGDAL_USE_MSSQL_ODBC=ON" "-DGDAL_USE_MSSQL_NCLI=OFF"
+	if exist gdalplugins\$(BUILD_CONFIG)\ogr_MSSQLSpatial.dll del gdalplugins\$(BUILD_CONFIG)\ogr_MSSQLSpatial.dll
+	$(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target ogr_MSSQLSpatial
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	xcopy /Y gdalplugins\$(BUILD_CONFIG)\ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	cd $(BASE_DIR)
+!ENDIF
+
+gdal-mssql-ncli: $(GDAL_LIB)
+!IFDEF GDAL_MSSQL_NCLI
+    cd $(GDAL_DIR)
+	cd $(CMAKE_BUILDDIR)
+	$(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" $(GDAL_CMAKE_OPT) "-DOGR_ENABLE_DRIVER_MSSQLSPATIAL_PLUGIN=ON" "-DGDAL_USE_MSSQL_NCLI=ON" "-DGDAL_USE_MSSQL_ODBC=OFF"
+	if exist gdalplugins\$(BUILD_CONFIG)\ogr_MSSQLSpatial.dll del gdalplugins\$(BUILD_CONFIG)\ogr_MSSQLSpatial.dll
+	$(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target ogr_MSSQLSpatial
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
+	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional\sqlncli mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional\sqlncli
+	xcopy /Y gdalplugins\$(BUILD_CONFIG)\ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional\sqlncli
+	cd $(BASE_DIR)
+!ENDIF
+
 $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 !IFDEF GDAL_ENABLED
 	set JAVA_HOME=$(JAVA_HOME)
+	SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+	SET USE_PATH_FOR_GDAL_PYTHON=YES
 !IFDEF GDAL_OGDI
     if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
 !ENDIF
@@ -2678,7 +2705,7 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 !IFNDEF NO_BUILD
     -xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
 	-xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.inc $(OUTPUT_DIR)\include
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" $(GDAL_CMAKE_OPT)
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" $(GDAL_CMAKE_OPT) "-DOGR_ENABLE_DRIVER_MSSQLSPATIAL_PLUGIN=OFF" "-DGDAL_USE_MSSQL_ODBC=OFF" "-DGDAL_USE_MSSQL_NCLI=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -4154,13 +4181,14 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(LIBGEOTIFF_LIB)
+test: $(GDAL_LIB)
 
 test2: $(SPATIALITE_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
+	git config --global core.autocrlf false
+	if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
 	cd $(MAPSERVER_DIR) 
     git reset --hard HEAD
     git fetch
@@ -4173,6 +4201,7 @@ update-ms:
     
 update-mapcache:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
+	git config --global core.autocrlf false
     if not exist $(MAPCACHE_DIR) git clone -b $(MAPCACHE_BRANCH) $(MAPCACHE_SRC) $(MAPCACHE_DIR)
 	cd $(MAPCACHE_DIR) 
     git reset --hard HEAD
@@ -4184,6 +4213,7 @@ update-mapcache:
     cd $(BASE_DIR)
 
 update-gdal:
+    git config --global core.autocrlf false
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
     cd $(GDAL_DIR)
     git reset --hard HEAD
@@ -4388,7 +4418,7 @@ gdal-clean:
 
 gdal: gdal-clean gdal-old 
 
-gdal-cmake: gdal-clean $(GDAL_LIB)  
+gdal-cmake: gdal-clean $(GDAL_LIB) gdal-mssql-odbc gdal-mssql-ncli
 
 $(OUTPUT_DIR):
     if exist $(OUTPUT_DIR).zip 7z x -y $(OUTPUT_DIR).zip
@@ -4607,12 +4637,15 @@ gdal-autotest:
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
     SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
-    SET DO_NOT_FAIL_ON_RECODE_ERRORS="YES"
-    SET GDAL_HTTP_UNSAFESSL="YES"
+    SET DO_NOT_FAIL_ON_RECODE_ERRORS=YES
+    SET GITHUB_WORKFLOW=Windows builds
+    SET CI=YES
+    SET GDAL_HTTP_UNSAFESSL=YES
     rem SET OGR_PG_CONNECTION_STRING=dbname=autotest$(CMAKE_BUILDDIR) host=127.0.0.1 port=5432 user=postgres
     rem SET PG_USE_COPY=YES
     rem SET PG_USE_POSTGIS=YES
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
+    SET USE_PATH_FOR_GDAL_PYTHON=YES
     cd $(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\autotest
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs
     cd $(BASE_DIR)
