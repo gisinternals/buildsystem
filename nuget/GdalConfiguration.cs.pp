@@ -106,6 +106,9 @@ namespace $rootnamespace$
                 Environment.SetEnvironmentVariable("PROJ_LIB", projSharePath);
                 Gdal.SetConfigOption("PROJ_LIB", projSharePath);
                 OSGeo.OSR.Osr.SetPROJSearchPaths(new[] { projSharePath });
+				
+				string certificateFile = Path.Combine(gdalPath, "curl-ca-bundle.crt");
+                Gdal.SetConfigOption("GDAL_CURL_CA_BUNDLE", certificateFile);
 
                 _usable = true;
             }

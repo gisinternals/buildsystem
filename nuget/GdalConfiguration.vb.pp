@@ -106,6 +106,8 @@ Namespace $rootnamespace$
                 Environment.SetEnvironmentVariable("PROJ_LIB", projSharePath)
                 Gdal.SetConfigOption("PROJ_LIB", projSharePath)
                 OSGeo.OSR.Osr.SetPROJSearchPaths({projSharePath})
+				Dim certificateFile As String = Path.Combine(gdalPath, "curl-ca-bundle.crt")
+                Gdal.SetConfigOption("GDAL_CURL_CA_BUNDLE", certificateFile)
                 _usable = True
             Catch e As Exception
                 _usable = False

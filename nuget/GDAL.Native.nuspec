@@ -98,6 +98,7 @@
         <file src="..\license.txt" target="build\gdal" />
         <file src="..\GDALLicense.rtf" target="build\gdal" />
         <file src="..\GISInternalsLicense.rtf" target="build\gdal" />
+		<file src="..\release-1928\bin\curl-ca-bundle.crt" target="build\gdal" />
         <file src="GDAL.Native.targets" target="build\netstandard2.0\"/>
   </files>
 </package>
