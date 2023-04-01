@@ -4839,10 +4839,12 @@ gdal-nuget:
     nuget pack GDAL.Native.nuspec -version $(GDAL_RELEASE_VER)
     nuget pack GDAL.Plugins.nuspec -version $(GDAL_RELEASE_VER)
     nuget pack GDAL.Linux.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.Applications.nuspec -version $(GDAL_RELEASE_VER)
     sign GDAL.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Native.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Linux.$(GDAL_RELEASE_VER).nupkg
+    sign GDAL.Applications.$(GDAL_RELEASE_VER).nupkg
     cd $(BASE_DIR)
 
 
@@ -4851,5 +4853,6 @@ gdal-nuget-push:
     nuget setApiKey $(NUGET_GDAL_API_KEY)
     nuget push GDAL.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+    nuget push GDAL.Applications.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
 

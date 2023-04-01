@@ -1,0 +1,23 @@
+# Ignore all files starting with "release"
+release*
+
+# Ignore folders starting with "release"
+/release*/
+
+# Ignore any files or folders inside a release folder
+/release*/**/*
+
+# Ignore nuget packages
+/nuget/*.nupkg
+
+# Ignore all files in the src folder and its subfolders
+/src/**
+
+# Ignore FileGDB SDK
+/support/FileGDB*
+
+# Ignore ECW SDK
+/support/ECW*
+
+# Ignore archives in support
+/support/*.zip

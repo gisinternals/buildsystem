@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Reference Include="gdal_csharp" Condition="'$(Platform)' == 'x86'">
+      <HintPath>$(MSBuildThisFileDirectory)x86\gdal_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ogr_csharp" Condition="'$(Platform)' == 'x86'">
+      <HintPath>$(MSBuildThisFileDirectory)x86\ogr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="osr_csharp" Condition="'$(Platform)' == 'x86'">
+      <HintPath>$(MSBuildThisFileDirectory)x86\osr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdalconst_csharp" Condition="'$(Platform)' == 'x86'">
+      <HintPath>$(MSBuildThisFileDirectory)x86\gdalconst_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdal_csharp" Condition="'$(Platform)' == 'x64'">
+      <HintPath>$(MSBuildThisFileDirectory)x64\gdal_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ogr_csharp" Condition="'$(Platform)' == 'x64'">
+      <HintPath>$(MSBuildThisFileDirectory)x64\ogr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="osr_csharp" Condition="'$(Platform)' == 'x64'">
+      <HintPath>$(MSBuildThisFileDirectory)x64\osr_csharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gdalconst_csharp" Condition="'$(Platform)' == 'x64'">
+      <HintPath>$(MSBuildThisFileDirectory)x64\gdalconst_csharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

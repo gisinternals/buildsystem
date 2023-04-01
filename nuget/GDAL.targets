@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="PlatformCheck" BeforeTargets="InjectReference"
+    Condition="(('$(Platform)' != 'x86') AND  ('$(Platform)' != 'x64'))">
+    <Error  Text="$(MSBuildThisFileName) does not work correctly on '$(Platform)' platform. You need to specify platform (x86 or x64)." />
+  </Target>
+  <Target Name="InjectReference" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup Condition="('$(Platform)' == 'x86' or '$(Platform)' == 'x64')">
+      <Reference Include="gdal_csharp">
+        <HintPath>$(MSBuildThisFileDirectory)$(Platform)\gdal_csharp.dll</HintPath>
+      </Reference>
+      <Reference Include="ogr_csharp">
+        <HintPath>$(MSBuildThisFileDirectory)$(Platform)\ogr_csharp.dll</HintPath>
+      </Reference>
+      <Reference Include="osr_csharp">
+        <HintPath>$(MSBuildThisFileDirectory)$(Platform)\osr_csharp.dll</HintPath>
+      </Reference>
+      <Reference Include="gdalconst_csharp">
+        <HintPath>$(MSBuildThisFileDirectory)$(Platform)\gdalconst_csharp.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+  </Target>
+</Project>
