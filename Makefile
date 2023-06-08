@@ -2249,6 +2249,7 @@ $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
     xcopy /Y *.exe $(OUTPUT_DIR)\bin
     xcopy /Y *.lib $(OUTPUT_DIR)\lib
     xcopy /Y sqlite3.h $(OUTPUT_DIR)\include
+    xcopy /Y sqlite3ext.h $(OUTPUT_DIR)\include
     copy /Y fts5*.h $(OUTPUT_DIR)\include
     copy /Y $(SQLITE_LIB) $(OUTPUT_DIR)\lib\sqlite3_i.lib
 !ENDIF
