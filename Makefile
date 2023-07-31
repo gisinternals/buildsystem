@@ -2782,7 +2782,8 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
     xcopy /Y install\share\csharp\*_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y install\share\csharp\*_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
 	if not exist $(OUTPUT_DIR)\bin\gdal\java mkdir $(OUTPUT_DIR)\bin\gdal\java
-    xcopy /Y install\share\java\gdalalljni.dll $(OUTPUT_DIR)\bin\gdal\java
+    if exist install\share\java\gdalalljni.dll xcopy /Y install\share\java\gdalalljni.dll $(OUTPUT_DIR)\bin\gdal\java
+	if exist install\lib\jni\gdalalljni.dll xcopy /Y install\lib\jni\gdalalljni.dll $(OUTPUT_DIR)\bin\gdal\java
     xcopy /Y install\share\java\*.jar $(OUTPUT_DIR)\bin\gdal\java
 	copy /Y install\share\java\gdal-$(GDAL_VER).jar $(OUTPUT_DIR)\bin\gdal\java\gdal.jar
 	xcopy /Y install\share\java\*.pom $(OUTPUT_DIR)\bin\gdal\java
