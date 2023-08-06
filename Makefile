@@ -4860,6 +4860,8 @@ mapmanager-installer:
 !ENDIF
 !IFNDEF NO_COPY
 	$(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+	if not exist $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+    xcopy /Y $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
