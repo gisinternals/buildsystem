@@ -735,7 +735,10 @@ BOOST_HEADERS = $(OUTPUT_DIR)\include\boost\version.hpp
 OGDI_LIB = $(OUTPUT_DIR)\lib\ogdi.lib
 ECW_DLL = $(OUTPUT_DIR)\bin\NCSEcw.dll
 FILEGDBAPI_DLL = $(OUTPUT_DIR)\bin\FileGDBAPI.dll
-LIBWEBP_LIB = $(OUTPUT_DIR)\lib\webp.lib
+LIBWEBP_LIB = $(OUTPUT_DIR)\lib\libwebp.lib
+!IFDEF GDAL_LIBWEBP
+LIBSHARPYUV_LIB = $(OUTPUT_DIR)\lib\libsharpyuv.lib
+!ENDIF
 ZSTD_LIB = $(OUTPUT_DIR)\lib\zstd_static.lib
 
 #installers (with separate licenses)
@@ -754,7 +757,7 @@ DEFAULT_TARGETS =
 
 # set up gdal configuration
 GDAL_DEPS = $(OUTPUT_DIR) $(MSVCRT_DLL) $(LIBPNG_LIB)
-GDAL_CMAKE_OPT = "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) advapi32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DGDAL_ENABLE_DRIVER_PCIDSK_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PCRASTER_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PNG_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WEBP_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WMS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_CAD_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_VFK_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_XLS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_OGDI_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_JP2OPENJPEG_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_LIBKML_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_MYSQL_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_PG_PLUGIN=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)"
+GDAL_CMAKE_OPT = "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) $(LIBSHARPYUV_LIB) advapi32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DGDAL_ENABLE_DRIVER_PCIDSK_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PCRASTER_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PNG_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WEBP_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WMS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_CAD_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_VFK_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_XLS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_OGDI_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_JP2OPENJPEG_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_LIBKML_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_MYSQL_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_PG_PLUGIN=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)"
 
 !IFDEF GDAL_GEOS
 GDAL_DEPS = $(GDAL_DEPS) $(GEOS_LIB)
@@ -852,7 +855,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(NETCDF_LIB)
 !ENDIF
 
 !IFDEF GDAL_LIBWEBP
-GDAL_DEPS = $(GDAL_DEPS) $(LIBWEBP_LIB)
+GDAL_DEPS = $(GDAL_DEPS) $(LIBWEBP_LIB) $(LIBSHARPYUV_LIB)
 !ENDIF
 
 !IFDEF GDAL_OGDI
@@ -2312,6 +2315,7 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
 	echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
     echo OPTFLAGS= /nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
     powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
+	powershell -Command "(gc makefile.vc) -replace 'libminizip.lib', 'minizip.lib' | Out-File -encoding ASCII makefile.vc
     cd src
     powershell -Command "(gc freexl.c) -replace 'round \(double num\)', 'round_unused (double num)' | Out-File -encoding ASCII freexl.c"
     cd ..
@@ -3404,9 +3408,12 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\*.exe $(OUTPUT_DIR)\bin\ms\apps
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\mapserver.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapserver*.h $(OUTPUT_DIR)\include
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\map*.h $(OUTPUT_DIR)\include
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\cgiutil.h $(OUTPUT_DIR)\include
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\hittest.h $(OUTPUT_DIR)\include
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\map*.h $(OUTPUT_DIR)\include
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\cgiutil.h $(OUTPUT_DIR)\include
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\hittest.h $(OUTPUT_DIR)\include
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\src\map*.h $(OUTPUT_DIR)\include
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\src\cgiutil.h $(OUTPUT_DIR)\include
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\src\hittest.h $(OUTPUT_DIR)\include
 !IFDEF MS_RELEASE_PDB
     xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\$(BUILD_CONFIG)\mapserver.pdb $(OUTPUT_DIR)\bin
 !ENDIF
@@ -3423,24 +3430,33 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
 !ENDIF
 !IFDEF MS_CSHARP
     if not exist $(OUTPUT_DIR)\bin\ms\csharp mkdir $(OUTPUT_DIR)\bin\ms\csharp
-    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\csharp
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\*.dll $(OUTPUT_DIR)\bin\ms\csharp
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\*.exe $(OUTPUT_DIR)\bin\ms\csharp
+    -xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\*.exe $(OUTPUT_DIR)\bin\ms\csharp
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\csharp\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\csharp\*.dll $(OUTPUT_DIR)\bin\ms\csharp
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\csharp\*.exe $(OUTPUT_DIR)\bin\ms\csharp
 !IFDEF MS_RELEASE_PDB
-    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\$(BUILD_CONFIG)\*.pdb $(OUTPUT_DIR)\bin\ms\csharp
+    -xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\csharp\$(BUILD_CONFIG)\*.pdb $(OUTPUT_DIR)\bin\ms\csharp
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\csharp\$(BUILD_CONFIG)\*.pdb $(OUTPUT_DIR)\bin\ms\csharp
 !ENDIF
 !ENDIF
 !IFDEF MS_JAVA
     if not exist $(OUTPUT_DIR)\bin\ms\java mkdir $(OUTPUT_DIR)\bin\ms\java
-    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\java\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\java
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\java\*.jar $(OUTPUT_DIR)\bin\ms\java
+    -xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\java\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\java
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\java\*.jar $(OUTPUT_DIR)\bin\ms\java
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\java\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin\ms\java
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\java\*.jar $(OUTPUT_DIR)\bin\ms\java
 !ENDIF
 !IFDEF MS_PYTHON
     if not exist $(OUTPUT_DIR)\bin\ms\python mkdir $(OUTPUT_DIR)\bin\ms\python
 	if not exist $(OUTPUT_DIR)\lib\ms-python mkdir $(OUTPUT_DIR)\lib\ms-python
-    xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\mapscript.py $(OUTPUT_DIR)\bin\ms\python
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)\*.pyd $(OUTPUT_DIR)\bin\ms\python
-	xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)\*.lib $(OUTPUT_DIR)\lib\ms-python
+    -xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\mapscript.py $(OUTPUT_DIR)\bin\ms\python
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)\*.pyd $(OUTPUT_DIR)\bin\ms\python
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)\*.lib $(OUTPUT_DIR)\lib\ms-python
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\python\mapscript.py $(OUTPUT_DIR)\bin\ms\python
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\python\$(BUILD_CONFIG)\*.pyd $(OUTPUT_DIR)\bin\ms\python
+	-xcopy /Y $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\python\$(BUILD_CONFIG)\*.lib $(OUTPUT_DIR)\lib\ms-python
 !ENDIF
 	cd $(OUTPUT_DIR)\bin
 	ms\apps\mapserv -v > $(OUTPUT_DIR)\doc\ms_version.txt
@@ -4244,7 +4260,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(GDAL_LIB)
+test: $(LIBWEBP_LIB)
 
 test2: $(SPATIALITE_LIB)
 
@@ -4730,7 +4746,9 @@ ms-python-bdist: $(MAPSERVER_LIB)
     SET DISTUTILS_USE_SDK=1
     SET MSSdk=1
     SET LIB=%LIB%;$(OUTPUT_DIR)\lib
-	cd $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)
+	
+	-cd $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\mapscript\python\$(BUILD_CONFIG)
+	-cd $(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\src\mapscript\python\$(BUILD_CONFIG)
 !IFNDEF NO_CLEAN
 	-rmdir /s /q dist
 !ENDIF
