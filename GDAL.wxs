@@ -668,6 +668,9 @@
 					<Component Id="proj_9_1.dll" Guid="*">
                         <File Id="proj_9_1.dll" Name="proj_9_1.dll" Source="$(var.TargetDir)\proj_9_1.dll" Vital="yes"/>
                     </Component>
+					<Component Id="proj_9_3.dll" Guid="*">
+                        <File Id="proj_9_3.dll" Name="proj_9_3.dll" Source="$(var.TargetDir)\proj_9_3.dll" Vital="yes"/>
+                    </Component>
                     <Component Id="spatialite.dll" Guid="*">
                         <File Id="spatialite.dll" Name="spatialite.dll" Source="$(var.TargetDir)\spatialite.dll" Vital="yes"/>
                     </Component>
@@ -1008,6 +1011,7 @@
             <ComponentRef Id="proj_4_9.dll" />
             <ComponentRef Id="proj_7_2.dll" />
 			<ComponentRef Id="proj_9_1.dll" />
+			<ComponentRef Id="proj_9_3.dll" />
             <ComponentRef Id="spatialite.dll" />
 			<ComponentRef Id="sqlite3.dll" />
             <ComponentRef Id="sqlite3.exe" />
