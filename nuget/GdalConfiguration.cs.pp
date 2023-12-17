@@ -68,8 +68,7 @@ namespace $rootnamespace$
                     return;
                 }
 
-                string executingAssemblyFile = new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath;
-                executingDirectory = Path.GetDirectoryName(executingAssemblyFile);
+                executingDirectory = AppContext.BaseDirectory;
 
                 if (string.IsNullOrEmpty(executingDirectory))
                     throw new InvalidOperationException("cannot get executing directory");

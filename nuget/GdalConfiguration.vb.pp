@@ -74,8 +74,7 @@ Namespace $rootnamespace$
                     Return
                 End If
 
-                Dim executingAssemblyFile As String = New Uri(Assembly.GetExecutingAssembly.GetName.CodeBase).LocalPath
-                executingDirectory = Path.GetDirectoryName(executingAssemblyFile)
+                executingDirectory = AppContext.BaseDirectory
                 If String.IsNullOrEmpty(executingDirectory) Then
                     Throw New InvalidOperationException("cannot get executing directory")
                 End If
