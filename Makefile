@@ -4807,7 +4807,7 @@ package-src:
 package-dev:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
     if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.zip $(OUTPUT_DIR)\install\*.bz2
-    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) Makefile config.opt readme.txt changelog.txt license.txt *.rtf
+    7z a -tzip -xr!*.cmake -xr!*.pc $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) Makefile config.opt readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
     
@@ -4819,7 +4819,7 @@ package-dev-x64:
     cd $(GDAL_DIR)
     nmake /f makefile.vc clean EXT_NMAKE_OPT=$(OUTPUT_DIR)\gdal.opt
     cd $(BASE_DIR)
-    7z a -tzip $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(OUTPUT_DIR)-x64 $(MAPSERVER_DIR) $(GDAL_DIR) $(REGEX_DIR) $(SWIG_EXE) $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\Lib Makefile config.opt readme.txt changelog.txt license.txt *.rtf
+    7z a -tzip -xr!*.cmake -xr!*.pc $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(OUTPUT_DIR)-x64 $(MAPSERVER_DIR) $(GDAL_DIR) $(REGEX_DIR) $(SWIG_EXE) $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\Lib Makefile config.opt readme.txt changelog.txt license.txt *.rtf
     
 install: package package-dev
     xcopy /Y $(OUTPUT_DIR).zip $(INSTALL_DIR)
