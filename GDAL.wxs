@@ -728,6 +728,9 @@
                     <Component Id="gdal_create.exe" Guid="*">
                         <File Id="gdal_create.exe" Name="gdal_create.exe" Source="$(var.TargetDir)\gdal\apps\gdal_create.exe" />
                     </Component>
+					<Component Id="gdal_footprint.exe" Guid="*">
+                        <File Id="gdal_footprint.exe" Name="gdal_footprint.exe" Source="$(var.TargetDir)\gdal\apps\gdal_footprint.exe" />
+                    </Component>
                     <Component Id="gdal_grid.exe" Guid="*">
                         <File Id="gdal_grid.exe" Name="gdal_grid.exe" Source="$(var.TargetDir)\gdal\apps\gdal_grid.exe" />
                     </Component>
@@ -799,6 +802,9 @@
                     </Component>
                     <Component Id="ogrtindex.exe" Guid="*">
                         <File Id="ogrtindex.exe" Name="ogrtindex.exe" Source="$(var.TargetDir)\gdal\apps\ogrtindex.exe" />
+                    </Component>
+					<Component Id="sozip.exe" Guid="*">
+                        <File Id="sozip.exe" Name="sozip.exe" Source="$(var.TargetDir)\gdal\apps\sozip.exe" />
                     </Component>
                     <Component Id="curl.exe" Guid="*">
                         <File Id="curl.exe" Name="curl.exe" Source="$(var.TargetDir)\curl.exe" />
@@ -1063,6 +1069,7 @@
             <Feature Id="GDALUtilities" Level="1" Title="GDAL Utilities" Display="expand" Description="GDAL Utilities">
                 <ComponentRef Id="gdal_contour.exe" />
                 <ComponentRef Id="gdal_create.exe" />
+				<ComponentRef Id="gdal_footprint.exe" />
                 <ComponentRef Id="gdal_grid.exe" />
                 <ComponentRef Id="gdal_rasterize.exe" />
                 <ComponentRef Id="gdal_translate.exe" />
@@ -1087,6 +1094,7 @@
                 <ComponentRef Id="ogrinfo.exe" />
                 <ComponentRef Id="ogrlineref.exe" />
                 <ComponentRef Id="ogrtindex.exe" />
+				<ComponentRef Id="sozip.exe" />
             </Feature>
             <Feature Id="PROJ4Utilities" Level="1" Title="Proj.4 Utilities" Display="expand" Description="Proj.4 Utilities">
                 <ComponentRef Id="cct.exe" />

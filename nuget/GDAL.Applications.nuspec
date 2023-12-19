@@ -16,60 +16,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\release-1928\bin\gdal\apps\gdaladdo.exe" target="build\gdal\x86" />
-    <file src="..\release-1928\bin\gdal\apps\gdalbuildvrt.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdaldem.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdalenhance.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdalinfo.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdallocationinfo.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdalmanage.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdalmdiminfo.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdalmdimtranslate.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdalsrsinfo.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdaltindex.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdaltransform.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdalwarp.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdal_contour.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdal_create.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdal_grid.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdal_rasterize.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdal_translate.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gdal_viewshed.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gnmanalyse.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\gnmmanage.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\nearblack.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\ogr2ogr.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\ogrinfo.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\ogrlineref.exe" target="build\gdal\x86" />
-	<file src="..\release-1928\bin\gdal\apps\ogrtindex.exe" target="build\gdal\x86" />
-	
-    <file src="..\release-1928-x64\bin\gdal\apps\gdaladdo.exe" target="build\gdal\x64" />
-    <file src="..\release-1928-x64\bin\gdal\apps\gdalbuildvrt.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdaldem.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdalenhance.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdalinfo.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdallocationinfo.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdalmanage.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdalmdiminfo.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdalmdimtranslate.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdalsrsinfo.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdaltindex.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdaltransform.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdalwarp.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdal_contour.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdal_create.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdal_grid.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdal_rasterize.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdal_translate.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gdal_viewshed.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gnmanalyse.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\gnmmanage.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\nearblack.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\ogr2ogr.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\ogrinfo.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\ogrlineref.exe" target="build\gdal\x64" />
-	<file src="..\release-1928-x64\bin\gdal\apps\ogrtindex.exe" target="build\gdal\x64" />
-	
+    <file src="..\release-1928\bin\gdal\apps\*.*" target="build\gdal\x86" />	
+    <file src="..\release-1928-x64\bin\gdal\apps\*.*" target="build\gdal\x64" />	
     <file src="Gdal.Applications.targets" target="build/netstandard2.0" />
   </files>
 </package>
