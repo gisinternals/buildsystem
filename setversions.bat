@@ -5,7 +5,7 @@ set gdal_major=3
 set gdal_minor=8
 set gdal_stable_tag=308
 set gdal_dev_tag=308
-set gdal_rel=1
+set gdal_rel=4
 
 set gdal_version=%gdal_major%-%gdal_minor%
 set gdal-release-ver=%gdal_major%.%gdal_minor%.%gdal_rel%
