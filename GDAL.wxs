@@ -614,19 +614,19 @@
                         <File Id="libcurl.dll" Name="libcurl.dll" Source="$(var.TargetDir)\libcurl.dll" Vital="yes"/>
                     </Component>
                     <?if $(sys.BUILDARCH) = x64?>
-                    <Component Id="libcrypto_1_1.dll" Guid="*">
-                        <File Id="libcrypto_1_1.dll" Name="libcrypto-1_1-x64.dll" Source="$(var.TargetDir)\libcrypto-1_1-x64.dll" Vital="yes"/>
+                    <Component Id="libcrypto_3.dll" Guid="*">
+                        <File Id="libcrypto_3.dll" Name="libcrypto-3-x64.dll" Source="$(var.TargetDir)\libcrypto-3-x64.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="libssl_1_1.dll" Guid="*">
-                        <File Id="libssl_1_1.dll" Name="libssl-1_1-x64.dll" Source="$(var.TargetDir)\libssl-1_1-x64.dll" Vital="yes"/>
+                    <Component Id="libssl_3.dll" Guid="*">
+                        <File Id="libssl_3.dll" Name="libssl-3-x64.dll" Source="$(var.TargetDir)\libssl-3-x64.dll" Vital="yes"/>
                     </Component>
                     
                     <?else?>
-                    <Component Id="libcrypto_1_1.dll" Guid="*">
-                        <File Id="libcrypto_1_1.dll" Name="libcrypto-1_1.dll" Source="$(var.TargetDir)\libcrypto-1_1.dll" Vital="yes"/>
+                    <Component Id="libcrypto_3.dll" Guid="*">
+                        <File Id="libcrypto_3.dll" Name="libcrypto-3.dll" Source="$(var.TargetDir)\libcrypto-3.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="libssl_1_1.dll" Guid="*">
-                        <File Id="libssl_1_1.dll" Name="libssl-1_1.dll" Source="$(var.TargetDir)\libssl-1_1.dll" Vital="yes"/>
+                    <Component Id="libssl_3.dll" Guid="*">
+                        <File Id="libssl_3.dll" Name="libssl-3.dll" Source="$(var.TargetDir)\libssl-3.dll" Vital="yes"/>
                     </Component>
                     
                     <?endif?>
@@ -1007,8 +1007,8 @@
             <ComponentRef Id="iconv_2.dll" />
             <ComponentRef Id="libcurl.dll" />
             <ComponentRef Id="curl_ca_bundle.crt" />
-            <ComponentRef Id="libssl_1_1.dll" />
-            <ComponentRef Id="libcrypto_1_1.dll" />
+            <ComponentRef Id="libssl_3.dll" />
+            <ComponentRef Id="libcrypto_3.dll" />
             <ComponentRef Id="libexpat.dll" />
             <ComponentRef Id="libpq.dll" />
             <ComponentRef Id="libmysql.dll" />

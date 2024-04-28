@@ -470,6 +470,8 @@ VCDIR=$(VCINSTALLDIR)
 SETARGV = "$(VCDIR)\lib\amd64\setargv.obj"
 !ELSE
 SETARGV = "$(VCDIR)\lib\setargv.obj"
+# last version that supports Win32
+MYSQL_BRANCH = mysql-cluster-8.1.0
 !ENDIF
 !ENDIF
 
@@ -1626,13 +1628,17 @@ $(ZLIB_LIB): $(MSVCRT_DLL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(ZLIB_DIR)\$(CMAKE_BUILDDIR)\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
-    xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
-    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
-    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
-    xcopy /Y /S install\*.pc $(OUTPUT_DIR)
+    rem xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+    rem xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    rem xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    -xcopy /Y /S $(OUTPUT_DIR)\share\*.pc $(OUTPUT_DIR)\lib
+	if exist $(OUTPUT_DIR)\share\pkgconfig rd /Q /S $(OUTPUT_DIR)\share\pkgconfig
+	if exist $(OUTPUT_DIR)\share\man rd /Q /S $(OUTPUT_DIR)\share\man
+	cd $(OUTPUT_DIR)\lib\pkgconfig
+	powershell -Command "(gc zlib.pc) -replace '-lz', '-lzlib' | Out-File -encoding ASCII zlib.pc"
     cd $(BASE_DIR)
 !ELSE
     @echo $(ZLIB_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1644,27 +1650,32 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
     cd $(BASE_DIR)\$(OPENSSL_DIR)
     git reset --hard HEAD
     git checkout $(OPENSSL_BRANCH)
+	if exist $(BASE_DIR)\$(OPENSSL_DIR)\install rd /Q /S $(BASE_DIR)\$(OPENSSL_DIR)\install
 !IFDEF WIN64
-    perl Configure VC-WIN64A no-asm enable-zlib --with-zlib-lib=$(ZLIB_LIB) -I$(OUTPUT_DIR)\include
+    perl Configure VC-WIN64A no-asm enable-zlib --with-zlib-lib=$(ZLIB_LIB) -I$(OUTPUT_DIR)\include --prefix=$(BASE_DIR)\$(OPENSSL_DIR)\install --release --openssldir=$(BASE_DIR)\$(OPENSSL_DIR)\install\ssl
 !ELSE
-    perl Configure VC-WIN32 no-asm enable-zlib --with-zlib-lib=$(ZLIB_LIB) -I$(OUTPUT_DIR)\include
+    perl Configure VC-WIN32 no-asm enable-zlib --with-zlib-lib=$(ZLIB_LIB) -I$(OUTPUT_DIR)\include --prefix=$(BASE_DIR)\$(OPENSSL_DIR)\install --release --openssldir=$(BASE_DIR)\$(OPENSSL_DIR)\install\ssl
 !ENDIF
 !IFNDEF NO_CLEAN
 	nmake clean
 !ENDIF
 !IFNDEF NO_BUILD
-    nmake
+    nmake install
 !ENDIF
-    if not exist $(OUTPUT_DIR)\include\openssl mkdir $(OUTPUT_DIR)\include\openssl
-	xcopy /Y include\openssl\*.h $(OUTPUT_DIR)\include\openssl
-    xcopy /Y ms\applink.c $(OUTPUT_DIR)\include\openssl
-!IFDEF WIN64
-    xcopy /Y lib*1_1-x64.dll $(OUTPUT_DIR)\bin
-!ELSE
-    xcopy /Y lib*1_1.dll $(OUTPUT_DIR)\bin
-!ENDIF
-    xcopy /Y *.lib $(OUTPUT_DIR)\lib
-    xcopy /Y apps\openssl.exe $(OUTPUT_DIR)\bin
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+	xcopy /Y /S install\include\*.c $(OUTPUT_DIR)\include
+	xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(OPENSSL_DIR)\*_static.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(OPENSSL_DIR)\libcrypto.pc $(OUTPUT_DIR)\lib\pkgconfig
+	xcopy /Y $(BASE_DIR)\$(OPENSSL_DIR)\libssl.pc $(OUTPUT_DIR)\lib\pkgconfig
+	xcopy /Y $(BASE_DIR)\$(OPENSSL_DIR)\openssl.pc $(OUTPUT_DIR)\lib\pkgconfig
+	cd $(OUTPUT_DIR)\lib\pkgconfig
+	powershell -Command "(gc libcrypto.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII libcrypto.pc"
+	powershell -Command "(gc libssl.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII libssl.pc"
+	powershell -Command "(gc openssl.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII openssl.pc"
     cd $(BASE_DIR)
 !ELSE
     @echo $(OPENSSL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1682,13 +1693,17 @@ $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB)
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(ZLIB_LIB) -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCMAKE_USE_OPENSSL=ON -DCMAKE_USE_LIBSSH2=OFF -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(ZLIB_LIB:\=/) -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCURL_USE_OPENSSL=ON -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	rem xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin
+	cd $(OUTPUT_DIR)\lib\pkgconfig
+	powershell -Command "(gc libcurl.pc) -replace '$(BASE_DIR:\=/)/$(CURL_DIR:\=/)/$(CMAKE_BUILDDIR)/install', '$(OUTPUT_DIR:\=/)' | Out-File -encoding ASCII libcurl.pc"
     cd $(BASE_DIR)
 !ELSE
     @echo $(CURL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1739,7 +1754,7 @@ $(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
     if not exist $(JPEG_VER) $(CURL_EXE) -L -k -o "jpeg.zip" "$(JPEG_SRC)" & 7z x -y jpeg.zip  
     xcopy /Y $(BASE_DIR)\support\win32.mak $(BASE_DIR)\$(JPEG_DIR)\$(JPEG_VER)
 	cd $(JPEG_VER)
-    powershell -Command "(gc makefile.vc) -replace 'cvars\)', 'cvarsdll)' | Out-File -encoding ASCII makefile.vc
+    powershell -Command "(gc makefile.vc) -replace 'cvars\)', 'cvarsdll)' | Out-File -encoding ASCII makefile.vc"
 !IFNDEF NO_CLEAN
 	nmake /f makefile.vc clean
 	del *.manifest
@@ -1826,6 +1841,7 @@ $(FREETYPE_LIB): $(FREETYPE_2)
 
 $(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB) $(LIBPNG_LIB)
 !IFDEF POPPLER_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(BASE_DIR)\support;$(CMAKE_DIR)\bin;$(PATH)
     if not exist $(POPPLER_DIR) git clone -b $(POPPLER_BRANCH) $(POPPLER_SRC) $(POPPLER_DIR)
     cd $(BASE_DIR)\$(POPPLER_DIR)
     git reset --hard HEAD
@@ -2351,8 +2367,8 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
 	echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
     echo OPTFLAGS= /nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
-	powershell -Command "(gc makefile.vc) -replace 'libminizip.lib', 'minizip.lib' | Out-File -encoding ASCII makefile.vc
+    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc"
+	powershell -Command "(gc makefile.vc) -replace 'libminizip.lib', 'minizip.lib' | Out-File -encoding ASCII makefile.vc"
     cd src
     powershell -Command "(gc freexl.c) -replace 'round \(double num\)', 'round_unused (double num)' | Out-File -encoding ASCII freexl.c"
     cd ..
@@ -2375,8 +2391,8 @@ $(LIBRTTOPO_LIB): $(GEOS_LIB) $(MSVCRT_DLL)
     xcopy /Y $(BASE_DIR)\support\librttopo\librttopo_geom.h headers
     echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
     echo OPTFLAGS=	/nologo /Ox /fp:precise /W4 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /I$(OUTPUT_DIR)\include >>nmake.opt
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
-    powershell -Command "(gc makefile.vc) -replace 'src\\stringbuffer.obj src\\varint.obj', 'src\stringbuffer.obj src\rtt_tpsnap.obj src\varint.obj' | Out-File -encoding ASCII makefile.vc
+    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc"
+    powershell -Command "(gc makefile.vc) -replace 'src\\stringbuffer.obj src\\varint.obj', 'src\stringbuffer.obj src\rtt_tpsnap.obj src\varint.obj' | Out-File -encoding ASCII makefile.vc"
     nmake /f makefile.vc install "LIBDIR=$(OUTPUT_DIR)\lib"
 !ENDIF
     cd $(BASE_DIR)
@@ -2400,8 +2416,8 @@ $(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ9_LIB) $(
     cd $(SPATIALITE_VER)
 !IFNDEF NO_BUILD
     rem powershell -Command "(gc config-msvc.h) -replace '#define HAVE_UNISTD_H 1', '/* #undef HAVE_UNISTD_H */' | Out-File -encoding ASCII config-msvc.h"
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
-    powershell -Command "(gc makefile.vc) -replace 'proj_i.lib', 'proj9.lib' | Out-File -encoding ASCII makefile.vc
+    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc"
+    powershell -Command "(gc makefile.vc) -replace 'proj_i.lib', 'proj9.lib' | Out-File -encoding ASCII makefile.vc"
     cd src
     cd gaiageo
     rem powershell -Command "(gc gg_extras.c) -replace 'rint \(double x\)', 'rint_unused (double x)' | Out-File -encoding ASCII gg_extras.c"
@@ -3612,6 +3628,9 @@ $(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
 $(MAPCACHE_LIB): $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
 !IFDEF MAPCACHE_ENABLED
     cd $(MAPCACHE_DIR)
+    cd lib
+    powershell -Command "(gc util.c) -replace 'typedef unsigned long int uint64_t', 'typedef unsigned long long uint64_t' | Out-File -encoding ASCII util.c"
+	cd ..
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -3838,6 +3857,13 @@ $(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
 	xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
 	xcopy /Y install\bin\netcdf.dll $(OUTPUT_DIR)\bin
 	xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
+	cd $(OUTPUT_DIR)\lib\pkgconfig
+	powershell -Command "(gc netcdf.pc) -replace '-lhdf5-shared', '-lhdf5' | Out-File -encoding ASCII netcdf.pc"
+	powershell -Command "(gc netcdf.pc) -replace '-lhdf5_hl-shared', '-lhdf5_hl' | Out-File -encoding ASCII netcdf.pc"
+	cd $(OUTPUT_DIR)\lib\cmake\netCDF
+	powershell -Command "(gc netCDFTargets.cmake) -replace 'hdf5-shared', '$(OUTPUT_DIR:\=/)/lib/hdf5.lib' | Out-File -encoding ASCII netCDFTargets.cmake"
+	powershell -Command "(gc netCDFTargets.cmake) -replace 'hdf5_hl-shared', '$(OUTPUT_DIR:\=/)/lib/hdf5_hl.lib' | Out-File -encoding ASCII netCDFTargets.cmake"
+	
     cd $(BASE_DIR)
 !ELSE
     @echo $(NETCDF_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -4009,11 +4035,11 @@ $(MYSQL_LIB): $(OPENSSL_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\install" "-DDOWNLOAD_BOOST=1" "-DWITH_BOOST=$(BASE_DIR)\src\mysql-boost" "-DWITHOUT_SERVER=1"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\install" "-DDOWNLOAD_BOOST=1" "-DWITH_BOOST=$(BASE_DIR)\src\mysql-boost" "-DWITHOUT_SERVER=1" "-DFORCE_UNSUPPORTED_COMPILER=1"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target libmysql  
 !ENDIF
-    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\Release\*.lib $(OUTPUT_DIR)\lib
-	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\Release\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\libmysql\$(BUILD_CONFIG)\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\library_output_directory\$(BUILD_CONFIG)\*.dll $(OUTPUT_DIR)\bin
 	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\*.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\libbinlogevents\export\*.h $(OUTPUT_DIR)\include
 	xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\$(CMAKE_BUILDDIR)\include\my*.h $(OUTPUT_DIR)\include
@@ -4021,8 +4047,8 @@ $(MYSQL_LIB): $(OPENSSL_LIB)
     xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\mysql\*.h $(OUTPUT_DIR)\include\mysql
 	if not exist $(OUTPUT_DIR)\include\mysql\psi mkdir $(OUTPUT_DIR)\include\mysql\psi
     xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\mysql\psi\*.h $(OUTPUT_DIR)\include\mysql\psi
-    if not exist $(OUTPUT_DIR)\include\atomic mkdir $(OUTPUT_DIR)\include\atomic
-    xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\atomic\*.h $(OUTPUT_DIR)\include\atomic
+    rem if not exist $(OUTPUT_DIR)\include\atomic mkdir $(OUTPUT_DIR)\include\atomic
+    rem xcopy /Y $(BASE_DIR)\$(MYSQL_DIR)\include\atomic\*.h $(OUTPUT_DIR)\include\atomic
     cd $(BASE_DIR)
 !ELSE
     @echo $(MYSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
