@@ -24,14 +24,14 @@
         <file src="..\release-1928-x64\bin\geos.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\geos_c.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\iconv-2.dll" target="build\gdal\x64" />
-        <file src="..\release-1928-x64\bin\libcrypto-1_1-x64.dll" target="build\gdal\x64" />
+        <file src="..\release-1928-x64\bin\libcrypto-3-x64.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libcurl.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libexpat.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libmysql.dll" target="build\gdal\x64" />
 		<file src="..\release-1928-x64\bin\libpng16.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libpq.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\librttopo.dll" target="build\gdal\x64" />
-        <file src="..\release-1928-x64\bin\libssl-1_1-x64.dll" target="build\gdal\x64" />
+        <file src="..\release-1928-x64\bin\libssl-3-x64.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\libxml2.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\msvcp140.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\msvcp140_1.dll" target="build\gdal\x64" />
@@ -63,14 +63,14 @@
         <file src="..\release-1928\bin\geos.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\geos_c.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\iconv-2.dll" target="build\gdal\x86" />
-        <file src="..\release-1928\bin\libcrypto-1_1.dll" target="build\gdal\x86" />
+        <file src="..\release-1928\bin\libcrypto-3.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libcurl.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libexpat.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libmysql.dll" target="build\gdal\x86" />
 		<file src="..\release-1928\bin\libpng16.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libpq.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\librttopo.dll" target="build\gdal\x86" />
-        <file src="..\release-1928\bin\libssl-1_1.dll" target="build\gdal\x86" />
+        <file src="..\release-1928\bin\libssl-3.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\libxml2.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\msvcp140.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\msvcp140_1.dll" target="build\gdal\x86" />
