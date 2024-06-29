@@ -8,8 +8,5 @@ echo starting makevc17.bat
 cmd /c makevc17.bat
 echo starting makevc17x64.bat
 cmd /c makevc17x64.bat
-echo starting makevc15.bat
-cmd /c makevc15.bat
-echo starting makevc15x64.bat
-cmd /c makevc15x64.bat
+
 

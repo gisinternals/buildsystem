@@ -2,10 +2,10 @@ set ms_version=8-0
 set ms_rel=1
 
 set gdal_major=3
-set gdal_minor=8
-set gdal_stable_tag=308
-set gdal_dev_tag=308
-set gdal_rel=5
+set gdal_minor=9
+set gdal_stable_tag=309
+set gdal_dev_tag=309
+set gdal_rel=1
 
 set gdal_version=%gdal_major%-%gdal_minor%
 set gdal-release-ver=%gdal_major%.%gdal_minor%.%gdal_rel%
