@@ -339,7 +339,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30139.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -349,7 +349,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30146.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -359,7 +359,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30148.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -369,7 +369,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30151.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -379,7 +379,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30154.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -399,7 +399,7 @@ CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.33.31629.0"
-MSVC_VER = 1930
+MSVC_VER = 1933
 MESON_BACKEND = vs2022
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
@@ -409,7 +409,7 @@ CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.33.31630.0"
-MSVC_VER = 1930
+MSVC_VER = 1933
 MESON_BACKEND = vs2022
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
@@ -419,7 +419,7 @@ CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.35.32215.0"
-MSVC_VER = 1930
+MSVC_VER = 1935
 MESON_BACKEND = vs2022
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
@@ -429,7 +429,7 @@ CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.36.32534.0"
-MSVC_VER = 1930
+MSVC_VER = 1936
 MESON_BACKEND = vs2022
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
@@ -439,7 +439,7 @@ CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.39.33523.0"
-MSVC_VER = 1930
+MSVC_VER = 1939
 MESON_BACKEND = vs2022
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
@@ -788,7 +788,7 @@ MAPMANAGER_INSTALLER = $(BASE_DIR)\MapManager-$(MS_VERSION)\Installer\bin\Releas
 DEFAULT_TARGETS = 
 
 # set up gdal configuration
-GDAL_DEPS = $(OUTPUT_DIR) $(MSVCRT_DLL) $(LIBPNG_LIB)
+GDAL_DEPS = $(OUTPUT_DIR) $(MSVCRT_DLL) $(LIBICONV_LIB) $(LIBPNG_LIB)
 GDAL_CMAKE_OPT = "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) $(LIBSHARPYUV_LIB) advapi32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DGDAL_ENABLE_DRIVER_PCIDSK_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PCRASTER_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PNG_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WEBP_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WMS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_CAD_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_VFK_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_XLS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_OGDI_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_JP2OPENJPEG_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_LIBKML_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_MYSQL_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_PG_PLUGIN=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)"
 
 !IFDEF GDAL_OGDI
@@ -819,7 +819,7 @@ GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\pro
 
 !IFDEF GDAL_PROJ9
 GDAL_DEPS = $(GDAL_DEPS) $(PROJ9_LIB)
-GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj9.lib"
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(PROJ9_LIB)"
 !ENDIF
 
 !IFDEF GDAL_JAVA
@@ -1790,9 +1790,13 @@ $(FREETYPE_1): $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FREETYPE_DIR)\$(CMAKE_BUILDDIR)\install" "-DZLIB_LIBRARY_RELEASE=$(ZLIB_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     echo freetype phase 1 > $(FREETYPE_1)
 	cd $(BASE_DIR)
 !ELSE
@@ -1814,6 +1818,8 @@ $(FREETYPE_2): $(FREETYPE_1) $(HARFBUZZ_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) $(LIBPNG_
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.cmake $(OUTPUT_DIR)\lib
+	xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     echo freetype phase 2 > $(FREETYPE_2)
 	cd $(BASE_DIR)
@@ -1916,7 +1922,7 @@ $(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ9_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj9.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(OUTPUT_DIR)\lib\proj9.lib" "-DBUILD_SHARED_LIBS=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -2077,8 +2083,10 @@ $(LIBEXPAT_LIB):
 
 $(XERCES_LIB):
 !IFDEF XERCES_ENABLED
-    if not exist $(XERCES_DIR) svn co $(XERCES_SRC)/$(XERCES_BRANCH) $(XERCES_DIR)
+    if not exist $(XERCES_DIR) git clone -b $(XERCES_BRANCH) $(XERCES_SRC) $(XERCES_DIR)
     cd $(XERCES_DIR)
+    git reset --hard HEAD
+    git checkout $(XERCES_BRANCH)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -2356,8 +2364,23 @@ $(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
     if not exist swigwin-$(SWIG_VER) $(CURL_EXE) -L -k -o "swigwin-$(SWIG_VER).zip" "$(SWIG_SRC)" & 7z x -y swigwin-$(SWIG_VER).zip
     echo >$(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
     cd $(BASE_DIR)
+	
+$(MINIZIP_LIB): $(ZLIB_LIB) $(MSVCRT_DLL)
+!IFDEF MINIZIP_ENABLED
+    cd $(ZLIB_DIR)\contrib\minizip
+	if not exist $(BASE_DIR)\$(ZLIB_DIR)\contrib\minizip\Makefile.vc xcopy /Y $(BASE_DIR)\support\minizip\Makefile.vc $(BASE_DIR)\$(ZLIB_DIR)\contrib\minizip
+!IFNDEF NO_CLEAN
+    nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc install "INSTALLDIR=$(OUTPUT_DIR)"
+!ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(MINIZIP_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
 
-$(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
+$(FREEXL_LIB): $(LIBICONV_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(MINIZIP_LIB) $(MSVCRT_DLL)
 !IFDEF FREEXL_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -2369,15 +2392,18 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
     nmake /f makefile.vc clean
 !ENDIF
 !IFNDEF NO_BUILD
-	echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
-    echo OPTFLAGS= /nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
-    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc"
-	powershell -Command "(gc makefile.vc) -replace 'libminizip.lib', 'minizip.lib' | Out-File -encoding ASCII makefile.vc"
+	echo INSTDIR=$(BASE_DIR)\$(FREEXL_DIR)\install >nmake.opt
+    echo OPTFLAGS=	/nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
+    powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc
+	powershell -Command "(gc makefile.vc) -replace 'libminizip.lib', 'minizip.lib' | Out-File -encoding ASCII makefile.vc
     cd src
     powershell -Command "(gc freexl.c) -replace 'round \(double num\)', 'round_unused (double num)' | Out-File -encoding ASCII freexl.c"
     cd ..
     nmake /f makefile.vc install "LIBDIR=$(OUTPUT_DIR)\lib"
 !ENDIF
+    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     cd $(BASE_DIR)
 !ELSE
     @echo $(FREEXL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -2472,6 +2498,7 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
     xcopy /Y $(BASE_DIR)\$(LIBXML2_DIR)\Release\bin\libxml2.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(LIBXML2_DIR)\Release\lib\libxml2.lib $(OUTPUT_DIR)\lib
     xcopy /Y /S $(BASE_DIR)\$(LIBXML2_DIR)\Release\include\libxml2\* $(OUTPUT_DIR)\include
+	xcopy /Y /S $(BASE_DIR)\$(LIBXML2_DIR)\Release\include\* $(OUTPUT_DIR)\include
     cd $(BASE_DIR)
 !ELSE
     @echo $(LIBXML2_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -2812,7 +2839,7 @@ gdal-mssql-ncli: $(GDAL_LIB)
 $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 !IFDEF GDAL_ENABLED
 	set JAVA_HOME=$(JAVA_HOME)
-	SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+	SET PATH=$(OUTPUT_DIR)\bin;$(PYTHON_BASE)\$(PYTHON_DIR);$(PATH)
 	SET USE_PATH_FOR_GDAL_PYTHON=YES
 !IFDEF GDAL_OGDI
     if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
@@ -3605,13 +3632,10 @@ $(PCRE_LIB): $(MSVCRT_DLL) $(CURL_EXE)
 
 $(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
 !IFDEF HTTPD_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    if not exist $(HTTPD_DIR) mkdir $(HTTPD_DIR)
-    cd $(HTTPD_DIR)
-    if not exist $(HTTPD_VER).tar.gz $(CURL_EXE) -L -k -o "$(HTTPD_VER).tar.gz" "$(HTTPD_SRC)"
-    if not exist $(HTTPD_VER) 7z e -y $(HTTPD_VER).tar.gz && 7z x -y $(HTTPD_VER).tar
-    cd $(HTTPD_VER)
+    if not exist $(HTTPD_DIR) git clone -b $(HTTPD_BRANCH) $(HTTPD_SRC) $(HTTPD_DIR)
+    cd $(BASE_DIR)\$(HTTPD_DIR)
+    git reset --hard HEAD
+    git checkout $(HTTPD_BRANCH)
 !IFNDEF NO_CLEAN
     if exist cmake rd /Q /S cmake
 !ENDIF
@@ -3761,12 +3785,10 @@ $(SZIP_LIB): $(ZLIB_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 
 $(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 !IFDEF HDF4_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    if not exist $(HDF4_DIR) mkdir $(HDF4_DIR)
-    cd $(HDF4_DIR)
-    if not exist $(HDF4_VER).zip $(CURL_EXE) -L -k -o "$(HDF4_VER).zip" "$(HDF4_SRC)" & 7z x -y $(HDF4_VER).zip
-    cd $(HDF4_VER)
+    if not exist $(HDF4_DIR) git clone -b $(HDF4_BRANCH) $(HDF4_SRC) $(HDF4_DIR)
+    cd $(BASE_DIR)\$(HDF4_DIR)
+    git reset --hard HEAD
+    git checkout $(HDF4_BRANCH)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -3774,7 +3796,7 @@ $(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
 !IFDEF HDF4_SZIP
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"  "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
 !ELSE
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=OFF" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
 !ENDIF
@@ -3804,7 +3826,7 @@ $(HDF5_LIB): $(MSVCRT_DLL) $(SZIP_LIB) $(ZLIB_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON" "-DHDF5_BUILD_EXAMPLES=OFF" "-DHDF5_BUILD_TOOLS=OFF"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON" "-DHDF5_BUILD_EXAMPLES=OFF" "-DHDF5_BUILD_TOOLS=OFF" "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -3812,6 +3834,7 @@ $(HDF5_LIB): $(MSVCRT_DLL) $(SZIP_LIB) $(ZLIB_LIB)
     xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
     xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
     xcopy /Y install\bin\hdf5*.dll $(OUTPUT_DIR)\bin
+	xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin
     cd $(BASE_DIR)
 !ELSE
     @echo $(HDF5_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -3862,11 +3885,11 @@ $(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
 	xcopy /Y install\bin\netcdf.dll $(OUTPUT_DIR)\bin
 	xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
 	cd $(OUTPUT_DIR)\lib\pkgconfig
-	powershell -Command "(gc netcdf.pc) -replace '-lhdf5-shared', '-lhdf5' | Out-File -encoding ASCII netcdf.pc"
-	powershell -Command "(gc netcdf.pc) -replace '-lhdf5_hl-shared', '-lhdf5_hl' | Out-File -encoding ASCII netcdf.pc"
+	powershell -Command "(gc netcdf.pc) -replace '-lhdf5-shared', '-lhdf5' | Out-File -encoding ASCII netcdf.pc
+	powershell -Command "(gc netcdf.pc) -replace '-lhdf5_hl-shared', '-lhdf5_hl' | Out-File -encoding ASCII netcdf.pc
 	cd $(OUTPUT_DIR)\lib\cmake\netCDF
-	powershell -Command "(gc netCDFTargets.cmake) -replace 'hdf5-shared', '$(OUTPUT_DIR:\=/)/lib/hdf5.lib' | Out-File -encoding ASCII netCDFTargets.cmake"
-	powershell -Command "(gc netCDFTargets.cmake) -replace 'hdf5_hl-shared', '$(OUTPUT_DIR:\=/)/lib/hdf5_hl.lib' | Out-File -encoding ASCII netCDFTargets.cmake"
+	powershell -Command "(gc netCDFTargets.cmake) -replace 'hdf5-shared', '$(OUTPUT_DIR:\=/)/lib/hdf5.lib' | Out-File -encoding ASCII netCDFTargets.cmake
+	powershell -Command "(gc netCDFTargets.cmake) -replace 'hdf5_hl-shared', '$(OUTPUT_DIR:\=/)/lib/hdf5_hl.lib' | Out-File -encoding ASCII netCDFTargets.cmake
 	
     cd $(BASE_DIR)
 !ELSE

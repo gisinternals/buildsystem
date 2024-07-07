@@ -1,0 +1,42 @@
+# Makefile for building minizip as a static library and installing headers with MSVC
+
+# MSVC compiler
+CC = cl
+
+# Compiler flags
+CFLAGS = /nologo /MD /O2 /I$(INSTALLDIR)/include /DZLIB_DLL
+
+# Source files
+SRCS = minizip.c zip.c unzip.c ioapi.c
+
+# Object files
+OBJS = $(SRCS:.c=.obj)
+
+# Output static library
+OUTPUT = minizip.lib
+
+# Installation directory
+INSTALLDIR = C:\Your\Installation\Directory
+
+# Build rule
+all: $(OUTPUT)
+
+$(OUTPUT): $(OBJS)
+    lib /OUT:$(OUTPUT) $(OBJS)
+
+# Compilation rule
+.c.obj:
+    $(CC) $(CFLAGS) /c $<
+
+# Install rule
+install: $(OUTPUT)
+    @echo Installing minizip headers to $(INSTALLDIR)\include\minizip
+    @if not exist "$(INSTALLDIR)\include\minizip" mkdir "$(INSTALLDIR)\include\minizip"
+    @copy *.h "$(INSTALLDIR)\include\minizip"
+    @echo Installing minizip library to $(INSTALLDIR)\lib
+    @if not exist "$(INSTALLDIR)\lib" mkdir "$(INSTALLDIR)\lib"
+    @copy $(OUTPUT) "$(INSTALLDIR)\lib"
+
+# Clean rule
+clean:
+    del /Q $(OBJS) $(OUTPUT)
