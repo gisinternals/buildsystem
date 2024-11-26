@@ -1,5 +1,5 @@
-set ms_version=8-0
-set ms_rel=1
+set ms_version=8-2
+set ms_rel=0
 
 set gdal_major=3
 set gdal_minor=9
