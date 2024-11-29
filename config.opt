@@ -85,11 +85,11 @@ ZLIB_BRANCH = v1.3.1
 ZLIB_SRC = https://github.com/madler/zlib.git
 
 OPENSSL_DIR = $(SRC_DIR)\openssl
-OPENSSL_BRANCH = openssl-3.3.0
+OPENSSL_BRANCH = openssl-3.4.0
 OPENSSL_SRC = https://github.com/openssl/openssl.git
 
 CURL_DIR = $(SRC_DIR)\curl
-CURL_BRANCH = curl-8_7_1
+CURL_BRANCH = curl-8_11_0
 CURL_SRC = https://github.com/curl/curl.git
 
 LIBPNG_DIR = $(SRC_DIR)\libpng
@@ -109,7 +109,7 @@ HARFBUZZ_BRANCH = 3.0.0
 HARFBUZZ_SRC = https://github.com/harfbuzz/harfbuzz.git
 
 GEOS_DIR = $(SRC_DIR)\geos
-GEOS_BRANCH = 3.10.2
+GEOS_BRANCH = 3.10.6
 GEOS_SRC = https://git.osgeo.org/gitea/geos/geos.git
 
 FRIBIDI_DIR = $(SRC_DIR)\fribidi
@@ -117,8 +117,8 @@ FRIBIDI_BRANCH = v1.0.10
 FRIBIDI_SRC = https://github.com/fribidi/fribidi.git
 
 LIBICONV_DIR = $(SRC_DIR)\libiconv
-LIBICONV_VER = libiconv-1.16
-LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz
+LIBICONV_VER = libiconv-1.17
+LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
 
 PGSQL_DIR = $(SRC_DIR)\postgres
 PGSQL_BRANCH = REL_14_0
@@ -131,7 +131,7 @@ PROJ6_BRANCH = 6.3.2
 PROJ7_DIR = $(SRC_DIR)\proj7
 PROJ7_BRANCH = 7.2.1
 PROJ9_DIR = $(SRC_DIR)\proj9
-PROJ9_BRANCH = 9.3.0
+PROJ9_BRANCH = 9.5.0
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 PROJ_DATA_DIR = $(SRC_DIR)\proj-data
@@ -139,7 +139,7 @@ PROJ_DATA_BRANCH = 1.12.0
 PROJ_DATA_SRC = https://github.com/OSGeo/PROJ-data.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
-SQLITE_VER = 3.37.2
+SQLITE_VER = 3.47.1
 SQLITE_SRC = https://www.sqlite.org/src/zip/sqlite.zip?r=release
 
 SPATIALITE_DIR = $(SRC_DIR)\spatialite
@@ -261,7 +261,7 @@ LIBSVGCAIRO_VER=libsvg-cairo-0.5.0
 LIBSVGCAIRO_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg-cairo/0.5/libsvg-cairo-0.5.0.src.tar.gz/download
 
 LIBTIFF_DIR = $(SRC_DIR)\libtiff
-LIBTIFF_BRANCH = v4.6.0
+LIBTIFF_BRANCH = v4.7.0
 LIBTIFF_SRC = https://gitlab.com/libtiff/libtiff.git
 
 LIBGEOTIFF_DIR = $(SRC_DIR)\libgeotiff
@@ -305,7 +305,7 @@ NETCDF_BRANCH = v4.8.1
 NETCDF_SRC =https://github.com/Unidata/netcdf-c.git
 
 OGDI_DIR = $(SRC_DIR)\ogdi
-OGDI_BRANCH = ogdi_4_1_0
+OGDI_BRANCH = ogdi_4_1_1
 OGDI_SRC = https://github.com/libogdi/ogdi.git
 
 FITS_DIR = $(SRC_DIR)\fits
@@ -331,4 +331,7 @@ BUILD_OUTDATED_TARGETS = YES
 
 # Customizations
 PLATFORMSDK_VERSION = 10.0.17763.0
+
+# Dependency build
+ENABLE_DEPENDENCIES = 1
 

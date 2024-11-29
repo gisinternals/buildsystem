@@ -39,8 +39,7 @@
         <file src="..\release-1928-x64\bin\ogdi.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\openjp2.dll" target="build\gdal\x64" />
 		<file src="..\release-1928-x64\bin\pcre.dll" target="build\gdal\x64" />
-        <file src="..\release-1928-x64\bin\proj_9_1.dll" target="build\gdal\x64" />
-		<file src="..\release-1928-x64\bin\proj_9_3.dll" target="build\gdal\x64" />
+		<file src="..\release-1928-x64\bin\proj_9.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\remote.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\rpf.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\skeleton.dll" target="build\gdal\x64" />
@@ -78,8 +77,7 @@
         <file src="..\release-1928\bin\ogdi.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\openjp2.dll" target="build\gdal\x86" />
 		<file src="..\release-1928\bin\pcre.dll" target="build\gdal\x86" />
-        <file src="..\release-1928\bin\proj_9_1.dll" target="build\gdal\x86" />
-		<file src="..\release-1928\bin\proj_9_3.dll" target="build\gdal\x86" />
+		<file src="..\release-1928\bin\proj_9.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\remote.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\rpf.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\skeleton.dll" target="build\gdal\x86" />

@@ -398,6 +398,16 @@ CMAKE_BUILDDIR = vc16x64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.29.30157.0"
+MSVC_VER = 1928
+MESON_BACKEND = vs2019
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
+CMAKE_BUILDDIR = vc16x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
+CMAKE_BUILDDIR = vc16
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.30.30709.0"
 MSVC_VER = 1930
 MESON_BACKEND = vs2022
@@ -459,6 +469,26 @@ CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.41.34123.0"
+MSVC_VER = 1930
+MESON_BACKEND = vs2022
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
+CMAKE_BUILDDIR = vc17
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.42.34433.0"
+MSVC_VER = 1930
+MESON_BACKEND = vs2022
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
+CMAKE_BUILDDIR = vc17
+!ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.42.34435.0"
 MSVC_VER = 1930
 MESON_BACKEND = vs2022
 !IFDEF WIN64
@@ -1553,11 +1583,13 @@ $(MSVCRT_DLL):
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+	if exist "%VCToolsRedistDir%MergeModules\Microsoft_VC143_CRT_x64.msm" xcopy /Y "%VCToolsRedistDir%MergeModules\Microsoft_VC143_CRT_x64.msm" $(BASE_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC143.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC143.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x86\Microsoft.VC143.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC143.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+	if exist "%VCToolsRedistDir%MergeModules\Microsoft_VC143_CRT_x86.msm" xcopy /Y "%VCToolsRedistDir%MergeModules\Microsoft_VC143_CRT_x86.msm" $(BASE_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) >= 1922
@@ -1565,11 +1597,13 @@ $(MSVCRT_DLL):
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+	if exist "%VCToolsRedistDir%MergeModules\Microsoft_VC142_CRT_x64.msm" xcopy /Y "%VCToolsRedistDir%MergeModules\Microsoft_VC142_CRT_x64.msm" $(BASE_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\vcruntime140*.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\msvcp140*.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x86\Microsoft.VC142.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC142.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+	if exist "%VCToolsRedistDir%MergeModules\Microsoft_VC142_CRT_x86.msm" xcopy /Y "%VCToolsRedistDir%MergeModules\Microsoft_VC142_CRT_x86.msm" $(BASE_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) >= 1911
@@ -1577,11 +1611,13 @@ $(MSVCRT_DLL):
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+	if exist "%VCToolsRedistDir%MergeModules\Microsoft_VC141_CRT_x64.msm" xcopy /Y "%VCToolsRedistDir%MergeModules\Microsoft_VC141_CRT_x64.msm" $(BASE_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr140-x64 > $(MSVCRT_DLL)
 !ELSE
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\vcruntime140.dll" $(OUTPUT_DIR)\bin
     xcopy /Y "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\msvcp140.dll" $(OUTPUT_DIR)\bin
     if exist "%VCToolsRedistDir%x86\Microsoft.VC141.CRT\concrt140.dll" xcopy /Y "%VCToolsRedistDir%x64\Microsoft.VC141.CRT\concrt140.dll" $(OUTPUT_DIR)\bin
+	if exist "%VCToolsRedistDir%MergeModules\Microsoft_VC141_CRT_x86.msm" xcopy /Y "%VCToolsRedistDir%MergeModules\Microsoft_VC141_CRT_x86.msm" $(BASE_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr140-x86 > $(MSVCRT_DLL)
 !ENDIF
 !ELSEIF $(MSVC_VER) == 1900
@@ -2377,7 +2413,22 @@ $(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
     echo >$(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
     cd $(BASE_DIR)
 
-$(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
+$(MINIZIP_LIB): $(ZLIB_LIB) $(MSVCRT_DLL)
+!IFDEF MINIZIP_ENABLED
+    cd $(ZLIB_DIR)\contrib\minizip
+	if not exist $(BASE_DIR)\$(ZLIB_DIR)\contrib\minizip\Makefile.vc xcopy /Y $(BASE_DIR)\support\minizip\Makefile.vc $(BASE_DIR)\$(ZLIB_DIR)\contrib\minizip
+!IFNDEF NO_CLEAN
+    nmake /f makefile.vc clean
+!ENDIF
+!IFNDEF NO_BUILD
+	nmake /f makefile.vc install "INSTALLDIR=$(OUTPUT_DIR)"
+!ENDIF
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(MINIZIP_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
+$(FREEXL_LIB): $(LIBICONV_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(MINIZIP_LIB) $(MSVCRT_DLL)
 !IFDEF FREEXL_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -2389,7 +2440,7 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
     nmake /f makefile.vc clean
 !ENDIF
 !IFNDEF NO_BUILD
-	echo INSTDIR=$(OUTPUT_DIR) >nmake.opt
+	echo INSTDIR=$(BASE_DIR)\$(FREEXL_DIR)\install >nmake.opt
     echo OPTFLAGS= /nologo /Ox /fp:precise /W3 /MD /D_CRT_SECURE_NO_WARNINGS /DDLL_EXPORT /DYY_NO_UNISTD_H /I$(OUTPUT_DIR)\include >>nmake.opt
     powershell -Command "(gc makefile.vc) -replace 'C:\\OSGeo4w\\lib', '$$(LIBDIR)' | Out-File -encoding ASCII makefile.vc"
 	powershell -Command "(gc makefile.vc) -replace 'libminizip.lib', 'minizip.lib' | Out-File -encoding ASCII makefile.vc"
@@ -2398,6 +2449,9 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(MSVCRT_DLL)
     cd ..
     nmake /f makefile.vc install "LIBDIR=$(OUTPUT_DIR)\lib"
 !ENDIF
+    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\include\*.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
+    xcopy /Y $(BASE_DIR)\$(FREEXL_DIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     cd $(BASE_DIR)
 !ELSE
     @echo $(FREEXL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -4347,9 +4401,9 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(LIBWEBP_LIB)
+test: $(PROJ9_LIB)
 
-test2: $(SPATIALITE_LIB)
+test2: $(LIBTIFF_LIB)
 
 update-ms:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
