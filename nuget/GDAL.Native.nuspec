@@ -46,7 +46,6 @@
         <file src="..\release-1928-x64\bin\spatialite.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\sqlite3.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\tiff.dll" target="build\gdal\x64" />
-        <file src="..\release-1928-x64\bin\tiffxx.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\vcruntime140.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\vcruntime140_1.dll" target="build\gdal\x64" />
         <file src="..\release-1928-x64\bin\vrf.dll" target="build\gdal\x64" />
@@ -84,7 +83,6 @@
         <file src="..\release-1928\bin\spatialite.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\sqlite3.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\tiff.dll" target="build\gdal\x86" />
-        <file src="..\release-1928\bin\tiffxx.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\vcruntime140.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\vrf.dll" target="build\gdal\x86" />
         <file src="..\release-1928\bin\xerces-c_3_2.dll" target="build\gdal\x86" />

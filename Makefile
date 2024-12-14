@@ -1027,8 +1027,12 @@ GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DOracle_LIBRARY=$(OCI_DIR)\$(INSTANTCLIENT_
 
 
 # set up mapserver configuration
-MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) -DCMAKE_SYSTEM_VERSION=$(PLATFORMSDK_VERSION) "-DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB:\=/);$(URIPARSER_LIB:\=/)" "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)" -DWITH_ORACLESPATIAL=0
+MAPSERVER_OPT = -DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\=/) "-DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB:\=/);$(URIPARSER_LIB:\=/)" "-DPNG_LIBRARY=$(LIBPNG_LIB:\=/)" -DWITH_ORACLESPATIAL=0
 MAPSERVER_DEPS = $(MSVCRT_DLL) $(JPEG_LIB) $(LIBPNG_LIB) $(FREETYPE_2)
+
+!IFDEF PLATFORMSDK_VERSION
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DCMAKE_SYSTEM_VERSION=$(PLATFORMSDK_VERSION)
+!ENDIF
 
 !IFNDEF MS_ICONV
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_ICONV=0
@@ -2883,6 +2887,11 @@ gdal-mssql-ncli: $(GDAL_LIB)
 	cd $(BASE_DIR)
 !ENDIF
 
+copy-mrsid-dll:
+	if exist $(MRSID_DLL) xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
+	if exist $(LIDAR_DLL) xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
+	if exist $(MRSID_RASTER_DIR)\lib\tbb.dll xcopy /Y $(MRSID_RASTER_DIR)\lib\tbb.dll $(OUTPUT_DIR)\bin
+
 $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 !IFDEF GDAL_ENABLED
 	set JAVA_HOME=$(JAVA_HOME)
@@ -2939,6 +2948,10 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins\ogr_FileGDB.dll move $(OUTPUT_DIR)\bin\gdal\plugins\ogr_FileGDB.dll $(OUTPUT_DIR)\bin\gdal\plugins-external\ogr_FileGDB.dll
 	if not exist $(OUTPUT_DIR)\bin\gdal\plugins-optional mkdir $(OUTPUT_DIR)\bin\gdal\plugins-optional
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins\ogr_MSSQLSpatial.dll move $(OUTPUT_DIR)\bin\gdal\plugins\ogr_MSSQLSpatial.dll $(OUTPUT_DIR)\bin\gdal\plugins-optional\ogr_MSSQLSpatial.dll
+
+	if exist $(MRSID_DLL) xcopy /Y $(MRSID_DLL) $(OUTPUT_DIR)\bin
+	if exist $(LIDAR_DLL) xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
+	if exist $(MRSID_RASTER_DIR)\lib\tbb.dll xcopy /Y $(MRSID_RASTER_DIR)\lib\tbb.dll $(OUTPUT_DIR)\bin
 	
 !IFDEF GDAL_RELEASE_PDB
 
@@ -4541,6 +4554,22 @@ show-dependencies:
     @echo MapServer dependencies
     @echo $(MAPSERVER_DEPS)
     @echo $(SETARGV)
+	
+show-mrsid:
+    echo MRSID_RASTER_DIR = $(MRSID_RASTER_DIR)
+    echo MRSID_RVER       = $(MRSID_RVER)
+    echo MRSID_JP2        = $(MRSID_JP2)
+    echo MRSID_ESDK       = $(MRSID_ESDK)
+    echo MRSID_RDLLBUILD  = $(MRSID_RDLLBUILD)
+    echo MRSID_LIDAR_DIR  = $(MRSID_LIDAR_DIR)
+    echo MRSID_LVER       = $(MRSID_LVER)
+    echo MRSID_LDLLBUILD  = $(MRSID_LDLLBUILD)
+    echo MRSID_CONFIG     = $(MRSID_CONFIG)
+    echo MRSID_FLAGS      = $(MRSID_FLAGS)
+    echo MRSID_INCLUDE    = $(MRSID_INCLUDE)
+    echo MRSID_LIB        = $(MRSID_LIB)
+    echo MRSID_DLL        = $(MRSID_DLL)
+    echo LIDAR_DLL        = $(LIDAR_DLL)
 
 dependencies: $(GDAL_DEPS) $(MAPSERVER_DEPS)
     @echo DEPENDENCY BUILD COMPLETE !!!!

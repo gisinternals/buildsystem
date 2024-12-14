@@ -493,9 +493,6 @@
                     <?endif?>
                     <?ifdef gdal_dll?>
                     <Directory Id="projlibDir" Name="projlib">
-                        <Component Id="epsg" Guid="*">
-                            <File Id="epsg" Name="epsg" Source="$(var.TargetDir)\proj\SHARE\epsg" />
-                        </Component>
                         <Component Id="world" Guid="*">
                             <File Id="world" Name="world" Source="$(var.TargetDir)\proj9\SHARE\world" Vital="yes"/>
                         </Component>
@@ -514,23 +511,8 @@
 						<Component Id="triangulation.schema.json" Guid="*">
                             <File Id="triangulation.schema.json" Name="triangulation.schema.json" Source="$(var.TargetDir)\proj9\SHARE\triangulation.schema.json" Vital="yes"/>
                         </Component>
-                        <Component Id="proj_def.dat" Guid="*">
-                            <File Id="proj_def.dat" Name="proj_def.dat" Source="$(var.TargetDir)\proj\SHARE\proj_def.dat" Vital="yes"/>
-                        </Component>
                         <Component Id="other.extra" Guid="*">
                             <File Id="other.extra" Name="other.extra" Source="$(var.TargetDir)\proj9\SHARE\other.extra" Vital="yes"/>
-                        </Component>
-                        <Component Id="nzgd2kgrid0005.gsb" Guid="*">
-                            <File Id="nzgd2kgrid0005.gsb" Name="nzgd2kgrid0005.gsb" Source="$(var.TargetDir)\proj\SHARE\nzgd2kgrid0005.gsb" Vital="yes"/>
-                        </Component>
-                        <Component Id="null" Guid="*">
-                            <File Id="null" Name="null" Source="$(var.TargetDir)\proj\SHARE\null" Vital="yes"/>
-                        </Component>
-                        <Component Id="ntv1_can.dat" Guid="*">
-                            <File Id="ntv1_can.dat" Name="ntv1_can.dat" Source="$(var.TargetDir)\proj\SHARE\ntv1_can.dat" Vital="yes"/>
-                        </Component>
-                        <Component Id="ntf_r93.gsb" Guid="*">
-                            <File Id="ntf_r93.gsb" Name="ntf_r93.gsb" Source="$(var.TargetDir)\proj\SHARE\ntf_r93.gsb" Vital="yes"/>
                         </Component>
                         <Component Id="nad83" Guid="*">
                             <File Id="nad83" Name="nad83" Source="$(var.TargetDir)\proj9\SHARE\nad83" Vital="yes"/>
@@ -540,9 +522,6 @@
                         </Component>
                         <Component Id="nad.lst" Guid="*">
                             <File Id="nad.lst" Name="nad.lst" Source="$(var.TargetDir)\proj9\SHARE\nad.lst" Vital="yes"/>
-                        </Component>
-                        <Component Id="IGNF" Guid="*">
-                            <File Id="IGNF" Name="IGNF" Source="$(var.TargetDir)\proj\SHARE\IGNF" Vital="yes"/>
                         </Component>
                         <Component Id="ITRF2014" Guid="*">
                             <File Id="ITRF2014" Name="ITRF2014" Source="$(var.TargetDir)\proj9\SHARE\ITRF2014" Vital="yes"/>
@@ -555,12 +534,6 @@
                         </Component>
                         <Component Id="GL27" Guid="*">
                             <File Id="GL27" Name="GL27" Source="$(var.TargetDir)\proj9\SHARE\GL27" Vital="yes"/>
-                        </Component>
-                        <Component Id="esri.extra" Guid="*">
-                            <File Id="esri.extra" Name="esri.extra" Source="$(var.TargetDir)\proj\SHARE\esri.extra" Vital="yes"/>
-                        </Component>
-                        <Component Id="esri" Guid="*">
-                            <File Id="esri" Name="esri" Source="$(var.TargetDir)\proj\SHARE\esri" Vital="yes"/>
                         </Component>
                         <Component Id="CH" Guid="*">
                             <File Id="CH" Name="CH" Source="$(var.TargetDir)\proj9\SHARE\CH" Vital="yes"/>
@@ -659,17 +632,8 @@
                     <Component Id="openjp2.dll" Guid="*">
                         <File Id="openjp2.dll" Name="openjp2.dll" Source="$(var.TargetDir)\openjp2.dll" Vital="yes"/>
                     </Component>
-                    <Component Id="proj_4_9.dll" Guid="*">
-                        <File Id="proj_4_9.dll" Name="proj_4_9.dll" Source="$(var.TargetDir)\proj_4_9.dll" Vital="yes"/>
-                    </Component>
-                    <Component Id="proj_7_2.dll" Guid="*">
-                        <File Id="proj_7_2.dll" Name="proj_7_2.dll" Source="$(var.TargetDir)\proj_7_2.dll" Vital="yes"/>
-                    </Component>
-					<Component Id="proj_9_1.dll" Guid="*">
-                        <File Id="proj_9_1.dll" Name="proj_9_1.dll" Source="$(var.TargetDir)\proj_9_1.dll" Vital="yes"/>
-                    </Component>
-					<Component Id="proj_9_3.dll" Guid="*">
-                        <File Id="proj_9_3.dll" Name="proj_9_3.dll" Source="$(var.TargetDir)\proj_9_3.dll" Vital="yes"/>
+                    <Component Id="proj_9.dll" Guid="*">
+                        <File Id="proj_9.dll" Name="proj_9.dll" Source="$(var.TargetDir)\proj_9.dll" Vital="yes"/>
                     </Component>
                     <Component Id="spatialite.dll" Guid="*">
                         <File Id="spatialite.dll" Name="spatialite.dll" Source="$(var.TargetDir)\spatialite.dll" Vital="yes"/>
@@ -1014,10 +978,7 @@
             <ComponentRef Id="libmysql.dll" />
 			<ComponentRef Id="libpng16.dll" />
             <ComponentRef Id="libxml2.dll" />
-            <ComponentRef Id="proj_4_9.dll" />
-            <ComponentRef Id="proj_7_2.dll" />
-			<ComponentRef Id="proj_9_1.dll" />
-			<ComponentRef Id="proj_9_3.dll" />
+            <ComponentRef Id="proj_9.dll" />
             <ComponentRef Id="spatialite.dll" />
 			<ComponentRef Id="sqlite3.dll" />
             <ComponentRef Id="sqlite3.exe" />
@@ -1037,29 +998,20 @@
             <ComponentRef Id="tiff.dll" />
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="GDALLicense.rtf" />
-            <ComponentRef Id="epsg" />
             <ComponentRef Id="world" />
             <ComponentRef Id="proj.db" />
 			<ComponentRef Id="proj.ini" />
 			<ComponentRef Id="deformation_model.schema.json" />
 			<ComponentRef Id="projjson.schema.json" />
 			<ComponentRef Id="triangulation.schema.json" />
-            <ComponentRef Id="proj_def.dat" />                
             <ComponentRef Id="other.extra" />
-            <ComponentRef Id="nzgd2kgrid0005.gsb" />
-            <ComponentRef Id="null" />
-            <ComponentRef Id="ntv1_can.dat" />
-            <ComponentRef Id="ntf_r93.gsb" />
             <ComponentRef Id="nad83" />
             <ComponentRef Id="nad27" />
             <ComponentRef Id="nad.lst" />
-            <ComponentRef Id="IGNF" />
             <ComponentRef Id="ITRF2014" />
             <ComponentRef Id="ITRF2008" />
             <ComponentRef Id="ITRF2000" />
             <ComponentRef Id="GL27" />
-            <ComponentRef Id="esri.extra" />
-            <ComponentRef Id="esri" />
             <ComponentRef Id="CH" />
             <ComponentRef Id="GDALShell.bat" />
             <ComponentGroupRef Id="GdalData" />
