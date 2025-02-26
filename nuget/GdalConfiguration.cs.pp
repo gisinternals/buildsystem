@@ -35,6 +35,8 @@ using System.Runtime.InteropServices;
 using Gdal = OSGeo.GDAL.Gdal;
 using Ogr = OSGeo.OGR.Ogr;
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+
 namespace $rootnamespace$
 {
     public static partial class GdalConfiguration
