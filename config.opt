@@ -131,7 +131,7 @@ PROJ6_BRANCH = 6.3.2
 PROJ7_DIR = $(SRC_DIR)\proj7
 PROJ7_BRANCH = 7.2.1
 PROJ9_DIR = $(SRC_DIR)\proj9
-PROJ9_BRANCH = 9.5.0
+PROJ9_BRANCH = 9.6.2
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 PROJ_DATA_DIR = $(SRC_DIR)\proj-data

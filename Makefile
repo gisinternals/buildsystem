@@ -4414,7 +4414,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(PROJ9_LIB)
+test: $(GDAL_LIB)
 
 test2: $(LIBTIFF_LIB)
 
@@ -4423,6 +4423,7 @@ update-ms:
 	git config --global core.autocrlf false
 	if not exist $(MAPSERVER_DIR) git clone -b $(MAPSERVER_BRANCH) $(MAPSERVER_SRC) $(MAPSERVER_DIR)
 	cd $(MAPSERVER_DIR) 
+	git clean -fd
     git reset --hard HEAD
     git fetch
     git checkout $(MAPSERVER_BRANCH)
@@ -4437,6 +4438,7 @@ update-mapcache:
 	git config --global core.autocrlf false
     if not exist $(MAPCACHE_DIR) git clone -b $(MAPCACHE_BRANCH) $(MAPCACHE_SRC) $(MAPCACHE_DIR)
 	cd $(MAPCACHE_DIR) 
+	git clean -fd
     git reset --hard HEAD
     git fetch
     git checkout $(MAPCACHE_BRANCH)
@@ -4449,6 +4451,7 @@ update-gdal:
     git config --global core.autocrlf false
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
     cd $(GDAL_DIR)
+	git clean -fd
     git reset --hard HEAD
     git fetch
     git checkout $(GDAL_BRANCH)
@@ -5021,6 +5024,7 @@ mapmanager-update:
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
     if not exist $(MAPMANAGER_DIR) git clone -b $(MAPMANAGER_BRANCH) $(MAPMANAGER_SRC) $(MAPMANAGER_DIR)
 	cd $(MAPMANAGER_DIR) 
+	git clean -fd
     git reset --hard HEAD
     git fetch
     git checkout $(MAPMANAGER_BRANCH)
