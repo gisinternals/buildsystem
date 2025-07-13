@@ -603,6 +603,10 @@ MAPMANAGER_REVISION=HEAD
 MAPMANAGER_DIR = $(MAPMANAGER_DIR)-x64
 !ENDIF
 
+!IFNDEF GDAL_CMAKE_TARGET
+GDAL_CMAKE_TARGET = install
+!ENDIF
+
 # GDAL installer variables
 !IF EXIST ($(BASE_DIR)\$(GDAL_DIR)\VERSION)
 GDAL_VER= \
@@ -2912,7 +2916,7 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
     -xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
 	-xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.inc $(OUTPUT_DIR)\include
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" $(GDAL_CMAKE_OPT) "-DOGR_ENABLE_DRIVER_MSSQLSPATIAL_PLUGIN=OFF" "-DGDAL_USE_MSSQL_ODBC=OFF" "-DGDAL_USE_MSSQL_NCLI=OFF"
-    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target $(GDAL_CMAKE_TARGET)
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
 	xcopy /Y install\include\*.h $(OUTPUT_DIR)\include
@@ -4699,7 +4703,7 @@ gdal-csharp-test: $(GDAL_CSHARP_DLL)
 	cd $(BASE_DIR)
 !ENDIF
 
-gdal-csharp-test-cmake: $(GDAL_CSHARP_DLL)	
+gdal-csharp-test-cmake:	
 !IFDEF GDAL_CSHARP
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\csharp;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\share

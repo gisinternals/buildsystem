@@ -170,13 +170,17 @@ LIBRTTOPO_DIR = $(SRC_DIR)\librttopo
 LIBRTTOPO_BRANCH = librttopo-1.1.0
 LIBRTTOPO_SRC = https://git.osgeo.org/gitea/rttopo/librttopo.git
 
+!IFNDEF GDAL_DIR
 GDAL_DIR = $(SRC_DIR)\gdal
+!ENDIF
 !IFNDEF GDAL_BRANCH
 GDAL_BRANCH = master
 !ENDIF
 GDAL_SRC = https://github.com/OSGeo/gdal.git
 
+!IFNDEF MAPSERVER_DIR
 MAPSERVER_DIR = $(SRC_DIR)\mapserver
+!ENDIF
 !IFNDEF MAPSERVER_BRANCH
 MAPSERVER_BRANCH = rel-7-6-4
 !ENDIF
