@@ -518,6 +518,16 @@ CMAKE_BUILDDIR = vc17x64
 CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.44.35222.0"
+MSVC_VER = 1930
+MESON_BACKEND = vs2022
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
+CMAKE_BUILDDIR = vc17
+!ENDIF
 !ELSE
 !ERROR This compiler version $(_NMAKE_VER) is not supported or must be enumerated in the makefile
 !ENDIF
