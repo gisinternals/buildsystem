@@ -85,43 +85,44 @@ ZLIB_BRANCH = v1.3.1
 ZLIB_SRC = https://github.com/madler/zlib.git
 
 OPENSSL_DIR = $(SRC_DIR)\openssl
-OPENSSL_BRANCH = openssl-3.4.0
+OPENSSL_BRANCH = openssl-3.6.0
 OPENSSL_SRC = https://github.com/openssl/openssl.git
 
 CURL_DIR = $(SRC_DIR)\curl
-CURL_BRANCH = curl-8_11_0
+CURL_BRANCH = curl-8_17_0
 CURL_SRC = https://github.com/curl/curl.git
 
 LIBPNG_DIR = $(SRC_DIR)\libpng
-LIBPNG_VER = lpng1637
-LIBPNG_SRC = https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/lpng1637.zip/download
+LIBPNG_VER = lpng1653
+LIBPNG_VERSION = 1.6.53
+LIBPNG_SRC = https://sourceforge.net/projects/libpng/files/libpng16/1.6.53/lpng1653.zip/download
 
 JPEG_DIR = $(SRC_DIR)\jpeg
-JPEG_VER = jpeg-9d
-JPEG_SRC = https://www.ijg.org/files/jpegsr9d.zip
+JPEG_VER = jpeg-9f
+JPEG_SRC = https://www.ijg.org/files/jpegsr9f.zip
 
 FREETYPE_DIR = $(SRC_DIR)\freetype2
-FREETYPE_BRANCH = VER-2-11-0
+FREETYPE_BRANCH = VER-2-14-1
 FREETYPE_SRC = https://git.sv.nongnu.org/r/freetype/freetype2.git
 
 HARFBUZZ_DIR = $(SRC_DIR)\harfbuzz
-HARFBUZZ_BRANCH = 3.0.0
+HARFBUZZ_BRANCH = 12.3.0
 HARFBUZZ_SRC = https://github.com/harfbuzz/harfbuzz.git
 
 GEOS_DIR = $(SRC_DIR)\geos
-GEOS_BRANCH = 3.10.6
-GEOS_SRC = https://git.osgeo.org/gitea/geos/geos.git
+GEOS_BRANCH = 3.14.1
+GEOS_SRC = https://github.com/libgeos/geos.git
 
 FRIBIDI_DIR = $(SRC_DIR)\fribidi
-FRIBIDI_BRANCH = v1.0.10
+FRIBIDI_BRANCH = v1.0.16
 FRIBIDI_SRC = https://github.com/fribidi/fribidi.git
 
 LIBICONV_DIR = $(SRC_DIR)\libiconv
-LIBICONV_VER = libiconv-1.17
-LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
+LIBICONV_VER = libiconv-1.18
+LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.18.tar.gz
 
 PGSQL_DIR = $(SRC_DIR)\postgres
-PGSQL_BRANCH = REL_14_0
+PGSQL_BRANCH = REL_16_11
 PGSQL_SRC = https://github.com/postgres/postgres.git
 
 PROJ4_DIR = $(SRC_DIR)\proj4
@@ -131,15 +132,15 @@ PROJ6_BRANCH = 6.3.2
 PROJ7_DIR = $(SRC_DIR)\proj7
 PROJ7_BRANCH = 7.2.1
 PROJ9_DIR = $(SRC_DIR)\proj9
-PROJ9_BRANCH = 9.6.2
+PROJ9_BRANCH = 9.7.1
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 PROJ_DATA_DIR = $(SRC_DIR)\proj-data
-PROJ_DATA_BRANCH = 1.12.0
+PROJ_DATA_BRANCH = 1.24.0
 PROJ_DATA_SRC = https://github.com/OSGeo/PROJ-data.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
-SQLITE_VER = 3.47.1
+SQLITE_VER = 3.51.1
 SQLITE_SRC = https://www.sqlite.org/src/zip/sqlite.zip?r=release
 
 SPATIALITE_DIR = $(SRC_DIR)\spatialite
@@ -151,20 +152,20 @@ FREEXL_VER = freexl-2.0.0
 FREEXL_SRC = https://www.gaia-gis.it/gaia-sins/freexl-sources/freexl-2.0.0.zip
 
 APR_DIR = $(SRC_DIR)\apr
-APR_VER = apr-1.7.0
+APR_VER = apr-1.7.4
 APR_SRC = https://downloads.apache.org/apr/$(APR_VER)-win32-src.zip
 
 APRUTIL_DIR = $(SRC_DIR)\apr-util
-APRUTIL_VER = apr-util-1.6.1
+APRUTIL_VER = apr-util-1.6.3
 APRUTIL_SRC = https://downloads.apache.org/apr/$(APRUTIL_VER)-win32-src.zip
 
 PCRE_DIR = $(SRC_DIR)\pcre
-PCRE_VER = pcre-8.44
-PCRE_SRC = https://ftp.pcre.org/pub/pcre/$(PCRE_VER).zip
+PCRE_VER = pcre-8.45
+PCRE_SRC = https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.zip/download
 
 HTTPD_DIR = $(SRC_DIR)\httpd
-HTTPD_VER = httpd-2.4.59
-HTTPD_SRC = https://downloads.apache.org//httpd/$(HTTPD_VER).tar.gz
+HTTPD_VER = httpd-2.4.66
+HTTPD_SRC = https://downloads.apache.org/httpd/$(HTTPD_VER).tar.gz
 
 LIBRTTOPO_DIR = $(SRC_DIR)\librttopo
 LIBRTTOPO_BRANCH = librttopo-1.1.0
@@ -174,7 +175,7 @@ LIBRTTOPO_SRC = https://git.osgeo.org/gitea/rttopo/librttopo.git
 GDAL_DIR = $(SRC_DIR)\gdal
 !ENDIF
 !IFNDEF GDAL_BRANCH
-GDAL_BRANCH = master
+GDAL_BRANCH = v3.12.1
 !ENDIF
 GDAL_SRC = https://github.com/OSGeo/gdal.git
 
@@ -193,31 +194,33 @@ MAPCACHE_BRANCH = rel-1-14-0
 MAPCACHE_SRC = https://github.com/MapServer/mapcache.git
 
 LIBXML2_DIR = $(SRC_DIR)\libxml2
-LIBXML2_BRANCH = v2.9.12
-LIBXML2_SRC = https://gitlab.gnome.org/GNOME/libxml2.git
+LIBXML2_BRANCH = v2.15.1
+LIBXML2_VERSION = 2.15.1
+LIBXML2_SRC = https://github.com/GNOME/libxml2.git
 
 LIBWEBP_DIR = $(SRC_DIR)\libwebp
-LIBWEBP_BRANCH = v1.3.2
+LIBWEBP_BRANCH = v1.6.0
 LIBWEBP_SRC = https://chromium.googlesource.com/webm/libwebp
 
 ZSTD_DIR = $(SRC_DIR)\zstd
-ZSTD_BRANCH = v1.5.0
+ZSTD_BRANCH = v1.5.7
 ZSTD_SRC = https://github.com/facebook/zstd.git
 
 XERCES_DIR = $(SRC_DIR)\xerces
-XERCES_BRANCH = Xerces-C_3_2_2
-XERCES_SRC = https://svn.apache.org/repos/asf/xerces/c/tags
+XERCES_BRANCH = v3.3.0
+XERCES_SRC = https://github.com/apache/xerces-c.git
 
 LIBEXPAT_DIR = $(SRC_DIR)\libexpat
-LIBEXPAT_BRANCH = R_2_4_4
+LIBEXPAT_BRANCH = R_2_7_3
 LIBEXPAT_SRC = https://github.com/libexpat/libexpat.git
 
 PROTOBUF_DIR = $(SRC_DIR)\protobuf
-PROTOBUF_BRANCH = v3.14.0
+#note: protobuf_c doesn't support the most recent protobuf versions we use 3.x
+PROTOBUF_BRANCH = v3.29.5
 PROTOBUF_SRC = https://github.com/protocolbuffers/protobuf.git
 
 PROTOBUF_C_DIR = $(SRC_DIR)\protobuf_c
-PROTOBUF_C_BRANCH = v1.3.3
+PROTOBUF_C_BRANCH = v1.5.2
 PROTOBUF_C_SRC = https://github.com/protobuf-c/protobuf-c.git
 
 SZIP_DIR = $(SRC_DIR)\szip
@@ -225,8 +228,8 @@ SZIP_VER = szip-2.1.1
 SZIP_SRC = https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz
 
 HDF4_DIR = $(SRC_DIR)\hdf4
-HDF4_VER = hdf-4.2.13
-HDF4_SRC = https://support.hdfgroup.org/ftp/HDF/HDF_Current/src/hdf-4.2.13.zip
+HDF4_BRANCH = hdf-4_2_16
+HDF4_SRC = https://github.com/HDFGroup/hdf4.git
 
 ECWSDK_VER = ERDAS ECW JPEG 2000 SDK 5.5.0
 ECWSDK_DIR = E:\buildsystem\support\ECWSDK\$(ECWSDK_VER)
@@ -241,19 +244,19 @@ MRSID_SDK = support\mrsid
 MRSID_SRC = https://bin.extensis.com/download/developer/
 
 PIXMAN_DIR = $(SRC_DIR)\pixman
-PIXMAN_VER = pixman-0.40.0
-PIXMAN_SRC = https://www.cairographics.org/releases/pixman-0.40.0.tar.gz
+PIXMAN_VER = pixman-0.46.4
+PIXMAN_SRC = https://www.cairographics.org/releases/pixman-0.46.4.tar.gz
 
 CAIRO_DIR = $(SRC_DIR)\cairo
-CAIRO_VER = cairo-1.16.0
-CAIRO_SRC = https://www.cairographics.org/releases/cairo-1.16.0.tar.xz
+CAIRO_VER = cairo-1.18.4
+CAIRO_SRC = https://www.cairographics.org/releases/cairo-1.18.4.tar.xz
 
 FONTCONFIG_DIR = $(SRC_DIR)\fontconfig
-FONTCONFIG_VER = fontconfig-2.13.94
-FONTCONFIG_SRC = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.13.94.tar.gz
+FONTCONFIG_VER = fontconfig-2.16.0
+FONTCONFIG_SRC = https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.16.0.tar.xz
 
 URIPARSER_DIR = $(SRC_DIR)\uriparser
-URIPARSER_BRANCH = uriparser-0.9.5
+URIPARSER_BRANCH = uriparser-1.0.0
 URIPARSER_SRC = https://github.com/uriparser/uriparser.git
 
 LIBSVG_DIR = $(SRC_DIR)\libsvg
@@ -265,24 +268,24 @@ LIBSVGCAIRO_VER=libsvg-cairo-0.5.0
 LIBSVGCAIRO_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg-cairo/0.5/libsvg-cairo-0.5.0.src.tar.gz/download
 
 LIBTIFF_DIR = $(SRC_DIR)\libtiff
-LIBTIFF_BRANCH = v4.7.0
+LIBTIFF_BRANCH = v4.7.1
 LIBTIFF_SRC = https://gitlab.com/libtiff/libtiff.git
 
 LIBGEOTIFF_DIR = $(SRC_DIR)\libgeotiff
-LIBGEOTIFF_BRANCH = 1.7.1
+LIBGEOTIFF_BRANCH = 1.7.3
 LIBGEOTIFF_SRC = https://github.com/OSGeo/libgeotiff.git
 
 OPENJPEG_DIR = $(SRC_DIR)\openjpeg
-OPENJPEG_BRANCH = v2.4.0
-OPENJPEG_SRC =https://github.com/uclouvain/openjpeg.git
+OPENJPEG_BRANCH = v2.5.4
+OPENJPEG_SRC = https://github.com/uclouvain/openjpeg.git
 
 POPPLER_DIR = $(SRC_DIR)\poppler
 POPPLER_BRANCH = poppler-0.89.0
-POPPLER_SRC =https://anongit.freedesktop.org/git/poppler/poppler.git
+POPPLER_SRC = https://anongit.freedesktop.org/git/poppler/poppler.git
 
 FCGI_DIR = $(SRC_DIR)\fcgi
-FCGI_BRANCH = 2.4.2
-FCGI_SRC =https://github.com/FastCGI-Archives/fcgi2.git
+FCGI_BRANCH = 2.4.7
+FCGI_SRC = https://github.com/FastCGI-Archives/fcgi2.git
 
 GIFLIB_DIR = $(SRC_DIR)\giflib
 GIFLIB_BRANCH = 5.0.5
@@ -297,8 +300,8 @@ MYSQL_BRANCH = mysql-cluster-8.1.0
 MYSQL_SRC =https://github.com/mysql/mysql-server.git
 
 HDF5_DIR = $(SRC_DIR)\hdf5
-HDF5_BRANCH = hdf5-1_12_0
-HDF5_SRC =https://bitbucket.hdfgroup.org/scm/hdffv/hdf5.git
+HDF5_BRANCH = hdf5-1_14_3
+HDF5_SRC = https://github.com/HDFGroup/hdf5.git
 
 KEA_DIR = $(SRC_DIR)\kealib
 KEA_BRANCH = kealib-1.4.14
