@@ -4862,22 +4862,22 @@ gdal-python-cmake-all:
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311 SWIG_VER=4.0.2
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
 !ELSE
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
     nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311-32 SWIG_VER=4.0.2
+    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
 !ENDIF
 !ENDIF
 
@@ -5030,11 +5030,11 @@ ms-python-bdist: $(MAPSERVER_LIB)
 	-rmdir /s /q dist
 !ENDIF
 !IFNDEF NO_BUILD
-	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py bdist $(PYTHON_BDIST_OPTS)
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py bdist --formats=zip
 !ENDIF
 !IFNDEF NO_COPY
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
-	xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	xcopy /Y dist\*.zip $(OUTPUT_DIR)\install
 !ENDIF
 	cd $(BASE_DIR)
 !ENDIF
