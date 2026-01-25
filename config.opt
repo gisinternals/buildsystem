@@ -39,6 +39,7 @@ GDAL_MRSID = YES
 GDAL_PROJ9 = YES
 GDAL_LIBWEBP = YES
 GDAL_ZSTD = YES
+GDAL_MUPARSER = YES
 
 # MapServer feature selection flags
 #MS_PROJ = YES
@@ -89,8 +90,10 @@ OPENSSL_BRANCH = openssl-3.6.0
 OPENSSL_SRC = https://github.com/openssl/openssl.git
 
 CURL_DIR = $(SRC_DIR)\curl
-CURL_BRANCH = curl-8_17_0
-CURL_SRC = https://github.com/curl/curl.git
+CURL_BRANCH = curl-8_18_0
+CURL_VERSION = 8.18.0
+#CURL_SRC = https://github.com/curl/curl.git
+CURL_SRC = https://curl.se/download/curl-8.18.0.zip
 
 LIBPNG_DIR = $(SRC_DIR)\libpng
 LIBPNG_VER = lpng1653
@@ -205,6 +208,10 @@ LIBWEBP_SRC = https://chromium.googlesource.com/webm/libwebp
 ZSTD_DIR = $(SRC_DIR)\zstd
 ZSTD_BRANCH = v1.5.7
 ZSTD_SRC = https://github.com/facebook/zstd.git
+
+MUPARSER_DIR = $(SRC_DIR)\muparser
+MUPARSER_BRANCH = v2.3.5
+MUPARSER_SRC = https://github.com/beltoforion/muparser.git
 
 XERCES_DIR = $(SRC_DIR)\xerces
 XERCES_BRANCH = v3.3.0

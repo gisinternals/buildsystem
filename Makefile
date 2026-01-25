@@ -379,7 +379,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30154.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -389,7 +389,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30156.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -399,7 +399,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30157.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -409,7 +409,7 @@ CMAKE_GENERATOR = "Visual Studio 16 2019" -A Win32
 CMAKE_BUILDDIR = vc16
 !ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.29.30159.0"
-MSVC_VER = 1928
+MSVC_VER = 1929
 MESON_BACKEND = vs2019
 !IFDEF WIN64
 CMAKE_GENERATOR = "Visual Studio 16 2019" -A x64
@@ -866,6 +866,7 @@ LIBWEBP_LIB = $(OUTPUT_DIR)\lib\libwebp.lib
 LIBSHARPYUV_LIB = $(OUTPUT_DIR)\lib\libsharpyuv.lib
 !ENDIF
 ZSTD_LIB = $(OUTPUT_DIR)\lib\zstd_static.lib
+MUPARSER_LIB = $(OUTPUT_DIR)\lib\muparser.lib
 
 #installers (with separate licenses)
 GDAL_INSTALLER_CORE = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-core.msi
@@ -1011,6 +1012,13 @@ GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_GEOTIFF=ON" "-DGDAL_USE_GEOTIFF_I
 
 !IFDEF GDAL_TIFF
 GDAL_DEPS = $(GDAL_DEPS) $(LIBTIFF_LIB) $(ZSTD_LIB)
+!ENDIF
+
+!IFDEF GDAL_MUPARSER
+GDAL_DEPS = $(MUPARSER_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) -DCMAKE_CXX_FLAGS="-DMUPARSER_STATIC"
+!ELSE
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_MUPARSER=OFF"
 !ENDIF
 
 !IFDEF GDAL_GEOTIFF
@@ -1302,6 +1310,7 @@ FITS_ENABLED = 1
 BOOST_ENABLED = 1
 OGDI_ENABLED = 1
 LIBWEBP_ENABLED = 1
+MUPARSER_ENABLED = 1
 !ENDIF
 
 # ECW SDK locations
@@ -1811,17 +1820,18 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
         
 $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB) 
 !IFDEF CURL_ENABLED
-    if not exist $(CURL_DIR) git clone -b $(CURL_BRANCH) $(CURL_SRC) $(CURL_DIR)
-    cd $(BASE_DIR)\$(CURL_DIR)
-    git reset --hard HEAD
-    git checkout $(CURL_BRANCH)
+    if not exist $(BASE_DIR)\$(CURL_DIR) mkdir $(BASE_DIR)\$(CURL_DIR)
+	cd $(BASE_DIR)\$(CURL_DIR)
+    if not exist curl-$(CURL_VERSION).zip powershell -NoLogo -NoProfile -Command "Invoke-WebRequest -Uri '$(CURL_SRC)' -OutFile 'curl-$(CURL_VERSION).zip'"
+    if not exist curl-$(CURL_VERSION) 7z x -y curl-$(CURL_VERSION).zip
+    cd curl-$(CURL_VERSION)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
 	if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(ZLIB_LIB:\=/) -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCURL_USE_OPENSSL=ON -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF -DCURL_USE_LIB2=OFF -DCURL_USE_LIBPSL=OFF
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(CURL_DIR)\curl-$(CURL_VERSION)\$(CMAKE_BUILDDIR)\install" -DZLIB_LIBRARY=$(ZLIB_LIB:\=/) -DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include -DCURL_USE_OPENSSL=ON -DHAVE_INET_PTON=OFF -DCURL_DISABLE_LDAPS=OFF -DCURL_USE_LIB2=OFF -DCURL_USE_LIBPSL=OFF
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -1831,7 +1841,7 @@ $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB)
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
     xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin
 	cd $(OUTPUT_DIR)\lib\pkgconfig
-	powershell -Command "(gc libcurl.pc) -replace '$(BASE_DIR:\=/)/$(CURL_DIR:\=/)/$(CMAKE_BUILDDIR)/install', '$(OUTPUT_DIR:\=/)' | Out-File -encoding ASCII libcurl.pc"
+	powershell -Command "(gc libcurl.pc) -replace '$(BASE_DIR:\=/)/$(CURL_DIR:\=/)/curl-$(CURL_VERSION)/$(CMAKE_BUILDDIR)/install', '$(OUTPUT_DIR:\=/)' | Out-File -encoding ASCII libcurl.pc"
     cd $(BASE_DIR)
 !ELSE
     @echo $(CURL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -2000,7 +2010,7 @@ $(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(FREETYPE_LIB);$(HARFBUZZ_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(FREETYPE_LIB);$(HARFBUZZ_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\poppler.lib $(OUTPUT_DIR)\lib
@@ -2053,7 +2063,7 @@ $(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ9_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(PROJ9_LIB)" "-DBUILD_SHARED_LIBS=OFF"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(PROJ9_LIB)" "-DBUILD_SHARED_LIBS=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -2703,6 +2713,9 @@ gdal-deps:
 !ENDIF
 !IFDEF GDAL_LIBWEBP
     echo libwebp - $(LIBWEBP_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
+!ENDIF
+!IFDEF GDAL_MUPARSER
+    echo muparser - $(MUPARSER_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_LIBKML
 !IFDEF LIBKML_DIR
@@ -3541,13 +3554,14 @@ $(GDAL_INSTALLER_CORE): $(GDAL_LIB)
     -del $(OUTPUT_DIR)\install\GDAL.wixpdb
     -del $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-core.msi
     -heat.exe dir $(OUTPUT_DIR)\bin\gdal-data -out $(OUTPUT_DIR)\install\gdal-data.wxs -var var.SourceDir -cg GdalData -dr gdaldataDir -g1 -ag -ke -srd -scom -sreg
-    -candle.exe "-dSourceDir=$(OUTPUT_DIR)\bin\gdal-data" -out "$(OUTPUT_DIR)\install\gdal-data.wixobj" $(OUTPUT_DIR)\install\gdal-data.wxs
 !IFDEF WIN64
+    -candle.exe "-dSourceDir=$(OUTPUT_DIR)\bin\gdal-data" -out "$(OUTPUT_DIR)\install\gdal-data.wixobj" -arch x64 $(OUTPUT_DIR)\install\gdal-data.wxs
     -candle.exe "-dVersionTag=$(GDAL_VER)" "$(GDAL_KEA_DEF)" "$(GDAL_MSSQL_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VER)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x64 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ELSE
+    -candle.exe "-dSourceDir=$(OUTPUT_DIR)\bin\gdal-data" -out "$(OUTPUT_DIR)\install\gdal-data.wixobj" -arch x86 $(OUTPUT_DIR)\install\gdal-data.wxs
     -candle.exe "-dVersionTag=$(GDAL_VER)" "$(GDAL_KEA_DEF)" "$(GDAL_MSSQL_DEF)" "-dgdal_dll=gdal$(GDAL_VERSIONTAG).dll" "-dCompiler=$(MSVC_VER)" "-dTargetDir=$(OUTPUT_DIR)\bin" "-dBaseDir=$(BASE_DIR)" -dTargetExt=.msi "-dTargetFileName=gdal-$(GDAL_VER)-$(COMPILER_VER)-core.msi" -out "$(OUTPUT_DIR)\install\GDAL.wixobj" -arch x86 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" "$(BASE_DIR)\GDAL.wxs"
 !ENDIF
-    -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj" "$(OUTPUT_DIR)\install\gdal-data.wixobj"
+    -Light.exe $(WIX_LIGHT_OPTS) -sice:ICE30 -sice:ICE82 -sice:ICE03 -ext "$(BASE_DIR)\$(WIX_DIR)\WixUtilExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixNetFxExtension.dll" -ext "$(BASE_DIR)\$(WIX_DIR)\WixUIExtension.dll" -out "$(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-core.msi" -pdbout "$(OUTPUT_DIR)\install\GDAL.wixpdb" "$(OUTPUT_DIR)\install\GDAL.wixobj" "$(OUTPUT_DIR)\install\gdal-data.wixobj"
     cd $(BASE_DIR)
 !ENDIF
 
@@ -3656,7 +3670,7 @@ $(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) $(MAPSERVER_OPT)
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPSERVER_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) $(MAPSERVER_OPT)
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG)
     if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
 	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
@@ -3736,7 +3750,7 @@ $(APR_LIB): $(MSVCRT_DLL) $(CURL_EXE)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install
@@ -3766,7 +3780,7 @@ $(APRUTIL_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -3794,7 +3808,7 @@ $(PCRE_LIB): $(MSVCRT_DLL) $(CURL_EXE)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -3820,7 +3834,7 @@ $(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib;$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DPCRE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPCRE_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/pcre.lib
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib;$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DPCRE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPCRE_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/pcre.lib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install\bin\libhttpd.dll $(OUTPUT_DIR)\bin
@@ -4120,6 +4134,28 @@ $(ZSTD_LIB): $(MSVCRT_DLL)
     @echo $(ZSTD_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(MUPARSER_LIB): $(MSVCRT_DLL)
+!IFDEF MUPARSER_ENABLED
+    if not exist $(MUPARSER_DIR) git clone -b $(MUPARSER_BRANCH) $(MUPARSER_SRC) $(MUPARSER_DIR)
+    cd $(BASE_DIR)\$(MUPARSER_DIR)
+    git reset --hard HEAD
+    git checkout $(MUPARSER_BRANCH)
+!IFNDEF NO_CLEAN
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
+!ENDIF
+    if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
+    cd $(CMAKE_BUILDDIR)
+!IFNDEF NO_BUILD
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MUPARSER_DIR)\$(CMAKE_BUILDDIR)\install" "-DBUILD_SHARED_LIBS=OFF"
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+!ENDIF
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
+    cd $(BASE_DIR)
+!ELSE
+    @echo $(MUPARSER_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
+!ENDIF
+
 $(FCGI_LIB):
 !IFDEF FCGI_ENABLED
     if not exist $(FCGI_DIR) git clone -b $(FCGI_BRANCH) $(FCGI_SRC) $(FCGI_DIR)
@@ -4341,7 +4377,7 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     @echo $(OGDI_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
-$(LIBICONV_LIB):
+$(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
 !IFDEF LIBICONV_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
@@ -4527,7 +4563,7 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 default: $(DEFAULT_TARGETS)
 
-test: $(LIBWEBP_LIB)
+test: $(CURL_LIB)
 
 test2:
     echo GDAL_VER = $(GDAL_VER)
@@ -4652,8 +4688,11 @@ ms-csharp-test: $(MAPSERVER_LIB)
 !IFDEF MS_CSHARP
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\csharp;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
-	cd $(BASE_DIR)\$(MAPSERVER_DIR)\mapscript\csharp
-	nmake /f makefile.vc test MSVC_VER=$(MSVC_VER)
+	cd $(BASE_DIR)\$(MAPSERVER_DIR)\src\mapscript\csharp
+	shpdump ../../../tests/point.shp
+	shapeinfo ../../../tests/point.shp
+	getbytes ../../../tests/test.map test_csharp2.png
+	RFC24.exe ../../../tests/test.map
 	cd $(BASE_DIR)
 !ENDIF
 
@@ -4988,7 +5027,7 @@ gdal-cpp-test:
     cd $(BASE_DIR)
 
 gdal-autotest:
-    rem SET GDAL_DOWNLOAD_TEST_DATA=YES
+    SET GDAL_DOWNLOAD_TEST_DATA=YES
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
     SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
@@ -5002,8 +5041,8 @@ gdal-autotest:
     rem SET PG_USE_POSTGIS=YES
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
     SET USE_PATH_FOR_GDAL_PYTHON=YES
-    cd $(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\autotest
-    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs
+    cd $(BASE_DIR)\$(GDAL_DIR)\autotest
+    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe gcore/ ogr/ osr/ alg/ gnm/ utilities/ -vvs
     cd $(BASE_DIR)
 
 ms-autotest:
@@ -5012,9 +5051,9 @@ ms-autotest:
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\ms\apps;$(OUTPUT_DIR)\bin\gdal\apps;$(OUTPUT_DIR)\bin\ms\python;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\pdiff\bin;$(PATH)
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
-    set PYTHONPATH=$(PYTHON_BASE)\$(PYTHON_DIR)
+    SET PYTHONPATH=$(OUTPUT_DIR)\bin\ms\python
     cd $(MAPSERVER_DIR)\msautotest
-    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe -vvs
+    $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe api/ misc/ query/ renderers/ config/ gdal/ sld/ wxs/  -vvs
     cd $(BASE_DIR)
     
 ms-python-bdist: $(MAPSERVER_LIB)
