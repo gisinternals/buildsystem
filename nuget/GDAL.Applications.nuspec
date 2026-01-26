@@ -16,8 +16,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\release-1928\bin\gdal\apps\*.*" target="build\gdal\x86" />	
-    <file src="..\release-1928-x64\bin\gdal\apps\*.*" target="build\gdal\x64" />	
+    <file src="..\release-1929\bin\gdal\apps\*.*" target="build\gdal\x86" />	
+    <file src="..\release-1929-x64\bin\gdal\apps\*.*" target="build\gdal\x64" />	
     <file src="Gdal.Applications.targets" target="build/netstandard2.0" />
   </files>
 </package>

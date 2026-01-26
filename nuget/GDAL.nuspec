@@ -16,7 +16,7 @@
     </contentFiles>
   </metadata>
   <files>
-    <file src="..\release-1928-x64\bin\gdal\csharp\*_csharp.dll" target="lib\netstandard2.0" />
+    <file src="..\release-1929-x64\bin\gdal\csharp\*_csharp.dll" target="lib\netstandard2.0" />
 <!--     <file src="..\release-1928-x64\bin\gdal\csharp\*_csharp.dll" target="build\netstandard2.0\x64" />
     <file src="..\release-1928\bin\gdal\csharp\*_csharp.dll" target="build\netstandard2.0\x86" /> -->
     <!-- PackageReference projects use contentFiles -->
