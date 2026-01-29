@@ -2699,7 +2699,7 @@ gdal-deps:
     echo freexl - $(FREEXL_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 	echo pcre - $(PCRE_VER) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
-!IFDEF GDAL_MYSQL)
+!IFDEF GDAL_MYSQL
     echo mysql - $(MYSQL_BRANCH) >> $(OUTPUT_DIR)\doc\gdal_deps.txt
 !ENDIF
 !IFDEF GDAL_XERCES

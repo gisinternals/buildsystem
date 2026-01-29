@@ -412,7 +412,7 @@
     <?endif?>
     <?endif?>
     
-    <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="1.0.0.0" Manufacturer="OSGeo" UpgradeCode="F70375C2-6571-4A8C-AEA9-3F253A1735E0">
+    <Product Id="*" Name="$(var.ProductName)" Language="1033" Version="$(var.VersionTag)" Manufacturer="OSGeo" UpgradeCode="F70375C2-6571-4A8C-AEA9-3F253A1735E0">
 		<Package InstallerVersion="405" Compressed="yes" Description="$(var.ProductName) Installer"/>
 
 		<Media Id="1" Cabinet="GDAL.cab" EmbedCab="yes" />
