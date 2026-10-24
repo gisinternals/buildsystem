@@ -55,11 +55,11 @@ and VS 2022.
 stable and release builds. At the time of this file:
 
 - MapServer stable branch: `branch-8-6`
-- MapServer release tag: `rel-8-6-0`
-- GDAL stable branch: `release/3.12`
-- GDAL release tag: `v3.12.1`
-- MapCache stable branch: `branch-1-14`
-- MapCache release tag: `rel-1-14-1`
+- MapServer release tag: `rel-8-6-6`
+- GDAL stable branch: `release/3.13`
+- GDAL release tag: `v3.13.3`
+- MapCache stable branch: `branch-1-16`
+- MapCache release tag: `rel-1-16-0`
 
 The compiler scripts translate those values into source directory names and
 package names:
@@ -276,6 +276,35 @@ nmake package PKG_VERSION=gdal-mapserver INSTALL_DIR=C:\Inetpub\wwwroot\sdk\down
   or MapCache versions.
 - Update `config.opt` when changing dependency versions, source URLs, feature
   flags, or local SDK paths.
+- Run the dependency pin audit before a dependency refresh and before preparing
+  a release:
+
+  ```powershell
+  powershell -NoProfile -ExecutionPolicy Bypass -File support\audit-dependency-pins.ps1
+  ```
+
+  The audit queries authoritative upstream tag repositories and selected
+  release pages. It writes dated Markdown and JSON reports under `doc`. A newer
+  tag is a review candidate; the script does not edit `config.opt` or
+  `setversions.bat`.
+- Run the Phase 1 baseline capture before and after substantial buildsystem or
+  dependency changes:
+
+  ```powershell
+  powershell -NoProfile -ExecutionPolicy Bypass -File support\capture-phase1-baseline.ps1
+  ```
+
+  It records toolchain availability, generated outputs, package artifacts,
+  repeated version definitions, and signing/publishing call sites in
+  `doc\phase1-baseline.md` and `doc\phase1-baseline.json`. It inspects the
+  checkout only; it does not compile, sign, publish, or delete files.
+- Treat `setversions.bat` as the authority for effective GDAL, MapServer, and
+  MapCache stable/release selections used by `makevc*.bat`. The corresponding
+  values in `config.opt` are fallbacks for direct `nmake` use. Third-party pins
+  remain authoritative in `config.opt`. Capture the original Phase 1 baseline
+  before applying accepted pins on an upgrade branch. The matching build recipe
+  and compatibility work may then follow on that branch before production
+  cutover.
 - If a new Visual Studio toolset reports an unknown `_NMAKE_VER`, add it to the
   compiler detection section in `Makefile` with the correct `MSVC_VER`,
   `MESON_BACKEND`, `CMAKE_GENERATOR`, and `CMAKE_BUILDDIR`.

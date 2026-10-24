@@ -82,30 +82,30 @@ HDF4_SZIP = YES
 SRC_DIR = src
 
 ZLIB_DIR = $(SRC_DIR)\zlib
-ZLIB_BRANCH = v1.3.1
+ZLIB_BRANCH = v1.3.2
 ZLIB_SRC = https://github.com/madler/zlib.git
 
 OPENSSL_DIR = $(SRC_DIR)\openssl
-OPENSSL_BRANCH = openssl-3.6.0
+OPENSSL_BRANCH = openssl-3.6.5
 OPENSSL_SRC = https://github.com/openssl/openssl.git
 
 CURL_DIR = $(SRC_DIR)\curl
-CURL_BRANCH = curl-8_18_0
-CURL_VERSION = 8.18.0
+CURL_BRANCH = curl-8_23_0
+CURL_VERSION = 8.23.0
 #CURL_SRC = https://github.com/curl/curl.git
-CURL_SRC = https://curl.se/download/curl-8.18.0.zip
+CURL_SRC = https://curl.se/download/curl-8.23.0.zip
 
 LIBPNG_DIR = $(SRC_DIR)\libpng
-LIBPNG_VER = lpng1653
-LIBPNG_VERSION = 1.6.53
-LIBPNG_SRC = https://sourceforge.net/projects/libpng/files/libpng16/1.6.53/lpng1653.zip/download
+LIBPNG_VER = lpng1659
+LIBPNG_VERSION = 1.6.59
+LIBPNG_SRC = https://sourceforge.net/projects/libpng/files/libpng16/1.6.59/lpng1659.zip/download
 
 JPEG_DIR = $(SRC_DIR)\jpeg
-JPEG_VER = jpeg-9f
-JPEG_SRC = https://www.ijg.org/files/jpegsr9f.zip
+JPEG_VER = jpeg-10
+JPEG_SRC = https://www.ijg.org/files/jpegsr10.zip
 
 FREETYPE_DIR = $(SRC_DIR)\freetype2
-FREETYPE_BRANCH = VER-2-14-1
+FREETYPE_BRANCH = VER-2-15-0
 FREETYPE_SRC = https://git.sv.nongnu.org/r/freetype/freetype2.git
 
 HARFBUZZ_DIR = $(SRC_DIR)\harfbuzz
@@ -117,15 +117,15 @@ GEOS_BRANCH = 3.14.1
 GEOS_SRC = https://github.com/libgeos/geos.git
 
 FRIBIDI_DIR = $(SRC_DIR)\fribidi
-FRIBIDI_BRANCH = v1.0.16
+FRIBIDI_BRANCH = v1.0.17
 FRIBIDI_SRC = https://github.com/fribidi/fribidi.git
 
 LIBICONV_DIR = $(SRC_DIR)\libiconv
-LIBICONV_VER = libiconv-1.18
-LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.18.tar.gz
+LIBICONV_VER = libiconv-1.19
+LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.tar.gz
 
 PGSQL_DIR = $(SRC_DIR)\postgres
-PGSQL_BRANCH = REL_16_11
+PGSQL_BRANCH = REL_18_6
 PGSQL_SRC = https://github.com/postgres/postgres.git
 
 PROJ4_DIR = $(SRC_DIR)\proj4
@@ -135,15 +135,15 @@ PROJ6_BRANCH = 6.3.2
 PROJ7_DIR = $(SRC_DIR)\proj7
 PROJ7_BRANCH = 7.2.1
 PROJ9_DIR = $(SRC_DIR)\proj9
-PROJ9_BRANCH = 9.7.1
+PROJ9_BRANCH = 9.9.0
 PROJ_SRC = https://github.com/OSGeo/PROJ.git
 
 PROJ_DATA_DIR = $(SRC_DIR)\proj-data
-PROJ_DATA_BRANCH = 1.24.0
+PROJ_DATA_BRANCH = 1.25.0
 PROJ_DATA_SRC = https://github.com/OSGeo/PROJ-data.git
 
 SQLITE_DIR = $(SRC_DIR)\sqlite
-SQLITE_VER = 3.51.1
+SQLITE_VER = 3.54.1
 SQLITE_SRC = https://www.sqlite.org/src/zip/sqlite.zip?r=release
 
 SPATIALITE_DIR = $(SRC_DIR)\spatialite
@@ -178,7 +178,7 @@ LIBRTTOPO_SRC = https://git.osgeo.org/gitea/rttopo/librttopo.git
 GDAL_DIR = $(SRC_DIR)\gdal
 !ENDIF
 !IFNDEF GDAL_BRANCH
-GDAL_BRANCH = v3.12.1
+GDAL_BRANCH = v3.13.3
 !ENDIF
 GDAL_SRC = https://github.com/OSGeo/gdal.git
 
@@ -186,19 +186,19 @@ GDAL_SRC = https://github.com/OSGeo/gdal.git
 MAPSERVER_DIR = $(SRC_DIR)\mapserver
 !ENDIF
 !IFNDEF MAPSERVER_BRANCH
-MAPSERVER_BRANCH = rel-7-6-4
+MAPSERVER_BRANCH = rel-8-6-6
 !ENDIF
 MAPSERVER_SRC = https://github.com/mapserver/mapserver.git
 
 MAPCACHE_DIR = $(SRC_DIR)\mapcache
 !IFNDEF MAPCACHE_BRANCH
-MAPCACHE_BRANCH = rel-1-14-0
+MAPCACHE_BRANCH = rel-1-16-0
 !ENDIF
 MAPCACHE_SRC = https://github.com/MapServer/mapcache.git
 
 LIBXML2_DIR = $(SRC_DIR)\libxml2
-LIBXML2_BRANCH = v2.15.1
-LIBXML2_VERSION = 2.15.1
+LIBXML2_BRANCH = v2.15.4
+LIBXML2_VERSION = 2.15.4
 LIBXML2_SRC = https://github.com/GNOME/libxml2.git
 
 LIBWEBP_DIR = $(SRC_DIR)\libwebp
@@ -218,7 +218,7 @@ XERCES_BRANCH = v3.3.0
 XERCES_SRC = https://github.com/apache/xerces-c.git
 
 LIBEXPAT_DIR = $(SRC_DIR)\libexpat
-LIBEXPAT_BRANCH = R_2_7_3
+LIBEXPAT_BRANCH = R_2_9_0
 LIBEXPAT_SRC = https://github.com/libexpat/libexpat.git
 
 PROTOBUF_DIR = $(SRC_DIR)\protobuf
@@ -275,11 +275,11 @@ LIBSVGCAIRO_VER=libsvg-cairo-0.5.0
 LIBSVGCAIRO_SRC = https://sourceforge.net/projects/svg2swf/files/libsvg-cairo/0.5/libsvg-cairo-0.5.0.src.tar.gz/download
 
 LIBTIFF_DIR = $(SRC_DIR)\libtiff
-LIBTIFF_BRANCH = v4.7.1
+LIBTIFF_BRANCH = v4.7.2
 LIBTIFF_SRC = https://gitlab.com/libtiff/libtiff.git
 
 LIBGEOTIFF_DIR = $(SRC_DIR)\libgeotiff
-LIBGEOTIFF_BRANCH = 1.7.3
+LIBGEOTIFF_BRANCH = 1.7.4
 LIBGEOTIFF_SRC = https://github.com/OSGeo/libgeotiff.git
 
 OPENJPEG_DIR = $(SRC_DIR)\openjpeg

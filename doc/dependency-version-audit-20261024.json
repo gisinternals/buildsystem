@@ -1,0 +1,412 @@
+﻿[
+    {
+        "name":  "zlib",
+        "variable":  "ZLIB_BRANCH",
+        "current":  "v1.3.2",
+        "pinOwner":  "config.opt",
+        "latest":  "v1.3.2",
+        "source":  "https://github.com/madler/zlib.git",
+        "checkedAt":  "2026-10-24T20:26:18.8167547+02:00",
+        "error":  null
+    },
+    {
+        "name":  "OpenSSL 3",
+        "variable":  "OPENSSL_BRANCH",
+        "current":  "openssl-3.6.5",
+        "pinOwner":  "config.opt",
+        "latest":  "openssl-3.6.5",
+        "source":  "https://github.com/openssl/openssl.git",
+        "checkedAt":  "2026-10-24T20:26:19.5217791+02:00",
+        "error":  null
+    },
+    {
+        "name":  "curl",
+        "variable":  "CURL_BRANCH",
+        "current":  "curl-8_23_0",
+        "pinOwner":  "config.opt",
+        "latest":  "curl-8_23_0",
+        "source":  "https://github.com/curl/curl.git",
+        "checkedAt":  "2026-10-24T20:26:20.2497875+02:00",
+        "error":  null
+    },
+    {
+        "name":  "libpng",
+        "variable":  "LIBPNG_VER",
+        "current":  "lpng1659",
+        "pinOwner":  "config.opt",
+        "latest":  "v1.6.59",
+        "source":  "https://git.code.sf.net/p/libpng/code",
+        "checkedAt":  "2026-10-24T20:26:21.6193867+02:00",
+        "error":  null
+    },
+    {
+        "name":  "FreeType",
+        "variable":  "FREETYPE_BRANCH",
+        "current":  "VER-2-15-0",
+        "pinOwner":  "config.opt",
+        "latest":  "VER-2-15-0",
+        "source":  "https://github.com/freetype/freetype.git",
+        "checkedAt":  "2026-10-24T20:26:22.2602293+02:00",
+        "error":  null
+    },
+    {
+        "name":  "HarfBuzz",
+        "variable":  "HARFBUZZ_BRANCH",
+        "current":  "12.3.0",
+        "pinOwner":  "config.opt",
+        "latest":  "15.0.0",
+        "source":  "https://github.com/harfbuzz/harfbuzz.git",
+        "checkedAt":  "2026-10-24T20:26:22.9908580+02:00",
+        "error":  null
+    },
+    {
+        "name":  "GEOS",
+        "variable":  "GEOS_BRANCH",
+        "current":  "3.14.1",
+        "pinOwner":  "config.opt",
+        "latest":  "3.15.0",
+        "source":  "https://github.com/libgeos/geos.git",
+        "checkedAt":  "2026-10-24T20:26:23.6258940+02:00",
+        "error":  null
+    },
+    {
+        "name":  "FriBidi",
+        "variable":  "FRIBIDI_BRANCH",
+        "current":  "v1.0.17",
+        "pinOwner":  "config.opt",
+        "latest":  "v1.0.17",
+        "source":  "https://github.com/fribidi/fribidi.git",
+        "checkedAt":  "2026-10-24T20:26:24.2398331+02:00",
+        "error":  null
+    },
+    {
+        "name":  "PostgreSQL 18 candidate",
+        "variable":  "PGSQL_BRANCH",
+        "current":  "REL_18_6",
+        "pinOwner":  "config.opt",
+        "latest":  "REL_18_6",
+        "source":  "https://github.com/postgres/postgres.git",
+        "checkedAt":  "2026-10-24T20:26:24.8811032+02:00",
+        "error":  null
+    },
+    {
+        "name":  "PROJ",
+        "variable":  "PROJ9_BRANCH",
+        "current":  "9.9.0",
+        "pinOwner":  "config.opt",
+        "latest":  "9.9.0",
+        "source":  "https://github.com/OSGeo/PROJ.git",
+        "checkedAt":  "2026-10-24T20:26:25.5119027+02:00",
+        "error":  null
+    },
+    {
+        "name":  "PROJ-data",
+        "variable":  "PROJ_DATA_BRANCH",
+        "current":  "1.25.0",
+        "pinOwner":  "config.opt",
+        "latest":  "1.25.0",
+        "source":  "https://github.com/OSGeo/PROJ-data.git",
+        "checkedAt":  "2026-10-24T20:26:26.1207308+02:00",
+        "error":  null
+    },
+    {
+        "name":  "GDAL",
+        "variable":  "GDAL_BRANCH",
+        "current":  "v3.13.3",
+        "pinOwner":  "setversions.bat (effective release)",
+        "latest":  "v3.13.3",
+        "source":  "https://github.com/OSGeo/gdal.git",
+        "checkedAt":  "2026-10-24T20:26:26.8071709+02:00",
+        "error":  null
+    },
+    {
+        "name":  "MapServer",
+        "variable":  "MAPSERVER_BRANCH",
+        "current":  "rel-8-6-6",
+        "pinOwner":  "setversions.bat (effective release)",
+        "latest":  "rel-8-6-6",
+        "source":  "https://github.com/MapServer/MapServer.git",
+        "checkedAt":  "2026-10-24T20:26:27.4923006+02:00",
+        "error":  null
+    },
+    {
+        "name":  "MapCache",
+        "variable":  "MAPCACHE_BRANCH",
+        "current":  "rel-1-16-0",
+        "pinOwner":  "setversions.bat (effective release)",
+        "latest":  "rel-1-16-0",
+        "source":  "https://github.com/MapServer/mapcache.git",
+        "checkedAt":  "2026-10-24T20:26:28.0985642+02:00",
+        "error":  null
+    },
+    {
+        "name":  "libxml2",
+        "variable":  "LIBXML2_BRANCH",
+        "current":  "v2.15.4",
+        "pinOwner":  "config.opt",
+        "latest":  "v2.15.4",
+        "source":  "https://github.com/GNOME/libxml2.git",
+        "checkedAt":  "2026-10-24T20:26:28.7708287+02:00",
+        "error":  null
+    },
+    {
+        "name":  "libwebp",
+        "variable":  "LIBWEBP_BRANCH",
+        "current":  "v1.6.0",
+        "pinOwner":  "config.opt",
+        "latest":  "v1.6.0",
+        "source":  "https://chromium.googlesource.com/webm/libwebp",
+        "checkedAt":  "2026-10-24T20:26:29.1660525+02:00",
+        "error":  null
+    },
+    {
+        "name":  "Zstandard",
+        "variable":  "ZSTD_BRANCH",
+        "current":  "v1.5.7",
+        "pinOwner":  "config.opt",
+        "latest":  "v1.5.7",
+        "source":  "https://github.com/facebook/zstd.git",
+        "checkedAt":  "2026-10-24T20:26:29.7974810+02:00",
+        "error":  null
+    },
+    {
+        "name":  "muparser",
+        "variable":  "MUPARSER_BRANCH",
+        "current":  "v2.3.5",
+        "pinOwner":  "config.opt",
+        "latest":  "v2.3.5",
+        "source":  "https://github.com/beltoforion/muparser.git",
+        "checkedAt":  "2026-10-24T20:26:30.3683697+02:00",
+        "error":  null
+    },
+    {
+        "name":  "Xerces-C",
+        "variable":  "XERCES_BRANCH",
+        "current":  "v3.3.0",
+        "pinOwner":  "config.opt",
+        "latest":  "v3.3.0",
+        "source":  "https://github.com/apache/xerces-c.git",
+        "checkedAt":  "2026-10-24T20:26:30.9867813+02:00",
+        "error":  null
+    },
+    {
+        "name":  "Expat",
+        "variable":  "LIBEXPAT_BRANCH",
+        "current":  "R_2_9_0",
+        "pinOwner":  "config.opt",
+        "latest":  "R_2_9_0",
+        "source":  "https://github.com/libexpat/libexpat.git",
+        "checkedAt":  "2026-10-24T20:26:31.6109049+02:00",
+        "error":  null
+    },
+    {
+        "name":  "protobuf 3",
+        "variable":  "PROTOBUF_BRANCH",
+        "current":  "v3.29.5",
+        "pinOwner":  "config.opt",
+        "latest":  "v3.29.5",
+        "source":  "https://github.com/protocolbuffers/protobuf.git",
+        "checkedAt":  "2026-10-24T20:26:32.3402071+02:00",
+        "error":  null
+    },
+    {
+        "name":  "protobuf-c",
+        "variable":  "PROTOBUF_C_BRANCH",
+        "current":  "v1.5.2",
+        "pinOwner":  "config.opt",
+        "latest":  "v1.5.2",
+        "source":  "https://github.com/protobuf-c/protobuf-c.git",
+        "checkedAt":  "2026-10-24T20:26:32.9563471+02:00",
+        "error":  null
+    },
+    {
+        "name":  "HDF4",
+        "variable":  "HDF4_BRANCH",
+        "current":  "hdf-4_2_16",
+        "pinOwner":  "config.opt",
+        "latest":  "hdf-4_2_16",
+        "source":  "https://github.com/HDFGroup/hdf4.git",
+        "checkedAt":  "2026-10-24T20:26:33.5520271+02:00",
+        "error":  null
+    },
+    {
+        "name":  "HDF5 1.14",
+        "variable":  "HDF5_BRANCH",
+        "current":  "hdf5-1_14_3",
+        "pinOwner":  "config.opt",
+        "latest":  "hdf5-1_14_3",
+        "source":  "https://github.com/HDFGroup/hdf5.git",
+        "checkedAt":  "2026-10-24T20:26:34.1834170+02:00",
+        "error":  null
+    },
+    {
+        "name":  "libtiff",
+        "variable":  "LIBTIFF_BRANCH",
+        "current":  "v4.7.2",
+        "pinOwner":  "config.opt",
+        "latest":  "v4.7.2",
+        "source":  "https://gitlab.com/libtiff/libtiff.git",
+        "checkedAt":  "2026-10-24T20:26:35.0925076+02:00",
+        "error":  null
+    },
+    {
+        "name":  "libgeotiff",
+        "variable":  "LIBGEOTIFF_BRANCH",
+        "current":  "1.7.4",
+        "pinOwner":  "config.opt",
+        "latest":  "1.7.4",
+        "source":  "https://github.com/OSGeo/libgeotiff.git",
+        "checkedAt":  "2026-10-24T20:26:35.7134111+02:00",
+        "error":  null
+    },
+    {
+        "name":  "OpenJPEG",
+        "variable":  "OPENJPEG_BRANCH",
+        "current":  "v2.5.4",
+        "pinOwner":  "config.opt",
+        "latest":  "v2.5.4",
+        "source":  "https://github.com/uclouvain/openjpeg.git",
+        "checkedAt":  "2026-10-24T20:26:36.3154297+02:00",
+        "error":  null
+    },
+    {
+        "name":  "FastCGI",
+        "variable":  "FCGI_BRANCH",
+        "current":  "2.4.7",
+        "pinOwner":  "config.opt",
+        "latest":  "2.4.7",
+        "source":  "https://github.com/FastCGI-Archives/fcgi2.git",
+        "checkedAt":  "2026-10-24T20:26:36.9262546+02:00",
+        "error":  null
+    },
+    {
+        "name":  "libkml",
+        "variable":  "LIBKML_BRANCH",
+        "current":  "1.3.0",
+        "pinOwner":  "config.opt",
+        "latest":  "1.3.0",
+        "source":  "https://github.com/libkml/libkml.git",
+        "checkedAt":  "2026-10-24T20:26:37.5141505+02:00",
+        "error":  null
+    },
+    {
+        "name":  "MySQL cluster 8",
+        "variable":  "MYSQL_BRANCH",
+        "current":  "mysql-cluster-8.1.0",
+        "pinOwner":  "config.opt",
+        "latest":  "mysql-cluster-8.4.13",
+        "source":  "https://github.com/mysql/mysql-server.git",
+        "checkedAt":  "2026-10-24T20:26:38.2140662+02:00",
+        "error":  null
+    },
+    {
+        "name":  "KEA",
+        "variable":  "KEA_BRANCH",
+        "current":  "kealib-1.4.14",
+        "pinOwner":  "config.opt",
+        "latest":  "kealib-2.0.0",
+        "source":  "https://github.com/ubarsc/kealib.git",
+        "checkedAt":  "2026-10-24T20:26:38.8495204+02:00",
+        "error":  null
+    },
+    {
+        "name":  "NetCDF",
+        "variable":  "NETCDF_BRANCH",
+        "current":  "v4.8.1",
+        "pinOwner":  "config.opt",
+        "latest":  "v4.10.1",
+        "source":  "https://github.com/Unidata/netcdf-c.git",
+        "checkedAt":  "2026-10-24T20:26:39.5337264+02:00",
+        "error":  null
+    },
+    {
+        "name":  "OGDI",
+        "variable":  "OGDI_BRANCH",
+        "current":  "ogdi_4_1_1",
+        "pinOwner":  "config.opt",
+        "latest":  "ogdi_4_1_1",
+        "source":  "https://github.com/libogdi/ogdi.git",
+        "checkedAt":  "2026-10-24T20:26:40.1478677+02:00",
+        "error":  null
+    },
+    {
+        "name":  "Boost",
+        "variable":  "BOOST_BRANCH",
+        "current":  "boost-1.75.0",
+        "pinOwner":  "config.opt",
+        "latest":  "boost-1.92.0",
+        "source":  "https://github.com/boostorg/boost.git",
+        "checkedAt":  "2026-10-24T20:26:40.7882437+02:00",
+        "error":  null
+    },
+    {
+        "name":  "SWIG",
+        "variable":  "SWIG_VER",
+        "current":  "4.0.2",
+        "pinOwner":  "Makefile/default",
+        "latest":  "rel-4.0.2",
+        "source":  "https://github.com/swig/swig.git",
+        "checkedAt":  "2026-10-24T20:26:41.4151061+02:00",
+        "error":  null
+    },
+    {
+        "name":  "CMake",
+        "variable":  "CMAKE_TOOL_VER",
+        "current":  "not pinned",
+        "pinOwner":  "Makefile/default",
+        "latest":  "v4.4.4",
+        "source":  "https://github.com/Kitware/CMake.git",
+        "checkedAt":  "2026-10-24T20:26:42.0970902+02:00",
+        "error":  null
+    },
+    {
+        "name":  "Ninja",
+        "variable":  "NINJA_TOOL_VER",
+        "current":  "not pinned",
+        "pinOwner":  "Makefile/default",
+        "latest":  "v1.13.2",
+        "source":  "https://github.com/ninja-build/ninja.git",
+        "checkedAt":  "2026-10-24T20:26:42.7103403+02:00",
+        "error":  null
+    },
+    {
+        "name":  "WinFlexBison",
+        "variable":  "WINFLEXBISON_VER",
+        "current":  "not pinned",
+        "pinOwner":  "Makefile/default",
+        "latest":  "v2.5.25",
+        "source":  "https://github.com/lexxmark/winflexbison.git",
+        "checkedAt":  "2026-10-24T20:26:43.3103468+02:00",
+        "error":  null
+    },
+    {
+        "name":  "IJG JPEG",
+        "variable":  "JPEG_VER",
+        "current":  "jpeg-10",
+        "pinOwner":  "config.opt",
+        "latest":  "jpeg-10",
+        "source":  "https://ijg.org/",
+        "checkedAt":  "2026-10-24T20:26:43.3103468+02:00",
+        "error":  null
+    },
+    {
+        "name":  "GNU libiconv",
+        "variable":  "LIBICONV_VER",
+        "current":  "libiconv-1.19",
+        "pinOwner":  "config.opt",
+        "latest":  "libiconv-1.19",
+        "source":  "https://ftp.gnu.org/pub/gnu/libiconv/",
+        "checkedAt":  "2026-10-24T20:26:43.3103468+02:00",
+        "error":  null
+    },
+    {
+        "name":  "SQLite",
+        "variable":  "SQLITE_VER",
+        "current":  "3.54.1",
+        "pinOwner":  "config.opt",
+        "latest":  "3.54.1",
+        "source":  "https://www.sqlite.org/chronology.html",
+        "checkedAt":  "2026-10-24T20:26:43.3103468+02:00",
+        "error":  null
+    }
+]
