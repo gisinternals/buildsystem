@@ -7,7 +7,7 @@ AR=LIB
 SLIBNAME = libsvg-cairo_i.lib
 DLLNAME = libsvg-cairo.dll
 
-INCLUDEDIRS=-I$(SDK_DIR)\include
+INCLUDEDIRS=-I$(SDK_DIR)\include -I$(SDK_DIR)\include\cairo
 
 EXTERNAL_LIBS= 
 
