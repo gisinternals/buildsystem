@@ -21,3 +21,13 @@ release*
 
 # Ignore archives in support
 /support/*.zip
+
+# Ignore optional local build-wrapper logs
+/doc/build-logs/
+
+# Helper downloads live under src and are covered by /src/** above. Keep these
+# explicit entries so their generated nature remains clear if src rules change.
+/src/cmake/
+/src/ninja/
+/src/winflexbison/
+/src/pkgconfiglite/

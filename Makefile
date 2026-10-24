@@ -601,6 +601,66 @@ SWIG_SRC = https://sourceforge.net/projects/swig/files/swigwin/swigwin-$(SWIG_VE
 SWIG_DIR = $(SRC_DIR)\swig
 SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\swig.exe
 
+!IFNDEF WINFLEXBISON_VER
+WINFLEXBISON_VER = 2.5.25
+!ENDIF
+!IFNDEF PKGCONFIGLITE_VER
+PKGCONFIGLITE_VER = 0.28-1
+!ENDIF
+!IFNDEF CMAKE_TOOL_VER
+CMAKE_TOOL_VER = 4.4.4
+!ENDIF
+!IFNDEF NINJA_TOOL_VER
+NINJA_TOOL_VER = 1.13.2
+!ENDIF
+
+WINFLEXBISON_SRC = https://github.com/lexxmark/winflexbison/releases/download/v$(WINFLEXBISON_VER)/win_flex_bison-$(WINFLEXBISON_VER).zip
+WINFLEXBISON_DIR = $(SRC_DIR)\winflexbison
+WINFLEXBISON_FLEX_EXE = $(BASE_DIR:\=/)/$(WINFLEXBISON_DIR:\=/)/win_flex.exe
+WINFLEXBISON_BISON_EXE = $(BASE_DIR:\=/)/$(WINFLEXBISON_DIR:\=/)/win_bison.exe
+WINFLEXBISON_PREREQ =
+!IFNDEF PGSQL_FLEX_EXE
+PGSQL_FLEX_EXE = $(WINFLEXBISON_FLEX_EXE)
+WINFLEXBISON_PREREQ = $(WINFLEXBISON_INSTALL)
+!ENDIF
+!IFNDEF PGSQL_BISON_EXE
+PGSQL_BISON_EXE = $(WINFLEXBISON_BISON_EXE)
+WINFLEXBISON_PREREQ = $(WINFLEXBISON_INSTALL)
+!ENDIF
+PKGCONFIGLITE_SRC = https://sourceforge.net/projects/pkgconfiglite/files/$(PKGCONFIGLITE_VER)/pkg-config-lite-$(PKGCONFIGLITE_VER)_bin-win32.zip/download
+PKGCONFIGLITE_DIR = $(SRC_DIR)\pkgconfiglite
+PKGCONFIGLITE_PACKAGE_DIR = pkg-config-lite-$(PKGCONFIGLITE_VER)
+!IFNDEF PKG_CONFIG_EXE
+PKG_CONFIG_EXE = $(BASE_DIR)\$(PKGCONFIGLITE_DIR)\$(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe
+PKGCONFIGLITE_PREREQ = $(PKGCONFIGLITE_INSTALL)
+!ELSE
+PKGCONFIGLITE_PREREQ =
+!ENDIF
+!IFNDEF CMAKE_TOOL_DIR
+CMAKE_TOOL_DIR = $(SRC_DIR)\cmake
+!ENDIF
+!IFNDEF CMAKE_TOOL_SRC
+CMAKE_TOOL_SRC = https://github.com/Kitware/CMake/releases/download/v$(CMAKE_TOOL_VER)/cmake-$(CMAKE_TOOL_VER)-windows-x86_64.zip
+!ENDIF
+CMAKE_TOOL_PACKAGE_DIR = cmake-$(CMAKE_TOOL_VER)-windows-x86_64
+CMAKE_TOOL_EXE = $(BASE_DIR)\$(CMAKE_TOOL_DIR)\$(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe
+!IFNDEF NINJA_TOOL_DIR
+NINJA_TOOL_DIR = $(SRC_DIR)\ninja
+!ENDIF
+!IFNDEF NINJA_TOOL_SRC
+NINJA_TOOL_SRC = https://github.com/ninja-build/ninja/releases/download/v$(NINJA_TOOL_VER)/ninja-win.zip
+!ENDIF
+NINJA_TOOL_PACKAGE_DIR = ninja-win-$(NINJA_TOOL_VER)
+NINJA_TOOL_EXE = $(BASE_DIR)\$(NINJA_TOOL_DIR)\$(NINJA_TOOL_PACKAGE_DIR)\ninja.exe
+
+!IFDEF INSECURE_DOWNLOADS
+CURL_DOWNLOAD_SSL_OPT = -k
+POWERSHELL_DOWNLOAD_PREFIX = [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; [Net.ServicePointManager]::ServerCertificateValidationCallback = { $$true };
+!ELSE
+CURL_DOWNLOAD_SSL_OPT =
+POWERSHELL_DOWNLOAD_PREFIX = [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
+!ENDIF
+
 !IFNDEF CYGWIN_DIR
 CYGWIN_DIR=E:\cygwin
 !ENDIF
@@ -750,6 +810,10 @@ MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_lidar_dsdk=$(LIDAR_DLL)" "-dlti_
 #specify build targets
 MSVCRT_DLL = $(OUTPUT_DIR)\build\msvcr.install
 SWIG_INSTALL = $(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
+WINFLEXBISON_INSTALL = $(OUTPUT_DIR)\build\winflexbison-$(WINFLEXBISON_VER).install
+PKGCONFIGLITE_INSTALL = $(OUTPUT_DIR)\build\pkgconfiglite-$(PKGCONFIGLITE_VER).install
+CMAKE_TOOL_INSTALL = $(OUTPUT_DIR)\build\cmake-$(CMAKE_TOOL_VER).install
+NINJA_TOOL_INSTALL = $(OUTPUT_DIR)\build\ninja-$(NINJA_TOOL_VER).install
 ZLIB_LIB = $(OUTPUT_DIR)\lib\zlib.lib
 OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
@@ -1398,15 +1462,13 @@ MS_PROJECT_CONFIG = "$(BUILD_CONFIG)|x64"
 MS_PROJECT_CONFIG = "$(BUILD_CONFIG)|Win32"
 !ENDIF
 
-#finding cmake.exe
-!IF EXIST($(CMAKE_DIR)\bin\cmake.exe)
-CMAKE_EXE = $(CMAKE_DIR)\bin\cmake.exe
+# Use the pinned helper by default. Administrators can define CMAKE_EXE in
+# config.opt or on the nmake command line to use a managed installation.
+!IFNDEF CMAKE_EXE
+CMAKE_EXE = $(CMAKE_TOOL_EXE)
+CMAKE_TOOL_PREREQ = $(CMAKE_TOOL_INSTALL)
 !ELSE
-!IF [echo off && for /f "usebackq tokens=*" %i IN (`where cmake.exe`) DO echo found cmake in %i] == 0
-CMAKE_EXE = cmake.exe
-!ELSE
-!ERROR cmake.exe not found. Please install cmake into $(CMAKE_DIR) or make it available in the PATH environment variable!
-!ENDIF
+CMAKE_TOOL_PREREQ =
 !ENDIF
 
 
@@ -1424,17 +1486,12 @@ CMAKE_EXE = cmake.exe
 !ENDIF
 !ENDIF
 
-#finding ninja.exe
-!IF DEFINED(MS_FRIBIDI) && DEFINED(FRIBIDI_ENABLED)
-!IF [echo off && for /f "usebackq tokens=*" %i IN (`where ninja.exe`) DO echo found ninja in %i] == 0
-NINJA_EXE = ninja.exe
+# Use the pinned helper by default. NINJA_EXE remains overridable.
+!IFNDEF NINJA_EXE
+NINJA_EXE = $(NINJA_TOOL_EXE)
+NINJA_TOOL_PREREQ = $(NINJA_TOOL_INSTALL)
 !ELSE
-!IF EXIST ($(BASE_DIR)\ninja\ninja.exe)
-NINJA_EXE = $(BASE_DIR)\ninja\ninja.exe
-!ELSE
-!ERROR ninja.exe not found. Please install ninja and make it available in the PATH environment variable!
-!ENDIF
-!ENDIF
+NINJA_TOOL_PREREQ =
 !ENDIF
 
 #finding 7z.exe
@@ -1822,7 +1879,7 @@ $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB)
 !IFDEF CURL_ENABLED
     if not exist $(BASE_DIR)\$(CURL_DIR) mkdir $(BASE_DIR)\$(CURL_DIR)
 	cd $(BASE_DIR)\$(CURL_DIR)
-    if not exist curl-$(CURL_VERSION).zip powershell -NoLogo -NoProfile -Command "Invoke-WebRequest -Uri '$(CURL_SRC)' -OutFile 'curl-$(CURL_VERSION).zip'"
+    if not exist curl-$(CURL_VERSION).zip powershell -NoLogo -NoProfile -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(CURL_SRC)' -OutFile 'curl-$(CURL_VERSION).zip'"
     if not exist curl-$(CURL_VERSION) 7z x -y curl-$(CURL_VERSION).zip
     cd curl-$(CURL_VERSION)
 !IFNDEF NO_CLEAN
@@ -1853,7 +1910,7 @@ $(CURL_CA_BUNDLE): $(CURL_EXE)
 !IFDEF CURL_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    $(CURL_EXE) -L -k -o "$(CURL_CA_BUNDLE)" "http://curl.haxx.se/ca/cacert.pem"
+    $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(CURL_CA_BUNDLE)" "https://curl.se/ca/cacert.pem"
 !ENDIF
     
 $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
@@ -1862,7 +1919,7 @@ $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     cd $(LIBPNG_DIR)
-    if not exist $(LIBPNG_VER) $(CURL_EXE) -L -k -o "libpng.zip" "$(LIBPNG_SRC)" & 7z x -y libpng.zip
+    if not exist $(LIBPNG_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "libpng.zip" "$(LIBPNG_SRC)" & 7z x -y libpng.zip
     cd $(LIBPNG_VER)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
@@ -1902,7 +1959,7 @@ $(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(JPEG_DIR) mkdir $(JPEG_DIR)
     cd $(JPEG_DIR)
-    if not exist $(JPEG_VER) $(CURL_EXE) -L -k -o "jpeg.zip" "$(JPEG_SRC)" & 7z x -y jpeg.zip  
+    if not exist $(JPEG_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "jpeg.zip" "$(JPEG_SRC)" & 7z x -y jpeg.zip
     xcopy /Y $(BASE_DIR)\support\win32.mak $(BASE_DIR)\$(JPEG_DIR)\$(JPEG_VER)
 	cd $(JPEG_VER)
     powershell -Command "(gc makefile.vc) -replace 'cvars\)', 'cvarsdll)' | Out-File -encoding ASCII makefile.vc"
@@ -2126,7 +2183,7 @@ $(LIBSVG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(URIPARSER_LIB) $(JP
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(LIBSVG_DIR) mkdir $(LIBSVG_DIR)
     cd $(LIBSVG_DIR)
-    if not exist $(LIBSVG_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBSVG_VER).tar.gz" "$(LIBSVG_SRC)"
+    if not exist $(LIBSVG_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(LIBSVG_VER).tar.gz" "$(LIBSVG_SRC)"
     if not exist $(LIBSVG_VER) 7z e -y $(LIBSVG_VER).tar.gz && 7z x -y $(LIBSVG_VER).tar
     xcopy /Y $(BASE_DIR)\support\libsvg\Makefile.vc $(LIBSVG_VER)\src
     xcopy /Y $(BASE_DIR)\support\libsvg\svg_uri.c $(LIBSVG_VER)\src
@@ -2152,7 +2209,7 @@ $(LIBSVGCAIRO_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(LIBSVG_LIB) $(
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(LIBSVGCAIRO_DIR) mkdir $(LIBSVGCAIRO_DIR)
     cd $(LIBSVGCAIRO_DIR)
-    if not exist $(LIBSVGCAIRO_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBSVGCAIRO_VER).tar.gz" "$(LIBSVGCAIRO_SRC)"
+    if not exist $(LIBSVGCAIRO_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(LIBSVGCAIRO_VER).tar.gz" "$(LIBSVGCAIRO_SRC)"
     if not exist $(LIBSVGCAIRO_VER) 7z e -y $(LIBSVGCAIRO_VER).tar.gz && 7z x -y $(LIBSVGCAIRO_VER).tar
     xcopy /Y $(BASE_DIR)\support\libsvg-cairo\Makefile.vc $(LIBSVGCAIRO_VER)\src
     cd $(LIBSVGCAIRO_VER)\src
@@ -2304,7 +2361,7 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
     @echo $(PROTOBUF_C_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(FRIBIDI_LIB):
+$(FRIBIDI_LIB): $(NINJA_TOOL_PREREQ)
 !IFDEF FRIBIDI_ENABLED
     if not exist $(FRIBIDI_DIR) git clone -b $(FRIBIDI_BRANCH) $(FRIBIDI_SRC) $(FRIBIDI_DIR)
     cd $(FRIBIDI_DIR)
@@ -2315,8 +2372,8 @@ $(FRIBIDI_LIB):
 !ENDIF
 !IFNDEF NO_BUILD
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\meson --prefix $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install --buildtype=release --backend=ninja $(CMAKE_BUILDDIR) -Ddocs=false
-    ninja -v -C $(CMAKE_BUILDDIR)
-    ninja -C $(CMAKE_BUILDDIR) install
+    $(NINJA_EXE) -v -C $(CMAKE_BUILDDIR)
+    $(NINJA_EXE) -C $(CMAKE_BUILDDIR) install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -2486,7 +2543,7 @@ $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SQLITE_DIR) mkdir $(SQLITE_DIR)
     cd $(SQLITE_DIR)
-    if not exist sqlite $(CURL_EXE) -L -k -o "sqlite.zip" "$(SQLITE_SRC)" & 7z x -y sqlite.zip  
+    if not exist sqlite $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "sqlite.zip" "$(SQLITE_SRC)" & 7z x -y sqlite.zip
 !IFNDEF NO_CLEAN
     if exist build rmdir /S /Q build
 !ENDIF
@@ -2511,12 +2568,67 @@ $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
     @echo $(SQLITE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(CMAKE_TOOL_INSTALL):
+    if not exist $(BASE_DIR)\$(CMAKE_TOOL_DIR) mkdir $(BASE_DIR)\$(CMAKE_TOOL_DIR)
+    cd $(BASE_DIR)\$(CMAKE_TOOL_DIR)
+    if not exist $(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe powershell -NoProfile -ExecutionPolicy Bypass -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(CMAKE_TOOL_SRC)' -OutFile '$(CMAKE_TOOL_PACKAGE_DIR).zip'"
+    if not exist $(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe $(7Z_EXE) x -y $(CMAKE_TOOL_PACKAGE_DIR).zip -o.
+    if not exist $(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe exit 1
+    if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
+    if not exist $(OUTPUT_DIR)\include mkdir $(OUTPUT_DIR)\include
+    if not exist $(OUTPUT_DIR)\bin mkdir $(OUTPUT_DIR)\bin
+    if not exist $(OUTPUT_DIR)\lib mkdir $(OUTPUT_DIR)\lib
+    if not exist $(OUTPUT_DIR)\doc mkdir $(OUTPUT_DIR)\doc
+    if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(CMAKE_TOOL_INSTALL)
+    cd $(BASE_DIR)
+
+$(NINJA_TOOL_INSTALL):
+    if not exist $(BASE_DIR)\$(NINJA_TOOL_DIR) mkdir $(BASE_DIR)\$(NINJA_TOOL_DIR)
+    cd $(BASE_DIR)\$(NINJA_TOOL_DIR)
+    if not exist $(NINJA_TOOL_PACKAGE_DIR)\ninja.exe mkdir $(NINJA_TOOL_PACKAGE_DIR)
+    cd $(NINJA_TOOL_PACKAGE_DIR)
+    if not exist ninja.exe powershell -NoProfile -ExecutionPolicy Bypass -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(NINJA_TOOL_SRC)' -OutFile 'ninja-win.zip'"
+    if not exist ninja.exe $(7Z_EXE) x -y ninja-win.zip -o.
+    if not exist ninja.exe exit 1
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(NINJA_TOOL_INSTALL)
+    cd $(BASE_DIR)
+
+$(WINFLEXBISON_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(WINFLEXBISON_DIR) mkdir $(WINFLEXBISON_DIR)
+    cd $(WINFLEXBISON_DIR)
+    if not exist win_flex.exe $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "win_flex_bison-$(WINFLEXBISON_VER).zip" "$(WINFLEXBISON_SRC)"
+    if not exist win_flex.exe $(7Z_EXE) x -y win_flex_bison-$(WINFLEXBISON_VER).zip -o.
+    if not exist win_flex.exe exit 1
+    if not exist win_bison.exe exit 1
+    if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(WINFLEXBISON_INSTALL)
+    cd $(BASE_DIR)
+
+$(PKGCONFIGLITE_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(PKGCONFIGLITE_DIR) mkdir $(PKGCONFIGLITE_DIR)
+    cd $(PKGCONFIGLITE_DIR)
+    if not exist $(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "pkg-config-lite-$(PKGCONFIGLITE_VER)_bin-win32.zip" "$(PKGCONFIGLITE_SRC)"
+    if not exist $(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe $(7Z_EXE) x -y pkg-config-lite-$(PKGCONFIGLITE_VER)_bin-win32.zip -o.
+    if not exist $(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe exit 1
+    if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(PKGCONFIGLITE_INSTALL)
+    cd $(BASE_DIR)
+
 $(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SWIG_DIR) mkdir $(SWIG_DIR)
     cd $(SWIG_DIR)
-    if not exist swigwin-$(SWIG_VER) $(CURL_EXE) -L -k -o "swigwin-$(SWIG_VER).zip" "$(SWIG_SRC)" & 7z x -y swigwin-$(SWIG_VER).zip
+    if not exist swigwin-$(SWIG_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "swigwin-$(SWIG_VER).zip" "$(SWIG_SRC)" & $(7Z_EXE) x -y swigwin-$(SWIG_VER).zip
     echo >$(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
     cd $(BASE_DIR)
 
@@ -2541,7 +2653,7 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(MINIZIP_LIB) $(MSVC
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FREEXL_DIR) mkdir $(FREEXL_DIR)
     cd $(FREEXL_DIR)
-    if not exist $(FREEXL_VER) $(CURL_EXE) -L -k -o "freexl.zip" "$(FREEXL_SRC)" & 7z x -y freexl.zip
+    if not exist $(FREEXL_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "freexl.zip" "$(FREEXL_SRC)" & 7z x -y freexl.zip
     cd $(FREEXL_VER)
 !IFNDEF NO_CLEAN
     nmake /f makefile.vc clean
@@ -2592,7 +2704,7 @@ $(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ9_LIB) $(
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SPATIALITE_DIR) mkdir $(SPATIALITE_DIR)
     cd $(SPATIALITE_DIR)
-    if not exist spatialite.zip $(CURL_EXE) -L -k -o "spatialite.zip" "$(SPATIALITE_SRC)"
+    if not exist spatialite.zip $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "spatialite.zip" "$(SPATIALITE_SRC)"
 !IFNDEF NO_CLEAN
     if exist $(SPATIALITE_VER) rmdir /s /q $(SPATIALITE_VER)
     rem nmake /f makefile.vc clean
@@ -3742,7 +3854,7 @@ $(APR_LIB): $(MSVCRT_DLL) $(CURL_EXE)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(APR_DIR) mkdir $(APR_DIR)
     cd $(APR_DIR)
-    if not exist $(APR_VER) $(CURL_EXE) -L -k -o "$(APR_VER).zip" "$(APR_SRC)" & 7z x -y $(APR_VER).zip
+    if not exist $(APR_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(APR_VER).zip" "$(APR_SRC)" & 7z x -y $(APR_VER).zip
     cd $(APR_VER)
 !IFNDEF NO_CLEAN
     if exist cmake rd /Q /S cmake
@@ -3772,7 +3884,7 @@ $(APRUTIL_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(APRUTIL_DIR) mkdir $(APRUTIL_DIR)
     cd $(APRUTIL_DIR)
-    if not exist $(APRUTIL_VER) $(CURL_EXE) -L -k -o "$(APRUTIL_VER).zip" "$(APRUTIL_SRC)" & 7z x -y $(APRUTIL_VER).zip
+    if not exist $(APRUTIL_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(APRUTIL_VER).zip" "$(APRUTIL_SRC)" & 7z x -y $(APRUTIL_VER).zip
     cd $(APRUTIL_VER)
 !IFNDEF NO_CLEAN
     if exist cmake rd /Q /S cmake
@@ -3797,7 +3909,7 @@ $(PCRE_LIB): $(MSVCRT_DLL) $(CURL_EXE)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(PCRE_DIR) mkdir $(PCRE_DIR)
     cd $(PCRE_DIR)
-    if not exist $(PCRE_VER) $(CURL_EXE) -L -k -o "$(PCRE_VER).zip" "$(PCRE_SRC)" & 7z x -y $(PCRE_VER).zip
+    if not exist $(PCRE_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(PCRE_VER).zip" "$(PCRE_SRC)" & 7z x -y $(PCRE_VER).zip
     cd $(PCRE_VER)
 	powershell -Command "(gc CMakeLists.txt) -replace 'CMAKE_POLICY', '# ' | Out-File -encoding ASCII CMakeLists.txt
 	powershell -Command "(gc CMakeLists.txt) -replace 'GET_TARGET_PROPERTY\(PCREGREP_EXE pcregrep DEBUG_LOCATION\)', 'set(PCREGREP_EXE ""$$<TARGET_FILE:pcregrep>\"")' | Out-File -encoding ASCII CMakeLists.txt
@@ -3825,7 +3937,7 @@ $(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(HTTPD_DIR) mkdir $(HTTPD_DIR)
     cd $(HTTPD_DIR)
-    if not exist $(HTTPD_VER).tar.gz $(CURL_EXE) -L -k -o "$(HTTPD_VER).tar.gz" "$(HTTPD_SRC)"
+    if not exist $(HTTPD_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(HTTPD_VER).tar.gz" "$(HTTPD_SRC)"
     if not exist $(HTTPD_VER) 7z e -y $(HTTPD_VER).tar.gz && 7z x -y $(HTTPD_VER).tar
     cd $(HTTPD_VER)
 !IFNDEF NO_CLEAN
@@ -3927,7 +4039,7 @@ $(FITS_LIB): $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FITS_DIR) mkdir $(FITS_DIR)
     cd $(FITS_DIR)
-    if not exist $(FITS_VER).tar.gz $(CURL_EXE) -L -k -o "$(FITS_VER).tar.gz" "$(FITS_SRC)"
+    if not exist $(FITS_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(FITS_VER).tar.gz" "$(FITS_SRC)"
     if not exist $(FITS_VER) 7z e -y $(FITS_VER).tar.gz && 7z x -y $(FITS_VER).tar
     cd $(FITS_VER)
 !IFNDEF NO_CLEAN
@@ -3954,7 +4066,7 @@ $(SZIP_LIB): $(ZLIB_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SZIP_DIR) mkdir $(SZIP_DIR)
     cd $(SZIP_DIR)
-    if not exist $(SZIP_VER).tar.gz $(CURL_EXE) -L -k -o "$(SZIP_VER).tar.gz" "$(SZIP_SRC)"
+    if not exist $(SZIP_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(SZIP_VER).tar.gz" "$(SZIP_SRC)"
     if not exist $(SZIP_VER) 7z e -y $(SZIP_VER).tar.gz && 7z x -y $(SZIP_VER).tar
     cd $(SZIP_VER)
 !IFNDEF NO_CLEAN
@@ -4383,7 +4495,7 @@ $(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(LIBICONV_DIR) mkdir $(LIBICONV_DIR)
     cd $(LIBICONV_DIR)
-    if not exist $(LIBICONV_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBICONV_VER).tar.gz" "$(LIBICONV_SRC)"
+    if not exist $(LIBICONV_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(LIBICONV_VER).tar.gz" "$(LIBICONV_SRC)"
 !IFNDEF NO_CLEAN
     if exist $(LIBICONV_VER) rd /Q /S $(LIBICONV_VER)
 !ENDIF
@@ -4461,7 +4573,7 @@ $(PIXMAN_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(LIBPNG_LIB) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(PIXMAN_DIR) mkdir $(PIXMAN_DIR)
     cd $(PIXMAN_DIR)
-    if not exist $(PIXMAN_VER).tar.gz $(CURL_EXE) -L -k -o "$(PIXMAN_VER).tar.gz" "$(PIXMAN_SRC)"
+    if not exist $(PIXMAN_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(PIXMAN_VER).tar.gz" "$(PIXMAN_SRC)"
     if not exist $(PIXMAN_VER) 7z e -y $(PIXMAN_VER).tar.gz && 7z x -y $(PIXMAN_VER).tar
     cd $(PIXMAN_VER)
 !IFNDEF NO_CLEAN
@@ -4491,7 +4603,7 @@ $(FONTCONFIG_LIB): $(LIBICONV_LIB) $(FREETYPE_LIB) $(LIBXML2_LIB) $(LIBEXPAT_LIB
 	SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FONTCONFIG_DIR) mkdir $(FONTCONFIG_DIR)
     cd $(FONTCONFIG_DIR)
-    if not exist $(FONTCONFIG_VER).tar.xz $(CURL_EXE) -L -k -o "$(FONTCONFIG_VER).tar.xz" "$(FONTCONFIG_SRC)"
+    if not exist $(FONTCONFIG_VER).tar.xz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(FONTCONFIG_VER).tar.xz" "$(FONTCONFIG_SRC)"
     if not exist $(FONTCONFIG_VER) 7z e -y $(FONTCONFIG_VER).tar.xz && 7z x -y $(FONTCONFIG_VER).tar
     cd $(FONTCONFIG_VER)
 !IFNDEF NO_CLEAN
@@ -4524,7 +4636,7 @@ $(CAIRO_LIB): $(PIXMAN_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(FREETYPE_LIB) $(LIBXML2_
     rem SET CPLUS_INCLUDE_PATH=$(OUTPUT_DIR)\include
     if not exist $(CAIRO_DIR) mkdir $(CAIRO_DIR)
     cd $(CAIRO_DIR)
-    if not exist $(CAIRO_VER).tar.xz $(CURL_EXE) -L -k -o "$(CAIRO_VER).tar.xz" "$(CAIRO_SRC)"
+    if not exist $(CAIRO_VER).tar.xz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(CAIRO_VER).tar.xz" "$(CAIRO_SRC)"
     if not exist $(CAIRO_VER) 7z e -y $(CAIRO_VER).tar.xz && 7z x -y $(CAIRO_VER).tar
 	cd $(CAIRO_VER)
 !IFNDEF NO_CLEAN
@@ -4551,7 +4663,11 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 !ELSE
 	devenv /rebuild Release MapManager.sln /Project Installer
 !ENDIF
+!IFNDEF NO_SIGN
 	$(BASE_DIR)\cert\sign "$(MAPMANAGER_INSTALLER)"
+!ELSE
+    @echo Signing disabled by NO_SIGN.
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
 	rem $(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
@@ -4561,7 +4677,13 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 # virtual targets
 
-default: $(DEFAULT_TARGETS)
+default: $(CMAKE_TOOL_PREREQ) $(DEFAULT_TARGETS)
+
+build-tools: $(CMAKE_TOOL_PREREQ) $(NINJA_TOOL_PREREQ)
+    @echo BUILD TOOLS READY
+
+postgres-tools: $(WINFLEXBISON_PREREQ) $(PKGCONFIGLITE_PREREQ) $(NINJA_TOOL_PREREQ)
+    @echo POSTGRESQL BUILD TOOLS READY
 
 test: $(CURL_LIB)
 
@@ -4680,9 +4802,9 @@ ms-deps:
     echo protobuf-c - $(PROTOBUF_C_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !ENDIF
 
-mapcache: $(MAPCACHE_LIB)
+mapcache: $(CMAKE_TOOL_PREREQ) $(MAPCACHE_LIB)
 
-ms: $(MAPSERVER_LIB) ms-deps
+ms: $(CMAKE_TOOL_PREREQ) $(MAPSERVER_LIB) ms-deps
 
 ms-csharp-test: $(MAPSERVER_LIB)
 !IFDEF MS_CSHARP
@@ -4727,7 +4849,7 @@ show-mrsid:
     echo MRSID_DLL        = $(MRSID_DLL)
     echo LIDAR_DLL        = $(LIDAR_DLL)
 
-dependencies: $(GDAL_DEPS) $(MAPSERVER_DEPS)
+dependencies: $(CMAKE_TOOL_PREREQ) $(GDAL_DEPS) $(MAPSERVER_DEPS)
     @echo DEPENDENCY BUILD COMPLETE !!!!
     
 package-dependencies: dependencies
@@ -4823,7 +4945,7 @@ gdal-clean:
 
 gdal: gdal-clean gdal-old 
 
-gdal-cmake: gdal-clean $(GDAL_LIB) gdal-mssql-odbc gdal-mssql-ncli
+gdal-cmake: gdal-clean $(CMAKE_TOOL_PREREQ) $(GDAL_LIB) gdal-mssql-odbc gdal-mssql-ncli
     
 gdalpluginlibs: $(GDAL_PDF_DLL) $(GDAL_OCI_DLL) $(GDAL_GEOR_DLL) $(GDAL_MRSID_DLL) $(GDAL_HDF4_DLL) $(GDAL_HDF5_DLL) $(GDAL_KEA_DLL) $(GDAL_NETCDF_DLL) $(GDAL_FITS_DLL) $(GDAL_ECW_DLL) $(GDAL_PG_DLL) $(GDAL_FILEGDB_DLL)  $(GDAL_AMIGOCLOUD_DLL) $(GDAL_MSSQL_DLL) $(GDAL_MSSQL_MSODBC_DLL)
 
@@ -5080,7 +5202,11 @@ ms-python-bdist: $(MAPSERVER_LIB)
 !ENDIF
 
 package:
+!IFNDEF NO_SIGN
     if exist $(OUTPUT_DIR)\install $(BASE_DIR)\cert\signdir $(OUTPUT_DIR)\install
+!ELSE
+    @echo Signing disabled by NO_SIGN.
+!ENDIF
     xcopy /Y $(BASE_DIR)\SDKShell.bat $(OUTPUT_DIR)
     xcopy /Y $(BASE_DIR)\read-me.txt $(OUTPUT_DIR)
     if exist $(OUTPUT_DIR)-$(PKG_VERSION).zip del $(OUTPUT_DIR)-$(PKG_VERSION).zip
@@ -5093,17 +5219,25 @@ package:
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.exe $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 	if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.zip $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION).zip" downloads
     if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.exe downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.zip downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	uploadftpdir $(OUTPUT_DIR)\doc\*.txt downloads/doc/release-$(COMPILER_VER)-$(PKG_VERSION)	
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
 
 package-libs:
     if exist $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip
     7z a -tzip $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(OUTPUT_DIR)\lib $(OUTPUT_DIR)\include
     xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
 	
 package-src:
     if exist $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip
@@ -5118,14 +5252,22 @@ package-src:
 	cd $(BASE_DIR)
     7z a -tzip -xr!?git\ -xr!?svn\ $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(MAPSERVER_DIR) $(GDAL_DIR)
     xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-src.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
     
 package-dev:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
     if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.zip $(OUTPUT_DIR)\install\*.bz2
     7z a -tzip -xr!*.cmake -xr!*.pc $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) Makefile config.opt readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
     
 package-dev-x64:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
@@ -5140,8 +5282,12 @@ package-dev-x64:
 install: package package-dev
     xcopy /Y $(OUTPUT_DIR).zip $(INSTALL_DIR)
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR).zip" downloads
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
     
 
 mapmanager-build:
@@ -5191,10 +5337,18 @@ mapmanager-installer:
 !ELSE
 	devenv /rebuild Release MapManager.sln /Project Installer
 !ENDIF
+!IFNDEF NO_SIGN
 	$(BASE_DIR)\cert\sign "$(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi"
+!ELSE
+    @echo Signing disabled by NO_SIGN.
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
+!IFNDEF NO_PUBLISH
 	$(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
 	if not exist $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     xcopy /Y $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 !ENDIF
@@ -5209,19 +5363,27 @@ gdal-nuget:
     nuget pack GDAL.Plugins.nuspec -version $(GDAL_RELEASE_VER)
     nuget pack GDAL.Linux.nuspec -version $(GDAL_RELEASE_VER)
     nuget pack GDAL.Applications.nuspec -version $(GDAL_RELEASE_VER)
+!IFNDEF NO_SIGN
     sign GDAL.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Native.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Linux.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Applications.$(GDAL_RELEASE_VER).nupkg
+!ELSE
+    @echo NuGet signing disabled by NO_SIGN.
+!ENDIF
     cd $(BASE_DIR)
 
 
 gdal-nuget-push:
+!IFNDEF NO_PUBLISH
     cd nuget
     nuget setApiKey $(NUGET_GDAL_API_KEY)
     nuget push GDAL.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.Applications.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+!ELSE
+    @echo NuGet publishing disabled by NO_PUBLISH.
+!ENDIF
 

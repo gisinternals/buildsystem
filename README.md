@@ -9,6 +9,24 @@ The normal scheduled entry point is `makevc.bat`. It runs the currently active
 Visual Studio 2019 and 2022 build scripts in sequence and writes dashboard logs
 under `C:\Inetpub\wwwroot\sdk\build-output`.
 
+`build.bat` is an optional operator wrapper. It does not replace the scheduled
+`makevc.bat` entry point or its HTML dashboard logging. It calls the same
+compiler scripts and adds timestamped plain-text logs and short summaries under
+`doc\build-logs` (which is ignored by Git). Examples:
+
+```bat
+build.bat
+build.bat x64 dev
+build.bat vc17x64 stable
+build.bat vc16x64 nuget
+build.bat nmake vc17x64 build-tools
+```
+
+The first command runs all four compiler scripts in the same order as
+`makevc.bat`. Run `build.bat help` for all selectors. The direct `nmake` form is
+intended for focused maintenance targets and accepts additional `NAME=VALUE`
+arguments after the target.
+
 ## Main Entry Points
 
 `makevc.bat` is the daily aggregate runner. It sets WiX light options and calls:
@@ -106,6 +124,31 @@ libraries from scratch. The dependency targets are tied to the expected outputs,
 so missing files in the selected `release-*` output directory cause the
 corresponding dependency to be rebuilt.
 
+## Build Helper Tools and Downloads
+
+The build pins and bootstraps CMake, Ninja, WinFlexBison, and pkg-config-lite
+under `src` instead of relying on whichever versions happen to be in `PATH`.
+Their versions are set in `config.opt`; successful extraction is recorded by
+versioned stamp files in the selected `release-*\build` directory.
+
+- `nmake build-tools` prepares CMake and Ninja.
+- `nmake postgres-tools` prepares WinFlexBison, pkg-config-lite, and Ninja for
+  the PostgreSQL build introduced in the next upgrade phase.
+- `CMAKE_EXE`, `NINJA_EXE`, `PGSQL_FLEX_EXE`, `PGSQL_BISON_EXE`, and
+  `PKG_CONFIG_EXE` can be set in `config.opt` or on the `nmake` command line to
+  use administrator-managed tools. When all executables supplied by one helper
+  are overridden, its pinned download prerequisite is suppressed.
+
+Downloads validate TLS certificates by default. For a trusted environment with
+an intercepting proxy, `INSECURE_DOWNLOADS=YES` can be supplied as an explicit
+local override, for example:
+
+```bat
+nmake build-tools INSECURE_DOWNLOADS=YES
+```
+
+Do not commit that setting to `config.opt`.
+
 `detect_mrsid.opt` is included when MrSID support is enabled and the file is
 present. It detects and configures the installed MrSID SDK layout.
 
@@ -196,6 +239,18 @@ After packaging, the Makefile copies artifacts into
 `uploadftpdir.bat` to publish runtime ZIPs, headers/libs ZIPs, source/dev ZIPs,
 installers, and documentation to the GISInternals download area on
 `www.gisinternals.com`.
+
+Scheduled builds retain that behavior by default. For validation in a staging
+directory, define `NO_SIGN=YES` and `NO_PUBLISH=YES`; packages are still created
+and copied to `INSTALL_DIR`, but certificate signing, FTP upload, NuGet signing,
+and NuGet push commands are skipped. For example:
+
+```bat
+build.bat nmake vc17x64 package PKG_VERSION=test INSTALL_DIR=E:\build-staging NO_SIGN=YES NO_PUBLISH=YES
+```
+
+These are explicit command-line controls and should not be enabled in the
+production `config.opt`.
 
 Build logs and dashboard snippets are written under
 `C:\Inetpub\wwwroot\sdk\build-output`, so the same web root exposes both the

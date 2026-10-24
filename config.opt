@@ -81,6 +81,18 @@ HDF4_SZIP = YES
 # Source directories, versions and locations
 SRC_DIR = src
 
+# Build helper versions. CMAKE_EXE, NINJA_EXE, MESON_EXE, PGSQL_FLEX_EXE,
+# PGSQL_BISON_EXE and PKG_CONFIG_EXE may be overridden by administrators.
+SWIG_VER = 4.0.2
+CMAKE_TOOL_VER = 4.4.4
+NINJA_TOOL_VER = 1.13.2
+WINFLEXBISON_VER = 2.5.25
+PKGCONFIGLITE_VER = 0.28-1
+
+# Downloads validate TLS certificates by default. Define INSECURE_DOWNLOADS
+# only as a local command-line/config override for a trusted intercepting proxy.
+#INSECURE_DOWNLOADS = YES
+
 ZLIB_DIR = $(SRC_DIR)\zlib
 ZLIB_BRANCH = v1.3.2
 ZLIB_SRC = https://github.com/madler/zlib.git
