@@ -134,6 +134,7 @@ FRIBIDI_SRC = https://github.com/fribidi/fribidi.git
 
 LIBICONV_DIR = $(SRC_DIR)\libiconv
 LIBICONV_VER = libiconv-1.19
+LIBICONV_VERSION = 1.19
 LIBICONV_SRC = https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.tar.gz
 
 PGSQL_DIR = $(SRC_DIR)\postgres

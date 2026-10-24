@@ -133,7 +133,7 @@ versioned stamp files in the selected `release-*\build` directory.
 
 - `nmake build-tools` prepares CMake and Ninja.
 - `nmake postgres-tools` prepares WinFlexBison, pkg-config-lite, and Ninja for
-  the PostgreSQL build introduced in the next upgrade phase.
+  the PostgreSQL 18 build.
 - `CMAKE_EXE`, `NINJA_EXE`, `PGSQL_FLEX_EXE`, `PGSQL_BISON_EXE`, and
   `PKG_CONFIG_EXE` can be set in `config.opt` or on the `nmake` command line to
   use administrator-managed tools. When all executables supplied by one helper
@@ -148,6 +148,37 @@ nmake build-tools INSECURE_DOWNLOADS=YES
 ```
 
 Do not commit that setting to `config.opt`.
+
+## Phase 3 Dependency Automation
+
+GNU libiconv and OGDI now run their generated shell scripts automatically
+through Cygwin; no manual Cygwin handoff is required. The Makefile looks for
+`E:\cygwin` and then `C:\cygwin`, or `CYGWIN_DIR` can point to another
+installation. Cygwin must provide `bash`, `make`, `dos2unix`, `chmod`,
+`cygpath`, and the binutils used by the existing MSVC compatibility scripts.
+OGDI remains gated by `GDAL_OGDI` in the normal GDAL dependency graph; the
+focused `ogdi` target can be used to validate it independently.
+
+PostgreSQL 18/libpq is built with Meson and the pinned Ninja, WinFlexBison, and
+pkg-config-lite helpers. Its build environment is scoped to the Meson command,
+including `CC=cl`, `CXX=cl`, and the output-local pkg-config directory. libxml2
+uses its current CMake build with explicit zlib and iconv locations.
+
+Focused targets are available for validation:
+
+```bat
+build.bat nmake vc17x64 iconv ENABLE_DEPENDENCIES=1
+build.bat nmake vc17x64 ogdi ENABLE_DEPENDENCIES=1
+build.bat nmake vc17x64 libxml2 ENABLE_DEPENDENCIES=1
+build.bat nmake vc17x64 postgresql ENABLE_DEPENDENCIES=1
+build.bat nmake vc17x64 phase3-dependencies ENABLE_DEPENDENCIES=1
+```
+
+Use `vc17` instead of `vc17x64` for x86. Versioned pin stamps under
+`release-*\build` force these recipes to reconfigure when their selected
+libiconv, OGDI, libxml2, or PostgreSQL pin changes. For ABI-affecting upgrades,
+use fresh source and output directories before rebuilding downstream GDAL and
+MapServer consumers.
 
 `detect_mrsid.opt` is included when MrSID support is enabled and the file is
 present. It detects and configures the installed MrSID SDK layout.

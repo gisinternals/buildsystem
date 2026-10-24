@@ -528,6 +528,16 @@ CMAKE_BUILDDIR = vc17x64
 CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
 CMAKE_BUILDDIR = vc17
 !ENDIF
+!ELSEIF "$(_NMAKE_VER)" == "14.44.35229.0"
+MSVC_VER = 1944
+MESON_BACKEND = vs2022
+!IFDEF WIN64
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A x64
+CMAKE_BUILDDIR = vc17x64
+!ELSE
+CMAKE_GENERATOR = "Visual Studio 17 2022" -A Win32
+CMAKE_BUILDDIR = vc17
+!ENDIF
 !ELSEIF "$(_NMAKE_VER)" == "14.50.35721.0"
 MSVC_VER = 1950
 MESON_BACKEND = vs2026
@@ -662,7 +672,13 @@ POWERSHELL_DOWNLOAD_PREFIX = [Net.ServicePointManager]::SecurityProtocol = [Net.
 !ENDIF
 
 !IFNDEF CYGWIN_DIR
+!IF EXIST(E:\cygwin\bin\cygpath.exe)
 CYGWIN_DIR=E:\cygwin
+!ELSEIF EXIST(C:\cygwin\bin\cygpath.exe)
+CYGWIN_DIR=C:\cygwin
+!ELSE
+CYGWIN_DIR=E:\cygwin
+!ENDIF
 !ENDIF
 
 !IF "$(GDAL_BRANCH)" == "master"
@@ -814,6 +830,10 @@ WINFLEXBISON_INSTALL = $(OUTPUT_DIR)\build\winflexbison-$(WINFLEXBISON_VER).inst
 PKGCONFIGLITE_INSTALL = $(OUTPUT_DIR)\build\pkgconfiglite-$(PKGCONFIGLITE_VER).install
 CMAKE_TOOL_INSTALL = $(OUTPUT_DIR)\build\cmake-$(CMAKE_TOOL_VER).install
 NINJA_TOOL_INSTALL = $(OUTPUT_DIR)\build\ninja-$(NINJA_TOOL_VER).install
+LIBICONV_PIN_STAMP = $(OUTPUT_DIR)\build\libiconv-$(LIBICONV_VERSION).pin
+OGDI_PIN_STAMP = $(OUTPUT_DIR)\build\ogdi-$(OGDI_BRANCH).pin
+LIBXML2_PIN_STAMP = $(OUTPUT_DIR)\build\libxml2-$(LIBXML2_VERSION).pin
+PGSQL_PIN_STAMP = $(OUTPUT_DIR)\build\postgresql-$(PGSQL_BRANCH).pin
 ZLIB_LIB = $(OUTPUT_DIR)\lib\zlib.lib
 OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
@@ -1684,6 +1704,10 @@ REGEX_PATH=$(BASE_DIR)\$(REGEX_DIR)
 PYDIR = $(PYTHON_BASE)\$(PYTHON_DIR)
 !ENDIF
 
+!IFNDEF MESON_EXE
+MESON_EXE = $(PYDIR)\Scripts\meson.exe
+!ENDIF
+
 $(OUTPUT_DIR):
     if exist $(OUTPUT_DIR).zip 7z x -y $(OUTPUT_DIR).zip
     if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
@@ -1693,6 +1717,18 @@ $(OUTPUT_DIR):
     if not exist $(OUTPUT_DIR)\doc mkdir $(OUTPUT_DIR)\doc
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
     if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+
+$(LIBICONV_PIN_STAMP): $(OUTPUT_DIR)
+    @echo LIBICONV_VERSION=$(LIBICONV_VERSION) > $(LIBICONV_PIN_STAMP)
+
+$(OGDI_PIN_STAMP): $(OUTPUT_DIR)
+    @echo OGDI_BRANCH=$(OGDI_BRANCH) > $(OGDI_PIN_STAMP)
+
+$(LIBXML2_PIN_STAMP): $(OUTPUT_DIR)
+    @echo LIBXML2_BRANCH=$(LIBXML2_BRANCH) > $(LIBXML2_PIN_STAMP)
+
+$(PGSQL_PIN_STAMP): $(OUTPUT_DIR)
+    @echo PGSQL_BRANCH=$(PGSQL_BRANCH) > $(PGSQL_PIN_STAMP)
 
 $(MSVCRT_DLL): $(OUTPUT_DIR)
 !IF $(MSVC_VER) >= 1950
@@ -1809,12 +1845,13 @@ $(MSVCRT_DLL): $(OUTPUT_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr71 > $(MSVCRT_DLL)
 !ENDIF
     
-$(ZLIB_LIB): $(MSVCRT_DLL)
+$(ZLIB_LIB): $(CMAKE_TOOL_PREREQ) $(MSVCRT_DLL)
 !IFDEF ZLIB_ENABLED
     if not exist $(ZLIB_DIR) git clone -b $(ZLIB_BRANCH) $(ZLIB_SRC) $(ZLIB_DIR)
     cd $(BASE_DIR)\$(ZLIB_DIR)
     git reset --hard HEAD
     git checkout $(ZLIB_BRANCH)
+    powershell -Command "(Get-Content CMakeLists.txt) -replace 'OUTPUT_NAME z\)', 'OUTPUT_NAME zlib)' | Set-Content -Encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -1853,8 +1890,13 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 	nmake clean
 !ENDIF
 !IFNDEF NO_BUILD
-    nmake
-    nmake install
+    nmake install_dev install_engines install_modules
+    nmake apps\openssl.exe
+    if not exist install\bin mkdir install\bin
+    if not exist install\ssl mkdir install\ssl
+    if exist apps\openssl.exe copy /Y apps\openssl.exe install\bin\openssl.exe
+    if exist apps\openssl.pdb copy /Y apps\openssl.pdb install\bin\openssl.pdb
+    if exist apps\openssl.cnf copy /Y apps\openssl.cnf install\ssl\openssl.cnf
 !ENDIF
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	xcopy /Y /S install\include\*.c $(OUTPUT_DIR)\include
@@ -1870,6 +1912,9 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 	powershell -Command "(gc libcrypto.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII libcrypto.pc"
 	powershell -Command "(gc libssl.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII libssl.pc"
 	powershell -Command "(gc openssl.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII openssl.pc"
+	powershell -Command "$$c = (gc libcrypto.pc) -join [Environment]::NewLine; $$c = $$c.Replace('libdir=$${exec_prefix}', 'libdir=$${exec_prefix}/lib').Replace('Libs: -L$${libdir} -lcrypto', 'Libs: $${libdir}/libcrypto.lib'); [IO.File]::WriteAllText('libcrypto.pc', $$c + [Environment]::NewLine, [Text.Encoding]::ASCII)"
+	powershell -Command "$$c = (gc libssl.pc) -join [Environment]::NewLine; $$c = $$c.Replace('libdir=$${exec_prefix}', 'libdir=$${exec_prefix}/lib').Replace('Libs: -L$${libdir} -lssl', 'Libs: $${libdir}/libssl.lib'); [IO.File]::WriteAllText('libssl.pc', $$c + [Environment]::NewLine, [Text.Encoding]::ASCII)"
+	powershell -Command "$$c = (gc openssl.pc) -join [Environment]::NewLine; $$c = $$c.Replace('libdir=$${exec_prefix}', 'libdir=$${exec_prefix}/lib'); [IO.File]::WriteAllText('openssl.pc', $$c + [Environment]::NewLine, [Text.Encoding]::ASCII)"
     cd $(BASE_DIR)
 !ELSE
     @echo $(OPENSSL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1908,9 +1953,8 @@ $(CURL_EXE): $(CURL_LIB)
 
 $(CURL_CA_BUNDLE): $(CURL_EXE)
 !IFDEF CURL_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(CURL_CA_BUNDLE)" "https://curl.se/ca/cacert.pem"
+    powershell -NoLogo -NoProfile -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri 'https://curl.se/ca/cacert.pem' -OutFile '$(CURL_CA_BUNDLE)'"
+    if not exist $(CURL_CA_BUNDLE) exit 1
 !ENDIF
     
 $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
@@ -2253,7 +2297,7 @@ $(GEOS_LIB): $(MSVCRT_DLL)
     @echo $(GEOS_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(LIBEXPAT_LIB):
+$(LIBEXPAT_LIB): $(CMAKE_TOOL_PREREQ)
 !IFDEF LIBEXPAT_ENABLED
     if not exist $(LIBEXPAT_DIR) git clone -b $(LIBEXPAT_BRANCH) $(LIBEXPAT_SRC) $(LIBEXPAT_DIR)
     cd $(LIBEXPAT_DIR)
@@ -2744,7 +2788,7 @@ $(FILEGDBAPI_DLL):
     xcopy /Y $(FILEGDB_DLL) $(OUTPUT_DIR)\bin
 !ENDIF
 
-$(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
+$(LIBXML2_LIB): $(CMAKE_TOOL_PREREQ) $(LIBXML2_PIN_STAMP) $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFDEF LIBXML2_ENABLED
     if not exist $(LIBXML2_DIR) git clone -b $(LIBXML2_BRANCH) $(LIBXML2_SRC) $(LIBXML2_DIR)
     cd $(LIBXML2_DIR)
@@ -2756,11 +2800,10 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBXML2_DIR)\$(CMAKE_BUILDDIR)\install" "-DLIBXML2_WITH_ZLIB=ON" "-DLIBXML2_WITH_HTTP=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBXML2_DIR)\$(CMAKE_BUILDDIR)\install" "-DLIBXML2_WITH_ZLIB=ON" "-DZLIB_LIBRARY=$(ZLIB_LIB)" "-DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DLIBXML2_WITH_ICONV=ON" "-DIconv_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DIconv_LIBRARY=$(LIBICONV_LIB)" "-DLIBXML2_WITH_LZMA=OFF" "-DLIBXML2_WITH_PYTHON=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
-    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     rem xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
 	rem xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
 	xcopy /Y /S install\include\libxml2\*.h $(OUTPUT_DIR)\include
@@ -2777,7 +2820,8 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 	echo. >> $(OUTPUT_DIR)\lib\pkgconfig\libxml-2.0.pc
 	echo Cflags: -I$${includedir} >> $(OUTPUT_DIR)\lib\pkgconfig\libxml-2.0.pc
 	echo Libs: -L$${libdir} -lxml2 -liconv -lzlib >> $(OUTPUT_DIR)\lib\pkgconfig\libxml-2.0.pc
-	
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    if not exist $(LIBXML2_LIB) exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(LIBXML2_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -3985,49 +4029,29 @@ $(MAPCACHE_LIB): $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
     @echo $(MAPCACHE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(PGSQL_LIB): $(OPENSSL_LIB) $(ZLIB_LIB) $(LIBXML2_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
+$(PGSQL_LIB): $(PGSQL_PIN_STAMP) $(OPENSSL_LIB) $(ZLIB_LIB) $(MSVCRT_DLL) $(WINFLEXBISON_PREREQ) $(PKGCONFIGLITE_PREREQ) $(NINJA_TOOL_PREREQ)
 !IFDEF PGSQL_ENABLED
     if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
     cd $(BASE_DIR)\$(PGSQL_DIR)
-    rem git reset --hard HEAD
-    rem git checkout $(PGSQL_BRANCH)
-    cd src\tools\msvc
-    echo use strict; >config.pl
-    echo use warnings; >>config.pl
-    echo our $$config = { >>config.pl
-    echo asserts =^> 0, >>config.pl
-    echo ldap =^> 1, >>config.pl
-    echo extraver  =^> undef, >>config.pl
-    echo gss       =^> undef, >>config.pl
-    echo icu       =^> undef, >>config.pl
-    echo lz4       =^> undef, >>config.pl
-    echo nls       =^> undef, >>config.pl
-    echo tap_tests =^> undef, >>config.pl
-    echo tcl       =^> undef, >>config.pl
-    echo perl      =^> undef, >>config.pl
-    echo python    =^> undef, >>config.pl
-    echo openssl   =^> '$(OUTPUT_DIR)', >>config.pl
-    echo uuid      =^> undef, >>config.pl
-    echo xml       =^> '$(OUTPUT_DIR)', >>config.pl
-    echo xslt      =^> undef, >>config.pl
-    echo iconv     =^> '$(OUTPUT_DIR)', >>config.pl
-    echo zlib      =^> '$(OUTPUT_DIR)' >>config.pl
-    echo }; >>config.pl
-    echo 1; >>config.pl
-    powershell -Command "(gc Solution.pm) -replace '\\lib\\zdll.lib', '\lib\zlib.lib' | Out-File -encoding ASCII Solution.pm"
+    git reset --hard HEAD
+    git checkout $(PGSQL_BRANCH)
 !IFNDEF NO_CLEAN
-    clean dist
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_BUILD
-    build libpq
+    cmd /d /c "set PKG_CONFIG=$(PKG_CONFIG_EXE)&& set PKG_CONFIG_PATH=$(OUTPUT_DIR:\=/)/lib/pkgconfig&& set PKG_CONFIG_LIBDIR=$(OUTPUT_DIR:\=/)/lib/pkgconfig&& set CC=cl&& set CXX=cl&& $(MESON_EXE) setup $(CMAKE_BUILDDIR) --backend=ninja --prefix=$(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\install --libdir=lib --buildtype=release -Dauto_features=disabled -Dssl=openssl -Dzlib=enabled -Dldap=disabled -Dgssapi=disabled -Dicu=disabled -Dlibcurl=disabled -Dlibxml=disabled -Dlibxslt=disabled -Dlz4=disabled -Dzstd=disabled -Dreadline=disabled -Dnls=disabled -Ddocs=disabled -Ddocs_pdf=disabled -Dtap_tests=disabled -Dplperl=disabled -Dplpython=disabled -Dpltcl=disabled -DFLEX=$(PGSQL_FLEX_EXE) -DBISON=$(PGSQL_BISON_EXE) -Dextra_include_dirs=$(OUTPUT_DIR:\=/)/include -Dextra_lib_dirs=$(OUTPUT_DIR:\=/)/lib&& $(NINJA_EXE) -C $(CMAKE_BUILDDIR) src/interfaces/libpq/libpq.dll"
 !ENDIF
-    cd $(BASE_DIR)\$(PGSQL_DIR)\$(BUILD_CONFIG)\libpq
-    xcopy /Y *.dll $(OUTPUT_DIR)\bin
-    xcopy /Y *.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\interfaces\libpq\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-fe.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-events.h $(OUTPUT_DIR)\include
+    if not exist $(OUTPUT_DIR)\include\libpq mkdir $(OUTPUT_DIR)\include\libpq
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\libpq\libpq-fs.h $(OUTPUT_DIR)\include\libpq
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
-    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\include\pg_config.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\include\pg_config_os.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\interfaces\libpq\*.lib $(OUTPUT_DIR)\lib
+    if not exist $(PGSQL_LIB) exit 1
+    if not exist $(OUTPUT_DIR)\bin\libpq.dll exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(PGSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.    
@@ -4408,8 +4432,10 @@ $(MYSQL_LIB): $(OPENSSL_LIB)
     @echo $(MYSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
+$(OGDI_LIB): $(OGDI_PIN_STAMP) $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
 !IFDEF OGDI_ENABLED
+    if not exist $(CYGWIN_DIR)\bin\bash.exe echo ERROR: Cygwin bash.exe was not found under CYGWIN_DIR=$(CYGWIN_DIR).
+    if not exist $(CYGWIN_DIR)\bin\bash.exe exit 1
     if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
     cd $(OGDI_DIR)
     git reset --hard HEAD
@@ -4440,7 +4466,8 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     cd ..
     cd ..
 !ENDIF
-    echo INCLUDE='$(INCLUDE)' > build.sh
+    echo set -e > build.sh
+    echo INCLUDE='$(INCLUDE)' >> build.sh
     echo export INCLUDE >> build.sh
     echo LIB='$(LIB)' >> build.sh
     echo export LIB >> build.sh
@@ -4462,7 +4489,9 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
 !IFNDEF NO_CLEAN
     echo make clean >> build.sh
 !ENDIF
+!IFNDEF NO_BUILD
     echo make >> build.sh
+!ENDIF
 !IFDEF WIN64
     echo cp -f $$TOPDIR/bin/win64/ogdi.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win64/adrg.dll $$OUTPUTDIR/bin >> build.sh
@@ -4470,7 +4499,6 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     echo cp -f $$TOPDIR/bin/win64/rpf.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win64/skeleton.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win64/vrf.dll $$OUTPUTDIR/bin >> build.sh
-    echo cp -f $$TOPDIR/lib/win64/ogdi.lib $$OUTPUTDIR/lib >> build.sh
 !ELSE
     echo cp -f $$TOPDIR/bin/win32/ogdi.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win32/adrg.dll $$OUTPUTDIR/bin >> build.sh
@@ -4478,26 +4506,38 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     echo cp -f $$TOPDIR/bin/win32/rpf.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win32/skeleton.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win32/vrf.dll $$OUTPUTDIR/bin >> build.sh
-    echo cp -f $$TOPDIR/lib/win32/ogdi.lib $$OUTPUTDIR/lib >> build.sh
 !ENDIF
     echo cp -f $$TOPDIR/ogdi/include/ecs*.h $$OUTPUTDIR/include >> build.sh
+!IFDEF WIN64
+    echo cp -f $$TOPDIR/lib/win64/ogdi.lib $$OUTPUTDIR/lib >> build.sh
+!ELSE
+    echo cp -f $$TOPDIR/lib/win32/ogdi.lib $$OUTPUTDIR/lib >> build.sh
+!ENDIF
     $(CYGWIN_DIR)\bin\dos2unix.exe build.sh
     $(CYGWIN_DIR)\bin\chmod.exe +rwxrwxrwx ./build.sh
-    echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(OGDI_DIR)\build.sh" & exit 1
+    for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(OGDI_DIR)\build.sh"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "%i" || exit 1
+    if not exist $(OGDI_LIB) exit 1
+    if not exist $(OUTPUT_DIR)\bin\ogdi.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\adrg.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\remote.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\rpf.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\skeleton.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\vrf.dll exit 1
+    if not exist $(OUTPUT_DIR)\include\ecs.h exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(OGDI_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
-$(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
+$(LIBICONV_LIB): $(LIBICONV_PIN_STAMP)
 !IFDEF LIBICONV_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(CYGWIN_DIR)\bin\bash.exe echo ERROR: Cygwin bash.exe was not found under CYGWIN_DIR=$(CYGWIN_DIR).
+    if not exist $(CYGWIN_DIR)\bin\bash.exe exit 1
     if not exist $(LIBICONV_DIR) mkdir $(LIBICONV_DIR)
     cd $(LIBICONV_DIR)
-    if not exist $(LIBICONV_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(LIBICONV_VER).tar.gz" "$(LIBICONV_SRC)"
+    if not exist $(LIBICONV_VER).tar.gz powershell -NoLogo -NoProfile -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(LIBICONV_SRC)' -OutFile '$(LIBICONV_VER).tar.gz'"
 !IFNDEF NO_CLEAN
-    if exist $(LIBICONV_VER) rd /Q /S $(LIBICONV_VER)
+    if exist $(LIBICONV_VER) for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "rm -rf '%i'" || exit 1
 !ENDIF
     if not exist $(LIBICONV_VER) 7z e -y $(LIBICONV_VER).tar.gz && 7z x -y $(LIBICONV_VER).tar
     cd $(LIBICONV_VER)
@@ -4514,7 +4554,8 @@ $(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
     powershell -Command "(gc Makefile.in) -replace '--output-format=coff', '$$(RCFLAGS)' | Out-File -encoding ASCII Makefile.in"
     cd ..
 
-    echo INCLUDE='$(INCLUDE)' >build-aux\vcvars.sh
+    echo set -e >build-aux\vcvars.sh
+    echo INCLUDE='$(INCLUDE)' >>build-aux\vcvars.sh
     echo LIB='$(LIB)' >>build-aux\vcvars.sh
     echo LIBPATH='$(LIBPATH)' >>build-aux\vcvars.sh
     for /f "usebackq tokens=*" %i in (`where cl.exe`) do echo COMPILERPATH=`cygpath -u "%~dpi."` >>build-aux\vcvars.sh
@@ -4540,8 +4581,9 @@ $(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
     echo make install-lib >>build-aux\vcvars.sh
 !ENDIF
     echo cp -f $$SRCDIR/install/bin/*.dll $$OUTPUTDIR/bin >>build-aux\vcvars.sh
-    echo cp -f $$SRCDIR/install/lib/iconv.dll.lib $$OUTPUTDIR/lib/iconv.lib >>build-aux\vcvars.sh
+    echo cp -f $$SRCDIR/install/bin/iconv-2.dll $$OUTPUTDIR/bin/iconv.dll >>build-aux\vcvars.sh
     echo cp -f $$SRCDIR/install/include/*.h $$OUTPUTDIR/include >>build-aux\vcvars.sh
+    echo cp -f $$SRCDIR/install/lib/iconv.dll.lib $$OUTPUTDIR/lib/iconv.lib >>build-aux\vcvars.sh
 
     $(CYGWIN_DIR)\bin\dos2unix.exe build-aux\vcvars.sh
     $(CYGWIN_DIR)\bin\chmod.exe +rwxrwxrwx ./build-aux/vcvars.sh
@@ -4559,7 +4601,11 @@ $(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
     echo Libs: -L$${libdir} -liconv >> $(OUTPUT_DIR)\lib\pkgconfig\iconv.pc
     echo Cflags: -I$${includedir} >> $(OUTPUT_DIR)\lib\pkgconfig\iconv.pc
 	
-    echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\build-aux\vcvars.sh" & exit 1
+    for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\build-aux\vcvars.sh"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "%i" || exit 1
+    if not exist $(LIBICONV_LIB) exit 1
+    if not exist $(OUTPUT_DIR)\bin\iconv-2.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\iconv.dll exit 1
+    if not exist $(OUTPUT_DIR)\include\iconv.h exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(LIBICONV_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -4684,6 +4730,21 @@ build-tools: $(CMAKE_TOOL_PREREQ) $(NINJA_TOOL_PREREQ)
 
 postgres-tools: $(WINFLEXBISON_PREREQ) $(PKGCONFIGLITE_PREREQ) $(NINJA_TOOL_PREREQ)
     @echo POSTGRESQL BUILD TOOLS READY
+
+iconv: $(LIBICONV_LIB)
+    @echo LIBICONV BUILD COMPLETE
+
+ogdi: $(OGDI_LIB)
+    @echo OGDI BUILD COMPLETE
+
+libxml2: $(LIBXML2_LIB)
+    @echo LIBXML2 BUILD COMPLETE
+
+postgresql: $(PGSQL_LIB)
+    @echo POSTGRESQL LIBPQ BUILD COMPLETE
+
+phase3-dependencies: $(CMAKE_TOOL_PREREQ) $(LIBICONV_LIB) $(OGDI_LIB) $(LIBXML2_LIB) $(PGSQL_LIB)
+    @echo PHASE 3 DEPENDENCY BUILD COMPLETE
 
 test: $(CURL_LIB)
 
