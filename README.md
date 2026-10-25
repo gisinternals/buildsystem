@@ -222,6 +222,38 @@ Important targets:
 - `package-dev` creates the larger development ZIP containing the output tree,
   Makefile, config files, licenses, and support files.
 
+## GDAL and MapServer CMake Compatibility
+
+The GDAL CMake build explicitly enables the configured C#, Java, and Python
+bindings and disables each binding when its matching `GDAL_*` flag is absent.
+The C# application target is .NET 8, while the managed library remains
+`netstandard2.0`. The C# binding is built serially before the install target to
+avoid concurrent .NET restore/build failures. PostgreSQL, SQLite/SpatiaLite,
+FastCGI, and their include/library locations are also passed explicitly to
+current GDAL, MapServer, and MapCache CMake discovery.
+
+Python 3.10 is the default. `PYTHON_VERSION` supplies the import-library suffix
+used by MapServer, and `GDAL_PYTHON_DIRS_X64` / `GDAL_PYTHON_DIRS_X86` list the
+installed interpreter directories for `gdal-python-cmake-all`. Space-separate
+additional directories when more Python versions are installed. That target
+creates both the normal binary distribution and ZIP form for every listed
+interpreter.
+
+NuGet manifests use output-directory properties instead of fixed paths.
+`NUGET_COMPILER_VER` defaults to `1929`, preserving the scheduled
+`makevc16x64.bat nuget` workflow. To package an already-built VS 2022 x86/x64
+pair instead, run:
+
+```bat
+build.bat nmake vc17x64 gdal-nuget NUGET_COMPILER_VER=1944 NO_SIGN=YES
+```
+
+The native NuGet manifest uses wildcards for the VC runtime families so newer
+runtime files such as `msvcp140_atomic_wait.dll`,
+`msvcp140_codecvt_ids.dll`, and `vcruntime140_threads.dll` are included when
+present. MSI installers continue to obtain the corresponding runtime through
+the compiler-specific merge module.
+
 ## Common Package Pipeline
 
 `makepackage-cmake.bat` executes the standard CMake-based package pipeline. For
@@ -282,6 +314,14 @@ build.bat nmake vc17x64 package PKG_VERSION=test INSTALL_DIR=E:\build-staging NO
 
 These are explicit command-line controls and should not be enabled in the
 production `config.opt`.
+
+Before switching a refreshed checkout into production, run development,
+stable, and explicit release packaging for x86 and x64 on each supported
+compiler with `NO_SIGN=YES NO_PUBLISH=YES` and a staging `INSTALL_DIR`. Verify
+the C#, Java, and Python tests, GDAL/MapServer test suites, installers, runtime
+ZIP, headers/libs ZIP, development ZIP, and NuGet packages against the current
+production artifact classes. This validation does not change the normal
+scheduled behavior once the suppression flags are omitted.
 
 Build logs and dashboard snippets are written under
 `C:\Inetpub\wwwroot\sdk\build-output`, so the same web root exposes both the

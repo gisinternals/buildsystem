@@ -1,5 +1,13 @@
 # Prerequisite locations
-#PYTHON_DIR = Python36
+# Python 3.10 is used by the GDAL/MapServer CMake builds. The lists control
+# which installed interpreters receive GDAL binary distributions.
+PYTHON_VERSION = 310
+GDAL_PYTHON_DIRS_X64 = Python310
+GDAL_PYTHON_DIRS_X86 = Python310-32
+
+# Scheduled NuGet packaging continues to consume the VS 2019 output by
+# default. Override with NUGET_COMPILER_VER=1944 for a VS 2022 package.
+NUGET_COMPILER_VER = 1929
 
 # GDAL feature selection flags
 GDAL_GEOS = YES
