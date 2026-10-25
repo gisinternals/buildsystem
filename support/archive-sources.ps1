@@ -64,7 +64,7 @@ function Get-RelativePath {
 }
 
 function Test-Excluded {
-    param([string]$RelativePath, $Settings)
+    param([string]$RelativePath, [bool]$IncludeBinaryInputs, $Settings)
 
     $segments = $RelativePath.Replace('\', '/').Split('/')
     foreach ($segment in $segments) {
@@ -73,9 +73,11 @@ function Test-Excluded {
             if ($segment -match '^vc\d+(x64)?$') { return $true }
         }
     }
-    $extension = [IO.Path]::GetExtension($RelativePath)
-    foreach ($excludedExtension in $Settings.excludedFileExtensions) {
-        if ($extension.Equals([string]$excludedExtension, [StringComparison]::OrdinalIgnoreCase)) { return $true }
+    if (-not $IncludeBinaryInputs) {
+        $extension = [IO.Path]::GetExtension($RelativePath)
+        foreach ($excludedExtension in $Settings.excludedFileExtensions) {
+            if ($extension.Equals([string]$excludedExtension, [StringComparison]::OrdinalIgnoreCase)) { return $true }
+        }
     }
     return $false
 }
@@ -91,7 +93,7 @@ function Get-GitFiles {
 }
 
 function Get-ComponentFiles {
-    param([string]$Root, [bool]$TrackedOnly, $Settings)
+    param([string]$Root, [bool]$TrackedOnly, [bool]$IncludeBinaryInputs, $Settings)
 
     $gitDir = Join-Path $Root '.git'
     if (Test-Path -LiteralPath $gitDir) {
@@ -103,14 +105,14 @@ function Get-ComponentFiles {
             -not $trackedSet.Contains([IO.Path]::GetFullPath($_))
         } | Where-Object {
             $relative = Get-RelativePath -Root $Root -Path $_
-            -not (Test-Excluded -RelativePath $relative -Settings $Settings)
+            -not (Test-Excluded -RelativePath $relative -IncludeBinaryInputs $IncludeBinaryInputs -Settings $Settings)
         })
         return @(($tracked + $untracked) | Sort-Object -Unique)
     }
     $files = Get-ChildItem -LiteralPath $Root -File -Recurse | Select-Object -ExpandProperty FullName
     return @($files | Where-Object {
         $relative = Get-RelativePath -Root $Root -Path $_
-        -not (Test-Excluded -RelativePath $relative -Settings $Settings)
+        -not (Test-Excluded -RelativePath $relative -IncludeBinaryInputs $IncludeBinaryInputs -Settings $Settings)
     } | Sort-Object -Unique)
 }
 
@@ -162,16 +164,17 @@ foreach ($definition in $settings.components) {
     if ([string]$definition.kind -eq 'children') {
         if (Test-Path -LiteralPath $fullPath -PathType Container) {
             foreach ($child in Get-ChildItem -LiteralPath $fullPath -Directory | Sort-Object Name) {
-                $componentList.Add([pscustomobject]@{ name = $child.Name; path = $child.FullName; optional = $false; trackedOnly = $false })
+                $componentList.Add([pscustomobject]@{ name = $child.Name; path = $child.FullName; optional = $false; trackedOnly = $false; includeBinaryInputs = $false })
             }
         }
         else {
-            $componentList.Add([pscustomobject]@{ name = [string]$definition.name; path = $fullPath; optional = $optional; trackedOnly = $false })
+            $componentList.Add([pscustomobject]@{ name = [string]$definition.name; path = $fullPath; optional = $optional; trackedOnly = $false; includeBinaryInputs = $false })
         }
     }
     else {
         $trackedOnly = ($definition.PSObject.Properties.Name -contains 'trackedOnly') -and [bool]$definition.trackedOnly
-        $componentList.Add([pscustomobject]@{ name = [string]$definition.name; path = $fullPath; optional = $optional; trackedOnly = $trackedOnly })
+        $includeBinaryInputs = ($definition.PSObject.Properties.Name -contains 'includeBinaryInputs') -and [bool]$definition.includeBinaryInputs
+        $componentList.Add([pscustomobject]@{ name = [string]$definition.name; path = $fullPath; optional = $optional; trackedOnly = $trackedOnly; includeBinaryInputs = $includeBinaryInputs })
     }
 }
 
@@ -195,7 +198,7 @@ foreach ($component in $componentList) {
         continue
     }
 
-    $files = @(Get-ComponentFiles -Root $component.path -TrackedOnly $component.trackedOnly -Settings $settings)
+    $files = @(Get-ComponentFiles -Root $component.path -TrackedOnly $component.trackedOnly -IncludeBinaryInputs $component.includeBinaryInputs -Settings $settings)
     $record = [ordered]@{
         name = $component.name
         path = Get-RelativePath -Root $basePath -Path $component.path

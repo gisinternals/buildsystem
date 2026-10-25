@@ -51,6 +51,52 @@
       "path": "support/regex-0.12",
       "optional": true,
       "description": "Legacy regex source used by MapServer when provisioned locally."
+    },
+    {
+      "name": "minizip-support",
+      "kind": "directory",
+      "path": "support/minizip",
+      "optional": true,
+      "description": "Local NMake recipe used for zlib contrib/minizip."
+    },
+    {
+      "name": "gdal-legacy-support",
+      "kind": "directory",
+      "path": "support/gdal",
+      "optional": true,
+      "description": "Legacy GDAL binding fallback recipes."
+    },
+    {
+      "name": "gperf-tool",
+      "kind": "directory",
+      "path": "support/gperf",
+      "optional": true,
+      "includeBinaryInputs": true,
+      "description": "Locally provisioned gperf used by Fontconfig."
+    },
+    {
+      "name": "pkg-config-tool",
+      "kind": "directory",
+      "path": "support/pkg-config",
+      "optional": true,
+      "includeBinaryInputs": true,
+      "description": "Locally provisioned pkg-config used by rendering dependencies."
+    },
+    {
+      "name": "pdiff-tool",
+      "kind": "directory",
+      "path": "support/pdiff",
+      "optional": true,
+      "includeBinaryInputs": true,
+      "description": "Perceptual image comparison tool used by MapServer autotests."
+    },
+    {
+      "name": "diffutils-tool",
+      "kind": "directory",
+      "path": "support/diffutils",
+      "optional": true,
+      "includeBinaryInputs": true,
+      "description": "Diff utilities used by GDAL autotests."
     }
   ]
 }

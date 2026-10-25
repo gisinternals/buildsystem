@@ -28,6 +28,11 @@ do not commit them to `config.opt`.
 - WiX Toolset 3.x under `wix`, or override `WIX_DIR`; NuGet CLI on `PATH` for
   the retained NuGet packaging path.
 
+The legacy local support inputs `regex-0.12`, `minizip`, `gdal`, `gperf`,
+`pkg-config`, `pdiff`, and `diffutils` are provisioned below `support` on the
+build host. They are ignored by Git but included by the source-archive manifest
+when present.
+
 CMake, Ninja, WinFlexBison, pkg-config-lite, and SWIG are pinned and prepared by
 the Makefile. Administrator-managed executable paths may override their
 download targets as documented in the root README.

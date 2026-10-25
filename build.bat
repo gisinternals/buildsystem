@@ -149,9 +149,9 @@ if not defined VCVARS (
     echo ERROR unknown toolset %TOOLSET%>>"%GIS_BUILD_SUMMARY%"
     exit /b 2
 )
-if not exist "%VCVARS%" (
-    echo ERROR: Visual Studio environment script not found: %VCVARS%
-    echo ERROR Visual Studio environment script missing: %VCVARS%>>"%GIS_BUILD_SUMMARY%"
+if not exist "!VCVARS!" (
+    echo ERROR: Visual Studio environment script not found: !VCVARS!
+    echo ERROR Visual Studio environment script missing: !VCVARS!>>"%GIS_BUILD_SUMMARY%"
     exit /b 1
 )
 echo Initializing Visual Studio environment: %VCVARS%>>"%GIS_BUILD_LOG%"

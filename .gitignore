@@ -19,6 +19,18 @@ release*
 # Ignore ECW SDK
 /support/ECW*
 
+# Ignore locally provisioned licensed MrSID SDKs
+/support/mrsid/
+
+# Ignore locally provisioned legacy build/test tools and source patches
+/support/diffutils/
+/support/gdal/
+/support/gperf/
+/support/minizip/
+/support/pdiff/
+/support/pkg-config/
+/support/regex-0.12/
+
 # Ignore archives in support
 /support/*.zip
 

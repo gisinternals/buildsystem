@@ -260,11 +260,11 @@ HDF4_BRANCH = hdf-4_2_16
 HDF4_SRC = https://github.com/HDFGroup/hdf4.git
 
 ECWSDK_VER = ERDAS ECW JPEG 2000 SDK 5.5.0
-ECWSDK_DIR = E:\buildsystem\support\ECWSDK\$(ECWSDK_VER)
+ECWSDK_DIR = $(BASE_DIR)\support\ECWSDK\$(ECWSDK_VER)
 ECWSDK_VERSION=55
 
 FILEGDB_DIR = FileGDB_API_1_5_1-VS2017
-FILEGDB_API_DIR = E:\buildsystem\support\$(FILEGDB_DIR)
+FILEGDB_API_DIR = $(BASE_DIR)\support\$(FILEGDB_DIR)
 
 OCI_DIR = E:\builds\Oracle
 
