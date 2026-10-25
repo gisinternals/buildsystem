@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "description": "Reproducible source inputs for the GISInternals GDAL/MapServer build.",
+  "pinFiles": [
+    "config.opt",
+    "setversions.bat"
+  ],
+  "excludedDirectoryNames": [
+    ".git",
+    ".svn",
+    ".vs",
+    ".idea",
+    "__pycache__",
+    "CMakeFiles",
+    "Debug",
+    "Release",
+    "RelWithDebInfo",
+    "build",
+    "dist",
+    "install"
+  ],
+  "excludedFileExtensions": [
+    ".dll",
+    ".exe",
+    ".exp",
+    ".idb",
+    ".ilk",
+    ".lib",
+    ".obj",
+    ".pdb",
+    ".pyc",
+    ".tlog"
+  ],
+  "components": [
+    {
+      "name": "buildsystem",
+      "kind": "git",
+      "path": ".",
+      "trackedOnly": true,
+      "description": "The committed build recipes, support patches, manifests, and documentation."
+    },
+    {
+      "name": "source-components",
+      "kind": "children",
+      "path": "$(SRC_DIR)",
+      "description": "Every downloaded or cloned component directly below the configured source root."
+    },
+    {
+      "name": "regex-support",
+      "kind": "directory",
+      "path": "support/regex-0.12",
+      "optional": true,
+      "description": "Legacy regex source used by MapServer when provisioned locally."
+    }
+  ]
+}

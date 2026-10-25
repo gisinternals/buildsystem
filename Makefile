@@ -41,6 +41,10 @@ COMPILER_VER=$(MSVC_VER)
 OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 !ENDIF
 
+!IFNDEF SOURCE_ARCHIVE_DIR
+SOURCE_ARCHIVE_DIR = $(BASE_DIR)\source-archives
+!ENDIF
+
 EXTRAFLAGS =
 
 # identify compiler version
@@ -4795,6 +4799,14 @@ postgresql: $(PGSQL_LIB)
 
 phase3-dependencies: $(CMAKE_TOOL_PREREQ) $(LIBICONV_LIB) $(OGDI_LIB) $(LIBXML2_LIB) $(PGSQL_LIB)
     @echo PHASE 3 DEPENDENCY BUILD COMPLETE
+
+source-archives: source-archives-force
+    powershell -NoProfile -ExecutionPolicy Bypass -File "$(BASE_DIR)\support\archive-sources.ps1" -BaseDir "$(BASE_DIR)" -OutputDir "$(SOURCE_ARCHIVE_DIR)" -Manifest "$(BASE_DIR)\support\source-archive-manifest.json"
+
+source-archives-validate: source-archives-force
+    powershell -NoProfile -ExecutionPolicy Bypass -File "$(BASE_DIR)\support\archive-sources.ps1" -BaseDir "$(BASE_DIR)" -Manifest "$(BASE_DIR)\support\source-archive-manifest.json" -ValidateOnly
+
+source-archives-force:
 
 test: $(CURL_LIB)
 

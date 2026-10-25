@@ -98,6 +98,19 @@ package names:
   - `MAPCACHE_BRANCH=rel-<mapcache_major>-<mapcache_minor>-<mapcache_rel>`
   - package version includes the GDAL and MapServer release numbers.
 
+The accepted third-party pin snapshot (audited 2026-10-24) is summarized
+below. `config.opt` remains authoritative; update this summary and rerun the pin
+audit whenever those values change.
+
+| Group | Pins |
+|---|---|
+| Build helpers | SWIG 4.0.2; CMake 4.4.4; Ninja 1.13.2; WinFlexBison 2.5.25; pkg-config-lite 0.28-1; Python 3.10 |
+| Compression, TLS, HTTP | zlib 1.3.2; OpenSSL 3.6.5; curl 8.23.0; libpng 1.6.59; IJG JPEG 10; libtiff 4.7.2; Zstandard 1.5.7; WebP 1.6.0 |
+| Spatial and database | GEOS 3.14.1; PostgreSQL 18.6; PROJ 9.9.0; PROJ-data 1.25.0; SQLite 3.54.1; SpatiaLite 5.1.0; FreeXL 2.0.0; librttopo 1.1.0; OGDI 4.1.1 |
+| Text, XML, rendering | FreeType 2.15.0; HarfBuzz 12.3.0; FriBidi 1.0.17; libiconv 1.19; libxml2 2.15.4; Expat 2.9.0; Xerces-C 3.3.0; Pixman 0.46.4; Cairo 1.18.4; Fontconfig 2.16.0; uriparser 1.0.0 |
+| Formats and support | OpenJPEG 2.5.4; protobuf 3.29.5; protobuf-c 1.5.2; HDF4 4.2.16; HDF5 1.14.3; KEA 1.4.14; netCDF 4.8.1; CFITSIO 3.49; libkml 1.3.0; muparser 2.3.5; Poppler 0.89.0; MySQL Cluster 8.1.0 |
+| MapCache/legacy web dependencies | APR 1.7.4; APR-util 1.6.3; PCRE 8.45; HTTP Server 2.4.66; FastCGI 2.4.7; giflib 5.0.5; libsvg/libsvg-cairo 0.5.0 |
+
 The `Makefile` then appends the CMake build directory to source directories.
 For example, `gdal` on VS 2022 x64 becomes `gdal-vc17x64`, while
 `gdal-3-12` becomes `gdal-3-12-vc17x64`.
@@ -183,6 +196,11 @@ MapServer consumers.
 `detect_mrsid.opt` is included when MrSID support is enabled and the file is
 present. It detects and configures the installed MrSID SDK layout.
 
+The complete host, SDK, signing, and publishing prerequisites are documented
+in [doc/build-prerequisites.md](doc/build-prerequisites.md). Apache/MS4W work
+found in the C2 prototype remains a separate future project; its boundary is
+recorded in [doc/ms4w-future-work.md](doc/ms4w-future-work.md).
+
 ## Makefile Responsibilities
 
 `Makefile` is the real build graph. It detects the active MSVC/NMake version,
@@ -221,6 +239,42 @@ Important targets:
 - `package-libs` creates the headers/libs ZIP and uploads it.
 - `package-dev` creates the larger development ZIP containing the output tree,
   Makefile, config files, licenses, and support files.
+- `source-archives-validate` inventories the configured source tree without
+  writing archives.
+- `source-archives` creates component ZIP files plus JSON/Markdown inventories
+  containing file counts, Git state, resolved pins, sizes, and SHA-256 hashes.
+
+## Reproducible source archives
+
+After source acquisition (normally after a clean build), archive the exact
+inputs used by the build:
+
+```bat
+build.bat nmake vc17x64 source-archives
+```
+
+The output is written below `source-archives\<timestamp>` by default. To use a
+separate retention volume:
+
+```bat
+build.bat nmake vc17x64 source-archives SOURCE_ARCHIVE_DIR=E:\archives\gisinternals-sources
+```
+
+`support\source-archive-manifest.json` controls the inventory. The buildsystem
+archive contains Git-tracked files using their current working-tree content.
+Every component directly below `SRC_DIR` is discovered automatically. Git
+components include tracked files and non-ignored local additions; unpacked
+archive components include their current source files. Git/SVN metadata and
+common compiler, CMake, packaging, and install outputs are excluded. The
+resolved version/source variables from `config.opt` and `setversions.bat` are
+recorded in the generated inventory. Commercial SDKs are recorded as host
+prerequisites and are not archived.
+
+Use the validation-only form before a run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File support\archive-sources.ps1 -ValidateOnly
+```
 
 ## GDAL and MapServer CMake Compatibility
 
@@ -447,3 +501,33 @@ nmake package PKG_VERSION=gdal-mapserver INSTALL_DIR=C:\Inetpub\wwwroot\sdk\down
   Makefile targets.
 - The current VS 2022 MapManager calls are commented out in `makevc17.bat` and
   `makevc17x64.bat`; VS 2019 scripts still call `makemapmanager.bat`.
+
+## Clean rebuild and recovery
+
+For an upgrade validation, retain the previous production checkout and its
+packages. Start from a separate checkout and remove only that checkout's
+generated `src`, `release-*`, helper-tool, local-log, and source-archive trees.
+Never clean the active production directory. Provision the prerequisites, run
+the four compiler/architecture combinations with `NO_SIGN=YES NO_PUBLISH=YES`
+and a staging `INSTALL_DIR`, then run stable, release, SDK/development, and
+NuGet packaging checks.
+
+Before cutover, stop or disable the scheduled task, preserve its command line,
+account, working directory, credentials, and current production directory, and
+point it to the validated checkout. Run one manual scheduled-equivalent cycle
+without publication first. If it fails, stop the new task invocation and point
+the unchanged task configuration back to the preserved production checkout;
+do not try to recover by mixing old `src` or `release-*` trees into the new
+checkout.
+
+The final manual validation checklist is:
+
+1. `makevc.bat` still invokes VS2019/VS2022 x86/x64 in order and propagates
+   failures.
+2. Development, stable, `rel`, SDK/development, MapManager, and NuGet entry
+   points retain their existing semantics.
+3. Binding and autotest results are reviewed, not merely allowed to continue.
+4. ZIP/MSI/NuGet contents, enabled drivers, DLL imports, CRT choice, PDBs, and
+   artifact names match the expected production classes.
+5. Source archives and their SHA-256 inventory are retained with the build.
+6. Signing and publication are re-enabled only after staging review.

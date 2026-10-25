@@ -25,6 +25,9 @@ release*
 # Ignore optional local build-wrapper logs
 /doc/build-logs/
 
+# Reproducible source archive output
+/source-archives/
+
 # Helper downloads live under src and are covered by /src/** above. Keep these
 # explicit entries so their generated nature remains clear if src rules change.
 /src/cmake/
