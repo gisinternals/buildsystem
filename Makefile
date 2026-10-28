@@ -970,6 +970,8 @@ GDAL_INSTALLER_MRSID = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-mr
 GDAL_INSTALLER_FILEGDB = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-filegdb.msi
 GDAL_INSTALLER_NETCDF = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-netcdf.msi
 GDAL_INSTALLER_PDF = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-pdf.msi
+WIX_CANDLE = $(BASE_DIR)\$(WIX_DIR)\candle.exe
+WIX_LIGHT = $(BASE_DIR)\$(WIX_DIR)\light.exe
 MS_INSTALLER_CORE = $(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi
 MAPMANAGER_INSTALLER = $(BASE_DIR)\MapManager-$(MS_VERSION)\Installer\bin\Release\MapManager.msi
 
@@ -1124,7 +1126,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(LIBTIFF_LIB) $(ZSTD_LIB)
 !ENDIF
 
 !IFDEF GDAL_MUPARSER
-GDAL_DEPS = $(MUPARSER_LIB)
+GDAL_DEPS = $(GDAL_DEPS) $(MUPARSER_LIB)
 GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) -DCMAKE_CXX_FLAGS="-DMUPARSER_STATIC"
 !ELSE
 GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_MUPARSER=OFF"
@@ -1330,7 +1332,7 @@ MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_JAVA=0
 !ENDIF
 
 !IFDEF MS_PYTHON
-MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PYTHON=1 "-DPYTHON_LIBRARY=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/libs/python$(PYTHON_VERSION).lib" "-DPYTHON_INCLUDE_DIR=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/include" "-DPYTHON_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe"
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PYTHON=1 "-DPYTHON_LIBRARY=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/libs/python$(PYTHON_VERSION).lib" "-DPYTHON_INCLUDE_DIR=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/include" "-DPYTHON_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe" "-DPython_LIBRARY=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/libs/python$(PYTHON_VERSION).lib" "-DPython_INCLUDE_DIR=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/include" "-DPython_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe"
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(SWIG_INSTALL)
 !ELSE
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PYTHON=0
@@ -1496,7 +1498,7 @@ OCI_VERSION = 11
 !ENDIF
 
 
-!IFDEF DEBUG
+!IF "$(DEBUG)" == "YES"
 BUILD_CONFIG=RelWithDebInfo
 MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=/MD /Zi /Od" "-DCMAKE_C_FLAGS_RELWITHDEBINFO=/MD /Zi /Od $(MS_EXTRAFLAGS_CC)"
 !ELSE
@@ -1904,6 +1906,7 @@ $(ZLIB_LIB): $(CMAKE_TOOL_PREREQ) $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+    if exist $(OUTPUT_DIR)\lib\zs.lib copy /Y $(OUTPUT_DIR)\lib\zs.lib $(OUTPUT_DIR)\lib\zlibstatic.lib
 !ENDIF
     rem xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     rem xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -2135,7 +2138,7 @@ $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
 
 $(FREETYPE_LIB): $(FREETYPE_2)
 
-$(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB) $(LIBPNG_LIB)
+$(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB) $(LIBPNG_LIB) $(PKGCONFIGLITE_PREREQ)
 !IFDEF POPPLER_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(BASE_DIR)\support;$(CMAKE_DIR)\bin;$(PATH)
     if not exist $(POPPLER_DIR) git clone -b $(POPPLER_BRANCH) $(POPPLER_SRC) $(POPPLER_DIR)
@@ -2155,7 +2158,7 @@ $(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(FREETYPE_LIB);$(HARFBUZZ_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DPKG_CONFIG_EXECUTABLE=$(PKG_CONFIG_EXE)" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(FREETYPE_LIB);$(HARFBUZZ_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\poppler.lib $(OUTPUT_DIR)\lib
@@ -2208,10 +2211,11 @@ $(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ9_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(PROJ9_LIB)" "-DBUILD_SHARED_LIBS=OFF"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(PROJ9_LIB)" "-DCMAKE_C_FLAGS=/I$(OUTPUT_DIR)\include\proj9" "-DBUILD_SHARED_LIBS=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	if not exist $(OUTPUT_DIR)\cmake mkdir $(OUTPUT_DIR)\cmake
 	xcopy /Y install\cmake\*.cmake $(OUTPUT_DIR)\cmake
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	xcopy /Y /S install\include\*.inc $(OUTPUT_DIR)\include
@@ -2638,9 +2642,9 @@ $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     if not exist build mkdir build
     cd build
-    nmake /f ..\sqlite\Makefile.msc sqlite3.dll  TOP=..\sqlite
-    nmake /f ..\sqlite\Makefile.msc sqlite3.exe  TOP=..\sqlite
-    nmake /f ..\sqlite\Makefile.msc fts5.dll  TOP=..\sqlite
+    nmake /f ..\sqlite\Makefile.msc sqlite3.dll  TOP=..\sqlite DEBUG=0
+    nmake /f ..\sqlite\Makefile.msc sqlite3.exe  TOP=..\sqlite DEBUG=0
+    nmake /f ..\sqlite\Makefile.msc fts5.dll  TOP=..\sqlite DEBUG=0
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
@@ -2844,7 +2848,7 @@ $(LIBXML2_LIB): $(CMAKE_TOOL_PREREQ) $(LIBXML2_PIN_STAMP) $(ZLIB_LIB) $(LIBICONV
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBXML2_DIR)\$(CMAKE_BUILDDIR)\install" "-DLIBXML2_WITH_ZLIB=ON" "-DZLIB_LIBRARY=$(ZLIB_LIB)" "-DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DLIBXML2_WITH_ICONV=ON" "-DIconv_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DIconv_LIBRARY=$(LIBICONV_LIB)" "-DLIBXML2_WITH_LZMA=OFF" "-DLIBXML2_WITH_PYTHON=OFF"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBXML2_DIR)\$(CMAKE_BUILDDIR)\install" "-DLIBXML2_WITH_ZLIB=ON" "-DZLIB_LIBRARY=$(ZLIB_LIB)" "-DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DLIBXML2_WITH_ICONV=ON" "-DIconv_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DIconv_LIBRARY=$(LIBICONV_LIB)" "-DLIBXML2_WITH_HTTP=ON" "-DLIBXML2_WITH_LZMA=OFF" "-DLIBXML2_WITH_PYTHON=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -2990,7 +2994,7 @@ $(GDAL_OPT): gdal-deps
 !IFDEF WIN64
 	echo WIN64=$(WIN64) >> $(GDAL_OPT)
 !ENDIF
-!IFDEF DEBUG
+!IF "$(DEBUG)" == "YES"
     echo DEBUG=$(DEBUG) >> $(GDAL_OPT)
     echo POSTFIX= >> $(GDAL_OPT)
     echo OPTFLAGS= /nologo /MP /MD /Zi /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(GDAL_OPT) 
@@ -3228,6 +3232,7 @@ $(GDAL_LIB): $(CMAKE_TOOL_PREREQ) $(GDAL_DEPS) $(SWIG_INSTALL)
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
     cd $(GDAL_DIR)
     -cd gdal
+    powershell -NoProfile -ExecutionPolicy Bypass -File "$(BASE_DIR)\support\patch-gdal-csharp-targeting-pack.ps1" -SourceDir "$(BASE_DIR)\$(GDAL_DIR)"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -3309,7 +3314,7 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     if exist $(BASE_DIR)\support\gdal\csharp\makefile.vc xcopy /Y $(BASE_DIR)\support\gdal\csharp\makefile.vc
-!IFDEF DEBUG
+!IF "$(DEBUG)" == "YES"
 	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT) DEBUG=1
 !ELSE
 	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
@@ -3756,7 +3761,7 @@ $(GDAL_PDF_DLL): $(GDAL_PDF_OPT) $(POPPLER_LIB)
 !ENDIF
 	cd $(BASE_DIR)
     
-$(GDAL_INSTALLER_CORE): $(GDAL_LIB)
+$(GDAL_INSTALLER_CORE): $(GDAL_LIB) $(WIX_CANDLE) $(WIX_LIGHT)
 !IFDEF WIX_DIR
     set PATH=$(BASE_DIR)\$(WIX_DIR);$(PATH)
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
@@ -3960,7 +3965,7 @@ $(APR_LIB): $(MSVCRT_DLL) $(CURL_EXE)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DINSTALL_PDB=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install
@@ -3990,7 +3995,7 @@ $(APRUTIL_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DINSTALL_PDB=OFF" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -4018,7 +4023,7 @@ $(PCRE_LIB): $(MSVCRT_DLL) $(CURL_EXE)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DBUILD_SHARED_LIBS=ON"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -4036,15 +4041,16 @@ $(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
     if not exist $(HTTPD_DIR) mkdir $(HTTPD_DIR)
     cd $(HTTPD_DIR)
     if not exist $(HTTPD_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(HTTPD_VER).tar.gz" "$(HTTPD_SRC)"
-    if not exist $(HTTPD_VER) 7z e -y $(HTTPD_VER).tar.gz && 7z x -y $(HTTPD_VER).tar
+    if not exist $(HTTPD_VER) 7z e -y $(HTTPD_VER).tar.gz && 7z x -y $(HTTPD_VER)*.tar
     cd $(HTTPD_VER)
+    powershell -NoProfile -Command "(gc CMakeLists.txt) -replace '(ELSE)?IF\(\$$\{macro_mod_enable_val\} STREQUAL .([OiaIA]).\)', '$${1}IF(x$$$${macro_mod_enable_val} STREQUAL x$${2})' | Out-File -encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist cmake rd /Q /S cmake
 !ENDIF
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib;$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DPCRE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPCRE_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/pcre.lib
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DINSTALL_PDB=OFF" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib;$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DPCRE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPCRE_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/pcre.lib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install\bin\libhttpd.dll $(OUTPUT_DIR)\bin
@@ -4126,7 +4132,7 @@ $(FITS_LIB): $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install\bin\cfitsio.dll $(OUTPUT_DIR)\bin
@@ -4153,7 +4159,7 @@ $(SZIP_LIB): $(ZLIB_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DBUILD_SHARED_LIBS=ON"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install
@@ -4178,7 +4184,7 @@ $(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
 !IFDEF HDF4_SZIP
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"  "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"  "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) $(ZLIB_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
 !ELSE
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=OFF" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
 !ENDIF
@@ -4208,7 +4214,7 @@ $(HDF5_LIB): $(MSVCRT_DLL) $(SZIP_LIB) $(ZLIB_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON" "-DHDF5_BUILD_EXAMPLES=OFF" "-DHDF5_BUILD_TOOLS=OFF" "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DZLIB_LIBRARY=$(ZLIB_LIB)" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install\cmake" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON" "-DHDF5_BUILD_EXAMPLES=OFF" "-DHDF5_BUILD_TOOLS=OFF" "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) $(ZLIB_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -4257,7 +4263,7 @@ $(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(OUTPUT_DIR)\cmake\hdf5" "-DBUILD_SHARED_LIBS=ON" "-DENABLE_HDF4=ON" "-DHDF4_DF_LIB=$(OUTPUT_DIR)\lib\hdf.lib" "-DHDF4_MFHDF_LIB=$(OUTPUT_DIR)\lib\mfhdf.lib" "-DMFHDF_H_INCLUDE_DIR=$(OUTPUT_DIR)\include\hdf4"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR:\=/)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(OUTPUT_DIR)\cmake\hdf5" "-DBUILD_SHARED_LIBS=ON" "-DENABLE_HDF4=ON" "-DHDF4_DF_LIB=$(OUTPUT_DIR)\lib\hdf.lib" "-DHDF4_MFHDF_LIB=$(OUTPUT_DIR)\lib\mfhdf.lib" "-DMFHDF_H_INCLUDE_DIR=$(OUTPUT_DIR)\include\hdf4"
 	xcopy /Y $(OUTPUT_DIR)\lib\szip.lib $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\liblib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
@@ -4442,7 +4448,7 @@ $(LIBKML_LIBS): $(URIPARSER_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(BOOST_HEADERS)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBKML_DIR)\$(CMAKE_BUILDDIR)\install" "-DCMAKE_CXX_FLAGS=/DWIN32 /D_WINDOWS /W3 /GR /EHsc /DURI_STATIC_BUILD"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBKML_DIR)\$(CMAKE_BUILDDIR)\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_CXX_FLAGS=/DWIN32 /D_WINDOWS /W3 /GR /EHsc /DURI_STATIC_BUILD"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -4457,10 +4463,12 @@ $(LIBKML_LIBS): $(URIPARSER_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(BOOST_HEADERS)
 
 $(MYSQL_LIB): $(OPENSSL_LIB)
 !IFDEF LIBKML_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     if not exist $(MYSQL_DIR) git clone -b $(MYSQL_BRANCH) $(MYSQL_SRC) $(MYSQL_DIR)
     cd $(MYSQL_DIR)
     git reset --hard HEAD
     git checkout $(MYSQL_BRANCH)
+    powershell -NoProfile -Command "(gc cmake\boost.cmake) -replace 'https://boostorg.jfrog.io/artifactory/main/release', 'https://archives.boost.io/release' | Out-File -encoding ASCII cmake\boost.cmake"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -4567,9 +4575,7 @@ $(OGDI_LIB): $(OGDI_PIN_STAMP) $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
 !ELSE
     echo cp -f $$TOPDIR/lib/win32/ogdi.lib $$OUTPUTDIR/lib >> build.sh
 !ENDIF
-    $(CYGWIN_DIR)\bin\dos2unix.exe build.sh
-    $(CYGWIN_DIR)\bin\chmod.exe +rwxrwxrwx ./build.sh
-    for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(OGDI_DIR)\build.sh"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "%i" || exit 1
+    for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(OGDI_DIR)\build.sh"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "tr -d '\r' < '%i' > '%i.unix' && chmod +x '%i.unix' && '%i.unix'" || exit 1
     if not exist $(OGDI_LIB) exit 1
     if not exist $(OUTPUT_DIR)\bin\ogdi.dll exit 1
     if not exist $(OUTPUT_DIR)\bin\adrg.dll exit 1
@@ -5143,10 +5149,10 @@ gdal-python-all:
 gdal-python-cmake-all:
 !IFNDEF NO_BUILD
 !IFDEF WIN64
-    for %%P in ($(GDAL_PYTHON_DIRS_X64)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER)
+    for %%P in ($(GDAL_PYTHON_DIRS_X64)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_COMMAND=bdist_wheel PYTHON_BDIST_OPTS=
     for %%P in ($(GDAL_PYTHON_DIRS_X64)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_OPTS=--formats=zip
 !ELSE
-    for %%P in ($(GDAL_PYTHON_DIRS_X86)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER)
+    for %%P in ($(GDAL_PYTHON_DIRS_X86)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_COMMAND=bdist_wheel PYTHON_BDIST_OPTS=
     for %%P in ($(GDAL_PYTHON_DIRS_X86)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_OPTS=--formats=zip
 !ENDIF
 !ENDIF
@@ -5219,6 +5225,7 @@ gdal-python-bdist: $(GDAL_LIB)
 !IFNDEF NO_COPY	
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
 	-xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-xcopy /Y dist\*.whl $(OUTPUT_DIR)\install
 	-for /R %%a IN (dist\*.zip) DO copy /Y %%a $(OUTPUT_DIR)\install\%%~na.$(PYTHON_DIR)%%~xa
 !ENDIF
 	cd $(BASE_DIR)  
@@ -5236,11 +5243,16 @@ gdal-python-cmake-bdist:
 	if exist build rmdir /S /Q build
 !ENDIF    
 !IFNDEF NO_BUILD
-	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py bdist $(PYTHON_BDIST_OPTS)
+!IFDEF PYTHON_BDIST_COMMAND
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py build_ext --library-dirs="$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install\lib" $(PYTHON_BDIST_COMMAND) $(PYTHON_BDIST_OPTS)
+!ELSE
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py build_ext --library-dirs="$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install\lib" bdist $(PYTHON_BDIST_OPTS)
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY	
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
 	-xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-xcopy /Y dist\*.whl $(OUTPUT_DIR)\install
 	-for /R %%a IN (dist\*.zip) DO copy /Y %%a $(OUTPUT_DIR)\install\%%~na.$(PYTHON_DIR)%%~xa
 !ENDIF
 	cd $(BASE_DIR)  
@@ -5249,7 +5261,7 @@ gdal-python-cmake-bdist:
 gdal-cpp-test:
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
-    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\data
+    SET GDAL_DATA=$(OUTPUT_DIR)\bin\gdal-data
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR);$(FILEGDB_BINPATH);$(PATH)
     cd $(BASE_DIR)\$(GDAL_DIR)\autotest\cpp
     nmake /f makefile.vc clean
@@ -5261,7 +5273,7 @@ gdal-autotest:
     SET GDAL_DOWNLOAD_TEST_DATA=YES
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
-    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
+    SET GDAL_DATA=$(OUTPUT_DIR)\bin\gdal-data
     SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
     SET DO_NOT_FAIL_ON_RECODE_ERRORS=YES
     SET GITHUB_WORKFLOW=Windows builds
@@ -5270,7 +5282,7 @@ gdal-autotest:
     rem SET OGR_PG_CONNECTION_STRING=dbname=autotest$(CMAKE_BUILDDIR) host=127.0.0.1 port=5432 user=postgres
     rem SET PG_USE_COPY=YES
     rem SET PG_USE_POSTGIS=YES
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\apps;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
     SET USE_PATH_FOR_GDAL_PYTHON=YES
     cd $(BASE_DIR)\$(GDAL_DIR)\autotest
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe gcore/ ogr/ osr/ alg/ gnm/ utilities/ -vvs

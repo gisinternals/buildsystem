@@ -126,7 +126,7 @@ JPEG_SRC = https://www.ijg.org/files/jpegsr10.zip
 
 FREETYPE_DIR = $(SRC_DIR)\freetype2
 FREETYPE_BRANCH = VER-2-15-0
-FREETYPE_SRC = https://git.sv.nongnu.org/r/freetype/freetype2.git
+FREETYPE_SRC = https://github.com/freetype/freetype.git
 
 HARFBUZZ_DIR = $(SRC_DIR)\harfbuzz
 HARFBUZZ_BRANCH = 12.3.0
@@ -177,11 +177,11 @@ FREEXL_SRC = https://www.gaia-gis.it/gaia-sins/freexl-sources/freexl-2.0.0.zip
 
 APR_DIR = $(SRC_DIR)\apr
 APR_VER = apr-1.7.4
-APR_SRC = https://downloads.apache.org/apr/$(APR_VER)-win32-src.zip
+APR_SRC = https://archive.apache.org/dist/apr/$(APR_VER)-win32-src.zip
 
 APRUTIL_DIR = $(SRC_DIR)\apr-util
 APRUTIL_VER = apr-util-1.6.3
-APRUTIL_SRC = https://downloads.apache.org/apr/$(APRUTIL_VER)-win32-src.zip
+APRUTIL_SRC = https://archive.apache.org/dist/apr/$(APRUTIL_VER)-win32-src.zip
 
 PCRE_DIR = $(SRC_DIR)\pcre
 PCRE_VER = pcre-8.45
@@ -189,7 +189,7 @@ PCRE_SRC = https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.zip/d
 
 HTTPD_DIR = $(SRC_DIR)\httpd
 HTTPD_VER = httpd-2.4.66
-HTTPD_SRC = https://downloads.apache.org/httpd/$(HTTPD_VER).tar.gz
+HTTPD_SRC = https://archive.apache.org/dist/httpd/$(HTTPD_VER).tar.gz
 
 LIBRTTOPO_DIR = $(SRC_DIR)\librttopo
 LIBRTTOPO_BRANCH = librttopo-1.1.0
@@ -309,7 +309,7 @@ OPENJPEG_SRC = https://github.com/uclouvain/openjpeg.git
 
 POPPLER_DIR = $(SRC_DIR)\poppler
 POPPLER_BRANCH = poppler-0.89.0
-POPPLER_SRC = https://anongit.freedesktop.org/git/poppler/poppler.git
+POPPLER_SRC = https://gitlab.freedesktop.org/poppler/poppler.git
 
 FCGI_DIR = $(SRC_DIR)\fcgi
 FCGI_BRANCH = 2.4.7
@@ -345,7 +345,7 @@ OGDI_SRC = https://github.com/libogdi/ogdi.git
 
 FITS_DIR = $(SRC_DIR)\fits
 FITS_VER = cfitsio-3.49
-FITS_SRC =http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.49.tar.gz
+FITS_SRC = https://ftp.eso.org/pub/dfs/pipelines/libraries/cfitsio/cfitsio-3.49.tar.gz
 
 BOOST_DIR = $(SRC_DIR)\boost
 BOOST_BRANCH = boost-1.75.0
