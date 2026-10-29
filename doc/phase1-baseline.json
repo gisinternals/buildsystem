@@ -1,0 +1,1178 @@
+﻿{
+    "capturedAt":  "2026-10-24T20:30:20.8656321+02:00",
+    "root":  "E:\\buildsystem3",
+    "gitHead":  "f5ce79bcb069e04d3ff10201247eff2937603362",
+    "gitStatus":  [
+                      "M  README.md",
+                      "M  config.opt",
+                      "A  doc/dependency-version-audit-20261024.json",
+                      "A  doc/dependency-version-audit-20261024.md",
+                      "A  doc/phase1-baseline.json",
+                      "A  doc/phase1-baseline.md",
+                      "M  setversions.bat",
+                      "A  support/audit-dependency-pins.ps1",
+                      "A  support/capture-phase1-baseline.ps1",
+                      "?? doc/upgrade-plan.md"
+                  ],
+    "tools":  [
+                  {
+                      "name":  "git",
+                      "path":  "C:\\Program Files\\Git\\cmd\\git.exe"
+                  },
+                  {
+                      "name":  "7z",
+                      "path":  "C:\\Program Files\\7-Zip\\7z.exe"
+                  },
+                  {
+                      "name":  "nmake",
+                      "path":  null
+                  },
+                  {
+                      "name":  "cl",
+                      "path":  null
+                  },
+                  {
+                      "name":  "nuget",
+                      "path":  null
+                  },
+                  {
+                      "name":  "dotnet",
+                      "path":  "C:\\Program Files\\dotnet\\dotnet.exe"
+                  },
+                  {
+                      "name":  "powershell",
+                      "path":  "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+                  }
+              ],
+    "visualStudioScripts":  [
+                                {
+                                    "path":  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat",
+                                    "exists":  true
+                                },
+                                {
+                                    "path":  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+                                    "exists":  true
+                                },
+                                {
+                                    "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat",
+                                    "exists":  true
+                                },
+                                {
+                                    "path":  "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat",
+                                    "exists":  true
+                                }
+                            ],
+    "outputDirectories":  [
+
+                          ],
+    "artifacts":  [
+
+                  ],
+    "duplicateVersionDefinitions":  [
+                                        {
+                                            "name":  "MAPSERVER_DIR",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "MAPSERVER_DIR",
+                                                                    "value":  "$(SRC_DIR)\\mapserver",
+                                                                    "file":  "config.opt",
+                                                                    "line":  186
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DIR",
+                                                                    "value":  "$(MAPSERVER_DIR)-$(CMAKE_BUILDDIR)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  615
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DIR",
+                                                                    "value":  "$(MAPSERVER_DIR)-$(MS_VERSION)-$(CMAKE_BUILDDIR)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  617
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "POPPLER_BRANCH",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "POPPLER_BRANCH",
+                                                                    "value":  "poppler-0.89.0",
+                                                                    "file":  "config.opt",
+                                                                    "line":  290
+                                                                },
+                                                                {
+                                                                    "name":  "POPPLER_BRANCH",
+                                                                    "value":  "poppler-0.76.0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  570
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "MYSQL_BRANCH",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "MYSQL_BRANCH",
+                                                                    "value":  "mysql-cluster-8.1.0",
+                                                                    "file":  "config.opt",
+                                                                    "line":  306
+                                                                },
+                                                                {
+                                                                    "name":  "MYSQL_BRANCH",
+                                                                    "value":  "mysql-cluster-8.1.0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  564
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "COMPILER_VER",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "COMPILER_VER",
+                                                                    "value":  "$(MSVC_VER)-x64",
+                                                                    "file":  "Makefile",
+                                                                    "line":  35
+                                                                },
+                                                                {
+                                                                    "name":  "COMPILER_VER",
+                                                                    "value":  "$(MSVC_VER)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  37
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "MSVC_VER",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1200",
+                                                                    "file":  "Makefile",
+                                                                    "line":  49
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1300",
+                                                                    "file":  "Makefile",
+                                                                    "line":  53
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1310",
+                                                                    "file":  "Makefile",
+                                                                    "line":  57
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1400",
+                                                                    "file":  "Makefile",
+                                                                    "line":  61
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1400",
+                                                                    "file":  "Makefile",
+                                                                    "line":  70
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1500",
+                                                                    "file":  "Makefile",
+                                                                    "line":  79
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1500",
+                                                                    "file":  "Makefile",
+                                                                    "line":  88
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1600",
+                                                                    "file":  "Makefile",
+                                                                    "line":  97
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1600",
+                                                                    "file":  "Makefile",
+                                                                    "line":  106
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1700",
+                                                                    "file":  "Makefile",
+                                                                    "line":  115
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1700",
+                                                                    "file":  "Makefile",
+                                                                    "line":  124
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1800",
+                                                                    "file":  "Makefile",
+                                                                    "line":  133
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1900",
+                                                                    "file":  "Makefile",
+                                                                    "line":  142
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1900",
+                                                                    "file":  "Makefile",
+                                                                    "line":  152
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1900",
+                                                                    "file":  "Makefile",
+                                                                    "line":  162
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1911",
+                                                                    "file":  "Makefile",
+                                                                    "line":  172
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1911",
+                                                                    "file":  "Makefile",
+                                                                    "line":  182
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1911",
+                                                                    "file":  "Makefile",
+                                                                    "line":  192
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  202
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  212
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  222
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  232
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  242
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  252
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  262
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1916",
+                                                                    "file":  "Makefile",
+                                                                    "line":  272
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1922",
+                                                                    "file":  "Makefile",
+                                                                    "line":  282
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1922",
+                                                                    "file":  "Makefile",
+                                                                    "line":  292
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1922",
+                                                                    "file":  "Makefile",
+                                                                    "line":  302
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1928",
+                                                                    "file":  "Makefile",
+                                                                    "line":  312
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1928",
+                                                                    "file":  "Makefile",
+                                                                    "line":  322
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1928",
+                                                                    "file":  "Makefile",
+                                                                    "line":  332
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1928",
+                                                                    "file":  "Makefile",
+                                                                    "line":  342
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1928",
+                                                                    "file":  "Makefile",
+                                                                    "line":  352
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1928",
+                                                                    "file":  "Makefile",
+                                                                    "line":  362
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1928",
+                                                                    "file":  "Makefile",
+                                                                    "line":  372
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1929",
+                                                                    "file":  "Makefile",
+                                                                    "line":  382
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1929",
+                                                                    "file":  "Makefile",
+                                                                    "line":  392
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1929",
+                                                                    "file":  "Makefile",
+                                                                    "line":  402
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1929",
+                                                                    "file":  "Makefile",
+                                                                    "line":  412
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  422
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  432
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  442
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  452
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  462
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  472
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  482
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  492
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  502
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1930",
+                                                                    "file":  "Makefile",
+                                                                    "line":  512
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1944",
+                                                                    "file":  "Makefile",
+                                                                    "line":  522
+                                                                },
+                                                                {
+                                                                    "name":  "MSVC_VER",
+                                                                    "value":  "1950",
+                                                                    "file":  "Makefile",
+                                                                    "line":  532
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "GDAL_VERSIONTAG",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "17",
+                                                                    "file":  "Makefile",
+                                                                    "line":  659
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "18",
+                                                                    "file":  "Makefile",
+                                                                    "line":  661
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "19",
+                                                                    "file":  "Makefile",
+                                                                    "line":  663
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "20",
+                                                                    "file":  "Makefile",
+                                                                    "line":  665
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "18dev",
+                                                                    "file":  "Makefile",
+                                                                    "line":  667
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "19dev",
+                                                                    "file":  "Makefile",
+                                                                    "line":  669
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "110dev",
+                                                                    "file":  "Makefile",
+                                                                    "line":  671
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "111",
+                                                                    "file":  "Makefile",
+                                                                    "line":  673
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "111dev",
+                                                                    "file":  "Makefile",
+                                                                    "line":  675
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "110",
+                                                                    "file":  "Makefile",
+                                                                    "line":  677
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "20dev",
+                                                                    "file":  "Makefile",
+                                                                    "line":  679
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "200",
+                                                                    "file":  "Makefile",
+                                                                    "line":  681
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "201",
+                                                                    "file":  "Makefile",
+                                                                    "line":  684
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "202",
+                                                                    "file":  "Makefile",
+                                                                    "line":  688
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "203",
+                                                                    "file":  "Makefile",
+                                                                    "line":  692
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "204",
+                                                                    "file":  "Makefile",
+                                                                    "line":  696
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "205",
+                                                                    "file":  "Makefile",
+                                                                    "line":  700
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "206",
+                                                                    "file":  "Makefile",
+                                                                    "line":  704
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "300",
+                                                                    "file":  "Makefile",
+                                                                    "line":  708
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "301",
+                                                                    "file":  "Makefile",
+                                                                    "line":  712
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "302",
+                                                                    "file":  "Makefile",
+                                                                    "line":  716
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "303",
+                                                                    "file":  "Makefile",
+                                                                    "line":  720
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "304",
+                                                                    "file":  "Makefile",
+                                                                    "line":  724
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "305",
+                                                                    "file":  "Makefile",
+                                                                    "line":  728
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSIONTAG",
+                                                                    "value":  "",
+                                                                    "file":  "Makefile",
+                                                                    "line":  732
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "GDAL_VERSION_H",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "GDAL_VERSION_H",
+                                                                    "value":  "$(BASE_DIR)\\$(GDAL_DIR)\\gdal\\gcore\\gdal_version.h",
+                                                                    "file":  "Makefile",
+                                                                    "line":  785
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_VERSION_H",
+                                                                    "value":  "$(BASE_DIR)\\$(GDAL_DIR)\\gcore\\gdal_version.h",
+                                                                    "file":  "Makefile",
+                                                                    "line":  787
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "MAPSERVER_OPT",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "-DWITH_THREAD_SAFETY=1 -DREGEX_DIR=$(REGEX_PATH:\\=/) \"-DMS_EXTERNAL_LIBS=$(HARFBUZZ_LIB:\\=/);$(URIPARSER_LIB:\\=/)\" \"-DPNG_LIBRARY=$(LIBPNG_LIB:\\=/)\" -DWITH_ORACLESPATIAL=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1082
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DCMAKE_SYSTEM_VERSION=$(PLATFORMSDK_VERSION)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1086
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_ICONV=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1090
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) \"-DICONV_DLL=$(OUTPUT_DIR:\\=/)/bin/iconv.dll\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1092
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_POSTGIS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1097
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_POSTGIS=1 -DPOSTGRESQL_LIBRARY=$(PGSQL_LIB:\\=/)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1099
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PROTOBUFC=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1104
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PROTOBUFC=1 \"-DPROTOBUFC_COMPILER=$(OUTPUT_DIR:\\=/)/bin/protoc.exe\" \"-DPROTOBUFC_INCLUDE_DIR=$(OUTPUT_DIR:\\=/)/include/protobuf-c\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1106
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\\=/)/include/proj9 -DPROJ_LIBRARY=$(OUTPUT_DIR:\\=/)/lib/proj9.lib",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1111
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\\=/)/include/proj7 -DPROJ_LIBRARY=$(OUTPUT_DIR:\\=/)/lib/proj.lib",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1114
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PROJ=1 -DPROJ_INCLUDE_DIR=$(OUTPUT_DIR:\\=/)/include -DPROJ_LIBRARY=$(OUTPUT_DIR:\\=/)/lib/proj_i.lib",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1117
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PROJ=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1120
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_GEOS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1124
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CAIRO=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1130
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_SVGCAIRO=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1136
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_SVGCAIRO=1 \"-DSVG_LIBRARY=$(LIBSVG_LIB:\\=/)\" \"-DSVGCAIRO_LIBRARY=$(LIBSVGCAIRO_LIB:\\=/)\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1138
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CURL=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1143
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CURL=1 -DWITH_CLIENT_WMS=1 -DWITH_CLIENT_WFS=1",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1145
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_FCGI=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1150
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_GIF=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1156
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_LIBXML2=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1162
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_WMS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1168
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_WFS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1172
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_SOS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1176
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_WCS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1180
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CLIENT_WMS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1184
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CLIENT_WMS=1",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1186
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CLIENT_WFS=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1190
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CLIENT_WFS=1",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1192
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_HARFBUZZ=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1196
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_HARFBUZZ=1 \"-DHARFBUZZ_INCLUDE_DIR=$(OUTPUT_DIR:\\=/)/include/harfbuzz\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1198
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_FRIBIDI=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1203
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_CSHARP=1 \"-DSWIG_EXECUTABLE=$(SWIG_EXE)\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1209
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_JAVA=1 \"-DSWIG_EXECUTABLE=$(SWIG_EXE)\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1214
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PYTHON=1 \"-DPYTHON_LIBRARY=$(PYTHON_BASE:\\=/)/$(PYTHON_DIR:\\=/)/libs/python37.lib\" \"-DPYTHON_INCLUDE_DIR=$(PYTHON_BASE:\\=/)/$(PYTHON_DIR:\\=/)/include\" \"-DPYTHON_EXECUTABLE=$(PYTHON_BASE:\\=/)/$(PYTHON_DIR:\\=/)/python.exe\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1219
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PHP=1",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1224
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_PHP=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1226
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_GDAL=0",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1230
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_MSSQL2008=1",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1237
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) -DWITH_ORACLE_PLUGIN=1 \"-DORACLE_INCLUDE_DIR=$(OCI_DIR:\\=/)/$(INSTANTCLIENT_DIR)/sdk/include\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1241
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) \"-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=/MD /Zi /Od\" \"-DCMAKE_C_FLAGS_RELWITHDEBINFO=/MD /Zi /Od $(MS_EXTRAFLAGS_CC)\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1385
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_OPT",
+                                                                    "value":  "$(MAPSERVER_OPT) \"-DCMAKE_CXX_FLAGS_RELEASE=/MD /Zi /O2 $(MS_EXTRAFLAGS_CC)\" \"-DCMAKE_C_FLAGS_RELEASE=/MD /Zi /O2 $(MS_EXTRAFLAGS_CC)\" \"-DCMAKE_MODULE_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO\" \"-DCMAKE_SHARED_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO\" \"-DCMAKE_EXE_LINKER_FLAGS_RELEASE=/OPT:REF /OPT:ICF /DEBUG /INCREMENTAL:NO\"",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1389
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "MAPSERVER_DEPS",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MSVCRT_DLL) $(JPEG_LIB) $(LIBPNG_LIB) $(FREETYPE_2)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1083
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(LIBICONV_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1093
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(PGSQL_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1100
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(PROTOBUF_C_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1107
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(PROJ9_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1112
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(PROJ7_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1115
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(PROJ_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1118
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(GEOS_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1126
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(CAIRO_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1132
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(LIBSVG_LIB) $(LIBSVGCAIRO_LIB) $(URIPARSER_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1139
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(CURL_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1146
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(FCGI_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1152
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(GIF_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1158
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(LIBXML2_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1164
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(HARFBUZZ_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1199
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(FRIBIDI_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1205
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(SWIG_INSTALL)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1210
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(SWIG_INSTALL)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1215
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(SWIG_INSTALL)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1220
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(APR_LIB) $(HTTPD_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1245
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "MAPSERVER_DEPS_ALL",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS_ALL",
+                                                                    "value":  "$(MAPSERVER_DEPS)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1231
+                                                                },
+                                                                {
+                                                                    "name":  "MAPSERVER_DEPS_ALL",
+                                                                    "value":  "$(MAPSERVER_DEPS) $(GDAL_LIB)",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1233
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "OCI_VERSION",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "OCI_VERSION",
+                                                                    "value":  "12",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1364
+                                                                },
+                                                                {
+                                                                    "name":  "OCI_VERSION",
+                                                                    "value":  "12",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1371
+                                                                },
+                                                                {
+                                                                    "name":  "OCI_VERSION",
+                                                                    "value":  "11",
+                                                                    "file":  "Makefile",
+                                                                    "line":  1378
+                                                                }
+                                                            ]
+                                        },
+                                        {
+                                            "name":  "GDAL_DRIVER_PATH",
+                                            "definitions":  [
+                                                                {
+                                                                    "name":  "GDAL_DRIVER_PATH",
+                                                                    "value":  "$(OUTPUT_DIR)\\bin\\gdal\\plugins;$(OUTPUT_DIR)\\bin\\gdal\\plugins-external",
+                                                                    "file":  "Makefile",
+                                                                    "line":  2914
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_DRIVER_PATH",
+                                                                    "value":  "$(OUTPUT_DIR)\\bin\\gdal\\plugins;$(OUTPUT_DIR)\\bin\\gdal\\plugins-external",
+                                                                    "file":  "Makefile",
+                                                                    "line":  5020
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_DRIVER_PATH",
+                                                                    "value":  "$(OUTPUT_DIR)\\bin\\gdal\\plugins;$(OUTPUT_DIR)\\bin\\gdal\\plugins-external",
+                                                                    "file":  "Makefile",
+                                                                    "line":  5032
+                                                                },
+                                                                {
+                                                                    "name":  "GDAL_DRIVER_PATH",
+                                                                    "value":  "$(OUTPUT_DIR)\\bin\\gdal\\plugins;$(OUTPUT_DIR)\\bin\\gdal\\plugins-external",
+                                                                    "file":  "Makefile",
+                                                                    "line":  5053
+                                                                }
+                                                            ]
+                                        }
+                                    ],
+    "publishingCommands":  [
+                               {
+                                   "file":  "Makefile",
+                                   "line":  4557,
+                                   "text":  "rem $(BASE_DIR)\\uploadftp $(BASE_DIR)\\$(MAPMANAGER_DIR)\\Installer\\bin\\Release\\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5083,
+                                   "text":  "if exist $(OUTPUT_DIR)\\install $(BASE_DIR)\\cert\\signdir $(OUTPUT_DIR)\\install"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5096,
+                                   "text":  "uploadftp \"$(OUTPUT_DIR)-$(PKG_VERSION).zip\" downloads"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5097,
+                                   "text":  "if exist $(OUTPUT_DIR)\\install uploadftpdir $(OUTPUT_DIR)\\install\\*.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5098,
+                                   "text":  "if exist $(OUTPUT_DIR)\\install uploadftpdir $(OUTPUT_DIR)\\install\\*.exe downloads/release-$(COMPILER_VER)-$(PKG_VERSION)"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5099,
+                                   "text":  "if exist $(OUTPUT_DIR)\\install uploadftpdir $(OUTPUT_DIR)\\install\\*.zip downloads/release-$(COMPILER_VER)-$(PKG_VERSION)"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5100,
+                                   "text":  "uploadftpdir $(OUTPUT_DIR)\\doc\\*.txt downloads/doc/release-$(COMPILER_VER)-$(PKG_VERSION)"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5106,
+                                   "text":  "uploadftp \"$(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip\" downloads"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5121,
+                                   "text":  "uploadftp \"$(OUTPUT_DIR)-$(PKG_VERSION)-src.zip\" downloads"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5128,
+                                   "text":  "uploadftp \"$(OUTPUT_DIR)-dev.zip\" downloads"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5143,
+                                   "text":  "uploadftp \"$(OUTPUT_DIR).zip\" downloads"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5144,
+                                   "text":  "uploadftp \"$(OUTPUT_DIR)-dev.zip\" downloads"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5197,
+                                   "text":  "$(BASE_DIR)\\uploadftp $(BASE_DIR)\\$(MAPMANAGER_DIR)\\Installer\\bin\\Release\\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5223,
+                                   "text":  "nuget push GDAL.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5224,
+                                   "text":  "nuget push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5225,
+                                   "text":  "nuget push GDAL.Applications.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json"
+                               },
+                               {
+                                   "file":  "Makefile",
+                                   "line":  5226,
+                                   "text":  "nuget push GDAL.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json"
+                               }
+                           ],
+    "buildExecution":  {
+                           "status":  "not-run",
+                           "reason":  "No release-* baseline exists, NuGet is not on PATH, and package targets contain live signing/FTP publication commands. Add staging/no-publish controls before executing the scheduled pipeline as validation."
+                       }
+}

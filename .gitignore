@@ -19,5 +19,30 @@ release*
 # Ignore ECW SDK
 /support/ECW*
 
+# Ignore locally provisioned licensed MrSID SDKs
+/support/mrsid/
+
+# Ignore locally provisioned legacy build/test tools and source patches
+/support/diffutils/
+/support/gdal/
+/support/gperf/
+/support/minizip/
+/support/pdiff/
+/support/pkg-config/
+/support/regex-0.12/
+
 # Ignore archives in support
 /support/*.zip
+
+# Ignore optional local build-wrapper logs
+/doc/build-logs/
+
+# Reproducible source archive output
+/source-archives/
+
+# Helper downloads live under src and are covered by /src/** above. Keep these
+# explicit entries so their generated nature remains clear if src rules change.
+/src/cmake/
+/src/ninja/
+/src/winflexbison/
+/src/pkgconfiglite/

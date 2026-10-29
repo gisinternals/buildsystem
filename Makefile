@@ -41,6 +41,10 @@ COMPILER_VER=$(MSVC_VER)
 OUTPUT_DIR = $(BASE_DIR)\release-$(COMPILER_VER)
 !ENDIF
 
+!IFNDEF SOURCE_ARCHIVE_DIR
+SOURCE_ARCHIVE_DIR = $(BASE_DIR)\source-archives
+!ENDIF
+
 EXTRAFLAGS =
 
 # identify compiler version
@@ -611,8 +615,74 @@ SWIG_SRC = https://sourceforge.net/projects/swig/files/swigwin/swigwin-$(SWIG_VE
 SWIG_DIR = $(SRC_DIR)\swig
 SWIG_EXE = $(BASE_DIR)\$(SWIG_DIR)\swigwin-$(SWIG_VER)\swig.exe
 
+!IFNDEF WINFLEXBISON_VER
+WINFLEXBISON_VER = 2.5.25
+!ENDIF
+!IFNDEF PKGCONFIGLITE_VER
+PKGCONFIGLITE_VER = 0.28-1
+!ENDIF
+!IFNDEF CMAKE_TOOL_VER
+CMAKE_TOOL_VER = 4.4.4
+!ENDIF
+!IFNDEF NINJA_TOOL_VER
+NINJA_TOOL_VER = 1.13.2
+!ENDIF
+
+WINFLEXBISON_SRC = https://github.com/lexxmark/winflexbison/releases/download/v$(WINFLEXBISON_VER)/win_flex_bison-$(WINFLEXBISON_VER).zip
+WINFLEXBISON_DIR = $(SRC_DIR)\winflexbison
+WINFLEXBISON_FLEX_EXE = $(BASE_DIR:\=/)/$(WINFLEXBISON_DIR:\=/)/win_flex.exe
+WINFLEXBISON_BISON_EXE = $(BASE_DIR:\=/)/$(WINFLEXBISON_DIR:\=/)/win_bison.exe
+WINFLEXBISON_PREREQ =
+!IFNDEF PGSQL_FLEX_EXE
+PGSQL_FLEX_EXE = $(WINFLEXBISON_FLEX_EXE)
+WINFLEXBISON_PREREQ = $(WINFLEXBISON_INSTALL)
+!ENDIF
+!IFNDEF PGSQL_BISON_EXE
+PGSQL_BISON_EXE = $(WINFLEXBISON_BISON_EXE)
+WINFLEXBISON_PREREQ = $(WINFLEXBISON_INSTALL)
+!ENDIF
+PKGCONFIGLITE_SRC = https://sourceforge.net/projects/pkgconfiglite/files/$(PKGCONFIGLITE_VER)/pkg-config-lite-$(PKGCONFIGLITE_VER)_bin-win32.zip/download
+PKGCONFIGLITE_DIR = $(SRC_DIR)\pkgconfiglite
+PKGCONFIGLITE_PACKAGE_DIR = pkg-config-lite-$(PKGCONFIGLITE_VER)
+!IFNDEF PKG_CONFIG_EXE
+PKG_CONFIG_EXE = $(BASE_DIR)\$(PKGCONFIGLITE_DIR)\$(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe
+PKGCONFIGLITE_PREREQ = $(PKGCONFIGLITE_INSTALL)
+!ELSE
+PKGCONFIGLITE_PREREQ =
+!ENDIF
+!IFNDEF CMAKE_TOOL_DIR
+CMAKE_TOOL_DIR = $(SRC_DIR)\cmake
+!ENDIF
+!IFNDEF CMAKE_TOOL_SRC
+CMAKE_TOOL_SRC = https://github.com/Kitware/CMake/releases/download/v$(CMAKE_TOOL_VER)/cmake-$(CMAKE_TOOL_VER)-windows-x86_64.zip
+!ENDIF
+CMAKE_TOOL_PACKAGE_DIR = cmake-$(CMAKE_TOOL_VER)-windows-x86_64
+CMAKE_TOOL_EXE = $(BASE_DIR)\$(CMAKE_TOOL_DIR)\$(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe
+!IFNDEF NINJA_TOOL_DIR
+NINJA_TOOL_DIR = $(SRC_DIR)\ninja
+!ENDIF
+!IFNDEF NINJA_TOOL_SRC
+NINJA_TOOL_SRC = https://github.com/ninja-build/ninja/releases/download/v$(NINJA_TOOL_VER)/ninja-win.zip
+!ENDIF
+NINJA_TOOL_PACKAGE_DIR = ninja-win-$(NINJA_TOOL_VER)
+NINJA_TOOL_EXE = $(BASE_DIR)\$(NINJA_TOOL_DIR)\$(NINJA_TOOL_PACKAGE_DIR)\ninja.exe
+
+!IFDEF INSECURE_DOWNLOADS
+CURL_DOWNLOAD_SSL_OPT = -k
+POWERSHELL_DOWNLOAD_PREFIX = [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; [Net.ServicePointManager]::ServerCertificateValidationCallback = { $$true };
+!ELSE
+CURL_DOWNLOAD_SSL_OPT =
+POWERSHELL_DOWNLOAD_PREFIX = [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
+!ENDIF
+
 !IFNDEF CYGWIN_DIR
+!IF EXIST(E:\cygwin\bin\cygpath.exe)
 CYGWIN_DIR=E:\cygwin
+!ELSEIF EXIST(C:\cygwin\bin\cygpath.exe)
+CYGWIN_DIR=C:\cygwin
+!ELSE
+CYGWIN_DIR=E:\cygwin
+!ENDIF
 !ENDIF
 
 !IF "$(GDAL_BRANCH)" == "master"
@@ -656,6 +726,12 @@ MAPMANAGER_DIR = $(MAPMANAGER_DIR)-x64
 !IFNDEF GDAL_CMAKE_TARGET
 GDAL_CMAKE_TARGET = install
 !ENDIF
+
+!IFNDEF NUGET_COMPILER_VER
+NUGET_COMPILER_VER = 1929
+!ENDIF
+
+NUGET_PROPERTIES = "gdalOutputX86=..\release-$(NUGET_COMPILER_VER);gdalOutputX64=..\release-$(NUGET_COMPILER_VER)-x64"
 
 # GDAL installer variables
 !IF EXIST ($(BASE_DIR)\$(GDAL_DIR)\VERSION)
@@ -760,6 +836,14 @@ MRSID_SETUP_FLAGS = $(MRSID_SETUP_FLAGS) "-dlti_lidar_dsdk=$(LIDAR_DLL)" "-dlti_
 #specify build targets
 MSVCRT_DLL = $(OUTPUT_DIR)\build\msvcr.install
 SWIG_INSTALL = $(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
+WINFLEXBISON_INSTALL = $(OUTPUT_DIR)\build\winflexbison-$(WINFLEXBISON_VER).install
+PKGCONFIGLITE_INSTALL = $(OUTPUT_DIR)\build\pkgconfiglite-$(PKGCONFIGLITE_VER).install
+CMAKE_TOOL_INSTALL = $(OUTPUT_DIR)\build\cmake-$(CMAKE_TOOL_VER).install
+NINJA_TOOL_INSTALL = $(OUTPUT_DIR)\build\ninja-$(NINJA_TOOL_VER).install
+LIBICONV_PIN_STAMP = $(OUTPUT_DIR)\build\libiconv-$(LIBICONV_VERSION).pin
+OGDI_PIN_STAMP = $(OUTPUT_DIR)\build\ogdi-$(OGDI_BRANCH).pin
+LIBXML2_PIN_STAMP = $(OUTPUT_DIR)\build\libxml2-$(LIBXML2_VERSION).pin
+PGSQL_PIN_STAMP = $(OUTPUT_DIR)\build\postgresql-$(PGSQL_BRANCH).pin
 ZLIB_LIB = $(OUTPUT_DIR)\lib\zlib.lib
 OPENSSL_LIB = $(OUTPUT_DIR)\lib\libssl.lib
 CURL_LIB = $(OUTPUT_DIR)\lib\libcurl_imp.lib
@@ -806,7 +890,7 @@ GDAL_CSHARP_DLL = $(OUTPUT_DIR)\bin\gdal\csharp\gdal_csharp.dll
 !ENDIF
 GDAL_JAVA_OPT = $(OUTPUT_DIR)\build\$(GDAL_OPT_PREFIX)gdal_java.opt
 !IFDEF GDAL_JAVA_DLL_NAME
-GDAL_JAVA_DLL = $(OUTPUT_DIR)\bin\gdal\java\$(GDAL_CSHARP_DLL_NAME)
+GDAL_JAVA_DLL = $(OUTPUT_DIR)\bin\gdal\java\$(GDAL_JAVA_DLL_NAME)
 !ELSE
 GDAL_JAVA_DLL = $(OUTPUT_DIR)\bin\gdal\java\gdalalljni.dll
 !ENDIF
@@ -886,6 +970,8 @@ GDAL_INSTALLER_MRSID = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-mr
 GDAL_INSTALLER_FILEGDB = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-filegdb.msi
 GDAL_INSTALLER_NETCDF = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-netcdf.msi
 GDAL_INSTALLER_PDF = $(OUTPUT_DIR)\install\gdal-$(GDAL_VER)-$(COMPILER_VER)-pdf.msi
+WIX_CANDLE = $(BASE_DIR)\$(WIX_DIR)\candle.exe
+WIX_LIGHT = $(BASE_DIR)\$(WIX_DIR)\light.exe
 MS_INSTALLER_CORE = $(OUTPUT_DIR)\install\mapserver-$(MS_VERSION)-$(COMPILER_VER)-core.msi
 MAPMANAGER_INSTALLER = $(BASE_DIR)\MapManager-$(MS_VERSION)\Installer\bin\Release\MapManager.msi
 
@@ -893,8 +979,8 @@ MAPMANAGER_INSTALLER = $(BASE_DIR)\MapManager-$(MS_VERSION)\Installer\bin\Releas
 DEFAULT_TARGETS = 
 
 # set up gdal configuration
-GDAL_DEPS = $(OUTPUT_DIR) $(MSVCRT_DLL) $(LIBPNG_LIB)
-GDAL_CMAKE_OPT = "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) $(LIBSHARPYUV_LIB) advapi32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DGDAL_ENABLE_DRIVER_PCIDSK_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PCRASTER_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PNG_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WEBP_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WMS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_CAD_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_VFK_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_XLS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_OGDI_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_JP2OPENJPEG_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_LIBKML_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_MYSQL_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_PG_PLUGIN=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)"
+GDAL_DEPS = $(OUTPUT_DIR) $(MSVCRT_DLL) $(LIBPNG_LIB) $(LIBXML2_LIB)
+GDAL_CMAKE_OPT = "-DSWIG_EXECUTABLE=$(SWIG_EXE)" "-DCMAKE_CXX_STANDARD_LIBRARIES=$(FREETYPE_LIB) $(HARFBUZZ_LIB) $(LIBPNG_LIB) $(JPEG_LIB) $(LIBTIFF_LIB) $(OPENJPEG_LIB) $(ZLIB_LIB) $(URIPARSER_LIB) $(MINIZIP_LIB) $(LIBEXPAT_LIB) $(LIBSHARPYUV_LIB) $(LIBXML2_LIB) advapi32.lib user32.lib" "-DGDAL_ENABLE_PLUGINS=ON" "-DGDAL_ENABLE_DRIVER_PCIDSK_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PCRASTER_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_PNG_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WEBP_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_WMS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_CAD_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_VFK_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_XLS_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_OGDI_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_JP2OPENJPEG_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_LIBKML_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_MYSQL_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER_PLUGIN=OFF" "-DOGR_ENABLE_DRIVER_PG_PLUGIN=OFF" "-DIconv_CHARSET_LIBRARY=$(LIBICONV_LIB)"
 
 !IFDEF GDAL_OGDI
 GDAL_DEPS = $(GDAL_DEPS) $(OGDI_LIB)
@@ -907,6 +993,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(GEOS_LIB)
 
 !IFDEF GDAL_POSTGIS
 GDAL_DEPS = $(GDAL_DEPS) $(PGSQL_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_POSTGRESQL=ON" "-DPostgreSQL_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include" "-DPostgreSQL_LIBRARY=$(PGSQL_LIB:\=/)" "-DOGR_ENABLE_DRIVER_PG=ON" "-DOGR_ENABLE_DRIVER_PG_PLUGIN=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER=OFF" "-DGDAL_ENABLE_DRIVER_POSTGISRASTER_PLUGIN=OFF"
 !ENDIF
 
 !IFDEF GDAL_PROJ4
@@ -928,7 +1015,9 @@ GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\pro
 !ENDIF
 
 !IFDEF GDAL_JAVA
-GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DANT=$(ANT_HOME)\bin\ant" "-DGDAL_JAVA_GENERATE_JAVADOC=OFF"
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DBUILD_JAVA_BINDINGS=ON" "-DANT=$(ANT_HOME)\bin\ant" "-DGDAL_JAVA_GENERATE_JAVADOC=OFF"
+!ELSE
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DBUILD_JAVA_BINDINGS=OFF"
 !ENDIF
 
 !IFDEF GDAL_CURL
@@ -937,15 +1026,27 @@ GDAL_DEPS = $(GDAL_DEPS) $(CURL_LIB)
 
 !IFDEF GDAL_SPATIALITE
 GDAL_DEPS = $(GDAL_DEPS) $(SPATIALITE_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_SQLITE3=ON" "-DGDAL_USE_SPATIALITE=ON" "-DSQLite3_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include" "-DSQLite3_LIBRARY=$(SQLITE_LIB:\=/)" "-DSPATIALITE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include" "-DSPATIALITE_LIBRARY=$(SPATIALITE_LIB:\=/)" "-DSPATIALITE_AMALGAMATION=ON" "-DOGR_ENABLE_DRIVER_SQLITE=ON" "-DOGR_ENABLE_DRIVER_GPKG=ON" "-DOGR_ENABLE_DRIVER_MBTILES=ON"
 !ENDIF
 
 !IFDEF GDAL_SQLITE
-GDAL_DEPS = $(GDAL_DEPS) $(SQLITE_LIB) $(PCRE_LIB)
+!IFNDEF GDAL_SPATIALITE
+GDAL_DEPS = $(GDAL_DEPS) $(SQLITE_LIB)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_SQLITE3=ON" "-DGDAL_USE_SPATIALITE=OFF" "-DGDAL_USE_PCRE=OFF" "-DGDAL_USE_PCRE2=OFF" "-DSQLite3_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include" "-DSQLite3_LIBRARY=$(SQLITE_LIB:\=/)" "-DOGR_ENABLE_DRIVER_SQLITE=ON" "-DOGR_ENABLE_DRIVER_GPKG=ON" "-DOGR_ENABLE_DRIVER_MBTILES=ON"
+!ENDIF
 !ENDIF
 
 !IFDEF GDAL_CSHARP
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_CSHARP_DLL)
-GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DCSHARP_LIBRARY_VERSION=netstandard2.0" "-DCSHARP_APPLICATION_VERSION=net5.0"
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DBUILD_CSHARP_BINDINGS=ON" "-DCSHARP_LIBRARY_VERSION=netstandard2.0" "-DCSHARP_APPLICATION_VERSION=net8.0"
+!ELSE
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DBUILD_CSHARP_BINDINGS=OFF"
+!ENDIF
+
+!IFDEF GDAL_PYTHON
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DBUILD_PYTHON_BINDINGS=ON" "-DPython_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe" "-DPython3_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe"
+!ELSE
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DBUILD_PYTHON_BINDINGS=OFF"
 !ENDIF
 
 !IFDEF GDAL_XERCES
@@ -1025,7 +1126,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(LIBTIFF_LIB) $(ZSTD_LIB)
 !ENDIF
 
 !IFDEF GDAL_MUPARSER
-GDAL_DEPS = $(MUPARSER_LIB)
+GDAL_DEPS = $(GDAL_DEPS) $(MUPARSER_LIB)
 GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) -DCMAKE_CXX_FLAGS="-DMUPARSER_STATIC"
 !ELSE
 GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT) "-DGDAL_USE_MUPARSER=OFF"
@@ -1056,7 +1157,7 @@ GDAL_DEPS = $(GDAL_DEPS) $(HDF5_LIB)
 !IFDEF GDAL_KEA
 DEFAULT_TARGETS = $(DEFAULT_TARGETS) $(GDAL_KEA_DLL)
 GDAL_DEPS = $(GDAL_DEPS) $(KEA_LIB)
-DAL_CMAKE_OPT = $(GDAL_CMAKE_OPT)
+GDAL_CMAKE_OPT = $(GDAL_CMAKE_OPT)
 !ENDIF
 
 !IFDEF GDAL_AMIGOCLOUD
@@ -1106,7 +1207,7 @@ MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(LIBICONV_LIB)
 !IFNDEF MS_POSTGIS
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_POSTGIS=0
 !ELSE
-MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_POSTGIS=1 -DPOSTGRESQL_LIBRARY=$(PGSQL_LIB:\=/)
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_POSTGIS=1 -DPOSTGRESQL_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPostgreSQL_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPOSTGRESQL_LIBRARY=$(PGSQL_LIB:\=/) -DPostgreSQL_LIBRARY=$(PGSQL_LIB:\=/)
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(PGSQL_LIB)
 !ENDIF
 
@@ -1159,6 +1260,7 @@ MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(CURL_LIB)
 !IFNDEF MS_FCGI
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_FCGI=0
 !ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_FCGI=1 -DFCGI_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DFCGI_LIBRARY=$(FCGI_LIB:\=/)
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(FCGI_LIB)
 !ENDIF
 
@@ -1218,16 +1320,22 @@ MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(FRIBIDI_LIB)
 !IFDEF MS_CSHARP
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CSHARP=1 "-DSWIG_EXECUTABLE=$(SWIG_EXE)"
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(SWIG_INSTALL)
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_CSHARP=0
 !ENDIF
 
 !IFDEF MS_JAVA
 MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_JAVA=1 "-DSWIG_EXECUTABLE=$(SWIG_EXE)"
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(SWIG_INSTALL)
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_JAVA=0
 !ENDIF
 
 !IFDEF MS_PYTHON
-MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PYTHON=1 "-DPYTHON_LIBRARY=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/libs/python37.lib" "-DPYTHON_INCLUDE_DIR=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/include" "-DPYTHON_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe"
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PYTHON=1 "-DPYTHON_LIBRARY=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/libs/python$(PYTHON_VERSION).lib" "-DPYTHON_INCLUDE_DIR=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/include" "-DPYTHON_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe" "-DPython_LIBRARY=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/libs/python$(PYTHON_VERSION).lib" "-DPython_INCLUDE_DIR=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/include" "-DPython_EXECUTABLE=$(PYTHON_BASE:\=/)/$(PYTHON_DIR:\=/)/python.exe"
 MAPSERVER_DEPS = $(MAPSERVER_DEPS) $(SWIG_INSTALL)
+!ELSE
+MAPSERVER_OPT = $(MAPSERVER_OPT) -DWITH_PYTHON=0
 !ENDIF
 
 !IFDEF MS_PHP
@@ -1390,7 +1498,7 @@ OCI_VERSION = 11
 !ENDIF
 
 
-!IFDEF DEBUG
+!IF "$(DEBUG)" == "YES"
 BUILD_CONFIG=RelWithDebInfo
 MAPSERVER_OPT = $(MAPSERVER_OPT) "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=/MD /Zi /Od" "-DCMAKE_C_FLAGS_RELWITHDEBINFO=/MD /Zi /Od $(MS_EXTRAFLAGS_CC)"
 !ELSE
@@ -1408,15 +1516,13 @@ MS_PROJECT_CONFIG = "$(BUILD_CONFIG)|x64"
 MS_PROJECT_CONFIG = "$(BUILD_CONFIG)|Win32"
 !ENDIF
 
-#finding cmake.exe
-!IF EXIST($(CMAKE_DIR)\bin\cmake.exe)
-CMAKE_EXE = $(CMAKE_DIR)\bin\cmake.exe
+# Use the pinned helper by default. Administrators can define CMAKE_EXE in
+# config.opt or on the nmake command line to use a managed installation.
+!IFNDEF CMAKE_EXE
+CMAKE_EXE = $(CMAKE_TOOL_EXE)
+CMAKE_TOOL_PREREQ = $(CMAKE_TOOL_INSTALL)
 !ELSE
-!IF [echo off && for /f "usebackq tokens=*" %i IN (`where cmake.exe`) DO echo found cmake in %i] == 0
-CMAKE_EXE = cmake.exe
-!ELSE
-!ERROR cmake.exe not found. Please install cmake into $(CMAKE_DIR) or make it available in the PATH environment variable!
-!ENDIF
+CMAKE_TOOL_PREREQ =
 !ENDIF
 
 
@@ -1434,17 +1540,12 @@ CMAKE_EXE = cmake.exe
 !ENDIF
 !ENDIF
 
-#finding ninja.exe
-!IF DEFINED(MS_FRIBIDI) && DEFINED(FRIBIDI_ENABLED)
-!IF [echo off && for /f "usebackq tokens=*" %i IN (`where ninja.exe`) DO echo found ninja in %i] == 0
-NINJA_EXE = ninja.exe
+# Use the pinned helper by default. NINJA_EXE remains overridable.
+!IFNDEF NINJA_EXE
+NINJA_EXE = $(NINJA_TOOL_EXE)
+NINJA_TOOL_PREREQ = $(NINJA_TOOL_INSTALL)
 !ELSE
-!IF EXIST ($(BASE_DIR)\ninja\ninja.exe)
-NINJA_EXE = $(BASE_DIR)\ninja\ninja.exe
-!ELSE
-!ERROR ninja.exe not found. Please install ninja and make it available in the PATH environment variable!
-!ENDIF
-!ENDIF
+NINJA_TOOL_PREREQ =
 !ENDIF
 
 #finding 7z.exe
@@ -1477,6 +1578,18 @@ PYTHON_DIR = Python310-32
 !IF $(MSVC_VER) == 1310
 PYTHON_DIR = Python27
 !ENDIF
+!ENDIF
+
+!IFNDEF PYTHON_VERSION
+PYTHON_VERSION = 310
+!ENDIF
+
+!IFNDEF GDAL_PYTHON_DIRS_X64
+GDAL_PYTHON_DIRS_X64 = Python310
+!ENDIF
+
+!IFNDEF GDAL_PYTHON_DIRS_X86
+GDAL_PYTHON_DIRS_X86 = Python310-32
 !ENDIF
 
 !IF "$(PYTHON_DIR)" == "Python25"
@@ -1637,6 +1750,10 @@ REGEX_PATH=$(BASE_DIR)\$(REGEX_DIR)
 PYDIR = $(PYTHON_BASE)\$(PYTHON_DIR)
 !ENDIF
 
+!IFNDEF MESON_EXE
+MESON_EXE = $(PYDIR)\Scripts\meson.exe
+!ENDIF
+
 $(OUTPUT_DIR):
     if exist $(OUTPUT_DIR).zip 7z x -y $(OUTPUT_DIR).zip
     if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
@@ -1646,6 +1763,18 @@ $(OUTPUT_DIR):
     if not exist $(OUTPUT_DIR)\doc mkdir $(OUTPUT_DIR)\doc
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
     if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+
+$(LIBICONV_PIN_STAMP): $(OUTPUT_DIR)
+    @echo LIBICONV_VERSION=$(LIBICONV_VERSION) > $(LIBICONV_PIN_STAMP)
+
+$(OGDI_PIN_STAMP): $(OUTPUT_DIR)
+    @echo OGDI_BRANCH=$(OGDI_BRANCH) > $(OGDI_PIN_STAMP)
+
+$(LIBXML2_PIN_STAMP): $(OUTPUT_DIR)
+    @echo LIBXML2_BRANCH=$(LIBXML2_BRANCH) > $(LIBXML2_PIN_STAMP)
+
+$(PGSQL_PIN_STAMP): $(OUTPUT_DIR)
+    @echo PGSQL_BRANCH=$(PGSQL_BRANCH) > $(PGSQL_PIN_STAMP)
 
 $(MSVCRT_DLL): $(OUTPUT_DIR)
 !IF $(MSVC_VER) >= 1950
@@ -1762,12 +1891,13 @@ $(MSVCRT_DLL): $(OUTPUT_DIR)
     if not exist $(MSVCRT_DLL) echo msvcr71 > $(MSVCRT_DLL)
 !ENDIF
     
-$(ZLIB_LIB): $(MSVCRT_DLL)
+$(ZLIB_LIB): $(CMAKE_TOOL_PREREQ) $(MSVCRT_DLL)
 !IFDEF ZLIB_ENABLED
     if not exist $(ZLIB_DIR) git clone -b $(ZLIB_BRANCH) $(ZLIB_SRC) $(ZLIB_DIR)
     cd $(BASE_DIR)\$(ZLIB_DIR)
     git reset --hard HEAD
     git checkout $(ZLIB_BRANCH)
+    powershell -Command "(Get-Content CMakeLists.txt) -replace 'OUTPUT_NAME z\)', 'OUTPUT_NAME zlib)' | Set-Content -Encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -1776,6 +1906,7 @@ $(ZLIB_LIB): $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(OUTPUT_DIR)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
+    if exist $(OUTPUT_DIR)\lib\zs.lib copy /Y $(OUTPUT_DIR)\lib\zs.lib $(OUTPUT_DIR)\lib\zlibstatic.lib
 !ENDIF
     rem xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
     rem xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -1806,8 +1937,13 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 	nmake clean
 !ENDIF
 !IFNDEF NO_BUILD
-    nmake
-    nmake install
+    nmake install_dev install_engines install_modules
+    nmake apps\openssl.exe
+    if not exist install\bin mkdir install\bin
+    if not exist install\ssl mkdir install\ssl
+    if exist apps\openssl.exe copy /Y apps\openssl.exe install\bin\openssl.exe
+    if exist apps\openssl.pdb copy /Y apps\openssl.pdb install\bin\openssl.pdb
+    if exist apps\openssl.cnf copy /Y apps\openssl.cnf install\ssl\openssl.cnf
 !ENDIF
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	xcopy /Y /S install\include\*.c $(OUTPUT_DIR)\include
@@ -1823,6 +1959,9 @@ $(OPENSSL_LIB): $(MSVCRT_DLL) $(ZLIB_LIB)
 	powershell -Command "(gc libcrypto.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII libcrypto.pc"
 	powershell -Command "(gc libssl.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII libssl.pc"
 	powershell -Command "(gc openssl.pc) -replace '$(BASE_DIR:\=\\)\\$(OPENSSL_DIR:\=\\)', '$(OUTPUT_DIR)' | Out-File -encoding ASCII openssl.pc"
+	powershell -Command "$$c = (gc libcrypto.pc) -join [Environment]::NewLine; $$c = $$c.Replace('libdir=$${exec_prefix}', 'libdir=$${exec_prefix}/lib').Replace('Libs: -L$${libdir} -lcrypto', 'Libs: $${libdir}/libcrypto.lib'); [IO.File]::WriteAllText('libcrypto.pc', $$c + [Environment]::NewLine, [Text.Encoding]::ASCII)"
+	powershell -Command "$$c = (gc libssl.pc) -join [Environment]::NewLine; $$c = $$c.Replace('libdir=$${exec_prefix}', 'libdir=$${exec_prefix}/lib').Replace('Libs: -L$${libdir} -lssl', 'Libs: $${libdir}/libssl.lib'); [IO.File]::WriteAllText('libssl.pc', $$c + [Environment]::NewLine, [Text.Encoding]::ASCII)"
+	powershell -Command "$$c = (gc openssl.pc) -join [Environment]::NewLine; $$c = $$c.Replace('libdir=$${exec_prefix}', 'libdir=$${exec_prefix}/lib'); [IO.File]::WriteAllText('openssl.pc', $$c + [Environment]::NewLine, [Text.Encoding]::ASCII)"
     cd $(BASE_DIR)
 !ELSE
     @echo $(OPENSSL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -1832,7 +1971,7 @@ $(CURL_LIB): $(OPENSSL_LIB) $(MSVCRT_DLL) $(ZLIB_LIB)
 !IFDEF CURL_ENABLED
     if not exist $(BASE_DIR)\$(CURL_DIR) mkdir $(BASE_DIR)\$(CURL_DIR)
 	cd $(BASE_DIR)\$(CURL_DIR)
-    if not exist curl-$(CURL_VERSION).zip powershell -NoLogo -NoProfile -Command "Invoke-WebRequest -Uri '$(CURL_SRC)' -OutFile 'curl-$(CURL_VERSION).zip'"
+    if not exist curl-$(CURL_VERSION).zip powershell -NoLogo -NoProfile -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(CURL_SRC)' -OutFile 'curl-$(CURL_VERSION).zip'"
     if not exist curl-$(CURL_VERSION) 7z x -y curl-$(CURL_VERSION).zip
     cd curl-$(CURL_VERSION)
 !IFNDEF NO_CLEAN
@@ -1861,9 +2000,8 @@ $(CURL_EXE): $(CURL_LIB)
 
 $(CURL_CA_BUNDLE): $(CURL_EXE)
 !IFDEF CURL_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
-    $(CURL_EXE) -L -k -o "$(CURL_CA_BUNDLE)" "http://curl.haxx.se/ca/cacert.pem"
+    powershell -NoLogo -NoProfile -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri 'https://curl.se/ca/cacert.pem' -OutFile '$(CURL_CA_BUNDLE)'"
+    if not exist $(CURL_CA_BUNDLE) exit 1
 !ENDIF
     
 $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
@@ -1872,7 +2010,7 @@ $(LIBPNG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(ZLIB_LIB)
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     cd $(LIBPNG_DIR)
-    if not exist $(LIBPNG_VER) $(CURL_EXE) -L -k -o "libpng.zip" "$(LIBPNG_SRC)" & 7z x -y libpng.zip
+    if not exist $(LIBPNG_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "libpng.zip" "$(LIBPNG_SRC)" & 7z x -y libpng.zip
     cd $(LIBPNG_VER)
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
@@ -1912,7 +2050,7 @@ $(JPEG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(JPEG_DIR) mkdir $(JPEG_DIR)
     cd $(JPEG_DIR)
-    if not exist $(JPEG_VER) $(CURL_EXE) -L -k -o "jpeg.zip" "$(JPEG_SRC)" & 7z x -y jpeg.zip  
+    if not exist $(JPEG_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "jpeg.zip" "$(JPEG_SRC)" & 7z x -y jpeg.zip
     xcopy /Y $(BASE_DIR)\support\win32.mak $(BASE_DIR)\$(JPEG_DIR)\$(JPEG_VER)
 	cd $(JPEG_VER)
     powershell -Command "(gc makefile.vc) -replace 'cvars\)', 'cvarsdll)' | Out-File -encoding ASCII makefile.vc"
@@ -2000,7 +2138,7 @@ $(HARFBUZZ_LIB): $(MSVCRT_DLL) $(FREETYPE_1) $(LIBPNG_LIB) $(ZLIB_LIB)
 
 $(FREETYPE_LIB): $(FREETYPE_2)
 
-$(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB) $(LIBPNG_LIB)
+$(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE_LIB) $(JPEG_LIB) $(OPENJPEG_LIB) $(LIBPNG_LIB) $(PKGCONFIGLITE_PREREQ)
 !IFDEF POPPLER_ENABLED
     SET PATH=$(OUTPUT_DIR)\bin;$(BASE_DIR)\support;$(CMAKE_DIR)\bin;$(PATH)
     if not exist $(POPPLER_DIR) git clone -b $(POPPLER_BRANCH) $(POPPLER_SRC) $(POPPLER_DIR)
@@ -2020,7 +2158,7 @@ $(POPPLER_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(ZLIB_LIB) $(CAIRO_LIB) $(FREETYPE
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(FREETYPE_LIB);$(HARFBUZZ_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(POPPLER_DIR)\$(CMAKE_BUILDDIR)\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DPKG_CONFIG_EXECUTABLE=$(PKG_CONFIG_EXE)" "-DENABLE_RELOCATABLE=OFF" "-DBUILD_SHARED_LIBS=ON" "-DFREETYPE_LIBRARY_RELEASE=$(FREETYPE_LIB);$(HARFBUZZ_LIB)" "-DPNG_LIBRARY_RELEASE=$(LIBPNG_LIB)"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\poppler.lib $(OUTPUT_DIR)\lib
@@ -2073,10 +2211,11 @@ $(LIBGEOTIFF_LIB): $(MSVCRT_DLL) $(LIBTIFF_LIB) $(PROJ9_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(PROJ9_LIB)" "-DBUILD_SHARED_LIBS=OFF"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install" "-DPROJ_INCLUDE_DIR=$(OUTPUT_DIR)\include\proj9" "-DPROJ_LIBRARY=$(PROJ9_LIB)" "-DCMAKE_C_FLAGS=/I$(OUTPUT_DIR)\include\proj9" "-DBUILD_SHARED_LIBS=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+	if not exist $(OUTPUT_DIR)\cmake mkdir $(OUTPUT_DIR)\cmake
 	xcopy /Y install\cmake\*.cmake $(OUTPUT_DIR)\cmake
     xcopy /Y /S install\include\*.h $(OUTPUT_DIR)\include
 	xcopy /Y /S install\include\*.inc $(OUTPUT_DIR)\include
@@ -2136,7 +2275,7 @@ $(LIBSVG_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(URIPARSER_LIB) $(JP
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(LIBSVG_DIR) mkdir $(LIBSVG_DIR)
     cd $(LIBSVG_DIR)
-    if not exist $(LIBSVG_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBSVG_VER).tar.gz" "$(LIBSVG_SRC)"
+    if not exist $(LIBSVG_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(LIBSVG_VER).tar.gz" "$(LIBSVG_SRC)"
     if not exist $(LIBSVG_VER) 7z e -y $(LIBSVG_VER).tar.gz && 7z x -y $(LIBSVG_VER).tar
     xcopy /Y $(BASE_DIR)\support\libsvg\Makefile.vc $(LIBSVG_VER)\src
     xcopy /Y $(BASE_DIR)\support\libsvg\svg_uri.c $(LIBSVG_VER)\src
@@ -2162,7 +2301,7 @@ $(LIBSVGCAIRO_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(MSVCRT_DLL) $(LIBSVG_LIB) $(
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(LIBSVGCAIRO_DIR) mkdir $(LIBSVGCAIRO_DIR)
     cd $(LIBSVGCAIRO_DIR)
-    if not exist $(LIBSVGCAIRO_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBSVGCAIRO_VER).tar.gz" "$(LIBSVGCAIRO_SRC)"
+    if not exist $(LIBSVGCAIRO_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(LIBSVGCAIRO_VER).tar.gz" "$(LIBSVGCAIRO_SRC)"
     if not exist $(LIBSVGCAIRO_VER) 7z e -y $(LIBSVGCAIRO_VER).tar.gz && 7z x -y $(LIBSVGCAIRO_VER).tar
     xcopy /Y $(BASE_DIR)\support\libsvg-cairo\Makefile.vc $(LIBSVGCAIRO_VER)\src
     cd $(LIBSVGCAIRO_VER)\src
@@ -2206,7 +2345,7 @@ $(GEOS_LIB): $(MSVCRT_DLL)
     @echo $(GEOS_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(LIBEXPAT_LIB):
+$(LIBEXPAT_LIB): $(CMAKE_TOOL_PREREQ)
 !IFDEF LIBEXPAT_ENABLED
     if not exist $(LIBEXPAT_DIR) git clone -b $(LIBEXPAT_BRANCH) $(LIBEXPAT_SRC) $(LIBEXPAT_DIR)
     cd $(LIBEXPAT_DIR)
@@ -2314,7 +2453,7 @@ $(PROTOBUF_C_LIB): $(PROTOBUF_LIB)
     @echo $(PROTOBUF_C_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(FRIBIDI_LIB):
+$(FRIBIDI_LIB): $(NINJA_TOOL_PREREQ)
 !IFDEF FRIBIDI_ENABLED
     if not exist $(FRIBIDI_DIR) git clone -b $(FRIBIDI_BRANCH) $(FRIBIDI_SRC) $(FRIBIDI_DIR)
     cd $(FRIBIDI_DIR)
@@ -2325,8 +2464,8 @@ $(FRIBIDI_LIB):
 !ENDIF
 !IFNDEF NO_BUILD
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\meson --prefix $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install --buildtype=release --backend=ninja $(CMAKE_BUILDDIR) -Ddocs=false
-    ninja -v -C $(CMAKE_BUILDDIR)
-    ninja -C $(CMAKE_BUILDDIR) install
+    $(NINJA_EXE) -v -C $(CMAKE_BUILDDIR)
+    $(NINJA_EXE) -C $(CMAKE_BUILDDIR) install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\lib\*.lib $(OUTPUT_DIR)\lib
     xcopy /Y $(BASE_DIR)\$(FRIBIDI_DIR)\$(CMAKE_BUILDDIR)\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -2496,16 +2635,16 @@ $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SQLITE_DIR) mkdir $(SQLITE_DIR)
     cd $(SQLITE_DIR)
-    if not exist sqlite $(CURL_EXE) -L -k -o "sqlite.zip" "$(SQLITE_SRC)" & 7z x -y sqlite.zip  
+    if not exist sqlite $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "sqlite.zip" "$(SQLITE_SRC)" & 7z x -y sqlite.zip
 !IFNDEF NO_CLEAN
     if exist build rmdir /S /Q build
 !ENDIF
 !IFNDEF NO_BUILD
     if not exist build mkdir build
     cd build
-    nmake /f ..\sqlite\Makefile.msc sqlite3.dll  TOP=..\sqlite
-    nmake /f ..\sqlite\Makefile.msc sqlite3.exe  TOP=..\sqlite
-    nmake /f ..\sqlite\Makefile.msc fts5.dll  TOP=..\sqlite
+    nmake /f ..\sqlite\Makefile.msc sqlite3.dll  TOP=..\sqlite DEBUG=0
+    nmake /f ..\sqlite\Makefile.msc sqlite3.exe  TOP=..\sqlite DEBUG=0
+    nmake /f ..\sqlite\Makefile.msc fts5.dll  TOP=..\sqlite DEBUG=0
 !ENDIF
 !IFNDEF NO_COPY
     xcopy /Y *.dll $(OUTPUT_DIR)\bin
@@ -2521,12 +2660,67 @@ $(SQLITE_LIB): $(CURL_EXE) $(MSVCRT_DLL)
     @echo $(SQLITE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
+$(CMAKE_TOOL_INSTALL):
+    if not exist $(BASE_DIR)\$(CMAKE_TOOL_DIR) mkdir $(BASE_DIR)\$(CMAKE_TOOL_DIR)
+    cd $(BASE_DIR)\$(CMAKE_TOOL_DIR)
+    if not exist $(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe powershell -NoProfile -ExecutionPolicy Bypass -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(CMAKE_TOOL_SRC)' -OutFile '$(CMAKE_TOOL_PACKAGE_DIR).zip'"
+    if not exist $(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe $(7Z_EXE) x -y $(CMAKE_TOOL_PACKAGE_DIR).zip -o.
+    if not exist $(CMAKE_TOOL_PACKAGE_DIR)\bin\cmake.exe exit 1
+    if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
+    if not exist $(OUTPUT_DIR)\include mkdir $(OUTPUT_DIR)\include
+    if not exist $(OUTPUT_DIR)\bin mkdir $(OUTPUT_DIR)\bin
+    if not exist $(OUTPUT_DIR)\lib mkdir $(OUTPUT_DIR)\lib
+    if not exist $(OUTPUT_DIR)\doc mkdir $(OUTPUT_DIR)\doc
+    if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(CMAKE_TOOL_INSTALL)
+    cd $(BASE_DIR)
+
+$(NINJA_TOOL_INSTALL):
+    if not exist $(BASE_DIR)\$(NINJA_TOOL_DIR) mkdir $(BASE_DIR)\$(NINJA_TOOL_DIR)
+    cd $(BASE_DIR)\$(NINJA_TOOL_DIR)
+    if not exist $(NINJA_TOOL_PACKAGE_DIR)\ninja.exe mkdir $(NINJA_TOOL_PACKAGE_DIR)
+    cd $(NINJA_TOOL_PACKAGE_DIR)
+    if not exist ninja.exe powershell -NoProfile -ExecutionPolicy Bypass -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(NINJA_TOOL_SRC)' -OutFile 'ninja-win.zip'"
+    if not exist ninja.exe $(7Z_EXE) x -y ninja-win.zip -o.
+    if not exist ninja.exe exit 1
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(NINJA_TOOL_INSTALL)
+    cd $(BASE_DIR)
+
+$(WINFLEXBISON_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(WINFLEXBISON_DIR) mkdir $(WINFLEXBISON_DIR)
+    cd $(WINFLEXBISON_DIR)
+    if not exist win_flex.exe $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "win_flex_bison-$(WINFLEXBISON_VER).zip" "$(WINFLEXBISON_SRC)"
+    if not exist win_flex.exe $(7Z_EXE) x -y win_flex_bison-$(WINFLEXBISON_VER).zip -o.
+    if not exist win_flex.exe exit 1
+    if not exist win_bison.exe exit 1
+    if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(WINFLEXBISON_INSTALL)
+    cd $(BASE_DIR)
+
+$(PKGCONFIGLITE_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
+    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(PKGCONFIGLITE_DIR) mkdir $(PKGCONFIGLITE_DIR)
+    cd $(PKGCONFIGLITE_DIR)
+    if not exist $(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "pkg-config-lite-$(PKGCONFIGLITE_VER)_bin-win32.zip" "$(PKGCONFIGLITE_SRC)"
+    if not exist $(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe $(7Z_EXE) x -y pkg-config-lite-$(PKGCONFIGLITE_VER)_bin-win32.zip -o.
+    if not exist $(PKGCONFIGLITE_PACKAGE_DIR)\bin\pkg-config.exe exit 1
+    if not exist $(OUTPUT_DIR) mkdir $(OUTPUT_DIR)
+    if not exist $(OUTPUT_DIR)\build mkdir $(OUTPUT_DIR)\build
+    echo >$(PKGCONFIGLITE_INSTALL)
+    cd $(BASE_DIR)
+
 $(SWIG_INSTALL): $(CURL_EXE) $(CURL_CA_BUNDLE)
     SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SWIG_DIR) mkdir $(SWIG_DIR)
     cd $(SWIG_DIR)
-    if not exist swigwin-$(SWIG_VER) $(CURL_EXE) -L -k -o "swigwin-$(SWIG_VER).zip" "$(SWIG_SRC)" & 7z x -y swigwin-$(SWIG_VER).zip
+    if not exist swigwin-$(SWIG_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "swigwin-$(SWIG_VER).zip" "$(SWIG_SRC)" & $(7Z_EXE) x -y swigwin-$(SWIG_VER).zip
     echo >$(OUTPUT_DIR)\build\swigwin-$(SWIG_VER).install
     cd $(BASE_DIR)
 
@@ -2551,7 +2745,7 @@ $(FREEXL_LIB): $(LIBICONV_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(MINIZIP_LIB) $(MSVC
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FREEXL_DIR) mkdir $(FREEXL_DIR)
     cd $(FREEXL_DIR)
-    if not exist $(FREEXL_VER) $(CURL_EXE) -L -k -o "freexl.zip" "$(FREEXL_SRC)" & 7z x -y freexl.zip
+    if not exist $(FREEXL_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "freexl.zip" "$(FREEXL_SRC)" & 7z x -y freexl.zip
     cd $(FREEXL_VER)
 !IFNDEF NO_CLEAN
     nmake /f makefile.vc clean
@@ -2602,7 +2796,7 @@ $(SPATIALITE_LIB): $(LIBRTTOPO_LIB) $(SQLITE_LIB) $(LIBXML2_LIB) $(PROJ9_LIB) $(
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SPATIALITE_DIR) mkdir $(SPATIALITE_DIR)
     cd $(SPATIALITE_DIR)
-    if not exist spatialite.zip $(CURL_EXE) -L -k -o "spatialite.zip" "$(SPATIALITE_SRC)"
+    if not exist spatialite.zip $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "spatialite.zip" "$(SPATIALITE_SRC)"
 !IFNDEF NO_CLEAN
     if exist $(SPATIALITE_VER) rmdir /s /q $(SPATIALITE_VER)
     rem nmake /f makefile.vc clean
@@ -2642,7 +2836,7 @@ $(FILEGDBAPI_DLL):
     xcopy /Y $(FILEGDB_DLL) $(OUTPUT_DIR)\bin
 !ENDIF
 
-$(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
+$(LIBXML2_LIB): $(CMAKE_TOOL_PREREQ) $(LIBXML2_PIN_STAMP) $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 !IFDEF LIBXML2_ENABLED
     if not exist $(LIBXML2_DIR) git clone -b $(LIBXML2_BRANCH) $(LIBXML2_SRC) $(LIBXML2_DIR)
     cd $(LIBXML2_DIR)
@@ -2654,11 +2848,10 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBXML2_DIR)\$(CMAKE_BUILDDIR)\install" "-DLIBXML2_WITH_ZLIB=ON" "-DLIBXML2_WITH_HTTP=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBXML2_DIR)\$(CMAKE_BUILDDIR)\install" "-DLIBXML2_WITH_ZLIB=ON" "-DZLIB_LIBRARY=$(ZLIB_LIB)" "-DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DLIBXML2_WITH_ICONV=ON" "-DIconv_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DIconv_LIBRARY=$(LIBICONV_LIB)" "-DLIBXML2_WITH_HTTP=ON" "-DLIBXML2_WITH_LZMA=OFF" "-DLIBXML2_WITH_PYTHON=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
-    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
     rem xcopy /Y /S install\lib\*.pc $(OUTPUT_DIR)\lib
 	rem xcopy /Y /S install\*.cmake $(OUTPUT_DIR)
 	xcopy /Y /S install\include\libxml2\*.h $(OUTPUT_DIR)\include
@@ -2675,7 +2868,8 @@ $(LIBXML2_LIB): $(ZLIB_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
 	echo. >> $(OUTPUT_DIR)\lib\pkgconfig\libxml-2.0.pc
 	echo Cflags: -I$${includedir} >> $(OUTPUT_DIR)\lib\pkgconfig\libxml-2.0.pc
 	echo Libs: -L$${libdir} -lxml2 -liconv -lzlib >> $(OUTPUT_DIR)\lib\pkgconfig\libxml-2.0.pc
-	
+    xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
+    if not exist $(LIBXML2_LIB) exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(LIBXML2_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -2800,7 +2994,7 @@ $(GDAL_OPT): gdal-deps
 !IFDEF WIN64
 	echo WIN64=$(WIN64) >> $(GDAL_OPT)
 !ENDIF
-!IFDEF DEBUG
+!IF "$(DEBUG)" == "YES"
     echo DEBUG=$(DEBUG) >> $(GDAL_OPT)
     echo POSTFIX= >> $(GDAL_OPT)
     echo OPTFLAGS= /nologo /MP /MD /Zi /Od /EHsc /FC /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /DDEBUG  >> $(GDAL_OPT) 
@@ -3027,7 +3221,7 @@ copy-mrsid-dll:
 	if exist $(LIDAR_DLL) xcopy /Y $(LIDAR_DLL) $(OUTPUT_DIR)\bin
 	if exist $(MRSID_RASTER_DIR)\lib\tbb.dll xcopy /Y $(MRSID_RASTER_DIR)\lib\tbb.dll $(OUTPUT_DIR)\bin
 
-$(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
+$(GDAL_LIB): $(CMAKE_TOOL_PREREQ) $(GDAL_DEPS) $(SWIG_INSTALL)
 !IFDEF GDAL_ENABLED
 	set JAVA_HOME=$(JAVA_HOME)
 	SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
@@ -3038,6 +3232,7 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
     if not exist $(GDAL_DIR) git clone -b $(GDAL_BRANCH) $(GDAL_SRC) $(GDAL_DIR)
     cd $(GDAL_DIR)
     -cd gdal
+    powershell -NoProfile -ExecutionPolicy Bypass -File "$(BASE_DIR)\support\patch-gdal-csharp-targeting-pack.ps1" -SourceDir "$(BASE_DIR)\$(GDAL_DIR)"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -3047,6 +3242,9 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
     -xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.h $(OUTPUT_DIR)\include
 	-xcopy /Y $(BASE_DIR)\$(LIBGEOTIFF_DIR)\libgeotiff\$(CMAKE_BUILDDIR)\install\include\*.inc $(OUTPUT_DIR)\include
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install" $(GDAL_CMAKE_OPT) "-DOGR_ENABLE_DRIVER_MSSQLSPATIAL_PLUGIN=OFF" "-DGDAL_USE_MSSQL_ODBC=OFF" "-DGDAL_USE_MSSQL_NCLI=OFF"
+!IFDEF GDAL_CSHARP
+    $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target csharp_binding -- /m:1
+!ENDIF
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target $(GDAL_CMAKE_TARGET)
 !ENDIF
     xcopy /Y install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -3057,15 +3255,21 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 	xcopy /Y install\bin\*.exe $(OUTPUT_DIR)\bin\gdal\apps
 	if not exist $(OUTPUT_DIR)\bin\gdal-data mkdir $(OUTPUT_DIR)\bin\gdal-data
 	xcopy /Y install\share\gdal\* $(OUTPUT_DIR)\bin\gdal-data
+!IFDEF GDAL_CSHARP
 	if not exist $(OUTPUT_DIR)\bin\gdal\csharp mkdir $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y install\share\csharp\*_csharp.dll $(OUTPUT_DIR)\bin\gdal\csharp
     xcopy /Y install\share\csharp\*_wrap.dll $(OUTPUT_DIR)\bin\gdal\csharp
+    -xcopy /Y install\share\csharp\*.pdb $(OUTPUT_DIR)\bin\gdal\csharp
+!ENDIF
+!IFDEF GDAL_JAVA
 	if not exist $(OUTPUT_DIR)\bin\gdal\java mkdir $(OUTPUT_DIR)\bin\gdal\java
     if exist install\share\java\gdalalljni.dll xcopy /Y install\share\java\gdalalljni.dll $(OUTPUT_DIR)\bin\gdal\java
 	if exist install\lib\jni\gdalalljni.dll xcopy /Y install\lib\jni\gdalalljni.dll $(OUTPUT_DIR)\bin\gdal\java
     xcopy /Y install\share\java\*.jar $(OUTPUT_DIR)\bin\gdal\java
 	copy /Y install\share\java\gdal-$(GDAL_VER).jar $(OUTPUT_DIR)\bin\gdal\java\gdal.jar
 	xcopy /Y install\share\java\*.pom $(OUTPUT_DIR)\bin\gdal\java
+!ENDIF
+!IFDEF GDAL_PYTHON
 	if not exist $(OUTPUT_DIR)\bin\gdal\python mkdir $(OUTPUT_DIR)\bin\gdal\python
 	if not exist $(OUTPUT_DIR)\bin\gdal\python\osgeo mkdir $(OUTPUT_DIR)\bin\gdal\python\osgeo
 	xcopy /Y install\lib\site-packages\osgeo\*.py $(OUTPUT_DIR)\bin\gdal\python\osgeo
@@ -3074,6 +3278,7 @@ $(GDAL_LIB): $(GDAL_DEPS) $(SWIG_INSTALL)
 	xcopy /Y /S install\lib\site-packages\osgeo_utils\*.py $(OUTPUT_DIR)\bin\gdal\python\osgeo_utils
 	if not exist $(OUTPUT_DIR)\bin\gdal\python\scripts mkdir $(OUTPUT_DIR)\bin\gdal\python\scripts
 	xcopy /Y install\Scripts\*.py $(OUTPUT_DIR)\bin\gdal\python\scripts
+!ENDIF
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins del $(OUTPUT_DIR)\bin\gdal\plugins\*.dll
     if exist $(OUTPUT_DIR)\bin\gdal\plugins-optional del $(OUTPUT_DIR)\bin\gdal\plugins-optional\*.dll
 	if exist $(OUTPUT_DIR)\bin\gdal\plugins-external del $(OUTPUT_DIR)\bin\gdal\plugins-external\*.dll
@@ -3109,7 +3314,7 @@ $(GDAL_CSHARP_DLL):	$(GDAL_LIB) $(GDAL_CSHARP_OPT)
 !ENDIF
 !IFNDEF NO_BUILD
     if exist $(BASE_DIR)\support\gdal\csharp\makefile.vc xcopy /Y $(BASE_DIR)\support\gdal\csharp\makefile.vc
-!IFDEF DEBUG
+!IF "$(DEBUG)" == "YES"
 	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT) DEBUG=1
 !ELSE
 	nmake /f makefile.vc interface EXT_NMAKE_OPT=$(GDAL_CSHARP_OPT)
@@ -3556,7 +3761,7 @@ $(GDAL_PDF_DLL): $(GDAL_PDF_OPT) $(POPPLER_LIB)
 !ENDIF
 	cd $(BASE_DIR)
     
-$(GDAL_INSTALLER_CORE): $(GDAL_LIB)
+$(GDAL_INSTALLER_CORE): $(GDAL_LIB) $(WIX_CANDLE) $(WIX_LIGHT)
 !IFDEF WIX_DIR
     set PATH=$(BASE_DIR)\$(WIX_DIR);$(PATH)
     if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
@@ -3667,7 +3872,7 @@ $(GDAL_INSTALLER_NETCDF): $(GDAL_INSTALLER_CORE)
 !ENDIF
 !ENDIF
 
-$(MAPSERVER_LIB): $(MAPSERVER_DEPS_ALL) 
+$(MAPSERVER_LIB): $(CMAKE_TOOL_PREREQ) $(MAPSERVER_DEPS_ALL)
 !IFDEF MAPSERVER_ENABLED
     set PATH=$(OUTPUT_DIR)\bin;$(PATH)
     set JAVA_HOME=$(JAVA_HOME)
@@ -3752,7 +3957,7 @@ $(APR_LIB): $(MSVCRT_DLL) $(CURL_EXE)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(APR_DIR) mkdir $(APR_DIR)
     cd $(APR_DIR)
-    if not exist $(APR_VER) $(CURL_EXE) -L -k -o "$(APR_VER).zip" "$(APR_SRC)" & 7z x -y $(APR_VER).zip
+    if not exist $(APR_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(APR_VER).zip" "$(APR_SRC)" & 7z x -y $(APR_VER).zip
     cd $(APR_VER)
 !IFNDEF NO_CLEAN
     if exist cmake rd /Q /S cmake
@@ -3760,7 +3965,7 @@ $(APR_LIB): $(MSVCRT_DLL) $(CURL_EXE)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DINSTALL_PDB=OFF"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(APR_DIR)\$(APR_VER)\cmake\install
@@ -3782,7 +3987,7 @@ $(APRUTIL_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(APRUTIL_DIR) mkdir $(APRUTIL_DIR)
     cd $(APRUTIL_DIR)
-    if not exist $(APRUTIL_VER) $(CURL_EXE) -L -k -o "$(APRUTIL_VER).zip" "$(APRUTIL_SRC)" & 7z x -y $(APRUTIL_VER).zip
+    if not exist $(APRUTIL_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(APRUTIL_VER).zip" "$(APRUTIL_SRC)" & 7z x -y $(APRUTIL_VER).zip
     cd $(APRUTIL_VER)
 !IFNDEF NO_CLEAN
     if exist cmake rd /Q /S cmake
@@ -3790,7 +3995,7 @@ $(APRUTIL_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DINSTALL_PDB=OFF" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(APRUTIL_DIR)\$(APRUTIL_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -3807,7 +4012,7 @@ $(PCRE_LIB): $(MSVCRT_DLL) $(CURL_EXE)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(PCRE_DIR) mkdir $(PCRE_DIR)
     cd $(PCRE_DIR)
-    if not exist $(PCRE_VER) $(CURL_EXE) -L -k -o "$(PCRE_VER).zip" "$(PCRE_SRC)" & 7z x -y $(PCRE_VER).zip
+    if not exist $(PCRE_VER) $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(PCRE_VER).zip" "$(PCRE_SRC)" & 7z x -y $(PCRE_VER).zip
     cd $(PCRE_VER)
 	powershell -Command "(gc CMakeLists.txt) -replace 'CMAKE_POLICY', '# ' | Out-File -encoding ASCII CMakeLists.txt
 	powershell -Command "(gc CMakeLists.txt) -replace 'GET_TARGET_PROPERTY\(PCREGREP_EXE pcregrep DEBUG_LOCATION\)', 'set(PCREGREP_EXE ""$$<TARGET_FILE:pcregrep>\"")' | Out-File -encoding ASCII CMakeLists.txt
@@ -3818,7 +4023,7 @@ $(PCRE_LIB): $(MSVCRT_DLL) $(CURL_EXE)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DBUILD_SHARED_LIBS=ON"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(PCRE_DIR)\$(PCRE_VER)\cmake\install\bin\*.dll $(OUTPUT_DIR)\bin
@@ -3835,16 +4040,17 @@ $(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(HTTPD_DIR) mkdir $(HTTPD_DIR)
     cd $(HTTPD_DIR)
-    if not exist $(HTTPD_VER).tar.gz $(CURL_EXE) -L -k -o "$(HTTPD_VER).tar.gz" "$(HTTPD_SRC)"
-    if not exist $(HTTPD_VER) 7z e -y $(HTTPD_VER).tar.gz && 7z x -y $(HTTPD_VER).tar
+    if not exist $(HTTPD_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(HTTPD_VER).tar.gz" "$(HTTPD_SRC)"
+    if not exist $(HTTPD_VER) 7z e -y $(HTTPD_VER).tar.gz && 7z x -y $(HTTPD_VER)*.tar
     cd $(HTTPD_VER)
+    powershell -NoProfile -Command "(gc CMakeLists.txt) -replace '(ELSE)?IF\(\$$\{macro_mod_enable_val\} STREQUAL .([OiaIA]).\)', '$${1}IF(x$$$${macro_mod_enable_val} STREQUAL x$${2})' | Out-File -encoding ASCII CMakeLists.txt"
 !IFNDEF NO_CLEAN
     if exist cmake rd /Q /S cmake
 !ENDIF
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib;$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DPCRE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPCRE_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/pcre.lib
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DINSTALL_PDB=OFF" -DAPR_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DAPR_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib;$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DPCRE_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPCRE_LIBRARIES=$(OUTPUT_DIR:\=/)/lib/pcre.lib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(HTTPD_DIR)\$(HTTPD_VER)\cmake\install\bin\libhttpd.dll $(OUTPUT_DIR)\bin
@@ -3855,7 +4061,7 @@ $(HTTPD_LIB): $(MSVCRT_DLL) $(CURL_EXE) $(APR_LIB) $(APRUTIL_LIB) $(PCRE_LIB)
     @echo $(HTTPD_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(MAPCACHE_LIB): $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
+$(MAPCACHE_LIB): $(CMAKE_TOOL_PREREQ) $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
 !IFDEF MAPCACHE_ENABLED
     cd $(MAPCACHE_DIR)
     cd lib
@@ -3867,7 +4073,7 @@ $(MAPCACHE_LIB): $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DFCGI_LIBRARY=$(FCGI_LIB) -DAPR_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib -DAPU_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DAPACHE_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libhttpd.lib -DWITH_POSTGRESQL=1 -DWITH_TIFF=1 -DWITH_TIFF_WRITE_SUPPORT=1 -DWITH_PCRE=1
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(MAPCACHE_DIR)\$(CMAKE_BUILDDIR)\install" -DCMAKE_BUILD_TYPE=$(BUILD_CONFIG) -DFCGI_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DFCGI_LIBRARY=$(FCGI_LIB) -DAPR_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libapr-1.lib -DAPU_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libaprutil-1.lib -DAPACHE_LIBRARY=$(OUTPUT_DIR:\=/)/lib/libhttpd.lib -DWITH_POSTGRESQL=1 -DPOSTGRESQL_INCLUDE_DIR=$(OUTPUT_DIR:\=/)/include -DPOSTGRESQL_LIBRARY=$(PGSQL_LIB:\=/) -DWITH_TIFF=1 -DWITH_TIFF_WRITE_SUPPORT=1 -DWITH_PCRE=1
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
     if not exist $(OUTPUT_DIR)\bin\ms mkdir $(OUTPUT_DIR)\bin\ms
 	if not exist $(OUTPUT_DIR)\bin\ms\apps mkdir $(OUTPUT_DIR)\bin\ms\apps
@@ -3883,49 +4089,29 @@ $(MAPCACHE_LIB): $(MAPSERVER_LIB) $(APR_LIB) $(HTTPD_LIB)
     @echo $(MAPCACHE_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(PGSQL_LIB): $(OPENSSL_LIB) $(ZLIB_LIB) $(LIBXML2_LIB) $(LIBICONV_LIB) $(MSVCRT_DLL)
+$(PGSQL_LIB): $(PGSQL_PIN_STAMP) $(OPENSSL_LIB) $(ZLIB_LIB) $(MSVCRT_DLL) $(WINFLEXBISON_PREREQ) $(PKGCONFIGLITE_PREREQ) $(NINJA_TOOL_PREREQ)
 !IFDEF PGSQL_ENABLED
     if not exist $(PGSQL_DIR) git clone -b $(PGSQL_BRANCH) $(PGSQL_SRC) $(PGSQL_DIR)
     cd $(BASE_DIR)\$(PGSQL_DIR)
-    rem git reset --hard HEAD
-    rem git checkout $(PGSQL_BRANCH)
-    cd src\tools\msvc
-    echo use strict; >config.pl
-    echo use warnings; >>config.pl
-    echo our $$config = { >>config.pl
-    echo asserts =^> 0, >>config.pl
-    echo ldap =^> 1, >>config.pl
-    echo extraver  =^> undef, >>config.pl
-    echo gss       =^> undef, >>config.pl
-    echo icu       =^> undef, >>config.pl
-    echo lz4       =^> undef, >>config.pl
-    echo nls       =^> undef, >>config.pl
-    echo tap_tests =^> undef, >>config.pl
-    echo tcl       =^> undef, >>config.pl
-    echo perl      =^> undef, >>config.pl
-    echo python    =^> undef, >>config.pl
-    echo openssl   =^> '$(OUTPUT_DIR)', >>config.pl
-    echo uuid      =^> undef, >>config.pl
-    echo xml       =^> '$(OUTPUT_DIR)', >>config.pl
-    echo xslt      =^> undef, >>config.pl
-    echo iconv     =^> '$(OUTPUT_DIR)', >>config.pl
-    echo zlib      =^> '$(OUTPUT_DIR)' >>config.pl
-    echo }; >>config.pl
-    echo 1; >>config.pl
-    powershell -Command "(gc Solution.pm) -replace '\\lib\\zdll.lib', '\lib\zlib.lib' | Out-File -encoding ASCII Solution.pm"
+    git reset --hard HEAD
+    git checkout $(PGSQL_BRANCH)
 !IFNDEF NO_CLEAN
-    clean dist
+    if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
 !IFNDEF NO_BUILD
-    build libpq
+    cmd /d /c "set PKG_CONFIG=$(PKG_CONFIG_EXE)&& set PKG_CONFIG_PATH=$(OUTPUT_DIR:\=/)/lib/pkgconfig&& set PKG_CONFIG_LIBDIR=$(OUTPUT_DIR:\=/)/lib/pkgconfig&& set CC=cl&& set CXX=cl&& $(MESON_EXE) setup $(CMAKE_BUILDDIR) --backend=ninja --prefix=$(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\install --libdir=lib --buildtype=release -Dauto_features=disabled -Dssl=openssl -Dzlib=enabled -Dldap=disabled -Dgssapi=disabled -Dicu=disabled -Dlibcurl=disabled -Dlibxml=disabled -Dlibxslt=disabled -Dlz4=disabled -Dzstd=disabled -Dreadline=disabled -Dnls=disabled -Ddocs=disabled -Ddocs_pdf=disabled -Dtap_tests=disabled -Dplperl=disabled -Dplpython=disabled -Dpltcl=disabled -DFLEX=$(PGSQL_FLEX_EXE) -DBISON=$(PGSQL_BISON_EXE) -Dextra_include_dirs=$(OUTPUT_DIR:\=/)/include -Dextra_lib_dirs=$(OUTPUT_DIR:\=/)/lib&& $(NINJA_EXE) -C $(CMAKE_BUILDDIR) src/interfaces/libpq/libpq.dll"
 !ENDIF
-    cd $(BASE_DIR)\$(PGSQL_DIR)\$(BUILD_CONFIG)\libpq
-    xcopy /Y *.dll $(OUTPUT_DIR)\bin
-    xcopy /Y *.lib $(OUTPUT_DIR)\lib
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\interfaces\libpq\*.dll $(OUTPUT_DIR)\bin
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-fe.h $(OUTPUT_DIR)\include
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\interfaces\libpq\libpq-events.h $(OUTPUT_DIR)\include
+    if not exist $(OUTPUT_DIR)\include\libpq mkdir $(OUTPUT_DIR)\include\libpq
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\libpq\libpq-fs.h $(OUTPUT_DIR)\include\libpq
     xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\postgres_ext.h $(OUTPUT_DIR)\include
-    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\src\include\pg_config_ext.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\include\pg_config.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\include\pg_config_os.h $(OUTPUT_DIR)\include
+    xcopy /Y $(BASE_DIR)\$(PGSQL_DIR)\$(CMAKE_BUILDDIR)\src\interfaces\libpq\*.lib $(OUTPUT_DIR)\lib
+    if not exist $(PGSQL_LIB) exit 1
+    if not exist $(OUTPUT_DIR)\bin\libpq.dll exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(PGSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.    
@@ -3937,7 +4123,7 @@ $(FITS_LIB): $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FITS_DIR) mkdir $(FITS_DIR)
     cd $(FITS_DIR)
-    if not exist $(FITS_VER).tar.gz $(CURL_EXE) -L -k -o "$(FITS_VER).tar.gz" "$(FITS_SRC)"
+    if not exist $(FITS_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(FITS_VER).tar.gz" "$(FITS_SRC)"
     if not exist $(FITS_VER) 7z e -y $(FITS_VER).tar.gz && 7z x -y $(FITS_VER).tar
     cd $(FITS_VER)
 !IFNDEF NO_CLEAN
@@ -3946,7 +4132,7 @@ $(FITS_LIB): $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y $(BASE_DIR)\$(FITS_DIR)\$(FITS_VER)\cmake\install\bin\cfitsio.dll $(OUTPUT_DIR)\bin
@@ -3964,7 +4150,7 @@ $(SZIP_LIB): $(ZLIB_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(SZIP_DIR) mkdir $(SZIP_DIR)
     cd $(SZIP_DIR)
-    if not exist $(SZIP_VER).tar.gz $(CURL_EXE) -L -k -o "$(SZIP_VER).tar.gz" "$(SZIP_SRC)"
+    if not exist $(SZIP_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(SZIP_VER).tar.gz" "$(SZIP_SRC)"
     if not exist $(SZIP_VER) 7z e -y $(SZIP_VER).tar.gz && 7z x -y $(SZIP_VER).tar
     cd $(SZIP_VER)
 !IFNDEF NO_CLEAN
@@ -3973,7 +4159,7 @@ $(SZIP_LIB): $(ZLIB_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 !IFNDEF NO_BUILD
     if not exist cmake mkdir cmake
 	cd cmake
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install" "-DBUILD_SHARED_LIBS=ON"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DBUILD_SHARED_LIBS=ON"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     cd $(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install
@@ -3998,7 +4184,7 @@ $(HDF4_LIB): $(ZLIB_LIB) $(SZIP_LIB) $(JPEG_LIB) $(MSVCRT_DLL)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
 !IFDEF HDF4_SZIP
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"  "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=ON" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"  "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) $(ZLIB_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
 !ELSE
     $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF4_DIR)\$(HDF4_VER)\$(CMAKE_BUILDDIR)\install" "-DHDF4_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF4_ENABLE_SZIP_SUPPORT=OFF" "-DHDF4_BUILD_FORTRAN=OFF" "-DJPEG_LIBRARY=$(JPEG_LIB)"  "-DBUILD_SHARED_LIBS=ON"
 !ENDIF
@@ -4028,7 +4214,7 @@ $(HDF5_LIB): $(MSVCRT_DLL) $(SZIP_LIB) $(ZLIB_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(CMAKE_BUILDDIR)" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON" "-DHDF5_BUILD_EXAMPLES=OFF" "-DHDF5_BUILD_TOOLS=OFF" "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(HDF5_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON" "-DZLIB_INCLUDE_DIR=$(OUTPUT_DIR)\include" "-DZLIB_LIBRARY=$(ZLIB_LIB)" "-DHDF5_ENABLE_SZIP_SUPPORT=ON" "-DSZIP_DIR=$(BASE_DIR)\$(SZIP_DIR)\$(SZIP_VER)\cmake\install\cmake" "-DBUILD_SHARED_LIBS=ON" "-DHDF5_BUILD_HL_LIB=ON" "-DHDF5_BUILD_CPP_LIB=ON" "-DHDF5_BUILD_EXAMPLES=OFF" "-DHDF5_BUILD_TOOLS=OFF" "-DCMAKE_C_STANDARD_LIBRARIES=$(SZIP_LIB) $(ZLIB_LIB) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -4077,7 +4263,7 @@ $(NETCDF_LIB): $(MSVCRT_DLL) $(HDF5_LIB) $(CURL_LIB) $(ZLIB_LIB)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(OUTPUT_DIR)\cmake\hdf5" "-DBUILD_SHARED_LIBS=ON" "-DENABLE_HDF4=ON" "-DHDF4_DF_LIB=$(OUTPUT_DIR)\lib\hdf.lib" "-DHDF4_MFHDF_LIB=$(OUTPUT_DIR)\lib\mfhdf.lib" "-DMFHDF_H_INCLUDE_DIR=$(OUTPUT_DIR)\include\hdf4"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) -DCMAKE_BUILD_TYPE=Release "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR:\=/)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\install" "-DHDF5_DIR=$(OUTPUT_DIR)\cmake\hdf5" "-DBUILD_SHARED_LIBS=ON" "-DENABLE_HDF4=ON" "-DHDF4_DF_LIB=$(OUTPUT_DIR)\lib\hdf.lib" "-DHDF4_MFHDF_LIB=$(OUTPUT_DIR)\lib\mfhdf.lib" "-DMFHDF_H_INCLUDE_DIR=$(OUTPUT_DIR)\include\hdf4"
 	xcopy /Y $(OUTPUT_DIR)\lib\szip.lib $(BASE_DIR)\$(NETCDF_DIR)\$(CMAKE_BUILDDIR)\liblib
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install
 !ENDIF
@@ -4262,7 +4448,7 @@ $(LIBKML_LIBS): $(URIPARSER_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(BOOST_HEADERS)
     if not exist $(CMAKE_BUILDDIR) mkdir $(CMAKE_BUILDDIR)
 	cd $(CMAKE_BUILDDIR)
 !IFNDEF NO_BUILD
-    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBKML_DIR)\$(CMAKE_BUILDDIR)\install" "-DCMAKE_CXX_FLAGS=/DWIN32 /D_WINDOWS /W3 /GR /EHsc /DURI_STATIC_BUILD"
+    $(CMAKE_EXE) ..\ -G $(CMAKE_GENERATOR) "-DCMAKE_PREFIX_PATH=$(OUTPUT_DIR)" "-DCMAKE_INSTALL_PREFIX=$(BASE_DIR)\$(LIBKML_DIR)\$(CMAKE_BUILDDIR)\install" "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" "-DCMAKE_CXX_FLAGS=/DWIN32 /D_WINDOWS /W3 /GR /EHsc /DURI_STATIC_BUILD"
     $(CMAKE_EXE) --build . --config $(BUILD_CONFIG) --target install  
 !ENDIF
     xcopy /Y install\lib\*.lib $(OUTPUT_DIR)\lib
@@ -4277,10 +4463,12 @@ $(LIBKML_LIBS): $(URIPARSER_LIB) $(LIBEXPAT_LIB) $(ZLIB_LIB) $(BOOST_HEADERS)
 
 $(MYSQL_LIB): $(OPENSSL_LIB)
 !IFDEF LIBKML_ENABLED
+    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
     if not exist $(MYSQL_DIR) git clone -b $(MYSQL_BRANCH) $(MYSQL_SRC) $(MYSQL_DIR)
     cd $(MYSQL_DIR)
     git reset --hard HEAD
     git checkout $(MYSQL_BRANCH)
+    powershell -NoProfile -Command "(gc cmake\boost.cmake) -replace 'https://boostorg.jfrog.io/artifactory/main/release', 'https://archives.boost.io/release' | Out-File -encoding ASCII cmake\boost.cmake"
 !IFNDEF NO_CLEAN
     if exist $(CMAKE_BUILDDIR) rd /Q /S $(CMAKE_BUILDDIR)
 !ENDIF
@@ -4306,8 +4494,10 @@ $(MYSQL_LIB): $(OPENSSL_LIB)
     @echo $(MYSQL_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
 
-$(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
+$(OGDI_LIB): $(OGDI_PIN_STAMP) $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
 !IFDEF OGDI_ENABLED
+    if not exist $(CYGWIN_DIR)\bin\bash.exe echo ERROR: Cygwin bash.exe was not found under CYGWIN_DIR=$(CYGWIN_DIR).
+    if not exist $(CYGWIN_DIR)\bin\bash.exe exit 1
     if not exist $(OGDI_DIR) git clone -b $(OGDI_BRANCH) $(OGDI_SRC) $(OGDI_DIR)
     cd $(OGDI_DIR)
     git reset --hard HEAD
@@ -4338,7 +4528,8 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     cd ..
     cd ..
 !ENDIF
-    echo INCLUDE='$(INCLUDE)' > build.sh
+    echo set -e > build.sh
+    echo INCLUDE='$(INCLUDE)' >> build.sh
     echo export INCLUDE >> build.sh
     echo LIB='$(LIB)' >> build.sh
     echo export LIB >> build.sh
@@ -4360,7 +4551,9 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
 !IFNDEF NO_CLEAN
     echo make clean >> build.sh
 !ENDIF
+!IFNDEF NO_BUILD
     echo make >> build.sh
+!ENDIF
 !IFDEF WIN64
     echo cp -f $$TOPDIR/bin/win64/ogdi.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win64/adrg.dll $$OUTPUTDIR/bin >> build.sh
@@ -4368,7 +4561,6 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     echo cp -f $$TOPDIR/bin/win64/rpf.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win64/skeleton.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win64/vrf.dll $$OUTPUTDIR/bin >> build.sh
-    echo cp -f $$TOPDIR/lib/win64/ogdi.lib $$OUTPUTDIR/lib >> build.sh
 !ELSE
     echo cp -f $$TOPDIR/bin/win32/ogdi.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win32/adrg.dll $$OUTPUTDIR/bin >> build.sh
@@ -4376,26 +4568,36 @@ $(OGDI_LIB): $(ZLIB_LIB) $(LIBEXPAT_LIB) $(MSVCRT_DLL)
     echo cp -f $$TOPDIR/bin/win32/rpf.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win32/skeleton.dll $$OUTPUTDIR/bin >> build.sh
     echo cp -f $$TOPDIR/bin/win32/vrf.dll $$OUTPUTDIR/bin >> build.sh
-    echo cp -f $$TOPDIR/lib/win32/ogdi.lib $$OUTPUTDIR/lib >> build.sh
 !ENDIF
     echo cp -f $$TOPDIR/ogdi/include/ecs*.h $$OUTPUTDIR/include >> build.sh
-    $(CYGWIN_DIR)\bin\dos2unix.exe build.sh
-    $(CYGWIN_DIR)\bin\chmod.exe +rwxrwxrwx ./build.sh
-    echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(OGDI_DIR)\build.sh" & exit 1
+!IFDEF WIN64
+    echo cp -f $$TOPDIR/lib/win64/ogdi.lib $$OUTPUTDIR/lib >> build.sh
+!ELSE
+    echo cp -f $$TOPDIR/lib/win32/ogdi.lib $$OUTPUTDIR/lib >> build.sh
+!ENDIF
+    for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(OGDI_DIR)\build.sh"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "tr -d '\r' < '%i' > '%i.unix' && chmod +x '%i.unix' && '%i.unix'" || exit 1
+    if not exist $(OGDI_LIB) exit 1
+    if not exist $(OUTPUT_DIR)\bin\ogdi.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\adrg.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\remote.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\rpf.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\skeleton.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\vrf.dll exit 1
+    if not exist $(OUTPUT_DIR)\include\ecs.h exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(OGDI_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
 !ENDIF
     
-$(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
+$(LIBICONV_LIB): $(LIBICONV_PIN_STAMP)
 !IFDEF LIBICONV_ENABLED
-    SET PATH=$(OUTPUT_DIR)\bin;$(PATH)
-    SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
+    if not exist $(CYGWIN_DIR)\bin\bash.exe echo ERROR: Cygwin bash.exe was not found under CYGWIN_DIR=$(CYGWIN_DIR).
+    if not exist $(CYGWIN_DIR)\bin\bash.exe exit 1
     if not exist $(LIBICONV_DIR) mkdir $(LIBICONV_DIR)
     cd $(LIBICONV_DIR)
-    if not exist $(LIBICONV_VER).tar.gz $(CURL_EXE) -L -k -o "$(LIBICONV_VER).tar.gz" "$(LIBICONV_SRC)"
+    if not exist $(LIBICONV_VER).tar.gz powershell -NoLogo -NoProfile -Command "$(POWERSHELL_DOWNLOAD_PREFIX) Invoke-WebRequest -UseBasicParsing -Uri '$(LIBICONV_SRC)' -OutFile '$(LIBICONV_VER).tar.gz'"
 !IFNDEF NO_CLEAN
-    if exist $(LIBICONV_VER) rd /Q /S $(LIBICONV_VER)
+    if exist $(LIBICONV_VER) for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "rm -rf '%i'" || exit 1
 !ENDIF
     if not exist $(LIBICONV_VER) 7z e -y $(LIBICONV_VER).tar.gz && 7z x -y $(LIBICONV_VER).tar
     cd $(LIBICONV_VER)
@@ -4412,7 +4614,8 @@ $(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
     powershell -Command "(gc Makefile.in) -replace '--output-format=coff', '$$(RCFLAGS)' | Out-File -encoding ASCII Makefile.in"
     cd ..
 
-    echo INCLUDE='$(INCLUDE)' >build-aux\vcvars.sh
+    echo set -e >build-aux\vcvars.sh
+    echo INCLUDE='$(INCLUDE)' >>build-aux\vcvars.sh
     echo LIB='$(LIB)' >>build-aux\vcvars.sh
     echo LIBPATH='$(LIBPATH)' >>build-aux\vcvars.sh
     for /f "usebackq tokens=*" %i in (`where cl.exe`) do echo COMPILERPATH=`cygpath -u "%~dpi."` >>build-aux\vcvars.sh
@@ -4438,8 +4641,9 @@ $(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
     echo make install-lib >>build-aux\vcvars.sh
 !ENDIF
     echo cp -f $$SRCDIR/install/bin/*.dll $$OUTPUTDIR/bin >>build-aux\vcvars.sh
-    echo cp -f $$SRCDIR/install/lib/iconv.dll.lib $$OUTPUTDIR/lib/iconv.lib >>build-aux\vcvars.sh
+    echo cp -f $$SRCDIR/install/bin/iconv-2.dll $$OUTPUTDIR/bin/iconv.dll >>build-aux\vcvars.sh
     echo cp -f $$SRCDIR/install/include/*.h $$OUTPUTDIR/include >>build-aux\vcvars.sh
+    echo cp -f $$SRCDIR/install/lib/iconv.dll.lib $$OUTPUTDIR/lib/iconv.lib >>build-aux\vcvars.sh
 
     $(CYGWIN_DIR)\bin\dos2unix.exe build-aux\vcvars.sh
     $(CYGWIN_DIR)\bin\chmod.exe +rwxrwxrwx ./build-aux/vcvars.sh
@@ -4457,7 +4661,11 @@ $(LIBICONV_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE)
     echo Libs: -L$${libdir} -liconv >> $(OUTPUT_DIR)\lib\pkgconfig\iconv.pc
     echo Cflags: -I$${includedir} >> $(OUTPUT_DIR)\lib\pkgconfig\iconv.pc
 	
-    echo run the following command from a cygwin shell!!! & $(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\build-aux\vcvars.sh" & exit 1
+    for /f "usebackq tokens=*" %i in (`$(CYGWIN_DIR)\bin\cygpath.exe -u "$(BASE_DIR)\$(LIBICONV_DIR)\$(LIBICONV_VER)\build-aux\vcvars.sh"`) do $(CYGWIN_DIR)\bin\bash.exe --login -c "%i" || exit 1
+    if not exist $(LIBICONV_LIB) exit 1
+    if not exist $(OUTPUT_DIR)\bin\iconv-2.dll exit 1
+    if not exist $(OUTPUT_DIR)\bin\iconv.dll exit 1
+    if not exist $(OUTPUT_DIR)\include\iconv.h exit 1
     cd $(BASE_DIR)
 !ELSE
     @echo $(LIBICONV_LIB) is outdated, but the build was suppressed! Remove this file to force rebuild.
@@ -4471,7 +4679,7 @@ $(PIXMAN_LIB): $(CURL_EXE) $(CURL_CA_BUNDLE) $(LIBPNG_LIB) $(MSVCRT_DLL)
     SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(PIXMAN_DIR) mkdir $(PIXMAN_DIR)
     cd $(PIXMAN_DIR)
-    if not exist $(PIXMAN_VER).tar.gz $(CURL_EXE) -L -k -o "$(PIXMAN_VER).tar.gz" "$(PIXMAN_SRC)"
+    if not exist $(PIXMAN_VER).tar.gz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(PIXMAN_VER).tar.gz" "$(PIXMAN_SRC)"
     if not exist $(PIXMAN_VER) 7z e -y $(PIXMAN_VER).tar.gz && 7z x -y $(PIXMAN_VER).tar
     cd $(PIXMAN_VER)
 !IFNDEF NO_CLEAN
@@ -4501,7 +4709,7 @@ $(FONTCONFIG_LIB): $(LIBICONV_LIB) $(FREETYPE_LIB) $(LIBXML2_LIB) $(LIBEXPAT_LIB
 	SET CURL_CA_BUNDLE=$(CURL_CA_BUNDLE)
     if not exist $(FONTCONFIG_DIR) mkdir $(FONTCONFIG_DIR)
     cd $(FONTCONFIG_DIR)
-    if not exist $(FONTCONFIG_VER).tar.xz $(CURL_EXE) -L -k -o "$(FONTCONFIG_VER).tar.xz" "$(FONTCONFIG_SRC)"
+    if not exist $(FONTCONFIG_VER).tar.xz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(FONTCONFIG_VER).tar.xz" "$(FONTCONFIG_SRC)"
     if not exist $(FONTCONFIG_VER) 7z e -y $(FONTCONFIG_VER).tar.xz && 7z x -y $(FONTCONFIG_VER).tar
     cd $(FONTCONFIG_VER)
 !IFNDEF NO_CLEAN
@@ -4534,7 +4742,7 @@ $(CAIRO_LIB): $(PIXMAN_LIB) $(LIBPNG_LIB) $(ZLIB_LIB) $(FREETYPE_LIB) $(LIBXML2_
     rem SET CPLUS_INCLUDE_PATH=$(OUTPUT_DIR)\include
     if not exist $(CAIRO_DIR) mkdir $(CAIRO_DIR)
     cd $(CAIRO_DIR)
-    if not exist $(CAIRO_VER).tar.xz $(CURL_EXE) -L -k -o "$(CAIRO_VER).tar.xz" "$(CAIRO_SRC)"
+    if not exist $(CAIRO_VER).tar.xz $(CURL_EXE) -L $(CURL_DOWNLOAD_SSL_OPT) -o "$(CAIRO_VER).tar.xz" "$(CAIRO_SRC)"
     if not exist $(CAIRO_VER) 7z e -y $(CAIRO_VER).tar.xz && 7z x -y $(CAIRO_VER).tar
 	cd $(CAIRO_VER)
 !IFNDEF NO_CLEAN
@@ -4561,7 +4769,11 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 !ELSE
 	devenv /rebuild Release MapManager.sln /Project Installer
 !ENDIF
+!IFNDEF NO_SIGN
 	$(BASE_DIR)\cert\sign "$(MAPMANAGER_INSTALLER)"
+!ELSE
+    @echo Signing disabled by NO_SIGN.
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
 	rem $(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
@@ -4571,7 +4783,36 @@ $(MAPMANAGER_INSTALLER) : $(MAPSERVER_LIB)
 
 # virtual targets
 
-default: $(DEFAULT_TARGETS)
+default: $(CMAKE_TOOL_PREREQ) $(DEFAULT_TARGETS)
+
+build-tools: $(CMAKE_TOOL_PREREQ) $(NINJA_TOOL_PREREQ)
+    @echo BUILD TOOLS READY
+
+postgres-tools: $(WINFLEXBISON_PREREQ) $(PKGCONFIGLITE_PREREQ) $(NINJA_TOOL_PREREQ)
+    @echo POSTGRESQL BUILD TOOLS READY
+
+iconv: $(LIBICONV_LIB)
+    @echo LIBICONV BUILD COMPLETE
+
+ogdi: $(OGDI_LIB)
+    @echo OGDI BUILD COMPLETE
+
+libxml2: $(LIBXML2_LIB)
+    @echo LIBXML2 BUILD COMPLETE
+
+postgresql: $(PGSQL_LIB)
+    @echo POSTGRESQL LIBPQ BUILD COMPLETE
+
+phase3-dependencies: $(CMAKE_TOOL_PREREQ) $(LIBICONV_LIB) $(OGDI_LIB) $(LIBXML2_LIB) $(PGSQL_LIB)
+    @echo PHASE 3 DEPENDENCY BUILD COMPLETE
+
+source-archives: source-archives-force
+    powershell -NoProfile -ExecutionPolicy Bypass -File "$(BASE_DIR)\support\archive-sources.ps1" -BaseDir "$(BASE_DIR)" -OutputDir "$(SOURCE_ARCHIVE_DIR)" -Manifest "$(BASE_DIR)\support\source-archive-manifest.json"
+
+source-archives-validate: source-archives-force
+    powershell -NoProfile -ExecutionPolicy Bypass -File "$(BASE_DIR)\support\archive-sources.ps1" -BaseDir "$(BASE_DIR)" -Manifest "$(BASE_DIR)\support\source-archive-manifest.json" -ValidateOnly
+
+source-archives-force:
 
 test: $(CURL_LIB)
 
@@ -4690,9 +4931,9 @@ ms-deps:
     echo protobuf-c - $(PROTOBUF_C_BRANCH) >> $(OUTPUT_DIR)\doc\ms_deps.txt
 !ENDIF
 
-mapcache: $(MAPCACHE_LIB)
+mapcache: $(CMAKE_TOOL_PREREQ) $(MAPCACHE_LIB)
 
-ms: $(MAPSERVER_LIB) ms-deps
+ms: $(CMAKE_TOOL_PREREQ) $(MAPSERVER_LIB) ms-deps
 
 ms-csharp-test: $(MAPSERVER_LIB)
 !IFDEF MS_CSHARP
@@ -4737,7 +4978,7 @@ show-mrsid:
     echo MRSID_DLL        = $(MRSID_DLL)
     echo LIDAR_DLL        = $(LIDAR_DLL)
 
-dependencies: $(GDAL_DEPS) $(MAPSERVER_DEPS)
+dependencies: $(CMAKE_TOOL_PREREQ) $(GDAL_DEPS) $(MAPSERVER_DEPS)
     @echo DEPENDENCY BUILD COMPLETE !!!!
     
 package-dependencies: dependencies
@@ -4833,7 +5074,7 @@ gdal-clean:
 
 gdal: gdal-clean gdal-old 
 
-gdal-cmake: gdal-clean $(GDAL_LIB) gdal-mssql-odbc gdal-mssql-ncli
+gdal-cmake: gdal-clean $(CMAKE_TOOL_PREREQ) $(GDAL_LIB) gdal-mssql-odbc gdal-mssql-ncli
     
 gdalpluginlibs: $(GDAL_PDF_DLL) $(GDAL_OCI_DLL) $(GDAL_GEOR_DLL) $(GDAL_MRSID_DLL) $(GDAL_HDF4_DLL) $(GDAL_HDF5_DLL) $(GDAL_KEA_DLL) $(GDAL_NETCDF_DLL) $(GDAL_FITS_DLL) $(GDAL_ECW_DLL) $(GDAL_PG_DLL) $(GDAL_FILEGDB_DLL)  $(GDAL_AMIGOCLOUD_DLL) $(GDAL_MSSQL_DLL) $(GDAL_MSSQL_MSODBC_DLL)
 
@@ -4908,25 +5149,11 @@ gdal-python-all:
 gdal-python-cmake-all:
 !IFNDEF NO_BUILD
 !IFDEF WIN64
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    for %%P in ($(GDAL_PYTHON_DIRS_X64)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_COMMAND=bdist_wheel PYTHON_BDIST_OPTS=
+    for %%P in ($(GDAL_PYTHON_DIRS_X64)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_OPTS=--formats=zip
 !ELSE
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python37-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python38-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python39-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python310-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
-    rem nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=Python311-32 SWIG_VER=4.0.2 PYTHON_BDIST_OPTS=--formats=zip
+    for %%P in ($(GDAL_PYTHON_DIRS_X86)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_COMMAND=bdist_wheel PYTHON_BDIST_OPTS=
+    for %%P in ($(GDAL_PYTHON_DIRS_X86)) do @nmake gdal-python-cmake-bdist GDAL_DIR=$(GDAL_DIR) PYTHON_DIR=%%P SWIG_VER=$(SWIG_VER) PYTHON_BDIST_OPTS=--formats=zip
 !ENDIF
 !ENDIF
 
@@ -4998,6 +5225,7 @@ gdal-python-bdist: $(GDAL_LIB)
 !IFNDEF NO_COPY	
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
 	-xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-xcopy /Y dist\*.whl $(OUTPUT_DIR)\install
 	-for /R %%a IN (dist\*.zip) DO copy /Y %%a $(OUTPUT_DIR)\install\%%~na.$(PYTHON_DIR)%%~xa
 !ENDIF
 	cd $(BASE_DIR)  
@@ -5015,11 +5243,16 @@ gdal-python-cmake-bdist:
 	if exist build rmdir /S /Q build
 !ENDIF    
 !IFNDEF NO_BUILD
-	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py bdist $(PYTHON_BDIST_OPTS)
+!IFDEF PYTHON_BDIST_COMMAND
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py build_ext --library-dirs="$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install\lib" $(PYTHON_BDIST_COMMAND) $(PYTHON_BDIST_OPTS)
+!ELSE
+	$(PYTHON_BASE)\$(PYTHON_DIR)\python.exe setup.py build_ext --library-dirs="$(BASE_DIR)\$(GDAL_DIR)\$(CMAKE_BUILDDIR)\install\lib" bdist $(PYTHON_BDIST_OPTS)
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY	
 	if not exist $(OUTPUT_DIR)\install mkdir $(OUTPUT_DIR)\install
 	-xcopy /Y dist\*.msi $(OUTPUT_DIR)\install
+	-xcopy /Y dist\*.whl $(OUTPUT_DIR)\install
 	-for /R %%a IN (dist\*.zip) DO copy /Y %%a $(OUTPUT_DIR)\install\%%~na.$(PYTHON_DIR)%%~xa
 !ENDIF
 	cd $(BASE_DIR)  
@@ -5028,7 +5261,7 @@ gdal-python-cmake-bdist:
 gdal-cpp-test:
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
-    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\data
+    SET GDAL_DATA=$(OUTPUT_DIR)\bin\gdal-data
     SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(BASE_DIR)\$(SDE_DIR);$(OCI_DIR);$(FILEGDB_BINPATH);$(PATH)
     cd $(BASE_DIR)\$(GDAL_DIR)\autotest\cpp
     nmake /f makefile.vc clean
@@ -5040,7 +5273,7 @@ gdal-autotest:
     SET GDAL_DOWNLOAD_TEST_DATA=YES
     SET PROJ_LIB=$(OUTPUT_DIR)\bin\proj9\SHARE
     SET GDAL_DRIVER_PATH=$(OUTPUT_DIR)\bin\gdal\plugins;$(OUTPUT_DIR)\bin\gdal\plugins-external
-    SET GDAL_DATA=$(BASE_DIR)\$(GDAL_DIR)\gdal\data
+    SET GDAL_DATA=$(OUTPUT_DIR)\bin\gdal-data
     SET PYTHONPATH=$(OUTPUT_DIR)\bin\gdal\python
     SET DO_NOT_FAIL_ON_RECODE_ERRORS=YES
     SET GITHUB_WORKFLOW=Windows builds
@@ -5049,7 +5282,7 @@ gdal-autotest:
     rem SET OGR_PG_CONNECTION_STRING=dbname=autotest$(CMAKE_BUILDDIR) host=127.0.0.1 port=5432 user=postgres
     rem SET PG_USE_COPY=YES
     rem SET PG_USE_POSTGIS=YES
-    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
+    SET PATH=$(OUTPUT_DIR)\bin;$(OUTPUT_DIR)\bin\debug;$(OUTPUT_DIR)\bin\gdal\apps;$(OUTPUT_DIR)\bin\gdal\python\osgeo;$(OCI_DIR)\$(INSTANTCLIENT_DIR);$(FILEGDB_BINPATH);$(BASE_DIR)\support\diffutils;$(PATH)
     SET USE_PATH_FOR_GDAL_PYTHON=YES
     cd $(BASE_DIR)\$(GDAL_DIR)\autotest
     $(PYTHON_BASE)\$(PYTHON_DIR)\Scripts\pytest.exe gcore/ ogr/ osr/ alg/ gnm/ utilities/ -vvs
@@ -5090,7 +5323,11 @@ ms-python-bdist: $(MAPSERVER_LIB)
 !ENDIF
 
 package:
+!IFNDEF NO_SIGN
     if exist $(OUTPUT_DIR)\install $(BASE_DIR)\cert\signdir $(OUTPUT_DIR)\install
+!ELSE
+    @echo Signing disabled by NO_SIGN.
+!ENDIF
     xcopy /Y $(BASE_DIR)\SDKShell.bat $(OUTPUT_DIR)
     xcopy /Y $(BASE_DIR)\read-me.txt $(OUTPUT_DIR)
     if exist $(OUTPUT_DIR)-$(PKG_VERSION).zip del $(OUTPUT_DIR)-$(PKG_VERSION).zip
@@ -5103,17 +5340,25 @@ package:
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.exe $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 	if exist $(OUTPUT_DIR)\install xcopy /Y $(OUTPUT_DIR)\install\*.zip $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION).zip" downloads
     if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.exe downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	if exist $(OUTPUT_DIR)\install uploadftpdir $(OUTPUT_DIR)\install\*.zip downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
 	uploadftpdir $(OUTPUT_DIR)\doc\*.txt downloads/doc/release-$(COMPILER_VER)-$(PKG_VERSION)	
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
 
 package-libs:
     if exist $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip
     7z a -tzip $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(OUTPUT_DIR)\lib $(OUTPUT_DIR)\include
     xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-libs.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
 	
 package-src:
     if exist $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip del $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip
@@ -5128,14 +5373,22 @@ package-src:
 	cd $(BASE_DIR)
     7z a -tzip -xr!?git\ -xr!?svn\ $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(MAPSERVER_DIR) $(GDAL_DIR)
     xcopy /Y $(OUTPUT_DIR)-$(PKG_VERSION)-src.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-$(PKG_VERSION)-src.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
     
 package-dev:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
     if exist $(OUTPUT_DIR)\install del $(OUTPUT_DIR)\install\*.exe $(OUTPUT_DIR)\install\*.msi $(OUTPUT_DIR)\install\*.zip $(OUTPUT_DIR)\install\*.bz2
     7z a -tzip -xr!*.cmake -xr!*.pc $(OUTPUT_DIR)-dev.zip $(OUTPUT_DIR) $(REGEX_DIR) Makefile config.opt readme.txt changelog.txt license.txt *.rtf
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
     
 package-dev-x64:
     if exist $(OUTPUT_DIR)-dev.zip del $(OUTPUT_DIR)-dev.zip
@@ -5150,8 +5403,12 @@ package-dev-x64:
 install: package package-dev
     xcopy /Y $(OUTPUT_DIR).zip $(INSTALL_DIR)
     xcopy /Y $(OUTPUT_DIR)-dev.zip $(INSTALL_DIR)
+!IFNDEF NO_PUBLISH
 	uploadftp "$(OUTPUT_DIR).zip" downloads
 	uploadftp "$(OUTPUT_DIR)-dev.zip" downloads
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
     
 
 mapmanager-build:
@@ -5201,10 +5458,18 @@ mapmanager-installer:
 !ELSE
 	devenv /rebuild Release MapManager.sln /Project Installer
 !ENDIF
+!IFNDEF NO_SIGN
 	$(BASE_DIR)\cert\sign "$(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi"
+!ELSE
+    @echo Signing disabled by NO_SIGN.
+!ENDIF
 !ENDIF
 !IFNDEF NO_COPY
+!IFNDEF NO_PUBLISH
 	$(BASE_DIR)\uploadftp $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi downloads/release-$(COMPILER_VER)-$(PKG_VERSION)
+!ELSE
+    @echo Publishing disabled by NO_PUBLISH.
+!ENDIF
 	if not exist $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION) mkdir $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
     xcopy /Y $(BASE_DIR)\$(MAPMANAGER_DIR)\Installer\bin\Release\MapManager.msi $(INSTALL_DIR)\release-$(COMPILER_VER)-$(PKG_VERSION)
 !ENDIF
@@ -5214,24 +5479,32 @@ mapmanager-installer:
 
 gdal-nuget:
     cd nuget
-    nuget pack GDAL.nuspec -version $(GDAL_RELEASE_VER)
-    nuget pack GDAL.Native.nuspec -version $(GDAL_RELEASE_VER)
-    nuget pack GDAL.Plugins.nuspec -version $(GDAL_RELEASE_VER)
-    nuget pack GDAL.Linux.nuspec -version $(GDAL_RELEASE_VER)
-    nuget pack GDAL.Applications.nuspec -version $(GDAL_RELEASE_VER)
+    nuget pack GDAL.nuspec -version $(GDAL_RELEASE_VER) -Properties $(NUGET_PROPERTIES)
+    nuget pack GDAL.Native.nuspec -version $(GDAL_RELEASE_VER) -Properties $(NUGET_PROPERTIES)
+    nuget pack GDAL.Plugins.nuspec -version $(GDAL_RELEASE_VER) -Properties $(NUGET_PROPERTIES)
+    nuget pack GDAL.Linux.nuspec -version $(GDAL_RELEASE_VER) -Properties $(NUGET_PROPERTIES)
+    nuget pack GDAL.Applications.nuspec -version $(GDAL_RELEASE_VER) -Properties $(NUGET_PROPERTIES)
+!IFNDEF NO_SIGN
     sign GDAL.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Native.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Linux.$(GDAL_RELEASE_VER).nupkg
     sign GDAL.Applications.$(GDAL_RELEASE_VER).nupkg
+!ELSE
+    @echo NuGet signing disabled by NO_SIGN.
+!ENDIF
     cd $(BASE_DIR)
 
 
 gdal-nuget-push:
+!IFNDEF NO_PUBLISH
     cd nuget
     nuget setApiKey $(NUGET_GDAL_API_KEY)
     nuget push GDAL.Native.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.Plugins.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.Applications.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
     nuget push GDAL.$(GDAL_RELEASE_VER).nupkg -Source https://api.nuget.org/v3/index.json
+!ELSE
+    @echo NuGet publishing disabled by NO_PUBLISH.
+!ENDIF
 
